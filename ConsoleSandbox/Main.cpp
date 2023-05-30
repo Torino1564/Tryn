@@ -4,6 +4,7 @@
 #include <Core/src/log/Channel.h>
 #include <Core/src/log/MsvcDebugDriver.h>
 #include <Core/src/log/TextFormatter.h>
+#include <Core/src/log/SeverityLevelPolicy.h>
 
 using namespace tryn;
 using namespace std::string_literals;
@@ -15,8 +16,11 @@ int main()
 	std::unique_ptr<log::IChannel> pChan = std::make_unique<log::Channel>(std::vector<std::shared_ptr<log::IDriver>>{
 		std::make_shared<log::MsvcDebugDriver>(std::make_unique<log::TextFormatter>())
 	});
+	pChan->AttachPolicy(std::make_unique<log::SeverityLevelPolicy>(log::Level::Error));
 
 	trylog.fatal(L"Failure!");
+	trylog.warn(L"warning!");
+	trylog.error(L"Error!");
 
 	return 0;
 }
