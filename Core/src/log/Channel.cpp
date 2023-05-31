@@ -31,7 +31,7 @@ void tryn::log::Channel::AttachDriver(std::shared_ptr<IDriver> pDriver)
 	driverPtrs_.push_back(std::move(pDriver));
 }
 
-void tryn::log::Channel::AttachPolicy(std::unique_ptr<IPolicy> pPolicy)
+void tryn::log::Channel::AttachPolicy(std::shared_ptr<IPolicy> pPolicy)
 {
 	policyPtrs_.push_back(std::move(pPolicy));
 }

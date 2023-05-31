@@ -1,22 +1,21 @@
-#include <Core/src/ioc/Container.h>
 #include <iostream>
-#include <Core/src/log/EntryBuilder.h>
-#include <Core/src/log/Channel.h>
-#include <Core/src/log/MsvcDebugDriver.h>
-#include <Core/src/log/TextFormatter.h>
+#include <Core/src/ioc/Container.h>
+#include <Core/src/log/Log.h>
 #include <Core/src/log/SeverityLevelPolicy.h>
 
 using namespace tryn;
 using namespace std::string_literals;
 
-#define trylog log::EntryBuilder{__FILEW__,__FUNCTIONW__,__LINE__,}.chan(pChan.get())
+void Boot()
+{
+	log::Boot();
+}
 
 int main()
 {
-	std::unique_ptr<log::IChannel> pChan = std::make_unique<log::Channel>(std::vector<std::shared_ptr<log::IDriver>>{
-		std::make_shared<log::MsvcDebugDriver>(std::make_unique<log::TextFormatter>())
-	});
-	pChan->AttachPolicy(std::make_unique<log::SeverityLevelPolicy>(log::Level::Error));
+	Boot();
+
+
 
 	trylog.fatal(L"Failure!");
 	trylog.warn(L"warning!");

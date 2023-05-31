@@ -12,9 +12,7 @@ namespace tryn::log
             .sourceLine_ = sourceLine,
 			.timestamp_ = std::chrono::system_clock::now(),
         }
-    {
-
-    }
+    {}
 
     EntryBuilder& tryn::log::EntryBuilder::note(std::wstring note)
     {
@@ -68,10 +66,19 @@ namespace tryn::log
         pDest_ = pChan;
         return *this;
     }
+	EntryBuilder& EntryBuilder::trace_skip(int depth)
+	{
+		traceSkipDepth_ = depth;
+		return *this;
+	}
     EntryBuilder::~EntryBuilder()
     {
         if (pDest_ != nullptr)
         {
+			if ((int)level_ <= (int)Level::Error)
+			{
+				trace_.emplace(traceSkipDepth_);
+			}
             pDest_->Submit(*this);
         }
     }

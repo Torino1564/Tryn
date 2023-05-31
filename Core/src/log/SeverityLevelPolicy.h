@@ -4,7 +4,9 @@
 
 namespace tryn::log
 {
-	class SeverityLevelPolicy : public IPolicy
+	class ISeverityLevelPolicy : public IPolicy {};
+
+	class SeverityLevelPolicy : public ISeverityLevelPolicy
 	{
 	public:
 		SeverityLevelPolicy(Level level);
