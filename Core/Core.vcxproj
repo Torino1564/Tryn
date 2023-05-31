@@ -19,6 +19,8 @@
     <ClCompile Include="src\log\MsvcDebugDriver.cpp" />
     <ClCompile Include="src\log\SeverityLevelPolicy.cpp" />
     <ClCompile Include="src\log\TextFormatter.cpp" />
+    <ClCompile Include="src\utl\StackTrace.cpp" />
+    <ClCompile Include="src\utl\String.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h" />
@@ -32,6 +34,9 @@
     <ClInclude Include="src\log\Policy.h" />
     <ClInclude Include="src\log\SeverityLevelPolicy.h" />
     <ClInclude Include="src\log\TextFormatter.h" />
+    <ClInclude Include="src\utl\StackTrace.h" />
+    <ClInclude Include="src\utl\String.h" />
+    <ClInclude Include="third\backward.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
