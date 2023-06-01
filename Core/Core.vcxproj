@@ -19,6 +19,8 @@
     <ClCompile Include="src\log\MsvcDebugDriver.cpp" />
     <ClCompile Include="src\log\SeverityLevelPolicy.cpp" />
     <ClCompile Include="src\log\TextFormatter.cpp" />
+    <ClCompile Include="src\utl\Assert.cpp" />
+    <ClCompile Include="src\utl\Exception.cpp" />
     <ClCompile Include="src\utl\StackTrace.cpp" />
     <ClCompile Include="src\utl\String.cpp" />
   </ItemGroup>
@@ -34,6 +36,10 @@
     <ClInclude Include="src\log\Policy.h" />
     <ClInclude Include="src\log\SeverityLevelPolicy.h" />
     <ClInclude Include="src\log\TextFormatter.h" />
+    <ClInclude Include="src\utl\Assert.h" />
+    <ClInclude Include="src\utl\Exception.h" />
+    <ClInclude Include="src\utl\Macro.h" />
+    <ClInclude Include="src\utl\NoReturn.h" />
     <ClInclude Include="src\utl\StackTrace.h" />
     <ClInclude Include="src\utl\String.h" />
     <ClInclude Include="third\backward.hpp" />

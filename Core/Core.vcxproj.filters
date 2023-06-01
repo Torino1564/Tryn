@@ -27,9 +27,6 @@
     <ClCompile Include="src\log\EntryBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\log\Channel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\log\MsvcDebugDriver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -43,6 +40,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\utl\String.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\log\Channel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utl\Exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utl\Assert.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -87,6 +93,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utl\String.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utl\Macro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utl\Assert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utl\Exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utl\NoReturn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
