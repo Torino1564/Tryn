@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include <stirng>
+#include <string>
 
 namespace backward
 {
@@ -12,7 +12,7 @@ namespace tryn::utl
 	class StackTrace
 	{
 	public:
-		StackTrace();
+		StackTrace(int depth = 6);
 		StackTrace(const StackTrace& src);
 		StackTrace& operator=(const StackTrace& src);
 		~StackTrace();

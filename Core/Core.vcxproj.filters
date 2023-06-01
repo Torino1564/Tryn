@@ -42,6 +42,12 @@
     <ClCompile Include="src\utl\String.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\log\Log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\log\SimpleFileDriver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\log\Channel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -93,6 +99,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utl\String.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\log\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\log\SimpleFileDriver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utl\Macro.h">

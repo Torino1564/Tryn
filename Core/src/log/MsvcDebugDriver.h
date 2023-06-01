@@ -4,13 +4,15 @@
 
 namespace tryn::log
 {
-	class MsvcDebugDriver : public ITextDriver
+	class IMsvcDebugDriver : public ITextDriver {};
+
+	class MsvcDebugDriver : public IMsvcDebugDriver
 	{
 	public:
-		MsvcDebugDriver(std::unique_ptr<ITextFormatter> pFormatter = {});
+		MsvcDebugDriver(std::shared_ptr<ITextFormatter> pFormatter = {});
 		void Submit(const Entry& e) override;
-		void SetFormatter(std::unique_ptr<ITextFormatter> pFormatter) override;
+		void SetFormatter(std::shared_ptr<ITextFormatter> pFormatter) override;
 	private:
-		std::unique_ptr<ITextFormatter> pFormatter_;
+		std::shared_ptr<ITextFormatter> pFormatter_;
 	};
 }

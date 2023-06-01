@@ -18,10 +18,12 @@ namespace tryn::log
 		EntryBuilder& error(std::wstring note = L"");
 		EntryBuilder& fatal(std::wstring note = L"");
 		EntryBuilder& chan(IChannel* chan);
+		EntryBuilder& trace_skip(int depth); 
 
 		~EntryBuilder();
 	private:
 		IChannel* pDest_ = nullptr;
+		int traceSkipDepth_ = 6;
 
 	};
 }

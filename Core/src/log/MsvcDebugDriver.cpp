@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include "TextFormatter.h"
 
-tryn::log::MsvcDebugDriver::MsvcDebugDriver(std::unique_ptr<ITextFormatter> pFormatter)
+tryn::log::MsvcDebugDriver::MsvcDebugDriver(std::shared_ptr<ITextFormatter> pFormatter)
 	:
 	pFormatter_{std::move(pFormatter)}
 {
@@ -18,7 +18,7 @@ void tryn::log::MsvcDebugDriver::Submit(const Entry& e)
 	// TODO: log warning or error on a logger backup logger
 }
 
-void tryn::log::MsvcDebugDriver::SetFormatter(std::unique_ptr<ITextFormatter> pFormatter)
+void tryn::log::MsvcDebugDriver::SetFormatter(std::shared_ptr<ITextFormatter> pFormatter)
 {
 	pFormatter_ = std::move(pFormatter);
 }
