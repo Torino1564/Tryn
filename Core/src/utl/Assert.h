@@ -44,19 +44,19 @@ namespace tryn::utl
 	};
 }
 
-#ifndef ZT_CHILASS_ACTIVE  
+#ifndef ZT_TRYNASS_ACTIVE  
 #ifdef NDEBUG  
-#define ZT_CHILASS_ACTIVE false  
+#define ZT_TRYNASS_ACTIVE false  
 #else  
-#define ZT_CHILASS_ACTIVE true  
+#define ZT_TRYNASS_ACTIVE true  
 #endif  
 #endif  
 
-#define chilass(expr) (!ZT_CHILASS_ACTIVE || bool(expr)) ? void(0) : (void)chil::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__ }  
+#define trynass(expr) (!ZT_TRYNASS_ACTIVE || bool(expr)) ? void(0) : (void)tryn::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__ }  
 
-#define chilchk(expr) bool(expr) ? void(0) : (void)chil::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__, ZT_CHILASS_ACTIVE ? chil::utl::Assertion::Consequence::Terminate : chil::utl::Assertion::Consequence::Log }  
+#define trynchk(expr) bool(expr) ? void(0) : (void)tryn::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__, ZT_TRYNASS_ACTIVE ? tryn::utl::Assertion::Consequence::Terminate : tryn::utl::Assertion::Consequence::Log }  
 
-#define chilchk_fail (void)chil::utl::Assertion{ L"[Always Fail]", __FILEW__, __FUNCTIONW__, __LINE__, ZT_CHILASS_ACTIVE ? chil::utl::Assertion::Consequence::Terminate : chil::utl::Assertion::Consequence::Log }  
+#define trynchk_fail (void)tryn::utl::Assertion{ L"[Always Fail]", __FILEW__, __FUNCTIONW__, __LINE__, ZT_TRYNASS_ACTIVE ? tryn::utl::Assertion::Consequence::Terminate : tryn::utl::Assertion::Consequence::Log }  
 
 #define ass_watch(...) ZT_DISPATCH_VA(ZZ_AW_, __VA_ARGS__) 
 #define ZZ_AW_(expr) watch((expr), ZT_WSTR(expr)) 

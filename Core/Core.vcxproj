@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h" />
+    <ClInclude Include="src\ioc\Exception.h" />
     <ClInclude Include="src\log\Driver.h" />
     <ClInclude Include="src\ioc\Singletons.h" />
     <ClInclude Include="src\log\Channel.h" />

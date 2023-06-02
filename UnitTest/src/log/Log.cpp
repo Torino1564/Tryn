@@ -20,6 +20,7 @@ public:
 		entry_ = e;
 	}
 	log::Entry entry_;
+	void Flush() override {};
 };
 
 class TestChannel : public log::Channel

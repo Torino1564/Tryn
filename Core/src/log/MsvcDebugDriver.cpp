@@ -22,3 +22,6 @@ void tryn::log::MsvcDebugDriver::SetFormatter(std::shared_ptr<ITextFormatter> pF
 {
 	pFormatter_ = std::move(pFormatter);
 }
+
+void tryn::log::MsvcDebugDriver::Flush()
+{}

@@ -7,6 +7,9 @@
 #include <stdexcept>
 #include <format>
 #include <tuple>
+#include <Core/src/utl/Assert.h>
+#include <Core/src/utl/String.h>
+#include "Exception.h"
 
 namespace tryn::ioc
 {
@@ -60,16 +63,15 @@ namespace tryn::ioc
 					return std::any_cast<G>(entry)(std::forward<Ps>(arg)...);
 				}
 				catch (const std::bad_any_cast&) {
-					// TODO: make this an assert
-					throw std::logic_error{ std::format(
-						"Could not resolve IoC mapped type\nfrom: [{}]\n  to: [{}]\n",
-						entry.type().name(), typeid(G).name()
-					) };
+					trynchk_fail.msg(std::format(
+						L"Could not resolve Singleton mapped to type\nfrom: [{}]\n  to: [{}]]\n",
+						utl::ToWide(entry.type().name()), utl::ToWide(typeid(Generator<T>).name())
+					)).ex();
 				}
 			}
 			else
 			{
-				throw std::runtime_error{ std::format("Could not find generator for type [{}] in IoC container", typeid(T).name()) };
+				throw ServiceNotFound{ std::format("Could not find generator for type [{}] in IoC container", typeid(T).name()) };
 			}
 		}
 		// data

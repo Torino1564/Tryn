@@ -12,6 +12,7 @@ namespace tryn::log
 		MsvcDebugDriver(std::shared_ptr<ITextFormatter> pFormatter = {});
 		void Submit(const Entry& e) override;
 		void SetFormatter(std::shared_ptr<ITextFormatter> pFormatter) override;
+		void Flush() override;
 	private:
 		std::shared_ptr<ITextFormatter> pFormatter_;
 	};
