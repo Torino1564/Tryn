@@ -4,6 +4,7 @@
 #include <Core/src/log/Log.h>
 #include <Core/src/log/SeverityLevelPolicy.h>
 #include <Core/src/utl/Assert.h>
+#include <Core/src/win/WindowClass.h>
 
 using namespace tryn;
 using namespace std::string_literals;
@@ -11,7 +12,6 @@ using namespace std::string_literals;
 class Butts
 {
 public:
-	Butts();
 	int Test()
 	{
 		return 420;
@@ -21,18 +21,21 @@ public:
 void Boot()
 {
 	log::Boot();
+
+	ioc::Get().Register<log::ISeverityLevelPolicy>([] {
+		return std::make_shared<log::SeverityLevelPolicy>(log::Level::Info);
+		});
 }
 
 int main()
 {
 	Boot();
 
-	auto test = ioc::Sing().Resolve<Butts>();
-	std::cout << test->Test() << std::endl;
+	auto pWinClass = std::make_unique<win::WindowClass>();
+	trynchk(pWinClass);
 
-	trylog.fatal(L"Failure!");
-	trylog.warn(L"warning!");
-	trylog.error(L"Error!");
+	trylog.error(L"No trace test").no_trace().no_line();
+	trylog.warn(L"Traced warning").trace();
 
 	return 0;
 }

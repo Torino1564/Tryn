@@ -19,6 +19,12 @@ namespace tryn::log
 		EntryBuilder& fatal(std::wstring note = L"");
 		EntryBuilder& chan(IChannel* chan);
 		EntryBuilder& trace_skip(int depth); 
+		EntryBuilder& no_trace();
+		EntryBuilder& trace();
+		EntryBuilder& no_line();
+		EntryBuilder& line();
+		EntryBuilder& hr();
+		EntryBuilder& hr(unsigned int);
 
 		~EntryBuilder();
 	private:

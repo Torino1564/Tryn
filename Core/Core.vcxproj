@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ccr\GenericTaskQueue.cpp" />
     <ClCompile Include="src\ioc\Container.cpp" />
     <ClCompile Include="src\ioc\Singletons.cpp" />
     <ClCompile Include="src\log\Channel.cpp" />
@@ -25,8 +26,13 @@
     <ClCompile Include="src\utl\Exception.cpp" />
     <ClCompile Include="src\utl\StackTrace.cpp" />
     <ClCompile Include="src\utl\String.cpp" />
+    <ClCompile Include="src\win\Boot.cpp" />
+    <ClCompile Include="src\win\Utilities.cpp" />
+    <ClCompile Include="src\win\Window.cpp" />
+    <ClCompile Include="src\win\WindowClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ccr\GenericTaskQueue.h" />
     <ClInclude Include="src\ioc\Container.h" />
     <ClInclude Include="src\ioc\Exception.h" />
     <ClInclude Include="src\log\Driver.h" />
@@ -41,12 +47,22 @@
     <ClInclude Include="src\log\SeverityLevelPolicy.h" />
     <ClInclude Include="src\log\SimpleFileDriver.h" />
     <ClInclude Include="src\log\TextFormatter.h" />
+    <ClInclude Include="src\spa\Dimensions.h" />
+    <ClInclude Include="src\spa\Rect.h" />
+    <ClInclude Include="src\spa\Vec2.h" />
     <ClInclude Include="src\utl\Assert.h" />
     <ClInclude Include="src\utl\Exception.h" />
     <ClInclude Include="src\utl\Macro.h" />
     <ClInclude Include="src\utl\NoReturn.h" />
     <ClInclude Include="src\utl\StackTrace.h" />
     <ClInclude Include="src\utl\String.h" />
+    <ClInclude Include="src\win\Boot.h" />
+    <ClInclude Include="src\win\Exception.h" />
+    <ClInclude Include="src\win\IWindow.h" />
+    <ClInclude Include="src\win\TrynWin.h" />
+    <ClInclude Include="src\win\Utilities.h" />
+    <ClInclude Include="src\win\Window.h" />
+    <ClInclude Include="src\win\WindowClass.h" />
     <ClInclude Include="third\backward.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -1,6 +1,9 @@
 #include "EntryBuilder.h"
 #include "Channel.h"
+#include <Core/src/win/TrynWin.h>
 
+#pragma warning(push) 
+#pragma warning(disable: 26815) 
 namespace tryn::log
 {
     EntryBuilder::EntryBuilder(const wchar_t* sourceFile, const wchar_t* sourceFunctionName, int sourceLine)
@@ -71,11 +74,41 @@ namespace tryn::log
 		traceSkipDepth_ = depth;
 		return *this;
 	}
+	EntryBuilder& EntryBuilder::no_trace()
+	{
+		captureTrace_ = false;
+		return *this;
+	}
+	EntryBuilder& EntryBuilder::trace()
+	{
+		captureTrace_ = true;
+		return *this;
+	}
+	EntryBuilder& EntryBuilder::no_line()
+	{
+		showSourceLine_ = false;
+		return *this;
+	}
+	EntryBuilder& EntryBuilder::line()
+	{
+		showSourceLine_ = true;
+		return *this;
+	}
+	EntryBuilder& EntryBuilder::hr()
+	{
+		hResult_ = GetLastError();
+		return *this;
+	}
+	EntryBuilder& EntryBuilder::hr(unsigned int hr)
+	{
+		hResult_ = hr;
+		return *this;
+	}
     EntryBuilder::~EntryBuilder()
     {
         if (pDest_ != nullptr)
         {
-			if ((int)level_ <= (int)Level::Error)
+			if (captureTrace_.value_or((int)level_ <= (int)Level::Error))
 			{
 				trace_.emplace(traceSkipDepth_);
 			}
@@ -84,4 +117,5 @@ namespace tryn::log
     }
 }
 
+#pragma warning(pop)
 
