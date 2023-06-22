@@ -43,6 +43,6 @@
 
 
 #pragma warning (push)
-#pragma warning (disable : 5105)
+#pragma warning (disable : 5105 28251)
 #include <windows.h>
 #pragma warning (pop)

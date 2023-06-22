@@ -26,6 +26,7 @@ namespace tryn::win
 		virtual HWND GetHandle() const = 0;
 		virtual bool IsClosing() const = 0;
 		virtual std::future<void> SetTitle(std::wstring title) = 0;
+		virtual spa::DimensionsI GetClientDimensions() const = 0;
 	protected:
 		virtual LRESULT HandleMessage_(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept = 0;
 	};

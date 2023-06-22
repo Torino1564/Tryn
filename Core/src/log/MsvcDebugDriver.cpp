@@ -1,6 +1,5 @@
 #include "MsvcDebugDriver.h"
-// TODO replace with custom windos header
-#include <Windows.h>
+#include <Core/src/win/TrynWin.h>
 #include "TextFormatter.h"
 
 tryn::log::MsvcDebugDriver::MsvcDebugDriver(std::shared_ptr<ITextFormatter> pFormatter)

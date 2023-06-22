@@ -19,6 +19,7 @@ namespace tryn::win
 			spa::DimensionsI clientAreaSize, std::optional<spa::Vec2I> position = {});
 		HWND GetHandle() const override;
 		bool IsClosing() const override;
+		spa::DimensionsI GetClientDimensions() const override;
 		std::future<void> SetTitle(std::wstring title) override;
 		~Window() override;
 	protected:
@@ -42,5 +43,6 @@ namespace tryn::win
 		std::thread kernelThread_;
 		HWND hWnd_ = nullptr;
 		std::atomic<bool> closing_ = false;
+		spa::DimensionsI clientDimensions;
 	};
 }

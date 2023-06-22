@@ -11,7 +11,8 @@ namespace tryn::win
 		spa::DimensionsI clientAreaSize, std::optional<spa::Vec2I> position)
 		:
 		pWindowClass_{ std::move(pWindowClass) },
-		kernelThread_{ &Window::MessageKernel_, this }
+		kernelThread_{ &Window::MessageKernel_, this },
+		clientDimensions(clientAreaSize)
 	{
 		auto future = tasks_.Push([=, this] {
 			const DWORD styles = WS_VISIBLE | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
@@ -48,6 +49,10 @@ namespace tryn::win
 	bool Window::IsClosing() const
 	{
 		return closing_;
+	}
+	spa::DimensionsI Window::GetClientDimensions() const 
+	{
+		return clientDimensions;
 	}
 	std::future<void> Window::SetTitle(std::wstring title)
 	{

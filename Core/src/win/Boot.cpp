@@ -28,8 +28,9 @@ namespace tryn::win
 				args.name.value_or(L"Main Window"),
 				args.size.value_or(spa::DimensionsI{ 1280, 720 }),
 				args.position
-				);
+			);
 			});
+
 		ioc::Get().Register<IWindowClass>([] { // passthru here? 
 			return std::make_shared<WindowClass>();
 			});

@@ -1,0 +1,19 @@
+#include "Gfx.h"
+#include <Core/src/ioc/Container.h>
+#include "dx11/Graphics.h"
+#include <memory>
+
+namespace tryn::gfx
+{
+	void Boot()
+	{
+		ioc::Get().Register<IGraphics>([](IGraphics::IocParams args) {
+			return std::make_shared<dx11::Graphics> (
+				args.hWnd,
+				args.width.value_or(1280),
+				args.height.value_or(720)
+			);
+			});
+	}
+}
+
