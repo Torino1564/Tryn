@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/src/win/TrynWin.h>
 #include <Core/src/gfx/IGraphics.h>
+#include <Core/src/spa/Dimensions.h>
 #include <d3d11.h>
 #include "TrynWLR.h"
 
@@ -22,7 +23,6 @@ namespace tryn::gfx::dx11
 		Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
-
 	};
 
 }

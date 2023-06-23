@@ -48,7 +48,7 @@ int WINAPI wWinMain(
 		{
 			gfx->BeginFrame();
 
-			gfx->ClearBuffer(0.9f, 0.0f, 0.0f);
+			gfx->ClearBuffer(0.0f, 0.0f, 0.0f);
 			gfx->DrawTriangle();
 
 			gfx->EndFrame();

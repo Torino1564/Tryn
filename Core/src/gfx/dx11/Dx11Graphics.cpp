@@ -3,7 +3,7 @@
 #include <iostream>
 #include <d3dcompiler.h>
 #include <fstream>
-
+#include <DirectXMath.h>
 
 #pragma comment (lib,"d3d11.lib")
 #pragma comment (lib,"D3DCompiler.lib")
@@ -92,13 +92,23 @@ namespace tryn::gfx::dx11
 		struct Vertex {
 			float x;
 			float y;
+			float z;
+			char r;
+			char g;
+			char b;
 		};
 
 		Vertex vertices[] =
 		{
-			{ 0.0f , 0.5f },
-			{ 0.5f , -0.5f },
-			{ -0.5f , -0.5f }
+			{ -1.0f,-1.0f,-1.0f	 ,255,0,0},
+			{ 1.0f,-1.0f,-1.0f	 ,0,255,0},
+			{ -1.0f,1.0f,-1.0f	 ,0,0,255},
+			{ 1.0f,1.0f,-1.0f	 ,255,255,0},
+			{ -1.0f,-1.0f,1.0f	 ,0,255,255},
+			{ 1.0f,-1.0f,1.0f	 ,255,0,255},
+			{ -1.0f,1.0f,1.0f	 ,255,255,255},
+			{ 1.0f,1.0f,1.0f	 ,0,255,0},
+
 		};
 
 		namespace wrl = Microsoft::WRL;
@@ -121,10 +131,35 @@ namespace tryn::gfx::dx11
 
 		pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
 
+		int indeces[] =
+		{
+			0,2,1, 2,3,1,
+			1,3,5, 3,7,5,
+			2,6,3, 3,6,7,
+			4,5,7, 4,7,6,
+			0,4,2, 2,4,6,
+			0,1,4, 1,5,4
+		};
+
+		wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
+		D3D11_BUFFER_DESC ibd = {};
+		ibd.Usage = D3D11_USAGE_DEFAULT;
+		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		ibd.CPUAccessFlags = 0u;
+		ibd.MiscFlags = 0u;
+		ibd.StructureByteStride = sizeof(int);
+		ibd.ByteWidth = sizeof(indeces);
+		D3D11_SUBRESOURCE_DATA isrd = {};
+		isrd.pSysMem = indeces;
+
+		pDevice->CreateBuffer(&ibd, &isrd, &pIndexBuffer) >> chk;
+		pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
+
+		// Pixel shader
+
 		wrl::ComPtr<ID3D11PixelShader> pPixelShader;
 		wrl::ComPtr<ID3DBlob> pBlob;
 
-		// Pixel shader
 
 		D3DReadFileToBlob(L"PixelShader.cso", &pBlob) >> chk;
 		pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader) >> chk;
@@ -139,11 +174,46 @@ namespace tryn::gfx::dx11
 		pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader) >> chk;
 		pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u);
 
+		// Cbuffer
+		static float angle = 0;
+		struct ConstantBuffer
+		{
+			DirectX::XMMATRIX transformation;
+		};
+
+		ConstantBuffer cb = {
+			{
+			DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(0.2f * angle) *
+									   DirectX::XMMatrixRotationZ(0.3f * angle) *
+									   DirectX::XMMatrixRotationX((float)angle) *
+									   DirectX::XMMatrixScaling(0.3f,0.3f,0.3f) *
+									   DirectX::XMMatrixTranslation(0,0,0.7f))
+		}
+		};
+
+		angle += 0.01;
+
+		wrl::ComPtr<ID3D11Buffer> pCBuffer;
+		D3D11_BUFFER_DESC cbd = {};
+		cbd.Usage = D3D11_USAGE_DYNAMIC;
+		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		cbd.MiscFlags = 0u;
+		cbd.StructureByteStride = 0u;
+		cbd.ByteWidth = sizeof(cb);
+		D3D11_SUBRESOURCE_DATA csrd = {};
+		csrd.pSysMem = &cb;
+
+		pDevice->CreateBuffer(&cbd, &csrd, &pCBuffer) >> chk;
+
+		pContext->VSSetConstantBuffers(0u, 1u, pCBuffer.GetAddressOf());
+
 		// input layout
 		wrl::ComPtr<ID3D11InputLayout> pLayout;
 		const D3D11_INPUT_ELEMENT_DESC layout[] =
 		{
-			{"POSITION",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 }
+			{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+			{"COLOR",0,DXGI_FORMAT_R8G8B8A8_UNORM,0,D3D11_APPEND_ALIGNED_ELEMENT,D3D11_INPUT_PER_VERTEX_DATA,0 },
 		};
 
 		pDevice->CreateInputLayout(layout, (UINT)std::size(layout), pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pLayout) >> chk;
@@ -164,6 +234,6 @@ namespace tryn::gfx::dx11
 
 		pContext->RSSetViewports(1u, &vp);
 
-		pContext->Draw( (UINT)std::size( vertices ) , 0u );
+		pContext->DrawIndexed( (UINT)std::size( indeces ) , 0u ,0u);
 	}
 }
