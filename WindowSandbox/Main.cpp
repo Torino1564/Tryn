@@ -6,6 +6,7 @@
 #include <Core/src/win/IWindow.h>
 #include <Core/src/win/Window.h>
 #include <Core/src/gfx/Gfx.h>
+#include <Core/src/utl/Exception.h>
 #include <memory>
 #include <format>
 #include <ranges>
@@ -41,13 +42,26 @@ int WINAPI wWinMain(
 
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{window->GetClientDimensions().width , window->GetClientDimensions().height, window->GetHandle()} );
 
-	while (!window->IsClosing())
+	try {
+
+		while (!window->IsClosing())
+		{
+			gfx->BeginFrame();
+
+			gfx->ClearBuffer(0.9f, 0.0f, 0.0f);
+			gfx->DrawTriangle();
+
+			gfx->EndFrame();
+		}
+
+	}
+	catch (utl::BufferedException e)
 	{
-		gfx->BeginFrame();
-
-		gfx->ClearBuffer(0.2, 0.5, 0.7);
-
-		gfx->EndFrame();
+		MessageBoxA(nullptr, e.what(), 0u, MB_OK | MB_ICONEXCLAMATION);
+	}
+	catch (...)
+	{
+		MessageBoxA(nullptr, "Unknown error", 0u, MB_OK | MB_ICONEXCLAMATION);
 	}
 
 	return 0;

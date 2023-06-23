@@ -1,6 +1,6 @@
 #include "Gfx.h"
 #include <Core/src/ioc/Container.h>
-#include "dx11/Graphics.h"
+#include "dx11/Dx11Graphics.h"
 #include <memory>
 
 namespace tryn::gfx
