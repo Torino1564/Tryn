@@ -17,6 +17,10 @@ namespace tryn::gfx::dx11
 		void EndFrame() override;
 		void ClearBuffer(float r, float g, float b) override;
 		void DrawTriangle() override;
+		void DrawIndexed(int count) override;
+
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetContext();
+		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> pDevice;

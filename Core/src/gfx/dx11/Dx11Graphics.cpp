@@ -93,9 +93,9 @@ namespace tryn::gfx::dx11
 			float x;
 			float y;
 			float z;
-			char r;
-			char g;
-			char b;
+			unsigned char r;
+			unsigned char g;
+			unsigned char b;
 		};
 
 		Vertex vertices[] =
@@ -235,5 +235,17 @@ namespace tryn::gfx::dx11
 		pContext->RSSetViewports(1u, &vp);
 
 		pContext->DrawIndexed( (UINT)std::size( indeces ) , 0u ,0u);
+	}
+	void Graphics::DrawIndexed(int count)
+	{
+		pContext->DrawIndexed(count, 0u, 0u);
+	}
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Graphics::GetContext()
+	{
+		return pContext;
+	}
+	Microsoft::WRL::ComPtr<ID3D11Device>& Graphics::GetDevice()
+	{
+		return pDevice;
 	}
 }

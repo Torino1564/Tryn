@@ -11,6 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ent\Bindables\VertexShader\DX11VertexShader.cpp" />
+    <ClCompile Include="src\ent\Box.cpp" />
+    <ClCompile Include="src\ent\Bindable.cpp" />
+    <ClCompile Include="src\ent\Entity.cpp" />
+    <ClCompile Include="src\ent\Model.cpp" />
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp" />
     <ClCompile Include="src\ccr\GenericTaskQueue.cpp" />
     <ClCompile Include="src\gfx\Gfx.cpp" />
@@ -38,7 +43,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ccr\GenericTaskQueue.h" />
+    <ClInclude Include="src\ent\Bindables\VertexShader\DX11VertexShader.h" />
+    <ClInclude Include="src\ent\Bindables\VertexShader\VertexShader.h" />
+    <ClInclude Include="src\ent\Box.h" />
+    <ClInclude Include="src\ent\Bindable.h" />
     <ClInclude Include="src\ent\Entity.h" />
+    <ClInclude Include="src\ent\Model.h" />
+    <ClInclude Include="src\gfx\dx11\Dx11VertexShader.h" />
     <ClInclude Include="src\gfx\Gfx.h" />
     <ClInclude Include="src\gfx\dx11\Dx11Graphics.h" />
     <ClInclude Include="src\gfx\dx11\GraphicsError.h" />
