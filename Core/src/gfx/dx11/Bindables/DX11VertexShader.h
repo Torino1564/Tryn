@@ -1,17 +1,16 @@
 #pragma once
-#include <Core/src/ent/Bindable.h>
 #include <Core/src/gfx/dx11/TrynWLR.h>
 #include <d3d11.h>
-#include "VertexShader.h"
+#include <Core/src/gfx/Bindables/VertexShader.h>
 #include <core/src/gfx/dx11/Dx11Graphics.h>
 #include <string>
 
-namespace tryn::ent::bnd
+namespace tryn::gfx::dx11
 {
-	class DX11VertexShader : BaseVertexShader
+	class DX11VertexShader : public BaseVertexShader
 	{
 	public:
-		DX11VertexShader(gfx::IGraphics gfx , std::wstring path);
+		DX11VertexShader(gfx::IGraphics& gfx , std::wstring path);
 		~DX11VertexShader() override;
 		void Bind(gfx::IGraphics& gfx) override;
 	private:

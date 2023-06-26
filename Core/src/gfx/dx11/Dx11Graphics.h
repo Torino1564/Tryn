@@ -7,7 +7,6 @@
 
 namespace tryn::gfx::dx11
 {
-
 	class Graphics : public IGraphics
 	{
 	public:

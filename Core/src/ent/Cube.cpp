@@ -1,10 +1,12 @@
-#include "Box.h"
+#include "Cube.h"
 #include <Core/src/spa/Vec3.h>
 #include <array>
 
+using namespace tryn::spa;
+
 namespace tryn::ent
 {
-	Cube::Cube(int size)
+	Cube::Cube(float size)
 	{
 		// create the model
 		std::vector<Vec3F> vertices =
@@ -36,10 +38,9 @@ namespace tryn::ent
 			0,1,4, 1,5,4
 		};
 
-		model = std::make_shared<Model>(std::move(vertices), std::move(indeces));
+		std::vector<spa::Vec3F> normals = {};
 
-
-
+		model = std::make_shared<ent::Model>(vertices, indeces, normals);
 	}
 	Cube::~Cube( )
 	{

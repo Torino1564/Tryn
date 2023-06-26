@@ -6,7 +6,8 @@ namespace tryn::ent
 {
 	class Cube : public IEntity
 	{
-		Cube( int size );
+	public:
+		Cube( float size );
 		~Cube();
 	};
 }

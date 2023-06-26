@@ -22,11 +22,11 @@ namespace tryn::spa
         }
         Vec3T operator+(const Vec3T& rhs) const
         {
-            return Vec2T{ *this } += rhs;
+            return Vec3T{ *this } += rhs;
         }
         Vec3T operator-(const Vec3T& rhs) const
         {
-            return Vec2T{ *this } -= rhs;
+            return Vec3T{ *this } -= rhs;
         }
         Vec3T& operator*=(const T& rhs)
         {

@@ -32,7 +32,7 @@ int main()
 	Boot();
 
 	auto pWinClass = std::make_unique<win::WindowClass>();
-	trynchk(pWinClass);
+	//trynchk(pWinClass);
 
 	trylog.error(L"No trace test").no_trace().no_line();
 	trylog.warn(L"Traced warning").trace();

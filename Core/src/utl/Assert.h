@@ -23,7 +23,7 @@ namespace tryn::utl
 			Exception,
 		};
 		// functions
-		Assertion(std::wstring expression, const wchar_t* file, const wchar_t* function, int line, Consequence consequence = Consequence::Terminate);
+		Assertion(std::wstring expression, const wchar_t* file, const wchar_t* function, int line, Consequence consequence = Consequence::Terminate , std::wstring msg = L"");
 		~Assertion();
 		Assertion& msg(const std::wstring& message);
 		template<typename T>
@@ -53,8 +53,9 @@ namespace tryn::utl
 #endif  
 
 #define trynass(expr) (!ZT_TRYNASS_ACTIVE || bool(expr)) ? void(0) : (void)tryn::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__ }  
+#define trynass_msg(expr, msg) (!ZT_TRYNASS_ACTIVE || bool(expr)) ? void(0) : (void)tryn::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__ , tryn::utl::Assertion::Consequence::Terminate , msg}  
 
-#define trynchk(expr) bool(expr) ? void(0) : (void)tryn::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__, ZT_TRYNASS_ACTIVE ? tryn::utl::Assertion::Consequence::Terminate : tryn::utl::Assertion::Consequence::Log }  
+#define trynchk(expr) bool(expr) ? void(0) : (void)tryn::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__, ZT_TRYNASS_ACTIVE ? tryn::utl::Assertion::Consequence::Terminate : tryn::utl::Assertion::Consequence::Log ,L""}  
 
 #define trynchk_fail (void)tryn::utl::Assertion{ L"[Always Fail]", __FILEW__, __FUNCTIONW__, __LINE__, ZT_TRYNASS_ACTIVE ? tryn::utl::Assertion::Consequence::Terminate : tryn::utl::Assertion::Consequence::Log }  
 

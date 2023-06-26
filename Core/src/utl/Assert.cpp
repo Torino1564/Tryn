@@ -14,7 +14,7 @@ namespace tryn::utl
 #endif
 	}
 
-	Assertion::Assertion(std::wstring expression, const wchar_t* file, const wchar_t* function, int line, Consequence consequence)
+	Assertion::Assertion(std::wstring expression, const wchar_t* file, const wchar_t* function, int line, Consequence consequence , std::wstring msg)
 		:
 		file_{ file },
 		function_{ function },
@@ -22,7 +22,7 @@ namespace tryn::utl
 		consequence_{ consequence },
 		skip_depth_{ skip_depth }
 	{
-		stream_ << L"Assertion Failed! " << expression << "\n";
+		stream_ << L"Assertion Failed! " << expression << "\n" << msg << "\n";
 	}
 	Assertion::~Assertion()
 	{

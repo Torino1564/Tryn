@@ -1,7 +1,7 @@
 #pragma once
 #include <Core/src/gfx/Gfx.h>
 
-namespace tryn::ent
+namespace tryn::gfx
 {
 	class IBindable
 	{

@@ -11,9 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ent\Bindables\VertexShader\DX11VertexShader.cpp" />
-    <ClCompile Include="src\ent\Box.cpp" />
-    <ClCompile Include="src\ent\Bindable.cpp" />
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11IndexBuffer.cpp" />
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexBuffer.h" />
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexShader.cpp" />
+    <ClCompile Include="src\ent\Cube.cpp" />
     <ClCompile Include="src\ent\Entity.cpp" />
     <ClCompile Include="src\ent\Model.cpp" />
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp" />
@@ -43,10 +44,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ccr\GenericTaskQueue.h" />
-    <ClInclude Include="src\ent\Bindables\VertexShader\DX11VertexShader.h" />
-    <ClInclude Include="src\ent\Bindables\VertexShader\VertexShader.h" />
-    <ClInclude Include="src\ent\Box.h" />
-    <ClInclude Include="src\ent\Bindable.h" />
+    <ClInclude Include="src\gfx\Bindables\IndexBuffer.h" />
+    <ClInclude Include="src\gfx\Bindables\VertexBuffer.h" />
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11IndexBuffer.h" />
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11VertexShader.h" />
+    <ClInclude Include="src\gfx\Bindables\VertexShader.h" />
+    <ClInclude Include="src\ent\Cube.h" />
+    <ClInclude Include="src\gfx\Bindables\Bindable.h" />
     <ClInclude Include="src\ent\Entity.h" />
     <ClInclude Include="src\ent\Model.h" />
     <ClInclude Include="src\gfx\dx11\Dx11VertexShader.h" />
