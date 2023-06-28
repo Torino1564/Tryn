@@ -1,10 +1,16 @@
 #pragma once
 #include <Core/src/win/TrynWin.h>
 #include <optional>
+#include <typeinfo>
 #include <Core/src/utl/Assert.h>
 
 namespace tryn::gfx
 {
+	enum class Type {
+		DX11,
+		DX12,
+		Vulcan,
+	};
 
 	class IGraphics
 	{
@@ -24,11 +30,15 @@ namespace tryn::gfx
 		virtual void DrawIndexed(int count) = 0;
 
 		template<typename T>
-		T* QueryInterface()
+		auto& QueryInterface()
 		{
-			auto ptr = dynamic_cast<T*>(this);
-			trynass_msg(ptr,L"Attempt to cast query IGraphics interface to an invalid type");
-			return ptr;
+			auto ptr = static_cast<T*>(this);
+#ifdef _DEBUG
+			trynass_msg( typeid(T) == typeid(this), L"Attempt to cast query IGraphics interface to an invalid type");
+#endif
+			return *ptr;
 		}
+		virtual Type GetType() = 0;
+
 	};
 }

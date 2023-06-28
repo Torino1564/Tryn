@@ -240,6 +240,10 @@ namespace tryn::gfx::dx11
 	{
 		pContext->DrawIndexed(count, 0u, 0u);
 	}
+	Type Graphics::GetType()
+	{
+		return Type::DX11;
+	}
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Graphics::GetContext()
 	{
 		return pContext;
