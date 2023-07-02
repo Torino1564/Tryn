@@ -59,6 +59,7 @@
     <ClInclude Include="src\gfx\dx11\GraphicsError.h" />
     <ClInclude Include="src\gfx\GraphicsException.h" />
     <ClInclude Include="src\gfx\IGraphics.h" />
+    <ClInclude Include="src\gfx\Vertex.h" />
     <ClInclude Include="src\gfx\vulkan\Graphics.h" />
     <ClInclude Include="src\ioc\Container.h" />
     <ClInclude Include="src\ioc\Exception.h" />
