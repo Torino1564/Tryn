@@ -46,6 +46,7 @@
     <ClInclude Include="src\ccr\GenericTaskQueue.h" />
     <ClInclude Include="src\gfx\Bindables\IndexBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\VertexBuffer.h" />
+    <ClInclude Include="src\gfx\Color.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11IndexBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11VertexShader.h" />
     <ClInclude Include="src\gfx\Bindables\VertexShader.h" />

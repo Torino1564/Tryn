@@ -1,42 +1,119 @@
 #pragma once
+#include <Core/third/glm/glm.hpp>
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <typeinfo>
+#include "Color.h"
+#include <utility>
+
+#define LAYOUT_ELEMENT_TYPES \
+		X( Position3D ) \
+		X( Position2D ) \
+		X( Normal ) \
+		X( UV ) \
+		X( Float3Color ) \
+		X( Float4Color ) \
+		X( Char4Color ) \
+		X( Tangent ) \
+		X( Bitangent ) \
+		X( Unknown )
 
 namespace tryn::gfx
 {
-	enum class VertexElement
-	{
-		Position3D,
-		Position2D,
-		Normal,
-		UV,
-		Tangent,
-		Bitangent,
-		Unknown,
-	};
 
 	class VertexLayout
 	{
-		template<typename... Args>
-		VertexLayout( Args ... args)
+		public:
+
+		enum VertexElement
 		{
-			std::unordered_map<VertexElement, int> CountPerElement;
-			AppendElement(args ...)
+			#define X(el) el,
+			LAYOUT_ELEMENT_TYPES
+			#undef X
+		};
+
+		enum class Format
+		{
+			Vec2F,
+			Vec3F,
+			Vec4F,
+			Vec3C,
+			Vec4C,
+		};
+
+		template <VertexElement>
+		struct VertexElementAttr {};
+		template <> struct VertexElementAttr<VertexElement::Position3D>
+		{
+			static constexpr Format format = Format::Vec3F;
+			static constexpr const char* semantic = "Position";
+		};
+		template <> struct VertexElementAttr<VertexElement::Position2D>
+		{
+			static constexpr Format format = Format::Vec2F;
+			static constexpr const char* semantic = "Position";
+		};
+		template <> struct VertexElementAttr<VertexElement::Normal>
+		{
+			static constexpr Format format = Format::Vec3F;
+			static constexpr const char* semantic = "Normal";
+		};
+		template <> struct VertexElementAttr<VertexElement::UV>
+		{
+			static constexpr Format format = Format::Vec2F;
+			static constexpr const char* semantic = "Texcoord";
+		};
+		template <> struct VertexElementAttr<VertexElement::Float3Color>
+		{
+			static constexpr Format format = Format::Vec3F;
+			static constexpr const char* semantic = "Color";
+		};
+		template <> struct VertexElementAttr<VertexElement::Float4Color>
+		{
+			static constexpr Format format = Format::Vec4F;
+			static constexpr const char* semantic = "Color";
+		};
+		template <> struct VertexElementAttr<VertexElement::Char4Color>
+		{
+			static constexpr Format format = Format::Vec4C;
+			static constexpr const char* semantic = "Color";
+		};
+		template <> struct VertexElementAttr<VertexElement::Tangent>
+		{
+			static constexpr Format format = Format::Vec3F;
+			static constexpr const char* semantic = "Tangent";
+		};
+		template <> struct VertexElementAttr<VertexElement::Bitangent>
+		{
+			static constexpr Format format = Format::Vec3F;
+			static constexpr const char* semantic = "Bitangent";
+		};
+		
+		template<template<VertexLayout::VertexElement> class F, typename... Args>
+		static constexpr auto Bridge(VertexLayout::VertexElement type, Args&&... args)
+		{
+			switch (type)
+			{
+				#define X(el) case VertexLayout::el: return F<VertexLayout::el>::Exec( std::forward<Args>( args )... );
+				LAYOUT_ELEMENT_TYPES
+				#undef X
+			}
+			assert("Invalid element type" && false);
+			return F<VertexLayout::Count>::Exec(std::forward<Args>(args)...);
 		}
 
-		template<typename T ,typename... Args>
-		void AppendElement(T type , Args ... args , std::unordered_map<VertexElement, int>& map)
+	public:
+		VertexLayout( VertexElement alArray[] , size_t elNum)
 		{
-			map[type]++;
-			Elements.emplace_back(std::make_pair(type, std::string(map[type]));
+			int elCounter[static_cast<int>(VertexElement::Unknown)] = {};
 
-			AppendElement(args, map);
+			for (int i = 0; i < elNum; i++)
+			{
+				auto counter = elCounter[static_cast<int>(alArray[i])]++;
+			}
 		}
-		void AppendElement()
-		{
-			// Base case for recursive function
-		}
+	public:
 		std::vector<std::pair<VertexElement,std::string>> Elements;
 	};
 
@@ -45,6 +122,6 @@ namespace tryn::gfx
 		VertexLayout layout;
 	private:        
 		char* buffer;
-		int bufferByteSize
+		int bufferByteSize;
 	};
 }

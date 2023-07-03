@@ -7,6 +7,8 @@
 #include <Core/src/win/Window.h>
 #include <Core/src/gfx/Gfx.h>
 #include <Core/src/utl/Exception.h>
+#include <Core/src/gfx/Vertex.h>
+#include <array>
 #include <memory>
 #include <format>
 #include <ranges>
@@ -41,6 +43,15 @@ int WINAPI wWinMain(
 	window->SetTitle(L"Test WindowApp");
 
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{window->GetClientDimensions().width , window->GetClientDimensions().height, window->GetHandle()} );
+	
+	std::array elements = {
+		gfx::VertexElement::Position3D,
+		gfx::VertexElement::Position3D,
+		gfx::VertexElement::Char4Color,
+		gfx::VertexElement::Normal,
+	};
+
+	gfx::VertexLayout testLayout(elements.data(), elements.size());
 
 	try {
 

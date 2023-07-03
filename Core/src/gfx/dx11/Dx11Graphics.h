@@ -1,5 +1,4 @@
 #pragma once
-#include <Core/src/win/TrynWin.h>
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/spa/Dimensions.h>
 #include <d3d11.h>
