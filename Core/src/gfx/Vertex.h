@@ -19,20 +19,26 @@
 		X( Bitangent ) \
 		X( Unknown )
 
+struct BGRAColor
+{
+	unsigned char a;
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
+};
+
 namespace tryn::gfx
 {
 
 	class VertexLayout
 	{
-		public:
-
+	public:
 		enum VertexElement
 		{
 			#define X(el) el,
 			LAYOUT_ELEMENT_TYPES
 			#undef X
 		};
-
 		enum class Format
 		{
 			Vec2F,
@@ -46,46 +52,61 @@ namespace tryn::gfx
 		struct VertexElementAttr {};
 		template <> struct VertexElementAttr<VertexElement::Position3D>
 		{
+			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Position";
 		};
 		template <> struct VertexElementAttr<VertexElement::Position2D>
 		{
+			using SysType = glm::vec2;
 			static constexpr Format format = Format::Vec2F;
 			static constexpr const char* semantic = "Position";
 		};
 		template <> struct VertexElementAttr<VertexElement::Normal>
 		{
+			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Normal";
 		};
 		template <> struct VertexElementAttr<VertexElement::UV>
 		{
+			using SysType = glm::vec2;
 			static constexpr Format format = Format::Vec2F;
 			static constexpr const char* semantic = "Texcoord";
 		};
 		template <> struct VertexElementAttr<VertexElement::Float3Color>
 		{
+			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Color";
 		};
 		template <> struct VertexElementAttr<VertexElement::Float4Color>
 		{
+			using SysType = glm::vec4;
 			static constexpr Format format = Format::Vec4F;
 			static constexpr const char* semantic = "Color";
 		};
 		template <> struct VertexElementAttr<VertexElement::Char4Color>
 		{
+			using SysType = BGRAColor;
 			static constexpr Format format = Format::Vec4C;
 			static constexpr const char* semantic = "Color";
 		};
 		template <> struct VertexElementAttr<VertexElement::Tangent>
 		{
+			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Tangent";
 		};
 		template <> struct VertexElementAttr<VertexElement::Bitangent>
 		{
+			using SysType = glm::vec3;
+			static constexpr Format format = Format::Vec3F;
+			static constexpr const char* semantic = "Bitangent";
+		};
+		template <> struct VertexElementAttr<VertexElement::Bitangent>
+		{
+			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Bitangent";
 		};
@@ -102,6 +123,17 @@ namespace tryn::gfx
 			assert("Invalid element type" && false);
 			return F<VertexLayout::Count>::Exec(std::forward<Args>(args)...);
 		}
+
+		template<VertexLayout::VertexElement type>
+		struct SysSizeLookup
+		{
+			static constexpr auto Exec() noexcept
+			{
+				return sizeof(VertexLayout::VertexElementAttr<type>::SysType);
+			}
+		};
+
+			
 
 	public:
 		VertexLayout( VertexElement alArray[] , size_t elNum)
