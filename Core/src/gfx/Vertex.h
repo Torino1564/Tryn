@@ -6,6 +6,10 @@
 #include <typeinfo>
 #include "Color.h"
 #include <utility>
+#include <Core/src/utl/Assert.h>
+#include <Core/src/utl/Exception.h>
+
+ZT_EX_DEF(DvtxException);
 
 #define LAYOUT_ELEMENT_TYPES \
 		X( Position3D ) \
@@ -46,6 +50,7 @@ namespace tryn::gfx
 			Vec4F,
 			Vec3C,
 			Vec4C,
+			Unknown
 		};
 
 		template <VertexElement>
@@ -104,11 +109,11 @@ namespace tryn::gfx
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Bitangent";
 		};
-		template <> struct VertexElementAttr<VertexElement::Bitangent>
+		template <> struct VertexElementAttr<VertexElement::Unknown>
 		{
-			using SysType = glm::vec3;
-			static constexpr Format format = Format::Vec3F;
-			static constexpr const char* semantic = "Bitangent";
+			using SysType = int;
+			static constexpr Format format = Format::Unknown;
+			static constexpr const char* semantic = "Unknown";
 		};
 		
 		template<template<VertexLayout::VertexElement> class F, typename... Args>
@@ -120,40 +125,170 @@ namespace tryn::gfx
 				LAYOUT_ELEMENT_TYPES
 				#undef X
 			}
-			assert("Invalid element type" && false);
-			return F<VertexLayout::Count>::Exec(std::forward<Args>(args)...);
+			throw DvtxException("Invalid element type");
+			return F<VertexLayout::VertexElement::Unknown>::Exec(std::forward<Args>(args)...);
 		}
 
-		template<VertexLayout::VertexElement type>
-		struct SysSizeLookup
+		class Element
 		{
-			static constexpr auto Exec() noexcept
-			{
-				return sizeof(VertexLayout::VertexElementAttr<type>::SysType);
-			}
+		public:
+			Element(VertexElement type, size_t offset);
+			size_t GetOffsetAfter() const;
+			size_t GetOffset() const;
+			size_t Size() const;
+			static constexpr size_t SizeOf(VertexElement type);
+			static constexpr std::string NameOf(VertexElement type);
+			std::string GetName() const;
+			VertexElement GetType() const;
+		private:
+			VertexElement type;
+			size_t offset;
 		};
-
-			
-
 	public:
-		VertexLayout( VertexElement alArray[] , size_t elNum)
+		VertexLayout()
+		{
+			size = 0;
+		}
+		template <typename...Args>
+		VertexLayout( Args... args )
 		{
 			int elCounter[static_cast<int>(VertexElement::Unknown)] = {};
+			int offset = 0;
 
-			for (int i = 0; i < elNum; i++)
+			AppendElement( elCounter , offset , args...);
+			size = Elements.back().first.GetOffsetAfter();
+		}
+		size_t Size() const
+		{
+			return size;
+		}
+		template <VertexLayout::VertexElement Type>
+		const Element& Resolve(int i = 0) const
+		{
+			int counter = 0;
+			for (auto& element : Elements)
 			{
-				auto counter = elCounter[static_cast<int>(alArray[i])]++;
+				if (element.first.GetType() == Type)
+				{
+					if (counter == element.second)
+					{
+						return element.first;
+					}
+				}
 			}
+			throw DvtxException("Could not resolve an element");
+		}
+		const Element& ResolveByIndex(size_t i) const
+		{
+			trynass_msg(i < Size(), L"Layout Indexed out of bounds!");
+			return Elements[i].first;
+		}
+	private:
+		template <typename Element>
+		void AppendElement(int* map, int& offset, Element element)
+		{
+			Elements.emplace_back(VertexLayout::Element(element, offset), map[static_cast<int>(element)]++);
+			offset += static_cast<int>(VertexLayout::Element::SizeOf(element));
+		}
+		template <typename First , typename ... Args>
+		void AppendElement( int* map , int& offset , First first, Args ... rest)
+		{
+			AppendElement( map , offset , first);
+			AppendElement( map , offset , rest...);
 		}
 	public:
-		std::vector<std::pair<VertexElement,std::string>> Elements;
+		std::vector<std::pair<Element,int>> Elements;
+	private:
+		size_t size;
+	};
+
+	class Vertex
+	{
+		friend class VertexBuffer;
+
+		template<VertexLayout::VertexElement type>
+		struct AttributeSetting
+		{
+			template<typename T>
+			static constexpr auto Exec(Vertex* pVertex, char* pAttribute, T&& val)
+			{
+				return pVertex->SetAttribute<type>(pAttribute, std::forward<T>(val));
+			}
+		};
+	protected:
+		Vertex(char* pData, const VertexLayout& layout)
+			:
+			pData(pData),
+			layout(layout)
+		{
+			trynass_msg(pData != nullptr, L"Vertex constructed from a nullptr!");
+		}
+
+	public:
+		template<VertexLayout::VertexElement Type>
+		auto& Attr(int i = 0)
+		{
+			auto pAttribute = pData + layout.Resolve<Type>().GetOffset();
+			return *reinterpret_cast<typename VertexLayout::VertexElementAttr<Type>::SysType*>(pAttribute);
+		}
+		template<typename T>
+		void SetAttributeByIndex(size_t i, T&& val)
+		{
+			const auto& element = layout.ResolveByIndex(i);
+			auto pAttribute = pData + element.GetOffset();
+			VertexLayout::Bridge<AttributeSetting>(
+				element.GetType(), this, pAttribute, std::forward<T>(val)
+			);
+		}
+	private:
+		template<typename First, typename ...Rest>
+		void SetAttributeByIndex(size_t i, First&& first, Rest&&... rest) 
+		{
+			SetAttributeByIndex(i, std::forward<First>(first));
+			SetAttributeByIndex(i + 1, std::forward<Rest>(rest)...);
+		}
+		template<VertexLayout::VertexElement DestLayoutType , typename SrcType>
+		void SetAttribute(char* pAttribute, SrcType&& val)
+		{
+			using Dest = typename VertexLayout::VertexElementAttr<DestLayoutType>::SysType;
+			if constexpr (std::is_assignable<Dest, SrcType>::value)
+			{
+				*reinterpret_cast<Dest*>(pAttribute) = val;
+			}
+			else
+			{
+				throw DvtxException("Parameter attribute type mismatch");
+			}
+		}
+		char* pData = nullptr;
+		const VertexLayout& layout;
 	};
 
 	class VertexBuffer
 	{
-		VertexLayout layout;
+	public:
+		VertexBuffer(VertexLayout layout_ , size_t size )
+		{
+			this->layout = std::move(layout_);
+			Resize(layout.Size() * size);
+		}
+		void Resize(size_t newSize)
+		{
+			buffer.resize(newSize);
+		}
+		size_t Size() const
+		{
+			return buffer.size() / layout.Size();
+		}
+		Vertex operator[](int i)
+		{
+			trynass_msg(i < Size() , L"VertexBuffer indexed out of bounds");
+			return Vertex{ buffer.data() + layout.Size() * i, layout };
+		}
+		
+
 	private:        
-		char* buffer;
-		int bufferByteSize;
+		VertexLayout layout;
+		std::vector<char> buffer;
 	};
 }

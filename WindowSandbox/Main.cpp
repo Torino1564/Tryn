@@ -43,15 +43,25 @@ int WINAPI wWinMain(
 	window->SetTitle(L"Test WindowApp");
 
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{window->GetClientDimensions().width , window->GetClientDimensions().height, window->GetHandle()} );
-	
-	std::array elements = {
-		gfx::VertexElement::Position3D,
-		gfx::VertexElement::Position3D,
-		gfx::VertexElement::Char4Color,
-		gfx::VertexElement::Normal,
-	};
 
-	gfx::VertexLayout testLayout(elements.data(), elements.size());
+	auto testSize = sizeof(glm::vec3);
+
+	using gfx::VertexLayout;
+
+	gfx::VertexBuffer testBuffer(gfx::VertexLayout(
+		gfx::VertexLayout::VertexElement::Position3D,
+		gfx::VertexLayout::VertexElement::Normal,
+		gfx::VertexLayout::VertexElement::UV
+		), 100);
+
+	testBuffer[5].Attr<gfx::VertexLayout::VertexElement::Position3D>() = glm::vec3(5.0f , 1.0f , 45.0f);
+	auto& testPos = testBuffer[5].Attr< gfx::VertexLayout::VertexElement::Position3D>();
+
+	auto x = testPos.x;
+	auto y = testPos.y;
+	auto z = testPos.z;
+
+	auto& testPos2 = testBuffer[5].Attr< gfx::VertexLayout::VertexElement::Position3D>();
 
 	try {
 

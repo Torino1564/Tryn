@@ -17,6 +17,7 @@
     <ClCompile Include="src\ent\Cube.cpp" />
     <ClCompile Include="src\ent\Entity.cpp" />
     <ClCompile Include="src\ent\Model.cpp" />
+    <ClCompile Include="src\gfx\Vertex.cpp" />
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp" />
     <ClCompile Include="src\ccr\GenericTaskQueue.cpp" />
     <ClCompile Include="src\gfx\Gfx.cpp" />
