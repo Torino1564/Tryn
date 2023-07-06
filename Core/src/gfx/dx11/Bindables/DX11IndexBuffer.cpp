@@ -5,14 +5,13 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11IndexBuffer::DX11IndexBuffer(gfx::IGraphics& gfx, tryn::ent::Model& model)
+	DX11IndexBuffer::DX11IndexBuffer(Graphics& gfx, tryn::ent::Model& model)
+		:
+		gfx(gfx)
 	{
-		trynass_msg(gfx.GetType() == gfx::Type::DX11, L"DX11 Index buffer called with a reference to a different graphics api");
 
-		gfx::dx11::Graphics rGfx = gfx.QueryInterface<dx11::Graphics>();
-
-		pIndeces = std::make_shared<std::vector<int>>(model.indices);
-		count = (int)model.indices.size();
+		indices = model.indices;
+		count = (int)indices.size();
 
 		D3D11_BUFFER_DESC ibd = {};
 		ibd.Usage = D3D11_USAGE_DEFAULT;
@@ -20,18 +19,18 @@ namespace tryn::gfx::dx11
 		ibd.CPUAccessFlags = 0u;
 		ibd.MiscFlags = 0u;
 		ibd.StructureByteStride = sizeof(int);
-		ibd.ByteWidth = count;
+		ibd.ByteWidth = count * sizeof(indices[0]);
 		D3D11_SUBRESOURCE_DATA isrd = {};
-		isrd.pSysMem = pIndeces.get();
+		isrd.pSysMem = indices.data();
 
-		rGfx.GetDevice()->CreateBuffer(&ibd, &isrd, &pBuffer) >> gfx::dx11::chk;
+		gfx.GetDevice()->CreateBuffer(&ibd, &isrd, &pBuffer) >> chk;
 	}
-	void DX11IndexBuffer::Bind(gfx::IGraphics& gfx)
+	void DX11IndexBuffer::Bind()
 	{
-		trynass_msg(gfx.GetType() == gfx::Type::DX11, L"DX11 Index buffer called with a reference to a different graphics api");
-
-		gfx::dx11::Graphics rGfx = gfx.QueryInterface<dx11::Graphics>();
-
-		rGfx.GetContext()->IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
+		gfx.GetContext()->IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
+	}
+	const size_t DX11IndexBuffer::Size() const
+	{
+		return indices.size();
 	}
 }

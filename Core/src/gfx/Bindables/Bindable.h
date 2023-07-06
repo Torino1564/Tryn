@@ -6,7 +6,7 @@ namespace tryn::gfx
 	class IBindable
 	{
 	public:
-		virtual ~IBindable() = 0;
-		virtual void Bind( gfx::IGraphics& gfx ) = 0;
+		virtual ~IBindable() {}
+		virtual void Bind( ) = 0;
 	};
 }

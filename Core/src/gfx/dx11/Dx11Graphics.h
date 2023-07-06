@@ -22,8 +22,7 @@ namespace tryn::gfx::dx11
 		void ClearBuffer(float r, float g, float b) override;
 		void DrawTriangle() override;
 		void DrawIndexed(int count) override;
-		Type GetType() override;
-		std::vector<char> GetLayoutFromVB(VertexBuffer&) const override;
+		GraphicAPI GetType() override;
 
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetContext();
 		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();

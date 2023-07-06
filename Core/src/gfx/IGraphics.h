@@ -5,15 +5,23 @@
 #include <Core/src/utl/Assert.h>
 #include <Core/src/spa/Dimensions.h>
 #include <vector>
+#include <concepts>
+
+#define GRAPHIC_APIS \
+		X( DX11 ) \
+		X( DX12 ) \
+		X( Vulkan ) \
+		X( Unknown )
 
 namespace tryn::gfx
 {
 	class VertexBuffer;
 
-	enum class Type {
-		DX11,
-		DX12,
-		Vulcan,
+	enum class GraphicAPI
+	{
+		#define X(el) el,
+		GRAPHIC_APIS
+		#undef X
 	};
 
 	class IGraphics
@@ -32,7 +40,6 @@ namespace tryn::gfx
 		virtual void ClearBuffer(float r, float g, float b) = 0;
 		virtual void DrawTriangle() = 0;
 		virtual void DrawIndexed(int count) = 0;
-		virtual std::vector<char> GetLayoutFromVB(VertexBuffer&) const = 0;
 
 		template<typename T>
 		auto& QueryInterface()
@@ -43,7 +50,9 @@ namespace tryn::gfx
 #endif
 			return *ptr;
 		}
-		virtual Type GetType() = 0;
+		virtual GraphicAPI GetType() = 0;
+
+
 
 		spa::DimensionsI dimensions = spa::DimensionsI(0,0);
 	};

@@ -6,7 +6,7 @@ namespace tryn::ent
 	{
 		for (auto& bindable : bindables)
 		{
-			bindable->Bind(gfx);
+			bindable->Bind();
 		}
 
 		gfx.DrawIndexed((int)model->indices.size());

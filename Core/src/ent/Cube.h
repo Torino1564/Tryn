@@ -1,5 +1,5 @@
 #pragma once
-
+#include <memory>
 #include "Entity.h"
 
 namespace tryn::ent
@@ -8,6 +8,9 @@ namespace tryn::ent
 	{
 	public:
 		Cube( float size );
-		~Cube();
+		const std::shared_ptr<Model> GetModel() const;
+	private:
+		inline static std::shared_ptr<Model> model;
+		inline static bool isStaticInitialized = false;
 	};
 }

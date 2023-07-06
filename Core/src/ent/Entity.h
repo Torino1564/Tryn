@@ -11,7 +11,7 @@ namespace tryn::ent
 	class IEntity
 	{
 	public:
-		virtual ~IEntity() = 0;
+		virtual ~IEntity() {}
 		void Draw( gfx::IGraphics& gfx );
 	protected:
 		std::shared_ptr<Model> model;

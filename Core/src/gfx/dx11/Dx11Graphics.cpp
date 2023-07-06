@@ -3,7 +3,12 @@
 #include <iostream>
 #include <d3dcompiler.h>
 #include <fstream>
-#include <Core/src/gfx/Vertex.h>
+#include <Core/src/gfx/dx11/Bindables/DX11VertexBuffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11InputLayout.h>
+#include <Core/src/gfx/dx11/Bindables/DX11VertexShader.h>
+#include <core/src/gfx/dx11/Bindables/DX11IndexBuffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11PixelShader.h>
+#include <Core/src/ent/Cube.h>
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <Core/third/glm/glm.hpp>
@@ -95,78 +100,45 @@ namespace tryn::gfx::dx11
 
 	void Graphics::DrawTriangle()
 	{
-		VertexBuffer vertices(VertexLayout(VertexLayout::Position3D, VertexLayout::Char4Color), 8);
-		vertices[0](glm::vec3{-1.0f, -1.0f, -1.0f	}, BGRAColor{ 255,0,0		});
-		vertices[1](glm::vec3{1.0f, -1.0f, -1.0f	}, BGRAColor{ 0,255,0		});
-		vertices[2](glm::vec3{-1.0f, 1.0f, -1.0f	}, BGRAColor{ 0,0,255		});
-		vertices[3](glm::vec3{1.0f, 1.0f, -1.0f		}, BGRAColor{ 255,255,0		});
-		vertices[4](glm::vec3{-1.0f, -1.0f, 1.0f	}, BGRAColor{ 0,255,255		});
-		vertices[5](glm::vec3{1.0f, -1.0f, 1.0f		}, BGRAColor{ 255,0,255		});
-		vertices[6](glm::vec3{-1.0f, 1.0f, 1.0f		}, BGRAColor{ 255,255,255	});
-		vertices[7](glm::vec3{1.0f, 1.0f, 1.0f		}, BGRAColor{ 0,255,0		});
+		DX11VertexBuffer vertexBuffer(*this,VertexLayout(VertexLayout::Position3D, VertexLayout::Char4Color), 8);
+		vertexBuffer[0](glm::vec3{-1.0f, -1.0f, -1.0f	}, BGRAColor{ 255,0,0		});
+		vertexBuffer[1](glm::vec3{1.0f, -1.0f, -1.0f	}, BGRAColor{ 0,255,0		});
+		vertexBuffer[2](glm::vec3{-1.0f, 1.0f, -1.0f	}, BGRAColor{ 0,0,255		});
+		vertexBuffer[3](glm::vec3{1.0f, 1.0f, -1.0f		}, BGRAColor{ 255,255,0		});
+		vertexBuffer[4](glm::vec3{-1.0f, -1.0f, 1.0f	}, BGRAColor{ 0,255,255		});
+		vertexBuffer[5](glm::vec3{1.0f, -1.0f, 1.0f		}, BGRAColor{ 255,0,255		});
+		vertexBuffer[6](glm::vec3{-1.0f, 1.0f, 1.0f		}, BGRAColor{ 255,255,255	});
+		vertexBuffer[7](glm::vec3{1.0f, 1.0f, 1.0f		}, BGRAColor{ 0,255,0		});
+
+		vertexBuffer.Bind();
 
 		namespace wrl = Microsoft::WRL;
 
-		wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
-		D3D11_BUFFER_DESC bd = {};
-		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bd.CPUAccessFlags = 0u;
-		bd.MiscFlags = 0u;
-		bd.StructureByteStride = (UINT)vertices.Stride();
-		bd.ByteWidth = (UINT)vertices.BufferSize();
+		// Index Buffer
 
-		D3D11_SUBRESOURCE_DATA srd = {};
-		srd.pSysMem = vertices.Data();
+		ent::Cube cube(1.0f);
+		DX11IndexBuffer indexBuffer( *this , *cube.GetModel().get() );
 
-		pDevice->CreateBuffer(&bd, &srd, &pVertexBuffer) >> chk;
-		const UINT stride = (UINT)vertices.Stride();
-		const UINT offset = 0u;
+		indexBuffer.Bind();
 
-		pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
-
-		int indeces[] =
-		{
-			0,2,1, 2,3,1,
-			1,3,5, 3,7,5,
-			2,6,3, 3,6,7,
-			4,5,7, 4,7,6,
-			0,4,2, 2,4,6,
-			0,1,4, 1,5,4
-		};
-
-		wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
-		D3D11_BUFFER_DESC ibd = {};
-		ibd.Usage = D3D11_USAGE_DEFAULT;
-		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		ibd.CPUAccessFlags = 0u;
-		ibd.MiscFlags = 0u;
-		ibd.StructureByteStride = sizeof(int);
-		ibd.ByteWidth = sizeof(indeces);
-		D3D11_SUBRESOURCE_DATA isrd = {};
-		isrd.pSysMem = indeces;
-
-		pDevice->CreateBuffer(&ibd, &isrd, &pIndexBuffer) >> chk;
-		pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
+		wrl::ComPtr<ID3DBlob> pBlob;
 
 		// Pixel shader
 
-		wrl::ComPtr<ID3D11PixelShader> pPixelShader;
-		wrl::ComPtr<ID3DBlob> pBlob;
+		DX11PixelShader pixelShader(*this, L"PixelShader.cso");
 
-
-		D3DReadFileToBlob(L"PixelShader.cso", &pBlob) >> chk;
-		pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader) >> chk;
-		pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+		pixelShader.Bind();
 
 
 		// Vertex shader
 
-		wrl::ComPtr<ID3D11VertexShader> pVertexShader;
-		D3DReadFileToBlob(L"VertexShader.cso", &pBlob) >> chk;
+		DX11VertexShader vertexShader(*this, L"VertexShader.cso");
+		vertexShader.Bind();
 
-		pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader) >> chk;
-		pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u);
+		// input layout
+
+		DX11InputLayout inputLayout(*this, vertexBuffer, vertexShader);
+		inputLayout.Bind();
 
 		// Cbuffer
 		static float angle = 0;
@@ -211,73 +183,18 @@ namespace tryn::gfx::dx11
 
 		pContext->VSSetConstantBuffers(0u, 1u, pCBuffer.GetAddressOf());
 
-		// input layout
-		wrl::ComPtr<ID3D11InputLayout> pLayout;
-
-		auto layoutBuf = GetLayoutFromVB(vertices);
-		auto layout = reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(layoutBuf.data());
-
-		pDevice->CreateInputLayout(layout, (UINT)vertices.GetLayout().GetElementCount(), pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pLayout) >> chk;
-		pContext->IASetInputLayout(pLayout.Get());
-
 		pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
 		pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		pContext->DrawIndexed( (UINT)std::size( indeces ) , 0u ,0u);
+		pContext->DrawIndexed( (UINT)indexBuffer.Size(), 0u, 0u);
 	}
 	void Graphics::DrawIndexed(int count)
 	{
 		pContext->DrawIndexed(count, 0u, 0u);
 	}
-	Type Graphics::GetType()
+	GraphicAPI Graphics::GetType()	
 	{
-		return Type::DX11;
-	}
-
-	DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
-	{
-		switch (format)
-		{
-		case VertexLayout::Format::Vec2F:
-			return DXGI_FORMAT_R32G32_FLOAT;
-			break;
-		case VertexLayout::Format::Vec3F:
-			return DXGI_FORMAT_R32G32B32_FLOAT;
-			break;
-		case VertexLayout::Format::Vec4F:
-			return DXGI_FORMAT_R32G32B32A32_FLOAT;
-			break;
-		case VertexLayout::Format::Vec4C_UNorm:
-			return DXGI_FORMAT_R8G8B8A8_UNORM;
-			break;
-		}
-		return DXGI_FORMAT_UNKNOWN;
-	}
-
-	std::vector<char> Graphics::GetLayoutFromVB(VertexBuffer& vb) const
-	{
-		const auto& vLayout = vb.GetLayout();
-		const auto descSize = vLayout.GetElementCount();
-		const auto charVectorSize = descSize * sizeof(D3D11_INPUT_ELEMENT_DESC);
-
-		std::vector<char> layout;
-		layout.resize(charVectorSize);
-
-		std::vector<D3D11_INPUT_ELEMENT_DESC> layoutt;
-		layout.resize(descSize);
-		for (int i = 0; i < descSize; i++)
-		{
-			auto fakePtr = reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(layout.data() + sizeof(D3D11_INPUT_ELEMENT_DESC) * i);
-			fakePtr->SemanticName = vLayout.Elements[i].first.GetName();
-			fakePtr->SemanticIndex = vLayout.Elements[i].second;
-			fakePtr->Format = MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
-			fakePtr->InputSlot = 0u;
-			fakePtr->InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-			fakePtr->AlignedByteOffset = (UINT)vLayout.Elements[i].first.GetOffset();
-			fakePtr->InstanceDataStepRate = 0u;
-		}
-
-		return layout;
+		return GraphicAPI::DX11;
 	}
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Graphics::GetContext()
 	{
@@ -287,4 +204,6 @@ namespace tryn::gfx::dx11
 	{
 		return pDevice;
 	}
+
+
 }

@@ -4,10 +4,10 @@
 #include <string>
 #include <unordered_map>
 #include <typeinfo>
-#include "Color.h"
 #include <utility>
 #include <Core/src/utl/Assert.h>
 #include <Core/src/utl/Exception.h>
+#include <Core/src/gfx/Bindables/Bindable.h>
 
 ZT_EX_DEF(DvtxException);
 
@@ -278,14 +278,9 @@ namespace tryn::gfx
 		const VertexLayout& layout;
 	};
 
-	class VertexBuffer
+	class VertexBuffer : public IBindable
 	{
 	public:
-		VertexBuffer(VertexLayout layout_ , size_t size )
-		{
-			this->layout = std::move(layout_);
-			Resize(layout.Size() * size);
-		}
 		void Resize(size_t newSize)
 		{
 			buffer.resize(newSize);
@@ -308,6 +303,7 @@ namespace tryn::gfx
 		template<typename ... Args>
 		void EmplaceBack(Args&& ... args)
 		{
+			dirty = true;
 			trynass_msg(sizeof...(args) == layout.GetElementCount(), L"Different number of parameters where passed to the EmplaceBack function for a VertexLayout");
 			Resize(buffer.size() + layout.Size());
 			Back().SetAttributeByIndex(0u, std::forward<Args>(args)...);
@@ -328,7 +324,12 @@ namespace tryn::gfx
 		{
 			return layout;
 		}
-	private:        
+
+		virtual std::vector<char> GetLayoutFromVB() const = 0;
+		virtual ~VertexBuffer() {}
+
+	protected:       
+		bool dirty = true;
 		VertexLayout layout;
 		std::vector<char> buffer;
 	};

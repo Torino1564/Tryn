@@ -7,7 +7,8 @@
 #include <Core/src/win/Window.h>
 #include <Core/src/gfx/Gfx.h>
 #include <Core/src/utl/Exception.h>
-#include <Core/src/gfx/Vertex.h>
+#include <Core/src/utl/Timer.h>
+#include <iostream>
 #include <array>
 #include <memory>
 #include <format>
@@ -24,7 +25,7 @@ void Boot()
 	log::Boot();
 
 	ioc::Get().Register<log::ISeverityLevelPolicy>([] {
-		return std::make_shared<log::SeverityLevelPolicy>(log::Level::Info);
+		return std::make_shared<log::SeverityLevelPolicy>(log::Level::Verbose);
 		});
 
 	win::Boot();
@@ -49,10 +50,8 @@ int WINAPI wWinMain(
 		while (!window->IsClosing())
 		{
 			gfx->BeginFrame();
-
 			gfx->ClearBuffer(0.0f, 0.0f, 0.0f);
 			gfx->DrawTriangle();
-
 			gfx->EndFrame();
 		}
 
