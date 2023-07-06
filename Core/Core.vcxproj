@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\gfx\Bindables\ConstantBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11IndexBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11InputLayout.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PixelShader.cpp" />
