@@ -3,9 +3,13 @@
 #include <optional>
 #include <typeinfo>
 #include <Core/src/utl/Assert.h>
+#include <Core/src/spa/Dimensions.h>
+#include <vector>
 
 namespace tryn::gfx
 {
+	class VertexBuffer;
+
 	enum class Type {
 		DX11,
 		DX12,
@@ -28,6 +32,7 @@ namespace tryn::gfx
 		virtual void ClearBuffer(float r, float g, float b) = 0;
 		virtual void DrawTriangle() = 0;
 		virtual void DrawIndexed(int count) = 0;
+		virtual std::vector<char> GetLayoutFromVB(VertexBuffer&) const = 0;
 
 		template<typename T>
 		auto& QueryInterface()
@@ -40,5 +45,6 @@ namespace tryn::gfx
 		}
 		virtual Type GetType() = 0;
 
+		spa::DimensionsI dimensions = spa::DimensionsI(0,0);
 	};
 }

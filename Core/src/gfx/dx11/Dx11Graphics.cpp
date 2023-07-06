@@ -3,7 +3,12 @@
 #include <iostream>
 #include <d3dcompiler.h>
 #include <fstream>
-#include <DirectXMath.h>
+#include <Core/src/gfx/Vertex.h>
+
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <Core/third/glm/glm.hpp>
+#include <Core/third/glm/gtc/matrix_transform.hpp>
+
 
 #pragma comment (lib,"d3d11.lib")
 #pragma comment (lib,"D3DCompiler.lib")
@@ -53,6 +58,9 @@ namespace tryn::gfx::dx11
 		pSwap->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer) >> chk;
 		pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pTarget.ReleaseAndGetAddressOf());
 
+		dimensions.height = height;
+		dimensions.width = width;
+
 		// viewport always fullscreen (for now)
 		D3D11_VIEWPORT vp;
 		vp.Width = (float)width;
@@ -62,8 +70,6 @@ namespace tryn::gfx::dx11
 		vp.TopLeftX = 0.0f;
 		vp.TopLeftY = 0.0f;
 		pContext->RSSetViewports(1u, &vp);
-
-
 	}
 
 	Graphics::~Graphics()
@@ -89,27 +95,15 @@ namespace tryn::gfx::dx11
 
 	void Graphics::DrawTriangle()
 	{
-		struct Vertex {
-			float x;
-			float y;
-			float z;
-			unsigned char r;
-			unsigned char g;
-			unsigned char b;
-		};
-
-		Vertex vertices[] =
-		{
-			{ -1.0f,-1.0f,-1.0f	 ,255,0,0},
-			{ 1.0f,-1.0f,-1.0f	 ,0,255,0},
-			{ -1.0f,1.0f,-1.0f	 ,0,0,255},
-			{ 1.0f,1.0f,-1.0f	 ,255,255,0},
-			{ -1.0f,-1.0f,1.0f	 ,0,255,255},
-			{ 1.0f,-1.0f,1.0f	 ,255,0,255},
-			{ -1.0f,1.0f,1.0f	 ,255,255,255},
-			{ 1.0f,1.0f,1.0f	 ,0,255,0},
-
-		};
+		VertexBuffer vertices(VertexLayout(VertexLayout::Position3D, VertexLayout::Char4Color), 8);
+		vertices[0](glm::vec3{-1.0f, -1.0f, -1.0f	}, BGRAColor{ 255,0,0		});
+		vertices[1](glm::vec3{1.0f, -1.0f, -1.0f	}, BGRAColor{ 0,255,0		});
+		vertices[2](glm::vec3{-1.0f, 1.0f, -1.0f	}, BGRAColor{ 0,0,255		});
+		vertices[3](glm::vec3{1.0f, 1.0f, -1.0f		}, BGRAColor{ 255,255,0		});
+		vertices[4](glm::vec3{-1.0f, -1.0f, 1.0f	}, BGRAColor{ 0,255,255		});
+		vertices[5](glm::vec3{1.0f, -1.0f, 1.0f		}, BGRAColor{ 255,0,255		});
+		vertices[6](glm::vec3{-1.0f, 1.0f, 1.0f		}, BGRAColor{ 255,255,255	});
+		vertices[7](glm::vec3{1.0f, 1.0f, 1.0f		}, BGRAColor{ 0,255,0		});
 
 		namespace wrl = Microsoft::WRL;
 
@@ -119,14 +113,14 @@ namespace tryn::gfx::dx11
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags = 0u;
 		bd.MiscFlags = 0u;
-		bd.StructureByteStride = sizeof(Vertex);
-		bd.ByteWidth = sizeof(vertices);
+		bd.StructureByteStride = (UINT)vertices.Stride();
+		bd.ByteWidth = (UINT)vertices.BufferSize();
 
 		D3D11_SUBRESOURCE_DATA srd = {};
-		srd.pSysMem = vertices;
+		srd.pSysMem = vertices.Data();
 
 		pDevice->CreateBuffer(&bd, &srd, &pVertexBuffer) >> chk;
-		const UINT stride = sizeof(Vertex);
+		const UINT stride = (UINT)vertices.Stride();
 		const UINT offset = 0u;
 
 		pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
@@ -178,17 +172,26 @@ namespace tryn::gfx::dx11
 		static float angle = 0;
 		struct ConstantBuffer
 		{
-			DirectX::XMMATRIX transformation;
+			glm::mat4 transformation;
 		};
+
+		glm::mat4 viewProjection2;
+		{
+			const auto eyePos = glm::vec3(0, 0, -6);
+			const auto focusPoint = glm::vec3(0, 0, 0);
+			const auto upDirection = glm::vec3(0, 1, 0);
+			const auto view = glm::lookAtLH(eyePos, focusPoint, upDirection);
+			const auto projection = glm::perspectiveFovLH(glm::radians(90.0f), (float)dimensions.width, (float)dimensions.height, 0.1f, 100.0f);
+			viewProjection2 = projection * view;
+		}
 
 		ConstantBuffer cb = {
 			{
-			DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(0.2f * angle) *
-									   DirectX::XMMatrixRotationZ(0.3f * angle) *
-									   DirectX::XMMatrixRotationX((float)angle) *
-									   DirectX::XMMatrixScaling(0.3f,0.3f,0.3f) *
-									   DirectX::XMMatrixTranslation(0,0,0.7f))
-		}
+			glm::transpose( viewProjection2 *
+							glm::rotate(glm::mat4(1.0f),0.6f * angle ,glm::vec3(0,0,1.0f) ) *
+							glm::rotate(glm::mat4(1.0f), angle ,glm::vec3(1.0f,0,0) ) *
+							glm::rotate(glm::mat4(0.5f),2.5f * angle ,glm::vec3(0,1.0f,0)) )
+			}
 		};
 
 		angle += 0.01;
@@ -210,29 +213,15 @@ namespace tryn::gfx::dx11
 
 		// input layout
 		wrl::ComPtr<ID3D11InputLayout> pLayout;
-		const D3D11_INPUT_ELEMENT_DESC layout[] =
-		{
-			{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-			{"COLOR",0,DXGI_FORMAT_R8G8B8A8_UNORM,0,D3D11_APPEND_ALIGNED_ELEMENT,D3D11_INPUT_PER_VERTEX_DATA,0 },
-		};
 
-		pDevice->CreateInputLayout(layout, (UINT)std::size(layout), pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pLayout) >> chk;
+		auto layoutBuf = GetLayoutFromVB(vertices);
+		auto layout = reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(layoutBuf.data());
+
+		pDevice->CreateInputLayout(layout, (UINT)vertices.GetLayout().GetElementCount(), pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pLayout) >> chk;
 		pContext->IASetInputLayout(pLayout.Get());
 
 		pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
 		pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		// COnfigure viewport
-
-		D3D11_VIEWPORT vp;
-		vp.Width = 800;
-		vp.Height = 600;
-		vp.MinDepth = 0;
-		vp.MaxDepth = 1;
-		vp.TopLeftX = 0;
-		vp.TopLeftY = 0;
-
-		pContext->RSSetViewports(1u, &vp);
 
 		pContext->DrawIndexed( (UINT)std::size( indeces ) , 0u ,0u);
 	}
@@ -243,6 +232,52 @@ namespace tryn::gfx::dx11
 	Type Graphics::GetType()
 	{
 		return Type::DX11;
+	}
+
+	DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
+	{
+		switch (format)
+		{
+		case VertexLayout::Format::Vec2F:
+			return DXGI_FORMAT_R32G32_FLOAT;
+			break;
+		case VertexLayout::Format::Vec3F:
+			return DXGI_FORMAT_R32G32B32_FLOAT;
+			break;
+		case VertexLayout::Format::Vec4F:
+			return DXGI_FORMAT_R32G32B32A32_FLOAT;
+			break;
+		case VertexLayout::Format::Vec4C_UNorm:
+			return DXGI_FORMAT_R8G8B8A8_UNORM;
+			break;
+		}
+		return DXGI_FORMAT_UNKNOWN;
+	}
+
+	std::vector<char> Graphics::GetLayoutFromVB(VertexBuffer& vb) const
+	{
+		const auto& vLayout = vb.GetLayout();
+		const auto descSize = vLayout.GetElementCount();
+		const auto charVectorSize = descSize * sizeof(D3D11_INPUT_ELEMENT_DESC);
+
+		std::vector<char> layout;
+		layout.resize(charVectorSize);
+
+		std::vector<D3D11_INPUT_ELEMENT_DESC> layoutt;
+		layout.resize(descSize);
+		for (int i = 0; i < descSize; i++)
+		{
+			auto fakePtr = reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(layout.data() + sizeof(D3D11_INPUT_ELEMENT_DESC) * i);
+			fakePtr->SemanticName = vLayout.Elements[i].first.GetName();
+			fakePtr->SemanticIndex = vLayout.Elements[i].second;
+			fakePtr->Format = MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
+			fakePtr->InputSlot = 0u;
+			fakePtr->InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+			fakePtr->AlignedByteOffset = (UINT)vLayout.Elements[i].first.GetOffset();
+			fakePtr->InstanceDataStepRate = 0u;
+		}
+
+		return layout;
 	}
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Graphics::GetContext()
 	{

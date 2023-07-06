@@ -43,11 +43,27 @@ namespace tryn::gfx
 			return VertexLayout::VertexElementAttr<type>::semantic;
 		}
 	};
-	constexpr std::string VertexLayout::Element::NameOf(VertexLayout::VertexElement type)
+	template<VertexLayout::VertexElement type>
+	struct FormatLookup
+	{
+		static constexpr auto Exec() noexcept
+		{
+			return VertexLayout::VertexElementAttr<type>::format;
+		}
+	};
+	constexpr const char * VertexLayout::Element::NameOf(VertexLayout::VertexElement type)
 	{
 		return Bridge<NameLookup>(type);
 	}
-	std::string VertexLayout::Element::GetName() const
+	constexpr VertexLayout::Format VertexLayout::Element::FormatOf(VertexElement type)
+	{
+		return Bridge<FormatLookup>(type);
+	}
+	VertexLayout::Format VertexLayout::Element::GetFormat() const
+	{
+		return FormatOf(type);
+	}
+	const char* VertexLayout::Element::GetName() const
 	{
 		return NameOf(type);
 	}

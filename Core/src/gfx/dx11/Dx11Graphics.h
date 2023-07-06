@@ -1,11 +1,17 @@
 #pragma once
+#include "TrynWLR.h"
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/spa/Dimensions.h>
 #include <d3d11.h>
-#include "TrynWLR.h"
+
+namespace tryn::gfx
+{
+	class VertexBuffer;
+}
 
 namespace tryn::gfx::dx11
 {
+
 	class Graphics : public IGraphics
 	{
 	public:
@@ -17,6 +23,7 @@ namespace tryn::gfx::dx11
 		void DrawTriangle() override;
 		void DrawIndexed(int count) override;
 		Type GetType() override;
+		std::vector<char> GetLayoutFromVB(VertexBuffer&) const override;
 
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetContext();
 		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();

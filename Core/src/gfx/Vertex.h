@@ -30,7 +30,6 @@ struct BGRAColor
 	unsigned char g;
 	unsigned char b;
 };
-
 namespace tryn::gfx
 {
 
@@ -48,8 +47,7 @@ namespace tryn::gfx
 			Vec2F,
 			Vec3F,
 			Vec4F,
-			Vec3C,
-			Vec4C,
+			Vec4C_UNorm,
 			Unknown
 		};
 
@@ -94,7 +92,7 @@ namespace tryn::gfx
 		template <> struct VertexElementAttr<VertexElement::Char4Color>
 		{
 			using SysType = BGRAColor;
-			static constexpr Format format = Format::Vec4C;
+			static constexpr Format format = Format::Vec4C_UNorm;
 			static constexpr const char* semantic = "Color";
 		};
 		template <> struct VertexElementAttr<VertexElement::Tangent>
@@ -137,8 +135,10 @@ namespace tryn::gfx
 			size_t GetOffset() const;
 			size_t Size() const;
 			static constexpr size_t SizeOf(VertexElement type);
-			static constexpr std::string NameOf(VertexElement type);
-			std::string GetName() const;
+			static constexpr const char* NameOf(VertexElement type);
+			static constexpr Format FormatOf(VertexElement type);
+			Format GetFormat() const;
+			const char* GetName() const;
 			VertexElement GetType() const;
 		private:
 			VertexElement type;
@@ -158,6 +158,7 @@ namespace tryn::gfx
 			AppendElement( elCounter , offset , args...);
 			size = Elements.back().first.GetOffsetAfter();
 		}
+		// Returns size in bytes
 		size_t Size() const
 		{
 			return size;
@@ -182,6 +183,11 @@ namespace tryn::gfx
 		{
 			trynass_msg(i < Size(), L"Layout Indexed out of bounds!");
 			return Elements[i].first;
+		}
+		// Returns number of elements
+		size_t GetElementCount() const
+		{
+			return Elements.size();
 		}
 	private:
 		template <typename Element>
@@ -240,6 +246,14 @@ namespace tryn::gfx
 				element.GetType(), this, pAttribute, std::forward<T>(val)
 			);
 		}
+		template <typename ... Args>
+		void operator()(Args ... args)
+		{
+			auto count = sizeof...(args);
+			trynass_msg(sizeof...(args) == layout.GetElementCount(), L"Invalid number of elements passed to the Vertex assigment operator");
+			SetAttributeByIndex(0u, std::forward<Args>(args)...);
+		}
+
 	private:
 		template<typename First, typename ...Rest>
 		void SetAttributeByIndex(size_t i, First&& first, Rest&&... rest) 
@@ -285,8 +299,35 @@ namespace tryn::gfx
 			trynass_msg(i < Size() , L"VertexBuffer indexed out of bounds");
 			return Vertex{ buffer.data() + layout.Size() * i, layout };
 		}
-		
+		Vertex Back()
+		{
+			trynass_msg(buffer.size() != 0u , L"Back called on an empty VertexBuffer");
+			return Vertex{ buffer.data() + buffer.size() - layout.Size(),layout };
+		}
 
+		template<typename ... Args>
+		void EmplaceBack(Args&& ... args)
+		{
+			trynass_msg(sizeof...(args) == layout.GetElementCount(), L"Different number of parameters where passed to the EmplaceBack function for a VertexLayout");
+			Resize(buffer.size() + layout.Size());
+			Back().SetAttributeByIndex(0u, std::forward<Args>(args)...);
+		}
+		char* Data() 
+		{
+			return buffer.data();
+		}
+		size_t BufferSize() const
+		{
+			return buffer.size();
+		}
+		size_t Stride() const
+		{
+			return layout.Size();
+		}
+		const VertexLayout& GetLayout() const
+		{
+			return layout;
+		}
 	private:        
 		VertexLayout layout;
 		std::vector<char> buffer;
