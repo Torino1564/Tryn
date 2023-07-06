@@ -72,6 +72,7 @@ namespace tryn::gfx
 			bool IsLeaf() const;
 			Node& GetEmpty() const;
 			Node& operator[](std::wstring id);
+			bool Validate() const;
 
 			Type type = Type::Empty;
 			std::vector<Node> children;

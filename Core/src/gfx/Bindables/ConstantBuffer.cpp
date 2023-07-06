@@ -40,5 +40,9 @@ namespace tryn::gfx
 
 		return GetEmpty();
 	}
+	bool ConstantBufferLayout::Node::Validate() const
+	{
+		return type != Type::Empty;
+	}
 }
 
