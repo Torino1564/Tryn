@@ -46,20 +46,26 @@ int WINAPI wWinMain(
 
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{window->GetClientDimensions().width, window->GetClientDimensions().height, window->GetHandle()});
 
-	gfx::ConstantBufferLayout test;
+	gfx::ConstantBufferLayout cbl;
 
-	test.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Float, "Float"));
-	test.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Float2, "Float2"));
-	test.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Matrix4, "Mat4"));
-	test.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Float3, "Float3"));
-	test.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Struct, "Specular"));
-	test["Specular"].Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Float3, "Normal"));
-	test["Specular"].Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Float, "Constant"));
-	test["Specular"].Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Float, "Linear"));
-	test["Specular"].Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Float, "Cuadratic"));
-	test.Solidify();
+	{
+		using namespace tryn::gfx;
 
-	gfx::ConstantBuffer testBuf(std::move(test));
+		cbl.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "Float"));
+		cbl.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float2, "Float2"));
+		cbl.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Matrix4, "Mat4"));
+		cbl.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float3, "Float3"));
+		cbl.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Struct, "Specular"));
+		cbl["Specular"].Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float3, "Normal"));
+		cbl["Specular"].Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "Constant"));
+		cbl["Specular"].Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "Linear"));
+		cbl["Specular"].Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "Cuadratic"));
+		cbl.Solidify();
+	}
+
+	gfx::ConstantBuffer testBuf(std::move(cbl));
+
+
 	try {
 
 		while (!window->IsClosing())

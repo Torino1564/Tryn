@@ -84,6 +84,7 @@ namespace tryn::gfx
 			return F<ConstantBufferLayout::Type::Empty>::Exec(std::forward<Args>(args)...);
 		}
 
+
 		static constexpr size_t SizeOf(ConstantBufferLayout::Type type);
 
 		struct Node
@@ -99,6 +100,10 @@ namespace tryn::gfx
 			bool Validate() const;
 			Type GetType() const;
 			size_t GetOffset() const;
+			auto& Ref()
+			{
+				return reinterpret_cast<TypeAttr<type>::SysType*>()
+			}
 			// returns size in byes
 
 			std::vector<Node> children;
