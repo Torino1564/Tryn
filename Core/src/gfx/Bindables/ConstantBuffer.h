@@ -100,10 +100,10 @@ namespace tryn::gfx
 			bool Validate() const;
 			Type GetType() const;
 			size_t GetOffset() const;
-			auto& Ref()
+			/*auto& Ref()
 			{
 				return reinterpret_cast<TypeAttr<type>::SysType*>()
-			}
+			}*/
 			// returns size in byes
 
 			std::vector<Node> children;
