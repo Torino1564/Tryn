@@ -4,6 +4,12 @@
 #include <Core/third/glm/glm.hpp>
 #include <string>
 #include <optional>
+#include <utility>
+#include <memory>
+#include <Core/src/utl/Exception.h>
+#include <unordered_map>
+
+ZT_EX_DEF(DcbException);
 
 #define CONSTANT_BUFFER_ELEMENTS \
 		X( Float ) \
@@ -11,13 +17,13 @@
 		X( Float3 ) \
 		X( Float4 ) \
 		X( Matrix4 ) \
-		X( Matrix3 ) \
-		X( Empty )
+		X( Matrix3 )
 
 namespace tryn::gfx
 {
 	class ConstantBufferLayout
 	{
+	public:
 		enum Type
 		{
 			#define X(el) el,
@@ -25,6 +31,7 @@ namespace tryn::gfx
 			#undef X
 			Struct,
 			Array,
+			Empty
 		};
 
 		template <Type>
@@ -64,31 +71,64 @@ namespace tryn::gfx
 			static constexpr size_t SysTypeSize = sizeof(glm::mat3);
 		};
 
+		template<template<ConstantBufferLayout::Type> class F, typename... Args>
+		static constexpr auto Bridge(ConstantBufferLayout::Type type, Args&&... args)
+		{
+			switch (type)
+			{
+#define X(el) case ConstantBufferLayout::Type::el: return F<ConstantBufferLayout::Type::el>::Exec( std::forward<Args>( args )... );
+				CONSTANT_BUFFER_ELEMENTS
+#undef X
+			}
+			throw DcbException("Invalid element type");
+			return F<ConstantBufferLayout::Type::Empty>::Exec(std::forward<Args>(args)...);
+		}
+
+		static constexpr size_t SizeOf(ConstantBufferLayout::Type type);
+
 		struct Node
 		{
-			Node(Type type, std::wstring id);
+			friend class ConstantBufferLayout;
+
+			Node(Type type, std::string id);
 			void Append(Node child);
 			bool IsRoot() const;
 			bool IsLeaf() const;
 			Node& GetEmpty() const;
-			Node& operator[](std::wstring id);
+			Node& operator[](std::string id);
 			bool Validate() const;
+			Type GetType() const;
+			size_t GetOffset() const;
+			// returns size in byes
 
-			Type type = Type::Empty;
 			std::vector<Node> children;
-			std::optional<Node&> parent;
-			std::wstring id;
-			size_t offset;
+		private:
+			Type type = Type::Empty;
+			std::optional<Node*> parent;
+			std::string id;
+			bool solid = false;
+			size_t offset = 0;
 		};
+	public:
+		ConstantBufferLayout();
+		void Append(Node child);
+		void Solidify();
+		bool IsSolid() const;
+		size_t Size() const;
+		Node& operator[](std::string id);
 	private:
-
-
+		std::unique_ptr<Node> root;
+		bool solid = false;
+		size_t size = 0;
 	};
 
 	class ConstantBuffer
 	{
+	public:
+		ConstantBuffer(ConstantBufferLayout cbl);
+
 	private:
-		std::vector<char> buffer;
 		ConstantBufferLayout layout;
+		std::vector<char> buffer;
 	};
 }

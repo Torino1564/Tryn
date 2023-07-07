@@ -55,7 +55,7 @@ namespace tryn::utl
 #define trynass(expr) (!ZT_TRYNASS_ACTIVE || bool(expr)) ? void(0) : (void)tryn::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__ }  
 #define trynass_msg(expr, msg) (!ZT_TRYNASS_ACTIVE || bool(expr)) ? void(0) : (void)tryn::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__ , tryn::utl::Assertion::Consequence::Terminate , msg}  
 
-#define trynchk(expr) bool(expr) ? void(0) : (void)tryn::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__, ZT_TRYNASS_ACTIVE ? tryn::utl::Assertion::Consequence::Terminate : tryn::utl::Assertion::Consequence::Log ,L""}  
+#define trynchk(expr) bool(expr) ? void(0) : (void)tryn::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__, ZT_TRYNASS_ACTIVE ? tryn::utl::Assertion::Consequence::Terminate : tryn::utl::Assertion::Consequence::Log ,L""}
 
 #define trynchk_fail (void)tryn::utl::Assertion{ L"[Always Fail]", __FILEW__, __FUNCTIONW__, __LINE__, ZT_TRYNASS_ACTIVE ? tryn::utl::Assertion::Consequence::Terminate : tryn::utl::Assertion::Consequence::Log }  
 
