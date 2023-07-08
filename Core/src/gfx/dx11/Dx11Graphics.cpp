@@ -8,6 +8,8 @@
 #include <Core/src/gfx/dx11/Bindables/DX11VertexShader.h>
 #include <core/src/gfx/dx11/Bindables/DX11IndexBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PixelShader.h>
+#include <Core/src/gfx/dx11/Bindables/DX11ConstantBuffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11PrimitiveTopology.h>
 #include <Core/src/ent/Cube.h>
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -100,15 +102,15 @@ namespace tryn::gfx::dx11
 
 	void Graphics::DrawTriangle()
 	{
-		DX11VertexBuffer vertexBuffer(*this,VertexLayout(VertexLayout::Position3D, VertexLayout::Char4Color), 8);
-		vertexBuffer[0](glm::vec3{-1.0f, -1.0f, -1.0f	}, BGRAColor{ 255,0,0		});
-		vertexBuffer[1](glm::vec3{1.0f, -1.0f, -1.0f	}, BGRAColor{ 0,255,0		});
-		vertexBuffer[2](glm::vec3{-1.0f, 1.0f, -1.0f	}, BGRAColor{ 0,0,255		});
-		vertexBuffer[3](glm::vec3{1.0f, 1.0f, -1.0f		}, BGRAColor{ 255,255,0		});
-		vertexBuffer[4](glm::vec3{-1.0f, -1.0f, 1.0f	}, BGRAColor{ 0,255,255		});
-		vertexBuffer[5](glm::vec3{1.0f, -1.0f, 1.0f		}, BGRAColor{ 255,0,255		});
-		vertexBuffer[6](glm::vec3{-1.0f, 1.0f, 1.0f		}, BGRAColor{ 255,255,255	});
-		vertexBuffer[7](glm::vec3{1.0f, 1.0f, 1.0f		}, BGRAColor{ 0,255,0		});
+		DX11VertexBuffer vertexBuffer(*this, VertexLayout(VertexLayout::Position3D, VertexLayout::Char4Color), 8);
+		vertexBuffer[0](glm::vec3{-1.0f, -1.0f, -1.0f	}, BGRAColor{ 255,0,0 });
+		vertexBuffer[1](glm::vec3{1.0f, -1.0f, -1.0f	}, BGRAColor{ 0,255,0 });
+		vertexBuffer[2](glm::vec3{-1.0f, 1.0f, -1.0f	}, BGRAColor{ 0,0,255 });
+		vertexBuffer[3](glm::vec3{1.0f, 1.0f, -1.0f		}, BGRAColor{ 255,255,0 });
+		vertexBuffer[4](glm::vec3{-1.0f, -1.0f, 1.0f	}, BGRAColor{ 0,255,255 });
+		vertexBuffer[5](glm::vec3{1.0f, -1.0f, 1.0f		}, BGRAColor{ 255,0,255 });
+		vertexBuffer[6](glm::vec3{-1.0f, 1.0f, 1.0f		}, BGRAColor{ 255,255,255 });
+		vertexBuffer[7](glm::vec3{1.0f, 1.0f, 1.0f		}, BGRAColor{ 0,255,0 });
 
 		vertexBuffer.Bind();
 
@@ -117,7 +119,7 @@ namespace tryn::gfx::dx11
 		// Index Buffer
 
 		ent::Cube cube(1.0f);
-		DX11IndexBuffer indexBuffer( *this , *cube.GetModel().get() );
+		DX11IndexBuffer indexBuffer(*this, *cube.GetModel().get());
 
 		indexBuffer.Bind();
 
@@ -126,7 +128,6 @@ namespace tryn::gfx::dx11
 		// Pixel shader
 
 		DX11PixelShader pixelShader(*this, L"PixelShader.cso");
-
 		pixelShader.Bind();
 
 
@@ -142,10 +143,11 @@ namespace tryn::gfx::dx11
 
 		// Cbuffer
 		static float angle = 0;
-		struct ConstantBuffer
-		{
-			glm::mat4 transformation;
-		};
+
+		ConstantBufferLayout cblayout;
+		cblayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Matrix4, "transformation"));
+		cblayout.Solidify();
+		DX11ConstantBuffer cbuf(*this, std::move(cblayout));
 
 		glm::mat4 viewProjection2;
 		{
@@ -157,34 +159,21 @@ namespace tryn::gfx::dx11
 			viewProjection2 = projection * view;
 		}
 
-		ConstantBuffer cb = {
-			{
-			glm::transpose( viewProjection2 *
-							glm::rotate(glm::mat4(1.0f),0.6f * angle ,glm::vec3(0,0,1.0f) ) *
-							glm::rotate(glm::mat4(1.0f), angle ,glm::vec3(1.0f,0,0) ) *
-							glm::rotate(glm::mat4(0.5f),2.5f * angle ,glm::vec3(0,1.0f,0)) )
-			}
-		};
+		cbuf["transformation"].Get<glm::mat4>() = glm::transpose(viewProjection2 *
+			glm::rotate(glm::mat4(1.0f), 0.6f * angle, glm::vec3(0, 0, 1.0f)) *
+			glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0, 0)) *
+			glm::rotate(glm::mat4(0.5f), 2.5f * angle, glm::vec3(0, 1.0f, 0))
+		);
+
+		cbuf.Bind();
 
 		angle += 0.01;
 
-		wrl::ComPtr<ID3D11Buffer> pCBuffer;
-		D3D11_BUFFER_DESC cbd = {};
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.MiscFlags = 0u;
-		cbd.StructureByteStride = 0u;
-		cbd.ByteWidth = sizeof(cb);
-		D3D11_SUBRESOURCE_DATA csrd = {};
-		csrd.pSysMem = &cb;
-
-		pDevice->CreateBuffer(&cbd, &csrd, &pCBuffer) >> chk;
-
-		pContext->VSSetConstantBuffers(0u, 1u, pCBuffer.GetAddressOf());
-
 		pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
-		pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		// Primitive Topology
+		DX11PrimitiveTopology topology(*this);
+		topology.Bind();
 
 		pContext->DrawIndexed( (UINT)indexBuffer.Size(), 0u, 0u);
 	}

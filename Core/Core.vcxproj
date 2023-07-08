@@ -12,9 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\gfx\Bindables\ConstantBuffer.cpp" />
+    <ClCompile Include="src\gfx\Bindables\PrimitiveTopology.h" />
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11ConstantBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11IndexBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11InputLayout.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PixelShader.cpp" />
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexBuffer.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexShader.cpp" />
@@ -57,6 +60,7 @@
     <ClInclude Include="src\gfx\dx11\Bindables\DX11IndexBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11InputLayout.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PixelShader.h" />
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11VertexShader.h" />
     <ClInclude Include="src\gfx\Bindables\VertexShader.h" />
     <ClInclude Include="src\ent\Cube.h" />

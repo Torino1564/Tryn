@@ -39,6 +39,10 @@ namespace tryn::gfx
 	}
 	ConstantBufferLayout::Node& ConstantBufferLayout::Node::operator[](std::string id)
 	{
+		return IndexByName(id);
+	}
+	ConstantBufferLayout::Node& ConstantBufferLayout::Node::IndexByName(std::string id)
+	{
 		trynass_msg(type == Type::Struct || type == Type::Array, L"Attempted to index an element to a non array/struct node");
 		for (auto& child : children)
 		{
@@ -67,16 +71,16 @@ namespace tryn::gfx
 	}
 
 	template<ConstantBufferLayout::Type type>
-	struct SysSizeLookup
+	struct TrueTypeSizeLookup
 	{
 		static constexpr auto Exec() noexcept
 		{
-			return sizeof(ConstantBufferLayout::TypeAttr<type>::SysType);
+			return sizeof(ConstantBufferLayout::TypeAttr<type>::TrueType);
 		}
 	};
 	constexpr size_t ConstantBufferLayout::SizeOf(ConstantBufferLayout::Type type)
 	{
-		return Bridge<SysSizeLookup>(type);
+		return Bridge<TrueTypeSizeLookup>(type);
 	}
 
 	ConstantBufferLayout::ConstantBufferLayout()
@@ -126,11 +130,16 @@ namespace tryn::gfx
 				current->offset = accumulatedOffset;
 				if (size > remainingSpace)
 				{
-					accumulatedOffset += remainingSpace;
+					if (size < 16)
+					{
+						accumulatedOffset += remainingSpace;
+					}
 				}
 				accumulatedOffset += size;
 				break;
 			}
+
+			current->solid = true;
 
 			for (auto& child : current->children)
 			{
@@ -145,12 +154,10 @@ namespace tryn::gfx
 		return (*root.get())[id];
 	}
 
-	ConstantBuffer::ConstantBuffer(ConstantBufferLayout cbl)
-	{
-		trynass_msg(cbl.IsSolid(), L"ConstantBuffer cannot be created with a non solidified layout!");
-
-		layout = std::move(cbl);
-		buffer.resize(layout.Size());
-	}
+	ElementView::ElementView(ConstantBufferLayout::Node& node, char* pBytes)
+		:
+		node(node),
+		pBytes(pBytes)
+	{}
 }
 

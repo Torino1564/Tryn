@@ -11,7 +11,6 @@ namespace tryn::gfx::dx11
 	public:
 
 		DX11VertexBuffer(Graphics& gfx, VertexLayout layout_, size_t size);
-		~DX11VertexBuffer() override = default;
 		void Bind() override;
 		std::vector<char> GetLayoutFromVB() const override;
 	private:

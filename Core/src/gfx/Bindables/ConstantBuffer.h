@@ -23,6 +23,7 @@ namespace tryn::gfx
 {
 	class ConstantBufferLayout
 	{
+		friend class ConstantBuffer;
 	public:
 		enum Type
 		{
@@ -37,39 +38,54 @@ namespace tryn::gfx
 		template <Type>
 		struct TypeAttr
 		{
-			using SysType = float;
-			static constexpr size_t SysTypeSize = 4;
+			using TrueType = float;
+			static constexpr size_t TrueTypeSize = 4;
 		};
 		template <> struct TypeAttr<Float>
 		{
-			using SysType = float;
-			static constexpr size_t SysTypeSize = 4;
+			using TrueType = float;
+			static constexpr size_t TrueTypeSize = 4;
 		};
 		template <> struct TypeAttr<Float2>
 		{
-			using SysType = glm::vec2;
-			static constexpr size_t SysTypeSize = sizeof(glm::vec2);
+			using TrueType = glm::vec2;
+			static constexpr size_t TrueTypeSize = sizeof(glm::vec2);
 		};
 		template <> struct TypeAttr<Float3>
 		{
-			using SysType = glm::vec3;
-			static constexpr size_t SysTypeSize = sizeof(glm::vec3);
+			using TrueType = glm::vec3;
+			static constexpr size_t TrueTypeSize = sizeof(glm::vec3);
 		};
 		template <> struct TypeAttr<Float4>
 		{
-			using SysType = glm::vec4;
-			static constexpr size_t SysTypeSize = sizeof(glm::vec4);
+			using TrueType = glm::vec4;
+			static constexpr size_t TrueTypeSize = sizeof(glm::vec4);
 		};
 		template <> struct TypeAttr<Matrix4>
 		{
-			using SysType = glm::mat4;
-			static constexpr size_t SysTypeSize = sizeof(glm::mat4);
+			using TrueType = glm::mat4;
+			static constexpr size_t TrueTypeSize = sizeof(glm::mat4);
 		};
 		template <> struct TypeAttr<Matrix3>
 		{
-			using SysType = glm::mat3;
-			static constexpr size_t SysTypeSize = sizeof(glm::mat3);
+			using TrueType = glm::mat3;
+			static constexpr size_t TrueTypeSize = sizeof(glm::mat3);
 		};
+
+		template <typename T>
+		struct TypeAttrLookup
+		{
+			static constexpr bool valid = false;
+		};
+
+		#define X(el) \
+		template<> struct TypeAttrLookup<typename TypeAttr<el>::TrueType> \
+		{\
+			static constexpr Type type = el; \
+			static constexpr bool valid = true; \
+		};
+		CONSTANT_BUFFER_ELEMENTS
+		#undef X
 
 		template<template<ConstantBufferLayout::Type> class F, typename... Args>
 		static constexpr auto Bridge(ConstantBufferLayout::Type type, Args&&... args)
@@ -97,17 +113,13 @@ namespace tryn::gfx
 			bool IsLeaf() const;
 			Node& GetEmpty() const;
 			Node& operator[](std::string id);
+			Node& IndexByName(std::string id);
 			bool Validate() const;
 			Type GetType() const;
 			size_t GetOffset() const;
-			/*auto& Ref()
-			{
-				return reinterpret_cast<TypeAttr<type>::SysType*>()
-			}*/
-			// returns size in byes
 
-			std::vector<Node> children;
 		private:
+			std::vector<Node> children;
 			Type type = Type::Empty;
 			std::optional<Node*> parent;
 			std::string id;
@@ -127,12 +139,46 @@ namespace tryn::gfx
 		size_t size = 0;
 	};
 
-	class ConstantBuffer
+	class ElementView
+	{
+		friend struct ConstantBufferLayout::Node;
+	public:
+		ElementView(ConstantBufferLayout::Node& node, char* pBytes);
+		ElementView operator[](std::string id)
+		{
+			trynass_msg(node.GetType() == ConstantBufferLayout::Type::Struct, L"Tried to index to a non struct ElementView!");
+
+			return ElementView(node[id], pBytes - (node[id].GetOffset() - node.GetOffset()));
+		}
+
+		template <typename T>
+		T& Get()
+		{
+			// Validate Type
+			trynass_msg(ConstantBufferLayout::TypeAttrLookup<T>::valid == true, L"Get called with an unsupported type");
+			static_assert(ConstantBufferLayout::TypeAttrLookup<T>::valid == true);
+
+			return *reinterpret_cast<T*>(pBytes);
+		}
+	private:
+		ConstantBufferLayout::Node& node;
+		char* pBytes;
+	};
+
+	class ConstantBuffer : public IBindable
 	{
 	public:
-		ConstantBuffer(ConstantBufferLayout cbl);
+		virtual ~ConstantBuffer() {}
+		ElementView operator[](std::string id)
+		{
+			dirty = true;
+			auto& indexTo = layout.root.get()->IndexByName(id);
+			ElementView temp(indexTo, buffer.data() + indexTo.GetOffset());
+			return temp;
+		}
 
-	private:
+	protected:
+		bool dirty = false;
 		ConstantBufferLayout layout;
 		std::vector<char> buffer;
 	};

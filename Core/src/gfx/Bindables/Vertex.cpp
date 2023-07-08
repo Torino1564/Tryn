@@ -24,19 +24,15 @@ namespace tryn::gfx
 	}
 
 	template<VertexLayout::VertexElement type>
-	struct SysSizeLookup
+	struct VertexSysSizeLookup
 	{
 		static constexpr auto Exec() noexcept
 		{
 			return sizeof(VertexLayout::VertexElementAttr<type>::SysType);
 		}
 	};
-	constexpr size_t VertexLayout::Element::SizeOf(VertexLayout::VertexElement type)
-	{
-		return Bridge<SysSizeLookup>(type);
-	}
 	template<VertexLayout::VertexElement type>
-	struct NameLookup
+	struct VertexNameLookup
 	{
 		static constexpr auto Exec() noexcept
 		{
@@ -44,20 +40,24 @@ namespace tryn::gfx
 		}
 	};
 	template<VertexLayout::VertexElement type>
-	struct FormatLookup
+	struct VertexFormatLookup
 	{
 		static constexpr auto Exec() noexcept
 		{
 			return VertexLayout::VertexElementAttr<type>::format;
 		}
 	};
+	constexpr size_t VertexLayout::Element::SizeOf(VertexLayout::VertexElement type)
+	{
+		return Bridge<VertexSysSizeLookup>(type);
+	}
 	constexpr const char * VertexLayout::Element::NameOf(VertexLayout::VertexElement type)
 	{
-		return Bridge<NameLookup>(type);
+		return Bridge<VertexNameLookup>(type);
 	}
 	constexpr VertexLayout::Format VertexLayout::Element::FormatOf(VertexElement type)
 	{
-		return Bridge<FormatLookup>(type);
+		return Bridge<VertexFormatLookup>(type);
 	}
 	VertexLayout::Format VertexLayout::Element::GetFormat() const
 	{

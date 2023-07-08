@@ -53,16 +53,16 @@ namespace tryn::gfx
 
 		template <VertexElement>
 		struct VertexElementAttr {};
-		template <> struct VertexElementAttr<VertexElement::Position3D>
-		{
-			using SysType = glm::vec3;
-			static constexpr Format format = Format::Vec3F;
-			static constexpr const char* semantic = "Position";
-		};
 		template <> struct VertexElementAttr<VertexElement::Position2D>
 		{
 			using SysType = glm::vec2;
 			static constexpr Format format = Format::Vec2F;
+			static constexpr const char* semantic = "Position";
+		};
+		template <> struct VertexElementAttr<VertexElement::Position3D>
+		{
+			using SysType = glm::vec3;
+			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Position";
 		};
 		template <> struct VertexElementAttr<VertexElement::Normal>
