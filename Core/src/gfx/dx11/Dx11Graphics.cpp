@@ -122,6 +122,10 @@ namespace tryn::gfx::dx11
 		bindables.push_back(std::make_unique<DX11VertexBuffer>(*this, model.GetBuffer()));
 		bindables.push_back(std::make_unique<DX11IndexBuffer>(*this, model.GetIndices()));
 	}
+	std::unique_ptr<IVertexBuffer> Graphics::MakeVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer)
+	{
+		return std::make_unique<IVertexBuffer>(DX11VertexBuffer(*this, cpuBuffer));
+	}
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Graphics::GetContext()
 	{
 		return pContext;

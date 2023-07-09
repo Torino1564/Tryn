@@ -12,6 +12,7 @@
 #include <Core/src/ent/Model/Cube.h>
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/ent/Entity.h>
+#include "TestApp.h"
 #include <iostream>
 #include <array>
 #include <memory>
@@ -54,17 +55,11 @@ int WINAPI wWinMain(
 
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{window->GetClientDimensions().width, window->GetClientDimensions().height, window->GetHandle()});
 
-	
+	TestApp app(window, gfx);
 
-	try {
-
-		while (!window->IsClosing())
-		{
-			gfx->BeginFrame();
-			gfx->ClearBuffer(0.0f, 0.0f, 0.0f);
-			gfx->EndFrame();
-		}
-
+	try
+	{
+		app.Go();
 	}
 	catch (utl::BufferedException e)
 	{

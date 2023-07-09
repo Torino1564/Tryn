@@ -129,6 +129,9 @@
     <ClCompile Include="src\ent\Model\Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1151,7 +1154,13 @@
     <ClInclude Include="src\gfx\Bindables\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\dx11\Bindables\DX11Bindables.h">
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11BindableBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\App.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Bindables\BindableBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
