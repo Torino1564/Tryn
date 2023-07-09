@@ -6,18 +6,14 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	wnd = wnd_;
 	gfx = gfx_;
 
-	ent::Entity box;
-	auto& model = ent::Cube::GetInstance();
+	std::unique_ptr<gfx::IBindable> vertexBuffer;
+	auto pVertexBuffer = vertexBuffer.get();
 
-	model.MakeBindables(Gfx());
-
-	// Index Buffer
-	auto indexBuffer = model.GetBindables().back().get();
-	
-	// VertexBuffer
+	Gfx().CreateVertexBuffer(  , &pVertexBuffer );
 }
 
 void TestApp::DoFrame()
 {
 
 }
+ 

@@ -4,8 +4,8 @@
 #include <typeinfo>
 #include <Core/src/utl/Assert.h>
 #include <Core/src/spa/Dimensions.h>
-#include <Core/src/gfx/Bindables/BindableBase.h>
 #include <vector>
+#include <Core/src/gfx/Bindables/Bindable.h>
 #include <concepts>
 
 #define GRAPHIC_APIS \
@@ -22,9 +22,9 @@ namespace tryn::gfx
 {
 	enum class GraphicAPI
 	{
-		#define X(el) el,
+#define X(el) el,
 		GRAPHIC_APIS
-		#undef X
+#undef X
 	};
 
 	class IGraphics
@@ -44,20 +44,25 @@ namespace tryn::gfx
 		virtual void DrawTriangle() = 0;
 		virtual void DrawIndexed(int count) = 0;
 		virtual void MakeBindablesForModel(ent::Model&) = 0;
-		virtual std::unique_ptr<IVertexBuffer> MakeVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer) = 0;
 		template<typename T>
 		auto& QueryInterface()
 		{
 			auto ptr = static_cast<T*>(this);
 #ifdef _DEBUG
-			trynass_msg( typeid(T) == typeid(this), L"Attempt to cast query IGraphics interface to an invalid type");
+			trynass_msg(typeid(T) == typeid(this), L"Attempt to cast query IGraphics interface to an invalid type");
 #endif
 			return *ptr;
 		}
 		virtual GraphicAPI GetType() = 0;
 
+		// Resurce Creation
+		virtual void CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer , IBindable** pBindable) = 0;
+		virtual void CreateVertexShader(IBindable** pBindable) = 0;
+		virtual void CreateIndexBuffer() = 0;
+		virtual void CreatePixelShader() = 0;
+		virtual void CreateConstantBuffer() = 0;
+		virtual void CreatePrimitiveTopology() = 0;
 
-
-		spa::DimensionsI dimensions = spa::DimensionsI(0,0);
+		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
 	};
 }

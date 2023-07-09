@@ -105,13 +105,13 @@ namespace tryn::gfx::dx11
 	void Graphics::DrawTriangle()
 	{
 
-		pContext->DrawIndexed( (UINT)36, 0u, 0u);
+		pContext->DrawIndexed((UINT)36, 0u, 0u);
 	}
 	void Graphics::DrawIndexed(int count)
 	{
 		pContext->DrawIndexed(count, 0u, 0u);
 	}
-	GraphicAPI Graphics::GetType()	
+	GraphicAPI Graphics::GetType()
 	{
 		return GraphicAPI::DX11;
 	}
@@ -122,10 +122,6 @@ namespace tryn::gfx::dx11
 		bindables.push_back(std::make_unique<DX11VertexBuffer>(*this, model.GetBuffer()));
 		bindables.push_back(std::make_unique<DX11IndexBuffer>(*this, model.GetIndices()));
 	}
-	std::unique_ptr<IVertexBuffer> Graphics::MakeVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer)
-	{
-		return std::make_unique<IVertexBuffer>(DX11VertexBuffer(*this, cpuBuffer));
-	}
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Graphics::GetContext()
 	{
 		return pContext;
@@ -133,6 +129,13 @@ namespace tryn::gfx::dx11
 	Microsoft::WRL::ComPtr<ID3D11Device>& Graphics::GetDevice()
 	{
 		return pDevice;
+	}
+
+	void Graphics::CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer, IBindable** pBindable)
+	{
+		DX11VertexBuffer* vertexBuffer = new DX11VertexBuffer(*this, cpuBuffer);
+
+		*pBindable = vertexBuffer;
 	}
 
 

@@ -8,8 +8,9 @@ namespace tryn::app
 	class App
 	{
 	public:
-		App();
+		App() = default;
 		App(std::shared_ptr<win::IWindow> wnd , std::shared_ptr<gfx::IGraphics> gfx);
+		virtual ~App() {};
 
 		void Go();
 		virtual void PreFrame();
