@@ -122,7 +122,7 @@ namespace tryn::gfx::dx11
 
 		// Index Buffer
 		
-		ent::Model Model = ent::Cube::GetInstance();
+		ent::Model& Model = ent::Cube::GetInstance();
 
 		Model.MakeBindables(*this);
 
