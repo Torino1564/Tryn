@@ -3,7 +3,7 @@
 #include <Core/src/gfx/Bindables/Bindable.h>
 #include <vector>
 #include <memory>
-#include "Model.h"
+#include "Model/Model.h"
 #include <Core/src/gfx/Gfx.h>
 
 namespace tryn::ent
@@ -16,5 +16,6 @@ namespace tryn::ent
 	protected:
 		std::shared_ptr<Model> model;
 		std::vector<std::shared_ptr<gfx::IBindable>> bindables;
+		static std::vector<std::shared_ptr<gfx::IBindable>> staticBindables;
 	};
 }

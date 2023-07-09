@@ -8,6 +8,7 @@
 #include <Core/src/utl/Assert.h>
 #include <Core/src/utl/Exception.h>
 #include <Core/src/gfx/Bindables/Bindable.h>
+#include <Core/src/log/Log.h>
 
 ZT_EX_DEF(DvtxException);
 
@@ -144,24 +145,26 @@ namespace tryn::gfx
 			VertexElement type;
 			size_t offset;
 		};
+
 	public:
 		VertexLayout()
 		{
 			size = 0;
+			elCounter.resize(static_cast<int>(VertexElement::Unknown));
 		}
 		template <typename...Args>
 		VertexLayout( Args... args )
 		{
-			int elCounter[static_cast<int>(VertexElement::Unknown)] = {};
 			int offset = 0;
+			elCounter.resize(static_cast<int>(VertexElement::Unknown));
 
-			AppendElement( elCounter , offset , args...);
+			AppendElement( offset , args...);
 			size = Elements.back().first.GetOffsetAfter();
 		}
 		// Returns size in bytes
 		size_t Size() const
 		{
-			return size;
+			return Elements.back().first.GetOffsetAfter();
 		}
 		template <VertexLayout::VertexElement Type>
 		const Element& Resolve(int i = 0) const
@@ -189,22 +192,37 @@ namespace tryn::gfx
 		{
 			return Elements.size();
 		}
+		template <typename Element>
+		void AppendElement(Element element)
+		{
+			size_t offset;
+			if (Elements.empty())
+			{
+				offset = 0;
+			}
+			else
+			{
+				offset = Elements.back().first.GetOffset() + Elements.back().first.Size();
+			}
+			Elements.emplace_back(VertexLayout::Element(element, offset), elCounter[static_cast<int>(element)]++);
+		}
 	private:
 		template <typename Element>
-		void AppendElement(int* map, int& offset, Element element)
+		void AppendElement( int& offset, Element element)
 		{
-			Elements.emplace_back(VertexLayout::Element(element, offset), map[static_cast<int>(element)]++);
+			Elements.emplace_back(VertexLayout::Element(element, offset), elCounter[static_cast<int>(element)]++);
 			offset += static_cast<int>(VertexLayout::Element::SizeOf(element));
 		}
 		template <typename First , typename ... Args>
-		void AppendElement( int* map , int& offset , First first, Args ... rest)
+		void AppendElement( int& offset , First first, Args ... rest)
 		{
-			AppendElement( map , offset , first);
-			AppendElement( map , offset , rest...);
+			AppendElement( offset , first);
+			AppendElement( offset , rest...);
 		}
 	public:
 		std::vector<std::pair<Element,int>> Elements;
 	private:
+		std::vector<int> elCounter = {};
 		size_t size;
 	};
 
@@ -274,6 +292,7 @@ namespace tryn::gfx
 				throw DvtxException("Parameter attribute type mismatch");
 			}
 		}
+	public:
 		char* pData = nullptr;
 		const VertexLayout& layout;
 	};
@@ -281,6 +300,12 @@ namespace tryn::gfx
 	class VertexBuffer : public IBindable
 	{
 	public:
+		VertexBuffer(VertexLayout layout_, size_t size)
+		{
+			trynass_msg(layout_.GetElementCount() != 0, L"Attempted to create a VertexBuffer with an empty layout");
+			this->layout = std::move(layout_);
+			Resize(layout.Size() * size);
+		}
 		void Resize(size_t newSize)
 		{
 			buffer.resize(newSize);
@@ -324,9 +349,21 @@ namespace tryn::gfx
 		{
 			return layout;
 		}
+		bool& GetDirty()
+		{
+			return dirty;
+		}
 
-		virtual std::vector<char> GetLayoutFromVB() const = 0;
-		virtual ~VertexBuffer() {}
+		virtual std::vector<char> GetLayoutFromVB() const
+		{
+			trylog.error(L"GetLayoutFromVB member on the VertexBuffer virtual class was called");
+			return {};
+		}
+
+		void Bind() override
+		{
+			trylog.error(L"Bind member on the VertexBuffer virtual class was called");
+		}
 
 	protected:       
 		bool dirty = true;

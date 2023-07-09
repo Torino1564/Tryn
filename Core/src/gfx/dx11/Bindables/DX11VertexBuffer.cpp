@@ -4,33 +4,32 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11VertexBuffer::DX11VertexBuffer(Graphics& gfx, VertexLayout layout_, size_t size)
+	DX11VertexBuffer::DX11VertexBuffer(Graphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer)
 		:
 		gfx(gfx)
 	{
-		this->layout = std::move(layout_);
-		Resize(layout.Size() * size);
+		pCPUBuffer = cpuBuffer;
 	}
 	void DX11VertexBuffer::Bind()
 	{
-		if (dirty)
+		if (Get().GetDirty())
 		{
 			D3D11_BUFFER_DESC bd = {};
 			bd.Usage = D3D11_USAGE_DEFAULT;
 			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 			bd.CPUAccessFlags = 0u;
 			bd.MiscFlags = 0u;
-			bd.StructureByteStride = (UINT)Stride();
-			bd.ByteWidth = (UINT)BufferSize();
+			bd.StructureByteStride = (UINT)Get().Stride();
+			bd.ByteWidth = (UINT)Get().BufferSize();
 
 			D3D11_SUBRESOURCE_DATA srd = {};
-			srd.pSysMem = Data();
+			srd.pSysMem = Get().Data();
 
 			gfx.GetDevice()->CreateBuffer(&bd, &srd, &pBuffer) >> chk;
 
-			dirty = false;
+			Get().GetDirty() = false;
 		}
-		const UINT stride = (UINT)Stride();
+		const UINT stride = (UINT)Get().Stride();
 		const UINT offset = 0u;
 		gfx.GetContext()->IASetVertexBuffers(0u, 1u, pBuffer.GetAddressOf(), &stride, &offset);
 	}
@@ -55,7 +54,7 @@ namespace tryn::gfx::dx11
 	}
 	std::vector<char> DX11VertexBuffer::GetLayoutFromVB() const
 	{
-		const auto& vLayout = GetLayout();
+		const auto& vLayout = ConstGet().GetLayout();
 		const auto descSize = vLayout.GetElementCount();
 		const auto charVectorSize = descSize * sizeof(D3D11_INPUT_ELEMENT_DESC);
 

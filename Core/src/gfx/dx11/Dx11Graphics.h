@@ -23,7 +23,7 @@ namespace tryn::gfx::dx11
 		void DrawTriangle() override;
 		void DrawIndexed(int count) override;
 		GraphicAPI GetType() override;
-
+		void MakeBindablesForModel(ent::Model&) override;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetContext();
 		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();
 

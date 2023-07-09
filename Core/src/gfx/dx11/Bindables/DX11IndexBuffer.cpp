@@ -1,17 +1,16 @@
 #include "DX11IndexBuffer.h"
 #include <Core/src/gfx/dx11/GraphicsError.h>
 #include <Core/src/utl/Assert.h>
-#include <Core/src/ent/Model.h>
+#include <Core/src/ent/Model/Model.h>
 
 namespace tryn::gfx::dx11
 {
-	DX11IndexBuffer::DX11IndexBuffer(Graphics& gfx, tryn::ent::Model& model)
+	DX11IndexBuffer::DX11IndexBuffer(Graphics& gfx, std::shared_ptr<const std::vector<int>> indices_)
 		:
 		gfx(gfx)
 	{
-
-		indices = model.indices;
-		count = (int)indices.size();
+		indices = indices_;
+		count = (int)indices->size();
 
 		D3D11_BUFFER_DESC ibd = {};
 		ibd.Usage = D3D11_USAGE_DEFAULT;
@@ -19,9 +18,9 @@ namespace tryn::gfx::dx11
 		ibd.CPUAccessFlags = 0u;
 		ibd.MiscFlags = 0u;
 		ibd.StructureByteStride = sizeof(int);
-		ibd.ByteWidth = count * sizeof(indices[0]);
+		ibd.ByteWidth = count * sizeof((*indices)[0]);
 		D3D11_SUBRESOURCE_DATA isrd = {};
-		isrd.pSysMem = indices.data();
+		isrd.pSysMem = indices->data();
 
 		gfx.GetDevice()->CreateBuffer(&ibd, &isrd, &pBuffer) >> chk;
 	}
@@ -31,6 +30,6 @@ namespace tryn::gfx::dx11
 	}
 	const size_t DX11IndexBuffer::Size() const
 	{
-		return indices.size();
+		return indices->size();
 	}
 }

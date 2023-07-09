@@ -10,7 +10,8 @@
 #include <Core/src/gfx/dx11/Bindables/DX11PixelShader.h>
 #include <Core/src/gfx/dx11/Bindables/DX11ConstantBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PrimitiveTopology.h>
-#include <Core/src/ent/Cube.h>
+#include <core/src/ent/Model/Model.h>
+#include <Core/src/ent/Model/Cube.h>
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <Core/third/glm/glm.hpp>
@@ -102,7 +103,10 @@ namespace tryn::gfx::dx11
 
 	void Graphics::DrawTriangle()
 	{
-		DX11VertexBuffer vertexBuffer(*this, VertexLayout(VertexLayout::Position3D, VertexLayout::Char4Color), 8);
+		std::shared_ptr<VertexBuffer> cpuBuffer = std::make_shared<VertexBuffer>(std::move(VertexLayout(VertexLayout::Position3D, VertexLayout::Char4Color)), 8);
+
+		DX11VertexBuffer vertexBuffer(*this, cpuBuffer);
+
 		vertexBuffer[0](glm::vec3{-1.0f, -1.0f, -1.0f	}, BGRAColor{ 255,0,0 });
 		vertexBuffer[1](glm::vec3{1.0f, -1.0f, -1.0f	}, BGRAColor{ 0,255,0 });
 		vertexBuffer[2](glm::vec3{-1.0f, 1.0f, -1.0f	}, BGRAColor{ 0,0,255 });
@@ -117,11 +121,12 @@ namespace tryn::gfx::dx11
 		namespace wrl = Microsoft::WRL;
 
 		// Index Buffer
+		
+		ent::Model Model = ent::Cube::GetInstance();
 
-		ent::Cube cube(1.0f);
-		DX11IndexBuffer indexBuffer(*this, *cube.GetModel().get());
+		Model.MakeBindables(*this);
 
-		indexBuffer.Bind();
+		Model.GetBindables().back()->Bind();
 
 		wrl::ComPtr<ID3DBlob> pBlob;
 
@@ -175,7 +180,7 @@ namespace tryn::gfx::dx11
 		DX11PrimitiveTopology topology(*this);
 		topology.Bind();
 
-		pContext->DrawIndexed( (UINT)indexBuffer.Size(), 0u, 0u);
+		pContext->DrawIndexed( (UINT)36, 0u, 0u);
 	}
 	void Graphics::DrawIndexed(int count)
 	{
@@ -184,6 +189,13 @@ namespace tryn::gfx::dx11
 	GraphicAPI Graphics::GetType()	
 	{
 		return GraphicAPI::DX11;
+	}
+	void Graphics::MakeBindablesForModel(ent::Model& model)
+	{
+		auto& bindables = model.GetBindables();
+
+		bindables.push_back(std::make_unique<DX11VertexBuffer>(*this, model.GetBuffer()));
+		bindables.push_back(std::make_unique<DX11IndexBuffer>(*this, model.GetIndices()));
 	}
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Graphics::GetContext()
 	{

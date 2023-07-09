@@ -12,11 +12,13 @@
 		X( DX12 ) \
 		X( Vulkan ) \
 		X( Unknown )
+namespace tryn::ent
+{
+	class Model;
+}
 
 namespace tryn::gfx
 {
-	class VertexBuffer;
-
 	enum class GraphicAPI
 	{
 		#define X(el) el,
@@ -40,7 +42,7 @@ namespace tryn::gfx
 		virtual void ClearBuffer(float r, float g, float b) = 0;
 		virtual void DrawTriangle() = 0;
 		virtual void DrawIndexed(int count) = 0;
-
+		virtual void MakeBindablesForModel(ent::Model&) = 0;
 		template<typename T>
 		auto& QueryInterface()
 		{

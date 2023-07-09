@@ -87,10 +87,7 @@
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ent\Cube.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ent\Model.cpp">
+    <ClCompile Include="src\ent\Model\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ent\Entity.cpp">
@@ -105,7 +102,7 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\Bindables\Vertex.cpp">
+    <ClCompile Include="src\gfx\Vertex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexBuffer.cpp">
@@ -127,6 +124,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ent\Model\Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1100,10 +1100,7 @@
     <ClInclude Include="src\gfx\Bindables\Bindable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Cube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ent\Model.h">
+    <ClInclude Include="src\ent\Model\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Bindables\VertexShader.h">
@@ -1121,7 +1118,7 @@
     <ClInclude Include="src\gfx\dx11\Bindables\DX11IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\Bindables\Vertex.h">
+    <ClInclude Include="src\gfx\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Bindables\InputLayout.h">
@@ -1146,6 +1143,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ent\Model\Cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Bindables\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

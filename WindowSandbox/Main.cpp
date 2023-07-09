@@ -9,7 +9,7 @@
 #include <Core/src/utl/Exception.h>
 #include <Core/src/utl/Timer.h>
 #include <core/src/gfx/dx11/Bindables/DX11ConstantBuffer.h>
-#include <Core/src/gfx/Bindables/Vertex.h>
+#include <Core/src/gfx/Vertex.h>
 #include <iostream>
 #include <array>
 #include <memory>

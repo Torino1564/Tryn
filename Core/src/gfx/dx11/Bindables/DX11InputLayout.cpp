@@ -12,7 +12,7 @@ namespace tryn::gfx::dx11
 		auto layoutBuf = vb.GetLayoutFromVB();
 		auto layout = reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(layoutBuf.data());
 
-		gfx.GetDevice()->CreateInputLayout(layout, (UINT)vb.GetLayout().GetElementCount(), vs.GetBlob()->GetBufferPointer(), vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
+		gfx.GetDevice()->CreateInputLayout(layout, (UINT)vb.ConstGet().GetLayout().GetElementCount(), vs.GetBlob()->GetBufferPointer(), vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
 	}
 	void DX11InputLayout::Bind()
 	{
