@@ -24,7 +24,7 @@ namespace tryn::win
 		// container 
 		ioc::Get().Register<IWindow>([](IWindow::IocParams args) {
 			return std::make_shared<Window>(
-				(args.pClass | ioc::Sing().Resolve<IWindowClass>()),
+				(args.pClass.value_or(ioc::Sing().Resolve<IWindowClass>())),
 				args.name.value_or(L"Main Window"),
 				args.size.value_or(spa::DimensionsI{ 1280, 720 }),
 				args.position

@@ -4,6 +4,7 @@
 #include <typeinfo>
 #include <Core/src/utl/Assert.h>
 #include <Core/src/spa/Dimensions.h>
+#include <Core/src/gfx/Bindables/BindableBase.h>
 #include <vector>
 #include <concepts>
 
@@ -43,6 +44,7 @@ namespace tryn::gfx
 		virtual void DrawTriangle() = 0;
 		virtual void DrawIndexed(int count) = 0;
 		virtual void MakeBindablesForModel(ent::Model&) = 0;
+		virtual std::unique_ptr<IVertexBuffer> MakeVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer) = 0;
 		template<typename T>
 		auto& QueryInterface()
 		{

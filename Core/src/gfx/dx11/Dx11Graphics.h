@@ -2,6 +2,7 @@
 #include "TrynWLR.h"
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/spa/Dimensions.h>
+#include <Core/src/gfx/dx11/Bindables/DX11BindableBase.h>
 #include <d3d11.h>
 
 namespace tryn::gfx
@@ -24,6 +25,7 @@ namespace tryn::gfx::dx11
 		void DrawIndexed(int count) override;
 		GraphicAPI GetType() override;
 		void MakeBindablesForModel(ent::Model&) override;
+		std::unique_ptr<IVertexBuffer> MakeVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer) override;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetContext();
 		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();
 

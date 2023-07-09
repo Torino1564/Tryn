@@ -4,6 +4,7 @@
 #include <Core/src/gfx/Bindables/Bindable.h>
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/gfx/IGraphics.h>
+#include "Cube.h"
 
 namespace tryn::ent
 {

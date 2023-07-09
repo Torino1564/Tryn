@@ -8,14 +8,21 @@
 #include <Core/src/gfx/Gfx.h>
 #include <Core/src/utl/Exception.h>
 #include <Core/src/utl/Timer.h>
-#include <core/src/gfx/dx11/Bindables/DX11ConstantBuffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11Bindables.h>
+#include <Core/src/ent/Model/Cube.h>
 #include <Core/src/gfx/Vertex.h>
+#include <Core/src/ent/Entity.h>
 #include <iostream>
 #include <array>
 #include <memory>
 #include <format>
 #include <ranges>
 #include <vector>
+
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <Core/third/glm/glm.hpp>
+#include <Core/third/glm/gtc/matrix_transform.hpp>
+
 
 using namespace tryn;
 using namespace std::chrono_literals;
@@ -42,27 +49,12 @@ int WINAPI wWinMain(
 {
 	Boot();
 
-	auto window = ioc::Get().Resolve<win::IWindow>();
+	auto window = ioc::Get().Resolve<win::IWindow>(win::IWindow::IocParams{.size = spa::DimensionsI{ .width = (1280), .height = (720) } });
 	window->SetTitle(L"Test WindowApp");
 
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{window->GetClientDimensions().width, window->GetClientDimensions().height, window->GetHandle()});
 
-	gfx::ConstantBufferLayout cbl;
-
-	{
-		using namespace tryn::gfx;
-
-		cbl.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "Float"));
-		cbl.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float2, "Float2"));
-		cbl.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Matrix4, "Mat4"));
-		cbl.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float3, "Float3"));
-		cbl.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Struct, "Specular"));
-		cbl["Specular"].Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float3, "Normal"));
-		cbl["Specular"].Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "Constant"));
-		cbl["Specular"].Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "Linear"));
-		cbl["Specular"].Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "Cuadratic"));
-		cbl.Solidify();
-	}
+	
 
 	try {
 
@@ -70,7 +62,6 @@ int WINAPI wWinMain(
 		{
 			gfx->BeginFrame();
 			gfx->ClearBuffer(0.0f, 0.0f, 0.0f);
-			gfx->DrawTriangle();
 			gfx->EndFrame();
 		}
 

@@ -16,7 +16,7 @@ namespace tryn::win
 		// types 
 		struct IocParams
 		{
-			std::shared_ptr<IWindowClass> pClass;
+			std::optional<std::shared_ptr<IWindowClass>> pClass;
 			std::optional<std::wstring> name;
 			std::optional<spa::DimensionsI> size;
 			std::optional<spa::Vec2I> position;
