@@ -5,7 +5,6 @@
 #include <Core/src/utl/Assert.h>
 #include <Core/src/spa/Dimensions.h>
 #include <vector>
-#include <Core/src/gfx/Bindables/Bindable.h>
 #include <concepts>
 
 #define GRAPHIC_APIS \
@@ -26,6 +25,9 @@ namespace tryn::gfx
 		GRAPHIC_APIS
 #undef X
 	};
+
+	class VertexBuffer;
+	class IBindable;
 
 	class IGraphics
 	{
@@ -57,11 +59,11 @@ namespace tryn::gfx
 
 		// Resurce Creation
 		virtual void CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer , IBindable** pBindable) = 0;
-		virtual void CreateVertexShader(IBindable** pBindable) = 0;
+		/*virtual void CreateVertexShader() = 0;
 		virtual void CreateIndexBuffer() = 0;
 		virtual void CreatePixelShader() = 0;
 		virtual void CreateConstantBuffer() = 0;
-		virtual void CreatePrimitiveTopology() = 0;
+		virtual void CreatePrimitiveTopology() = 0;*/
 
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
 	};

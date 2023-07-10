@@ -3,5 +3,5 @@
 
 namespace tryn::gfx
 {
-	class BaseVertexShader : public IBindable {};
+	class IVertexShader : public IBindable {};
 }

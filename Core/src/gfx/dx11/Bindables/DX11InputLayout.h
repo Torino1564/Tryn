@@ -16,6 +16,7 @@ namespace tryn::gfx::dx11
 	public:
 		DX11InputLayout(Graphics& gfx , DX11VertexBuffer& vb , DX11VertexShader& vs);
 		void Bind() override;
+
 	private:
 		Graphics& gfx;
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> pLayout;

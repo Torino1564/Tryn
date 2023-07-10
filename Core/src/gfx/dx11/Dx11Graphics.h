@@ -29,11 +29,11 @@ namespace tryn::gfx::dx11
 
 		// Resurce Creation
 		void CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer, IBindable** pBindable) override;
-		void CreateVertexShader() override;
+		/*void CreateVertexShader() override;
 		void CreateIndexBuffer() override;
 		void CreatePixelShader() override;
 		void CreateConstantBuffer() override;
-		void CreatePrimitiveTopology() override;
+		void CreatePrimitiveTopology() override;*/
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> pDevice;

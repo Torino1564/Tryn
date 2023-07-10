@@ -12,26 +12,7 @@ namespace tryn::gfx::dx11
 	}
 	void DX11VertexBuffer::Bind()
 	{
-		if (Get().GetDirty())
-		{
-			D3D11_BUFFER_DESC bd = {};
-			bd.Usage = D3D11_USAGE_DEFAULT;
-			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-			bd.CPUAccessFlags = 0u;
-			bd.MiscFlags = 0u;
-			bd.StructureByteStride = (UINT)Get().Stride();
-			bd.ByteWidth = (UINT)Get().BufferSize();
-
-			D3D11_SUBRESOURCE_DATA srd = {};
-			srd.pSysMem = Get().Data();
-
-			gfx.GetDevice()->CreateBuffer(&bd, &srd, &pBuffer) >> chk;
-
-			Get().GetDirty() = false;
-		}
-		const UINT stride = (UINT)Get().Stride();
-		const UINT offset = 0u;
-		gfx.GetContext()->IASetVertexBuffers(0u, 1u, pBuffer.GetAddressOf(), &stride, &offset);
+		BindSlotted(0,1);
 	}
 	DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
 	{
@@ -54,6 +35,10 @@ namespace tryn::gfx::dx11
 	}
 	std::vector<char> DX11VertexBuffer::GetLayoutFromVB() const
 	{
+		return GetSlottedLayoutFromVB(0);
+	}
+	std::vector<char> DX11VertexBuffer::GetSlottedLayoutFromVB(int slot) const
+	{
 		const auto& vLayout = ConstGet().GetLayout();
 		const auto descSize = vLayout.GetElementCount();
 		const auto charVectorSize = descSize * sizeof(D3D11_INPUT_ELEMENT_DESC);
@@ -69,13 +54,36 @@ namespace tryn::gfx::dx11
 			fakePtr->SemanticName = vLayout.Elements[i].first.GetName();
 			fakePtr->SemanticIndex = vLayout.Elements[i].second;
 			fakePtr->Format = MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
-			fakePtr->InputSlot = 0u;
+			fakePtr->InputSlot = (UINT)slot;
 			fakePtr->InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 			fakePtr->AlignedByteOffset = (UINT)vLayout.Elements[i].first.GetOffset();
 			fakePtr->InstanceDataStepRate = 0u;
 		}
 
 		return layout;
+	}
+	void DX11VertexBuffer::BindSlotted(int slot, int buffCount)
+	{
+		if (Get().GetDirty())
+		{
+			D3D11_BUFFER_DESC bd = {};
+			bd.Usage = D3D11_USAGE_DEFAULT;
+			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			bd.CPUAccessFlags = 0u;
+			bd.MiscFlags = 0u;
+			bd.StructureByteStride = (UINT)Get().Stride();
+			bd.ByteWidth = (UINT)Get().BufferSize();
+
+			D3D11_SUBRESOURCE_DATA srd = {};
+			srd.pSysMem = Get().Data();
+
+			gfx.GetDevice()->CreateBuffer(&bd, &srd, &pBuffer) >> chk;
+
+			Get().GetDirty() = false;
+		}
+		const UINT stride = (UINT)Get().Stride();
+		const UINT offset = 0u;
+		gfx.GetContext()->IASetVertexBuffers((UINT)slot, (UINT)buffCount, pBuffer.GetAddressOf(), &stride, &offset);
 	}
 }
 
