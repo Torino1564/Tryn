@@ -35,6 +35,10 @@ namespace tryn::gfx
 	class IPolyInputLayout;
 	class IInputLayout;
 	class IBindable;
+	class IIndexBuffer;
+	class IPrimitiveTopology;
+	class ConstantBufferLayout;
+	class IConstantBuffer;
 
 	class IGraphics
 	{
@@ -66,15 +70,15 @@ namespace tryn::gfx
 
 		// Resurce Creation
 		virtual void CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer, IVertexBuffer** ppBindable) = 0;
+		virtual void CreateIndexBuffer(std::shared_ptr<std::vector<int>> indices, IIndexBuffer** ppBindable) = 0;
 		virtual void CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers, IPolyVBuffer** ppBindable) = 0;
 		virtual void CreateVertexShader(std::wstring path, IVertexShader** ppBindable) = 0;
 		virtual void CreatePixelShader(std::wstring path, IPixelShader** ppBindable) = 0;
 		virtual void CreatePolyInputLayout(IPolyVBuffer& PVBuf, IVertexShader& vs, IPolyInputLayout** ppBindable) = 0;
 		virtual void CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs , IInputLayout** ppBindable) = 0;
 		virtual void CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs, IInputLayout** ppBindable) = 0;
-		//virtual void CreatePixelShader() = 0;
-		//virtual void CreateConstantBuffer() = 0;
-		//virtual void CreatePrimitiveTopology() = 0;
+		virtual void CreatePrimitiveTopology( IPrimitiveTopology** ppBindable ) = 0;
+		virtual void CreateConstantBuffer( ConstantBufferLayout&& , IConstantBuffer** ppBindable ) = 0;
 
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
 	};

@@ -5,10 +5,10 @@
 
 namespace tryn::gfx::dx11
 {
-	class DX11ConstantBuffer : public ConstantBuffer
+	class DX11ConstantBuffer : public IConstantBuffer
 	{
 	public:
-		DX11ConstantBuffer(Graphics& gfx , ConstantBufferLayout cbl);
+		DX11ConstantBuffer(Graphics& gfx , ConstantBufferLayout&& cbl);
 		void Bind() override;
 		char* Data();
 		void Update();

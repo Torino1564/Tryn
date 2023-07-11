@@ -20,7 +20,7 @@ namespace tryn::ent
 	{
 		gfx.MakeBindablesForModel(*this);
 	}
-	std::vector<std::unique_ptr<gfx::IBindable>>& Model::GetBindables()
+	std::vector<std::shared_ptr<gfx::IBindable>>& Model::GetBindables()
 	{
 		return bindables;
 	}

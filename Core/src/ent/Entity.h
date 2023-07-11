@@ -13,7 +13,8 @@ namespace tryn::ent
 	public:
 		virtual ~IEntity() {}
 		void Draw( gfx::IGraphics& gfx );
-	
+
+		std::shared_ptr<gfx::IConstantBuffer> pConstantBuffer;
 		std::shared_ptr<Model> model;
 		std::vector<std::shared_ptr<gfx::IBindable>> bindables;
 		static std::vector<std::shared_ptr<gfx::IBindable>> staticBindables;

@@ -1,4 +1,5 @@
 #include "Entity.h"
+#include <Core/src/gfx/Bindables/ConstantBuffer.h>
 
 namespace tryn::ent
 {
@@ -8,7 +9,7 @@ namespace tryn::ent
 		{
 			bindable->Bind();
 		}
-
+		pConstantBuffer->Bind();
 		gfx.DrawIndexed((int)model->GetIndices()->size());
 	}
 }

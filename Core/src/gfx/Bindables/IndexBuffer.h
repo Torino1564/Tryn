@@ -3,5 +3,5 @@
 
 namespace tryn::gfx
 {
-	class BaseIndexBuffer : public IBindable {};
+	class IIndexBuffer : public IBindable {};
 }

@@ -12,12 +12,12 @@ namespace tryn::ent
 	public:
 		Model(std::vector<glm::vec3> vertices, std::vector<int> indices);
 		void MakeBindables( gfx::IGraphics& gfx );
-		std::vector<std::unique_ptr<gfx::IBindable>>& GetBindables();
+		std::vector<std::shared_ptr<gfx::IBindable>>& GetBindables();
 		std::shared_ptr<gfx::VertexBuffer> GetBuffer();
 		const std::shared_ptr<const std::vector<int>>& GetIndices() const;
 		bool HasBindables() const;
 	protected:
-		std::vector<std::unique_ptr<gfx::IBindable>> bindables;
+		std::vector<std::shared_ptr<gfx::IBindable>> bindables;
 		std::shared_ptr<std::vector<int>> indices;
 		std::shared_ptr<gfx::VertexBuffer> buffer;
 	};

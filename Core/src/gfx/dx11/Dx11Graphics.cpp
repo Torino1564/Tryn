@@ -90,6 +90,7 @@ namespace tryn::gfx::dx11
 	void Graphics::BeginFrame()
 	{
 		pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
+		ClearBuffer();
 	}
 
 	void Graphics::EndFrame()
@@ -152,13 +153,20 @@ namespace tryn::gfx::dx11
 		*ppBindable = polyVBuffer;
 	}
 
+	void Graphics::CreateIndexBuffer( std::shared_ptr<std::vector<int>> indices, IIndexBuffer** ppBindable)
+	{
+		DX11IndexBuffer* pIndexBuffer = new DX11IndexBuffer(*this, indices);
+
+		*ppBindable = pIndexBuffer;
+	}
+
 	void Graphics::CreateVertexShader(std::wstring path, IVertexShader** ppBindable)
 	{
 		DX11VertexShader* vertexShader = new DX11VertexShader(*this, path);
 
 		*ppBindable = vertexShader;
 	}
-	void Graphics::CreatePolyInputLayout(IPolyVBuffer& pVBuf , IVertexShader& vs , IPolyInputLayout** ppBindable)
+	void Graphics::CreatePolyInputLayout(IPolyVBuffer& pVBuf, IVertexShader& vs, IPolyInputLayout** ppBindable)
 	{
 		DX11PolyInputLayout* pPolyInputLayout = new DX11PolyInputLayout(*this, static_cast<DX11PolyVBuffer&>(pVBuf), static_cast<DX11VertexShader&>(vs));
 
@@ -178,8 +186,20 @@ namespace tryn::gfx::dx11
 	}
 	void Graphics::CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs, IInputLayout** ppBindable)
 	{
-		DX11InputLayout* inputLayout = new DX11InputLayout(*this, static_cast<DX11PolyVBuffer&>(vb), static_cast<DX11VertexShader&>(vs));
+		DX11InputLayout* pInputLayout = new DX11InputLayout(*this, static_cast<DX11PolyVBuffer&>(vb), static_cast<DX11VertexShader&>(vs));
 
-		*ppBindable = inputLayout;
+		*ppBindable = pInputLayout;
+	}
+	void Graphics::CreatePrimitiveTopology(IPrimitiveTopology** ppBindable)
+	{
+		DX11PrimitiveTopology* pPrimitiveTopology = new DX11PrimitiveTopology(*this);
+
+		*ppBindable = pPrimitiveTopology;
+	}
+	void Graphics::CreateConstantBuffer(ConstantBufferLayout&& layout, IConstantBuffer** ppBindable)
+	{
+		DX11ConstantBuffer* pConstantBuffer = new DX11ConstantBuffer(*this, std::move(layout));
+
+		*ppBindable = pConstantBuffer;
 	}
 }

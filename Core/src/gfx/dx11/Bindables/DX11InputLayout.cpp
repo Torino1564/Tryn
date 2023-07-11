@@ -19,17 +19,16 @@ namespace tryn::gfx::dx11
 		:
 		gfx(gfx)
 	{
-		std::vector<D3D11_INPUT_ELEMENT_DESC> totalLayoutBuf;
-		UINT totalElCount = 0;
+		size_t totalElCount = 0;
 		int slot = 0;
-		for (auto& buffer : pvb.slots)
+		for (auto& buf : pvb.slots)
 		{
-			auto layoutBuf = buffer->GetSlottedLayoutFromVB(slot++);
+			auto layoutBuf = buf->GetSlottedLayoutFromVB(slot++);
 			auto layout = reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(layoutBuf.data());
-			totalLayoutBuf.push_back(*layout);
-			totalElCount += buffer->Get().GetLayout().GetElementCount();
+			buffer.push_back(*layout);
+			totalElCount += buf->Get().GetLayout().GetElementCount();
 		}
-		gfx.GetDevice()->CreateInputLayout(totalLayoutBuf.data(), totalElCount, vs.GetBlob()->GetBufferPointer(), vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
+		gfx.GetDevice()->CreateInputLayout(buffer.data(), (UINT)totalElCount, vs.GetBlob()->GetBufferPointer(), vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
 	}
 	void DX11InputLayout::Bind()
 	{

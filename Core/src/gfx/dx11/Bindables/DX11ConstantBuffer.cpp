@@ -3,7 +3,7 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11ConstantBuffer::DX11ConstantBuffer(Graphics& gfx, ConstantBufferLayout cbl)
+	DX11ConstantBuffer::DX11ConstantBuffer(Graphics& gfx, ConstantBufferLayout&& cbl)
 		:
 		gfx(gfx)
 	{

@@ -23,7 +23,7 @@ namespace tryn::gfx
 {
 	class ConstantBufferLayout
 	{
-		friend class ConstantBuffer;
+		friend class IConstantBuffer;
 	public:
 		enum Type
 		{
@@ -165,10 +165,10 @@ namespace tryn::gfx
 		char* pBytes;
 	};
 
-	class ConstantBuffer : public IBindable
+	class IConstantBuffer : public IBindable
 	{
 	public:
-		virtual ~ConstantBuffer() {}
+		virtual ~IConstantBuffer() {}
 		ElementView operator[](std::string id)
 		{
 			dirty = true;

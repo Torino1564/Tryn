@@ -3,21 +3,45 @@
 #include <Core/src/ent/Model/Cube.h>
 #include <Core/src/gfx/dx11/TrynWLR.h>
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
+#include <Core/third/glm/glm.hpp>
+#include <Core/third/glm/gtc/matrix_transform.hpp>
 
 TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraphics> gfx_)
 {
 	wnd = wnd_;
 	gfx = gfx_;
 
+	ent::Entity testEntity;
+
+	std::vector<int> indices = {
+				0,2,1, 2,3,1,
+				1,3,5, 3,7,5,
+				2,6,3, 3,6,7,
+				4,5,7, 4,7,6,
+				0,4,2, 2,4,6,
+				0,1,4, 1,5,4
+	};
+
+	ent::Model testModel({},  indices);
+	testEntity.model = std::make_shared<ent::Model>(testModel);
+
 	// Vertex Shader
 	gfx::IVertexShader* pVertexShader_;
 	Gfx().CreateVertexShader(L"VertexShader.cso", &pVertexShader_);
-	std::unique_ptr<gfx::IVertexShader> pVertexShader(pVertexShader_);
+	std::shared_ptr<gfx::IVertexShader> pVertexShader(pVertexShader_);
+	testEntity.bindables.push_back(pVertexShader);
 
 	// Pixel Shader
 	gfx::IPixelShader* pPixelShader_;
 	Gfx().CreatePixelShader(L"PixelShader.cso", &pPixelShader_);
-	std::unique_ptr<gfx::IPixelShader> pPixelShader(pPixelShader_);
+	std::shared_ptr<gfx::IPixelShader> pPixelShader(pPixelShader_);
+	testEntity.bindables.push_back(pPixelShader);
+
+	// Index Buffer
+	gfx::IIndexBuffer* pIndexBuffer_;
+	Gfx().CreateIndexBuffer(std::make_shared<std::vector<int>>(indices), &pIndexBuffer_);
+	std::shared_ptr<gfx::IIndexBuffer> pIndexBuffer(pIndexBuffer_);
+	testEntity.bindables.push_back(pIndexBuffer);
 
 	// PolyVertexBuffer
 	auto posCPUBuffer = ent::Cube::GetVertexBuffer();
@@ -39,18 +63,61 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 		colorCPUBuffer
 	};
 	Gfx().CreatePolyVertexBuffer(vertexBufferArr , &pPolyVB_);
-	std::unique_ptr<gfx::IPolyVBuffer> pPolyVB(pPolyVB_);
+	std::shared_ptr<gfx::IPolyVBuffer> pPolyVB(pPolyVB_);
+	testEntity.bindables.push_back(pPolyVB);
 
 	// InputLayout
 	gfx::IInputLayout* pInputLayout_;
 	Gfx().CreateInputLayout(*pPolyVB, *pVertexShader, &pInputLayout_);
-	std::unique_ptr<gfx::IInputLayout> pPolyIL(pInputLayout_);
+	std::shared_ptr<gfx::IInputLayout> pInputLayout(pInputLayout_);
+	testEntity.bindables.push_back(pInputLayout);
+
+	// Primitive Topology
+	gfx::IPrimitiveTopology* pPTopology_;
+	Gfx().CreatePrimitiveTopology(&pPTopology_);
+	std::shared_ptr<gfx::IPrimitiveTopology> pPrimitiveTopology(pPTopology_);
+	testEntity.bindables.push_back(pPrimitiveTopology);
+
+	// Constant Buffer
+	gfx::ConstantBufferLayout cBufLayout;
+	cBufLayout.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Matrix4, "transformation"));
+	cBufLayout.Solidify();
+
+	gfx::IConstantBuffer* pCBuf_;
+	Gfx().CreateConstantBuffer(std::move(cBufLayout), &pCBuf_);
+	std::shared_ptr<gfx::IConstantBuffer> pConstantBuffer(pCBuf_);
+	testEntity.pConstantBuffer = pConstantBuffer;
+
+	
+	
+	entities.push_back(std::move(testEntity));
 
 }
 
 void TestApp::DoFrame()
 {
+	static float angle = 0;
+	
 
+	for (auto& entity : entities)
+	{
+		glm::mat4 viewProjection2;
+		{
+			const auto eyePos = glm::vec3(0, 0, -6);
+			const auto focusPoint = glm::vec3(0, 0, 0);
+			const auto upDirection = glm::vec3(0, 1, 0);
+			const auto view = glm::lookAtLH(eyePos, focusPoint, upDirection);
+			const auto projection = glm::perspectiveFovLH(glm::radians(90.0f), (float)Gfx().dimensions.width, (float)Gfx().dimensions.height, 0.1f, 100.0f);
+			viewProjection2 = projection * view;
+		}
+		(*entity.pConstantBuffer)["transformation"].Get<glm::mat4>() = glm::transpose(viewProjection2 *
+			glm::rotate(glm::mat4(1.0f), 0.6f * angle, glm::vec3(0, 0, 1.0f)) *
+			glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0, 0)) *
+			glm::rotate(glm::mat4(0.5f), 2.5f * angle, glm::vec3(0, 1.0f, 0)));
+
+		entity.Draw(Gfx());
+	}
+	angle += 0.01;
 }
  
 //std::shared_ptr<VertexBuffer> cpuBuffer = std::make_shared<VertexBuffer>(std::move(VertexLayout(VertexLayout::Position3D, VertexLayout::Char4Color)), 8);

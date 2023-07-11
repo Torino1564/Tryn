@@ -19,16 +19,20 @@ namespace tryn::gfx::dx11
 
 	void DX11PolyVBuffer::Bind()
 	{
-		for (auto& vBuffer : slots)
+		if (!initialized)
 		{
-			if (vBuffer->Get().GetDirty())
+			for (auto& vBuffer : slots)
 			{
-				vBuffer->Init();
+				if (vBuffer->Get().GetDirty())
+				{
+					vBuffer->Init();
+				}
+				strides.push_back((UINT)vBuffer->Get().Stride());
+				offsets.push_back((UINT)0);
+				auto dx11vb = std::dynamic_pointer_cast<DX11VertexBuffer>(vBuffer);
+				buffArray.push_back(dx11vb->GetPtr());
 			}
-			strides.push_back((UINT)vBuffer->Get().Stride());
-			offsets.push_back((UINT)0);
-			auto dx11vb = std::dynamic_pointer_cast<DX11VertexBuffer>(vBuffer);
-			buffArray.push_back(dx11vb->GetPtr());
+			initialized = true;
 		}
 		gfx.GetContext()->IASetVertexBuffers((UINT)0, (UINT)buffArray.size(), buffArray.data(), strides.data(), offsets.data());
 	}

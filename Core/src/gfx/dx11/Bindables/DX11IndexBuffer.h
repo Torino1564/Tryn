@@ -13,7 +13,7 @@ namespace tryn::ent
 namespace tryn::gfx::dx11
 {
 
-	class DX11IndexBuffer : public BaseIndexBuffer
+	class DX11IndexBuffer : public IIndexBuffer
 	{
 	public:
 		DX11IndexBuffer( Graphics& gfx, std::shared_ptr<const std::vector<int>> indices);
