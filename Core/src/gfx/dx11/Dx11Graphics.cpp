@@ -10,6 +10,8 @@
 #include <Core/src/gfx/dx11/Bindables/DX11PixelShader.h>
 #include <Core/src/gfx/dx11/Bindables/DX11ConstantBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PrimitiveTopology.h>
+#include <Core/src/gfx/dx11/Bindables/DX11PolyVBuffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11PolyInputLayout.h>
 #include <core/src/ent/Model/Model.h>
 #include <Core/src/ent/Model/Cube.h>
 
@@ -131,12 +133,53 @@ namespace tryn::gfx::dx11
 		return pDevice;
 	}
 
-	void Graphics::CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer, IBindable** pBindable)
+	void Graphics::CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer, IVertexBuffer** ppBindable)
 	{
 		DX11VertexBuffer* vertexBuffer = new DX11VertexBuffer(*this, cpuBuffer);
 
-		*pBindable = vertexBuffer;
+		*ppBindable = vertexBuffer;
 	}
 
+	void Graphics::CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers, IPolyVBuffer** ppBindable)
+	{
+		DX11PolyVBuffer* polyVBuffer = new DX11PolyVBuffer(*this);
 
+		for (auto& buffer : buffers)
+		{
+			polyVBuffer->Append(buffer);
+		}
+
+		*ppBindable = polyVBuffer;
+	}
+
+	void Graphics::CreateVertexShader(std::wstring path, IVertexShader** ppBindable)
+	{
+		DX11VertexShader* vertexShader = new DX11VertexShader(*this, path);
+
+		*ppBindable = vertexShader;
+	}
+	void Graphics::CreatePolyInputLayout(IPolyVBuffer& pVBuf , IVertexShader& vs , IPolyInputLayout** ppBindable)
+	{
+		DX11PolyInputLayout* pPolyInputLayout = new DX11PolyInputLayout(*this, static_cast<DX11PolyVBuffer&>(pVBuf), static_cast<DX11VertexShader&>(vs));
+
+		*ppBindable = pPolyInputLayout;
+	}
+	void Graphics::CreatePixelShader(std::wstring path, IPixelShader** ppBindable)
+	{
+		DX11PixelShader* pixelShader = new DX11PixelShader(*this, path);
+
+		*ppBindable = pixelShader;
+	}
+	void Graphics::CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs, IInputLayout** ppBindable)
+	{
+		DX11InputLayout* inputLayout = new DX11InputLayout(*this, static_cast<DX11VertexBuffer&>(vb), static_cast<DX11VertexShader&>(vs));
+
+		*ppBindable = inputLayout;
+	}
+	void Graphics::CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs, IInputLayout** ppBindable)
+	{
+		DX11InputLayout* inputLayout = new DX11InputLayout(*this, static_cast<DX11PolyVBuffer&>(vb), static_cast<DX11VertexShader&>(vs));
+
+		*ppBindable = inputLayout;
+	}
 }

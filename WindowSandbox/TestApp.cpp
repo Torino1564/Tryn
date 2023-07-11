@@ -1,17 +1,50 @@
 #include "TestApp.h"
 #include <Core/src/gfx/Bindables/BindableBase.h>
+#include <Core/src/ent/Model/Cube.h>
+#include <Core/src/gfx/dx11/TrynWLR.h>
+#include <Core/src/gfx/dx11/Dx11Graphics.h>
 
 TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraphics> gfx_)
 {
 	wnd = wnd_;
 	gfx = gfx_;
 
-	
+	// Vertex Shader
+	gfx::IVertexShader* pVertexShader_;
+	Gfx().CreateVertexShader(L"VertexShader.cso", &pVertexShader_);
+	std::unique_ptr<gfx::IVertexShader> pVertexShader(pVertexShader_);
 
-	std::unique_ptr<gfx::IBindable> vertexBuffer;
-	auto pVertexBuffer = vertexBuffer.get();
-	std::shared_ptr<gfx::VertexBuffer> cpuBuffer = std::make_shared<gfx::VertexBuffer>(std::move(gfx::VertexLayout(gfx::VertexLayout::Position3D, gfx::VertexLayout::Char4Color)), 8);
-	Gfx().CreateVertexBuffer( cpuBuffer , &pVertexBuffer );
+	// Pixel Shader
+	gfx::IPixelShader* pPixelShader_;
+	Gfx().CreatePixelShader(L"PixelShader.cso", &pPixelShader_);
+	std::unique_ptr<gfx::IPixelShader> pPixelShader(pPixelShader_);
+
+	// PolyVertexBuffer
+	auto posCPUBuffer = ent::Cube::GetVertexBuffer();
+
+	std::shared_ptr<gfx::VertexBuffer> colorCPUBuffer = std::make_shared<gfx::VertexBuffer>(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Char4Color), posCPUBuffer->Size());
+	(*colorCPUBuffer)[0].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,0 };
+	(*colorCPUBuffer)[1].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
+	(*colorCPUBuffer)[2].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,0,255 };
+	(*colorCPUBuffer)[3].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,0 };
+	(*colorCPUBuffer)[4].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,255 };
+	(*colorCPUBuffer)[5].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,255 };
+	(*colorCPUBuffer)[6].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,255 };
+	(*colorCPUBuffer)[7].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
+
+	gfx::IPolyVBuffer* pPolyVB_;
+	std::vector<std::shared_ptr<gfx::VertexBuffer>> vertexBufferArr =
+	{
+		posCPUBuffer,
+		colorCPUBuffer
+	};
+	Gfx().CreatePolyVertexBuffer(vertexBufferArr , &pPolyVB_);
+	std::unique_ptr<gfx::IPolyVBuffer> pPolyVB(pPolyVB_);
+
+	// InputLayout
+	gfx::IInputLayout* pInputLayout_;
+	Gfx().CreateInputLayout(*pPolyVB, *pVertexShader, &pInputLayout_);
+	std::unique_ptr<gfx::IInputLayout> pPolyIL(pInputLayout_);
 
 }
 
@@ -27,11 +60,11 @@ void TestApp::DoFrame()
 //vertexBuffer[0](glm::vec3{-1.0f, -1.0f, -1.0f	}, BGRAColor{ 255,0,0 });
 //vertexBuffer[1](glm::vec3{1.0f, -1.0f, -1.0f	}, BGRAColor{ 0,255,0 });
 //vertexBuffer[2](glm::vec3{-1.0f, 1.0f, -1.0f	}, BGRAColor{ 0,0,255 });
-//vertexBuffer[3](glm::vec3{1.0f, 1.0f, -1.0f		}, BGRAColor{ 255,255,0 });
+//vertexBuffer[3](glm::vec3{1.0f, 1.0f, -1.0f	}, BGRAColor{ 255,255,0 });
 //vertexBuffer[4](glm::vec3{-1.0f, -1.0f, 1.0f	}, BGRAColor{ 0,255,255 });
-//vertexBuffer[5](glm::vec3{1.0f, -1.0f, 1.0f		}, BGRAColor{ 255,0,255 });
-//vertexBuffer[6](glm::vec3{-1.0f, 1.0f, 1.0f		}, BGRAColor{ 255,255,255 });
-//vertexBuffer[7](glm::vec3{1.0f, 1.0f, 1.0f		}, BGRAColor{ 0,255,0 });
+//vertexBuffer[5](glm::vec3{1.0f, -1.0f, 1.0f	}, BGRAColor{ 255,0,255 });
+//vertexBuffer[6](glm::vec3{-1.0f, 1.0f, 1.0f	}, BGRAColor{ 255,255,255 });
+//vertexBuffer[7](glm::vec3{1.0f, 1.0f, 1.0f	}, BGRAColor{ 0,255,0 });
 //
 //vertexBuffer.Bind();
 //

@@ -12,6 +12,7 @@
 		X( DX12 ) \
 		X( Vulkan ) \
 		X( Unknown )
+
 namespace tryn::ent
 {
 	class Model;
@@ -27,6 +28,12 @@ namespace tryn::gfx
 	};
 
 	class VertexBuffer;
+	class IVertexBuffer;
+	class IVertexShader;
+	class IPixelShader;
+	class IPolyVBuffer;
+	class IPolyInputLayout;
+	class IInputLayout;
 	class IBindable;
 
 	class IGraphics
@@ -58,12 +65,16 @@ namespace tryn::gfx
 		virtual GraphicAPI GetType() = 0;
 
 		// Resurce Creation
-		virtual void CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer , IBindable** pBindable) = 0;
-		/*virtual void CreateVertexShader() = 0;
-		virtual void CreateIndexBuffer() = 0;
-		virtual void CreatePixelShader() = 0;
-		virtual void CreateConstantBuffer() = 0;
-		virtual void CreatePrimitiveTopology() = 0;*/
+		virtual void CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer, IVertexBuffer** ppBindable) = 0;
+		virtual void CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers, IPolyVBuffer** ppBindable) = 0;
+		virtual void CreateVertexShader(std::wstring path, IVertexShader** ppBindable) = 0;
+		virtual void CreatePixelShader(std::wstring path, IPixelShader** ppBindable) = 0;
+		virtual void CreatePolyInputLayout(IPolyVBuffer& PVBuf, IVertexShader& vs, IPolyInputLayout** ppBindable) = 0;
+		virtual void CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs , IInputLayout** ppBindable) = 0;
+		virtual void CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs, IInputLayout** ppBindable) = 0;
+		//virtual void CreatePixelShader() = 0;
+		//virtual void CreateConstantBuffer() = 0;
+		//virtual void CreatePrimitiveTopology() = 0;
 
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
 	};

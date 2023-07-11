@@ -12,7 +12,30 @@ namespace tryn::gfx::dx11
 	}
 	void DX11VertexBuffer::Bind()
 	{
-		BindSlotted(0,1);
+		if (Get().GetDirty())
+		{
+			Init();
+		}
+		const UINT stride = (UINT)Get().Stride();
+		const UINT offset = 0u;
+		gfx.GetContext()->IASetVertexBuffers((UINT)0, (UINT)1, pBuffer.GetAddressOf(), &stride, &offset);
+	}
+	void DX11VertexBuffer::Init()
+	{
+		D3D11_BUFFER_DESC bd = {};
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bd.CPUAccessFlags = 0u;
+		bd.MiscFlags = 0u;
+		bd.StructureByteStride = (UINT)Get().Stride();
+		bd.ByteWidth = (UINT)Get().BufferSize();
+
+		D3D11_SUBRESOURCE_DATA srd = {};
+		srd.pSysMem = Get().Data();
+
+		gfx.GetDevice()->CreateBuffer(&bd, &srd, &pBuffer) >> chk;
+
+		Get().GetDirty() = false;
 	}
 	DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
 	{
@@ -56,34 +79,16 @@ namespace tryn::gfx::dx11
 			fakePtr->Format = MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
 			fakePtr->InputSlot = (UINT)slot;
 			fakePtr->InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-			fakePtr->AlignedByteOffset = (UINT)vLayout.Elements[i].first.GetOffset();
+			fakePtr->AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 			fakePtr->InstanceDataStepRate = 0u;
 		}
 
 		return layout;
 	}
-	void DX11VertexBuffer::BindSlotted(int slot, int buffCount)
+
+	ID3D11Buffer* DX11VertexBuffer::GetPtr()
 	{
-		if (Get().GetDirty())
-		{
-			D3D11_BUFFER_DESC bd = {};
-			bd.Usage = D3D11_USAGE_DEFAULT;
-			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-			bd.CPUAccessFlags = 0u;
-			bd.MiscFlags = 0u;
-			bd.StructureByteStride = (UINT)Get().Stride();
-			bd.ByteWidth = (UINT)Get().BufferSize();
-
-			D3D11_SUBRESOURCE_DATA srd = {};
-			srd.pSysMem = Get().Data();
-
-			gfx.GetDevice()->CreateBuffer(&bd, &srd, &pBuffer) >> chk;
-
-			Get().GetDirty() = false;
-		}
-		const UINT stride = (UINT)Get().Stride();
-		const UINT offset = 0u;
-		gfx.GetContext()->IASetVertexBuffers((UINT)slot, (UINT)buffCount, pBuffer.GetAddressOf(), &stride, &offset);
+		return *pBuffer.GetAddressOf();
 	}
-}
 
+}

@@ -300,7 +300,7 @@ namespace tryn::gfx
 	class VertexBuffer : public IBindable
 	{
 	public:
-		VertexBuffer(VertexLayout layout_, size_t size)
+		VertexBuffer(VertexLayout layout_, size_t size = 0)
 		{
 			trynass_msg(layout_.GetElementCount() != 0, L"Attempted to create a VertexBuffer with an empty layout");
 			this->layout = std::move(layout_);

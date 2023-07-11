@@ -16,7 +16,7 @@ namespace tryn::ent
 		std::shared_ptr<gfx::VertexBuffer> GetBuffer();
 		const std::shared_ptr<const std::vector<int>>& GetIndices() const;
 		bool HasBindables() const;
-	private:
+	protected:
 		std::vector<std::unique_ptr<gfx::IBindable>> bindables;
 		std::shared_ptr<std::vector<int>> indices;
 		std::shared_ptr<gfx::VertexBuffer> buffer;

@@ -8,9 +8,13 @@ namespace tryn::gfx::dx11
 	{
 	public:
 		DX11PolyVBuffer(Graphics& gfx);
-		void Append(std::shared_ptr<IVertexBuffer>) override;
+		void Append(std::shared_ptr<VertexBuffer>) override;
 		void Bind() override;
 	private:
 		Graphics& gfx;
+		bool initialized = false;
+		std::vector<UINT> strides;
+		std::vector<UINT> offsets;
+		std::vector<ID3D11Buffer*> buffArray;
 	};
 }

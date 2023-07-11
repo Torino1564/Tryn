@@ -9,11 +9,10 @@ namespace tryn::gfx::dx11
 		gfx(gfx),
 		vs(vs)
 	{
-		for (auto& vertexBuffer : polyVB.slots)
-		{
-			auto dx11VertexBuffer = static_cast<DX11VertexBuffer*>(vertexBuffer.get());
-			slots.push_back(std::make_shared<DX11InputLayout>(gfx, *dx11VertexBuffer, vs));
-		}
+		
+	}
+	void DX11PolyInputLayout::Bind()
+	{
 	}
 }
 

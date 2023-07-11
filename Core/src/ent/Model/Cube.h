@@ -7,7 +7,7 @@ namespace tryn::ent
 	class Cube : public Model
 	{
 	public:
-		static std::shared_ptr<std::vector<glm::vec3>> GetCubeVertices()
+		static std::shared_ptr<gfx::VertexBuffer> GetVertexBuffer()
 		{
 			static const std::vector<glm::vec3> verticesBuf =
 			{
@@ -23,13 +23,16 @@ namespace tryn::ent
 
 			if (!vertInitialized)
 			{
-				vertices = std::make_shared<std::vector<glm::vec3>>(verticesBuf);
-				vertInitialized = true;
+				buffer = std::make_shared<gfx::VertexBuffer>(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Position3D));
+				for (auto& vertex : verticesBuf)
+				{
+					buffer->EmplaceBack(vertex);
+				}
 			}
 
-			return vertices;
+			return buffer;
 		}
-		static std::vector<int> GetCubeIndices()
+		static std::shared_ptr<std::vector<int>> GetCubeIndices()
 		{
 			static const std::vector<int> indicesBuf =
 			{
@@ -46,13 +49,15 @@ namespace tryn::ent
 				indices = std::make_shared<std::vector<int>>(indicesBuf);
 				indInitialized = true;
 			}
+			return indices;
 
 		}
 
 	private:
-		static std::shared_ptr<std::vector<glm::vec3>> vertices;
-		static std::shared_ptr<std::vector<int>> indices;
-		static bool vertInitialized;
-		static bool indInitialized;
+		static inline std::shared_ptr<std::vector<glm::vec3>> vertices;
+		static inline std::shared_ptr<std::vector<int>> indices;
+		static inline std::shared_ptr<gfx::VertexBuffer> buffer;
+		static inline bool vertInitialized;
+		static inline bool indInitialized;
 	};
 }

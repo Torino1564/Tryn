@@ -15,7 +15,7 @@ namespace tryn::gfx::dx11
 	class Graphics : public IGraphics
 	{
 	public:
-		Graphics( HWND hWnd, int width, int height );
+		Graphics(HWND hWnd, int width, int height);
 		~Graphics() override;
 		void BeginFrame() override;
 		void EndFrame() override;
@@ -28,12 +28,16 @@ namespace tryn::gfx::dx11
 		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();
 
 		// Resurce Creation
-		void CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer, IBindable** pBindable) override;
-		/*void CreateVertexShader() override;
-		void CreateIndexBuffer() override;
-		void CreatePixelShader() override;
-		void CreateConstantBuffer() override;
-		void CreatePrimitiveTopology() override;*/
+		void CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer, IVertexBuffer** ppBindable) override;
+		void CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers, IPolyVBuffer** ppBindable) override;
+		void CreateVertexShader(std::wstring path, IVertexShader** ppBindable) override;
+		void CreatePolyInputLayout(IPolyVBuffer& pVBuf, IVertexShader& vs, IPolyInputLayout** ppBindable) override;
+		void CreatePixelShader(std::wstring path, IPixelShader** ppBindable) override;
+		void CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs, IInputLayout** ppBindable) override;
+		void CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs, IInputLayout** ppBindable) override;
+		//void CreatePixelShader() override;
+		//void CreateConstantBuffer() override;
+		//void CreatePrimitiveTopology() override;
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> pDevice;

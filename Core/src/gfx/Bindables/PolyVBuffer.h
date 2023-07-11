@@ -15,7 +15,7 @@ namespace tryn::gfx
 		{
 			return slots.size();
 		}
-		virtual void Append(std::shared_ptr<IVertexBuffer>) = 0;
+		virtual void Append(std::shared_ptr<VertexBuffer>) = 0;
 
 		std::vector<std::shared_ptr<IVertexBuffer>> slots;
 	};

@@ -8,7 +8,7 @@
 
 namespace tryn::gfx
 {
-	class PolyInputLayout : public IBindable
+	class IPolyInputLayout : public IBindable
 	{
 	protected:
 		std::vector<std::shared_ptr<IInputLayout>> slots;
