@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/src/app/App.h>
 #include <Core/src/ent/Entity.h>
+#include <vector>
 
 using namespace tryn;
 

@@ -6,19 +6,35 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11InputLayout::DX11InputLayout(Graphics& gfx, DX11VertexBuffer& vb, DX11VertexShader& vs)
+	DX11InputLayout::DX11InputLayout(Graphics& gfx, IVertexBuffer& vb, IVertexShader& vs)
 		:
 		gfx(gfx)
 	{
+		trynass_msg(vb.GetAPI() == GraphicAPI::DX11, L"A DX11InputLayout was constructed with a non DX11 Vertex Buffer");
+		trynass_msg(vs.GetAPI() == GraphicAPI::DX11, L"A DX11InputLayout was constructed with a non DX11 Vertex Shader");
+
+		auto& dx11vb = static_cast<DX11VertexBuffer&>(vb);
+		auto& dx11vs = static_cast<DX11VertexShader&>(vs);
+
+		type = GraphicAPI::DX11;
+
 		auto layoutBuf = vb.GetLayoutFromVB();
 		auto layout = reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(layoutBuf.data());
 
-		gfx.GetDevice()->CreateInputLayout(layout, (UINT)vb.ConstGet().GetLayout().GetElementCount(), vs.GetBlob()->GetBufferPointer(), vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
+		gfx.GetDevice()->CreateInputLayout(layout, (UINT)vb.ConstGet().GetLayout().GetElementCount(), dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
 	}
-	DX11InputLayout::DX11InputLayout(Graphics& gfx, DX11PolyVBuffer& pvb, DX11VertexShader& vs)
+	DX11InputLayout::DX11InputLayout(Graphics& gfx, IPolyVBuffer& pvb, IVertexShader& vs)
 		:
 		gfx(gfx)
 	{
+		trynass_msg(pvb.GetAPI() == GraphicAPI::DX11, L"A DX11InputLayout was constructed with a non DX11 Poly Vertex Buffer");
+		trynass_msg(vs.GetAPI() == GraphicAPI::DX11, L"A DX11InputLayout was constructed with a non DX11 Vertex Shader");
+
+		auto& dx11vb = static_cast<DX11PolyVBuffer&>(pvb);
+		auto& dx11vs = static_cast<DX11VertexShader&>(vs);
+
+		type = GraphicAPI::DX11;
+
 		size_t totalElCount = 0;
 		int slot = 0;
 		for (auto& buf : pvb.slots)
@@ -28,7 +44,7 @@ namespace tryn::gfx::dx11
 			buffer.push_back(*layout);
 			totalElCount += buf->Get().GetLayout().GetElementCount();
 		}
-		gfx.GetDevice()->CreateInputLayout(buffer.data(), (UINT)totalElCount, vs.GetBlob()->GetBufferPointer(), vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
+		gfx.GetDevice()->CreateInputLayout(buffer.data(), (UINT)totalElCount, dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
 	}
 	void DX11InputLayout::Bind()
 	{

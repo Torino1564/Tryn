@@ -8,7 +8,6 @@
 #include <Core/src/gfx/Gfx.h>
 #include <Core/src/utl/Exception.h>
 #include <Core/src/utl/Timer.h>
-#include <Core/src/gfx/dx11/Bindables/DX11BindableBase.h>
 #include <Core/src/ent/Model/Cube.h>
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/ent/Entity.h>

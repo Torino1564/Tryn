@@ -11,7 +11,6 @@
 #include <Core/src/gfx/dx11/Bindables/DX11ConstantBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PrimitiveTopology.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PolyVBuffer.h>
-#include <Core/src/gfx/dx11/Bindables/DX11PolyInputLayout.h>
 #include <core/src/ent/Model/Model.h>
 #include <Core/src/ent/Model/Cube.h>
 
@@ -134,72 +133,54 @@ namespace tryn::gfx::dx11
 		return pDevice;
 	}
 
-	void Graphics::CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer, IVertexBuffer** ppBindable)
+	std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer)
 	{
-		DX11VertexBuffer* vertexBuffer = new DX11VertexBuffer(*this, cpuBuffer);
-
-		*ppBindable = vertexBuffer;
+		return std::make_shared<DX11VertexBuffer>(*this, cpuBuffer);
 	}
 
-	void Graphics::CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers, IPolyVBuffer** ppBindable)
+	std::shared_ptr<IPolyVBuffer> Graphics::CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers)
 	{
-		DX11PolyVBuffer* polyVBuffer = new DX11PolyVBuffer(*this);
-
+		auto pPVB =  std::make_shared<DX11PolyVBuffer>(*this);
 		for (auto& buffer : buffers)
 		{
-			polyVBuffer->Append(buffer);
+			pPVB->Append(buffer);
 		}
 
-		*ppBindable = polyVBuffer;
+		return pPVB;
 	}
 
-	void Graphics::CreateIndexBuffer( std::shared_ptr<std::vector<int>> indices, IIndexBuffer** ppBindable)
+	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::shared_ptr<std::vector<int>> indices)
 	{
-		DX11IndexBuffer* pIndexBuffer = new DX11IndexBuffer(*this, indices);
-
-		*ppBindable = pIndexBuffer;
+		return std::make_shared<DX11IndexBuffer>(*this, indices);
 	}
 
-	void Graphics::CreateVertexShader(std::wstring path, IVertexShader** ppBindable)
+	std::shared_ptr<IVertexShader> Graphics::CreateVertexShader(std::string path)
 	{
-		DX11VertexShader* vertexShader = new DX11VertexShader(*this, path);
-
-		*ppBindable = vertexShader;
+		return std::make_shared<DX11VertexShader>(*this, path);
 	}
-	void Graphics::CreatePolyInputLayout(IPolyVBuffer& pVBuf, IVertexShader& vs, IPolyInputLayout** ppBindable)
-	{
-		DX11PolyInputLayout* pPolyInputLayout = new DX11PolyInputLayout(*this, static_cast<DX11PolyVBuffer&>(pVBuf), static_cast<DX11VertexShader&>(vs));
 
-		*ppBindable = pPolyInputLayout;
+	std::shared_ptr<IPixelShader> Graphics::CreatePixelShader(std::string path)
+	{
+		return std::make_shared<DX11PixelShader>(*this, path);
 	}
-	void Graphics::CreatePixelShader(std::wstring path, IPixelShader** ppBindable)
-	{
-		DX11PixelShader* pixelShader = new DX11PixelShader(*this, path);
 
-		*ppBindable = pixelShader;
+	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs)
+	{
+		return std::make_shared<DX11InputLayout>(*this, vb, vs);
 	}
-	void Graphics::CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs, IInputLayout** ppBindable)
-	{
-		DX11InputLayout* inputLayout = new DX11InputLayout(*this, static_cast<DX11VertexBuffer&>(vb), static_cast<DX11VertexShader&>(vs));
 
-		*ppBindable = inputLayout;
+	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(IPolyVBuffer& pvb, IVertexShader& vs)
+	{
+		return std::make_shared<DX11InputLayout>(*this, pvb, vs);
 	}
-	void Graphics::CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs, IInputLayout** ppBindable)
-	{
-		DX11InputLayout* pInputLayout = new DX11InputLayout(*this, static_cast<DX11PolyVBuffer&>(vb), static_cast<DX11VertexShader&>(vs));
 
-		*ppBindable = pInputLayout;
+	std::shared_ptr<IPrimitiveTopology> Graphics::CreatePrimitiveTopology()
+	{
+		return std::make_shared<DX11PrimitiveTopology>(*this);
 	}
-	void Graphics::CreatePrimitiveTopology(IPrimitiveTopology** ppBindable)
-	{
-		DX11PrimitiveTopology* pPrimitiveTopology = new DX11PrimitiveTopology(*this);
 
-		*ppBindable = pPrimitiveTopology;
-	}
-	void Graphics::CreateConstantBuffer(ConstantBufferLayout&& layout, IConstantBuffer** ppBindable)
+	std::shared_ptr<IConstantBuffer> Graphics::CreateConstantBuffer(ConstantBufferLayout&& layout)
 	{
-		DX11ConstantBuffer* pConstantBuffer = new DX11ConstantBuffer(*this, std::move(layout));
-
-		*ppBindable = pConstantBuffer;
+		return std::make_shared<DX11ConstantBuffer>(*this, std::move(layout));
 	}
 }

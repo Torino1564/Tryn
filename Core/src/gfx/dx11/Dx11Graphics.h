@@ -28,16 +28,15 @@ namespace tryn::gfx::dx11
 		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();
 
 		// Resurce Creation
-		void CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer, IVertexBuffer** ppBindable) override;
-		void CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers, IPolyVBuffer** ppBindable) override;
-		void CreateIndexBuffer(std::shared_ptr<std::vector<int>> indices, IIndexBuffer** ppBindable) override;
-		void CreateVertexShader(std::wstring path, IVertexShader** ppBindable) override;
-		void CreatePolyInputLayout(IPolyVBuffer& pVBuf, IVertexShader& vs, IPolyInputLayout** ppBindable) override;
-		void CreatePixelShader(std::wstring path, IPixelShader** ppBindable) override;
-		void CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs, IInputLayout** ppBindable) override;
-		void CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs, IInputLayout** ppBindable) override;
-		void CreatePrimitiveTopology(IPrimitiveTopology** ppBindable) override;
-		void CreateConstantBuffer(ConstantBufferLayout&&, IConstantBuffer** ppBindable) override;
+		std::shared_ptr<IVertexBuffer>			CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer) override;
+		std::shared_ptr<IPolyVBuffer>			CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers) override;
+		std::shared_ptr<IIndexBuffer>			CreateIndexBuffer(std::shared_ptr<std::vector<int>> indices) override;
+		std::shared_ptr<IVertexShader>			CreateVertexShader(std::string path) override;
+		std::shared_ptr<IPixelShader>			CreatePixelShader(std::string path) override;
+		std::shared_ptr<IInputLayout>			CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) override;
+		std::shared_ptr<IInputLayout>			CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) override;
+		std::shared_ptr<IPrimitiveTopology>		CreatePrimitiveTopology() override;
+		std::shared_ptr<IConstantBuffer>		CreateConstantBuffer(ConstantBufferLayout&&) override;
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> pDevice;

@@ -13,13 +13,13 @@
   <ItemGroup>
     <ClCompile Include="src\app\App.cpp" />
     <ClCompile Include="src\ent\Model\Cube.cpp" />
+    <ClCompile Include="src\gfx\BindablePool.cpp" />
     <ClCompile Include="src\gfx\Bindables\ConstantBuffer.cpp" />
     <ClCompile Include="src\gfx\Bindables\PrimitiveTopology.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11ConstantBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11IndexBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11InputLayout.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PixelShader.cpp" />
-    <ClCompile Include="src\gfx\dx11\Bindables\DX11PolyInputLayout.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexBuffer.cpp" />
@@ -57,6 +57,7 @@
     <ClInclude Include="src\app\App.h" />
     <ClInclude Include="src\ccr\GenericTaskQueue.h" />
     <ClInclude Include="src\ent\Model\Cube.h" />
+    <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
     <ClInclude Include="src\gfx\Bindables\ConstantBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\IndexBuffer.h" />
@@ -64,14 +65,11 @@
     <ClInclude Include="src\gfx\Bindables\PixelShader.h" />
     <ClInclude Include="src\gfx\Bindables\PolyVBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\PoliVertexBuffer.h" />
-    <ClInclude Include="src\gfx\Bindables\PolyInputLayout.h" />
     <ClInclude Include="src\gfx\Bindables\VertexBuffer.h" />
-    <ClInclude Include="src\gfx\dx11\Bindables\DX11BindableBase.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11ConstantBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11IndexBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11InputLayout.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PixelShader.h" />
-    <ClInclude Include="src\gfx\dx11\Bindables\DX11PolyInputLayout.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11VertexShader.h" />

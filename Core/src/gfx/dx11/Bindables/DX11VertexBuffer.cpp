@@ -9,6 +9,7 @@ namespace tryn::gfx::dx11
 		gfx(gfx)
 	{
 		pCPUBuffer = cpuBuffer;
+		type = GraphicAPI::DX11;
 	}
 	void DX11VertexBuffer::Bind()
 	{

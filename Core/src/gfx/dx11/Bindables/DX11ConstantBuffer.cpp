@@ -8,7 +8,7 @@ namespace tryn::gfx::dx11
 		gfx(gfx)
 	{
 		trynass_msg(cbl.IsSolid(), L"ConstantBuffer cannot be created with a non solidified layout!");
-
+		type = GraphicAPI::DX11;
 		layout = std::move(cbl);
 		buffer.resize(layout.Size());
 

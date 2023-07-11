@@ -11,7 +11,7 @@ namespace tryn::gfx::dx11
 	{
 		indices = indices_;
 		count = (int)indices->size();
-
+		type = GraphicAPI::DX11;
 		D3D11_BUFFER_DESC ibd = {};
 		ibd.Usage = D3D11_USAGE_DEFAULT;
 		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;

@@ -135,7 +135,7 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\dx11\Bindables\DX11PolyInputLayout.cpp">
+    <ClCompile Include="src\gfx\BindablePool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1160,9 +1160,6 @@
     <ClInclude Include="src\gfx\Bindables\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\dx11\Bindables\DX11BindableBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\app\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1178,10 +1175,7 @@
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\Bindables\PolyInputLayout.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gfx\dx11\Bindables\DX11PolyInputLayout.h">
+    <ClInclude Include="src\gfx\BindablePool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

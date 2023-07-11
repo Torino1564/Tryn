@@ -8,7 +8,9 @@ namespace tryn::gfx::dx11
 	DX11PolyVBuffer::DX11PolyVBuffer(Graphics& gfx)
 		:
 		gfx(gfx)
-	{}
+	{
+		type = GraphicAPI::DX11;
+	}
 
 	void DX11PolyVBuffer::Append(std::shared_ptr<VertexBuffer> pVB)
 	{

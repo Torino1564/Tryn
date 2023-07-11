@@ -1,14 +1,13 @@
 #pragma once
 #include <Core/src/gfx/Bindables/VertexShader.h>
 #include <core/src/gfx/dx11/Dx11Graphics.h>
-#include <string>
 
 namespace tryn::gfx::dx11
 {
 	class DX11VertexShader : public IVertexShader
 	{
 	public:
-		DX11VertexShader(Graphics& gfx , std::wstring path);
+		DX11VertexShader(Graphics& gfx , std::string& path);
 		void Bind() override;
 		const Microsoft::WRL::ComPtr<ID3DBlob>& GetBlob() const;
 	private:

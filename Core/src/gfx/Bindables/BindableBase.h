@@ -7,5 +7,4 @@
 #include "PixelShader.h"
 #include "PrimitiveTopology.h"
 #include "InputLayout.h"
-#include "PolyInputLayout.h"
 #include "PolyVBuffer.h"
