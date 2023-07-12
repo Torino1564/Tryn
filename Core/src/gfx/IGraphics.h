@@ -4,6 +4,7 @@
 #include <typeinfo>
 #include <Core/src/utl/Assert.h>
 #include <Core/src/spa/Dimensions.h>
+#include <Core/src/utl/String.h>
 #include <vector>
 #include <concepts>
 #include <memory>
@@ -13,6 +14,9 @@
 		X( DX12 ) \
 		X( Vulkan ) \
 		X( Unknown )
+
+#define GENERATE_ENUM(ENUM) ENUM,
+#define GENERATE_STRING(STRING) #STRING,
 
 namespace tryn::ent
 {
@@ -50,7 +54,7 @@ namespace tryn::gfx
 			std::optional<int> height;
 			HWND hWnd;
 		};
-
+		
 		virtual ~IGraphics() {}
 		virtual void BeginFrame() = 0;
 		virtual void EndFrame() = 0;
@@ -68,10 +72,18 @@ namespace tryn::gfx
 			return *ptr;
 		}
 		virtual GraphicAPI GetType() = 0;
-
+		static const std::vector<std::string>& GetAPIArray()
+		{
+			static std::vector<std::string> GRAPHIC_APISTR = {
+	#define X(el) GENERATE_STRING(el)
+			GRAPHIC_APIS
+	#undef X
+			};
+			return GRAPHIC_APISTR;
+		}
 		// Resurce Creation
 		virtual std::shared_ptr<IVertexBuffer>		CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer) = 0;
-		virtual std::shared_ptr<IIndexBuffer>		CreateIndexBuffer(std::shared_ptr<std::vector<int>> indices) = 0;
+		virtual std::shared_ptr<IIndexBuffer>		CreateIndexBuffer(std::string tag, std::shared_ptr<std::vector<int>> indices) = 0;
 		virtual std::shared_ptr<IPolyVBuffer>		CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers) = 0;
 		virtual std::shared_ptr<IVertexShader>		CreateVertexShader(std::string path) = 0;
 		virtual std::shared_ptr<IPixelShader>		CreatePixelShader(std::string path) = 0;

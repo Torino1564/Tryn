@@ -16,7 +16,7 @@ namespace tryn::gfx::dx11
 	class DX11IndexBuffer : public IIndexBuffer
 	{
 	public:
-		DX11IndexBuffer( Graphics& gfx, std::shared_ptr<const std::vector<int>> indices);
+		DX11IndexBuffer(Graphics& gfx, std::string tag, std::shared_ptr<const std::vector<int>> indices);
 		void Bind( ) override;
 		const size_t Size() const;
 

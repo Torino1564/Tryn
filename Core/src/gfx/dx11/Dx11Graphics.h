@@ -30,7 +30,7 @@ namespace tryn::gfx::dx11
 		// Resurce Creation
 		std::shared_ptr<IVertexBuffer>			CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer) override;
 		std::shared_ptr<IPolyVBuffer>			CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers) override;
-		std::shared_ptr<IIndexBuffer>			CreateIndexBuffer(std::shared_ptr<std::vector<int>> indices) override;
+		std::shared_ptr<IIndexBuffer>			CreateIndexBuffer(std::string tag, std::shared_ptr<std::vector<int>> indices) override;
 		std::shared_ptr<IVertexShader>			CreateVertexShader(std::string path) override;
 		std::shared_ptr<IPixelShader>			CreatePixelShader(std::string path) override;
 		std::shared_ptr<IInputLayout>			CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) override;

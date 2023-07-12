@@ -10,15 +10,20 @@ namespace tryn::ent
 	class Model
 	{
 	public:
-		Model(std::vector<glm::vec3> vertices, std::vector<int> indices);
+		Model(std::vector<glm::vec3> vertices, std::vector<int> indices , std::string tag);
 		void MakeBindables( gfx::IGraphics& gfx );
 		std::vector<std::shared_ptr<gfx::IBindable>>& GetBindables();
 		std::shared_ptr<gfx::VertexBuffer> GetBuffer();
 		const std::shared_ptr<const std::vector<int>>& GetIndices() const;
 		bool HasBindables() const;
+		const std::string GetTag() const
+		{
+			return tag;
+		}
 	protected:
 		std::vector<std::shared_ptr<gfx::IBindable>> bindables;
 		std::shared_ptr<std::vector<int>> indices;
 		std::shared_ptr<gfx::VertexBuffer> buffer;
+		std::string tag;
 	};
 }

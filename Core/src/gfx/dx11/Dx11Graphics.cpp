@@ -122,7 +122,7 @@ namespace tryn::gfx::dx11
 		auto& bindables = model.GetBindables();
 
 		bindables.push_back(std::make_unique<DX11VertexBuffer>(*this, model.GetBuffer()));
-		bindables.push_back(std::make_unique<DX11IndexBuffer>(*this, model.GetIndices()));
+		bindables.push_back(std::make_unique<DX11IndexBuffer>(*this, model.GetTag(), model.GetIndices()));
 	}
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Graphics::GetContext()
 	{
@@ -149,9 +149,9 @@ namespace tryn::gfx::dx11
 		return pPVB;
 	}
 
-	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::shared_ptr<std::vector<int>> indices)
+	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::string tag, std::shared_ptr<std::vector<int>> indices)
 	{
-		return std::make_shared<DX11IndexBuffer>(*this, indices);
+		return std::make_shared<DX11IndexBuffer>(*this, tag, indices);
 	}
 
 	std::shared_ptr<IVertexShader> Graphics::CreateVertexShader(std::string path)

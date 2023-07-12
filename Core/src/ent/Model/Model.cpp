@@ -2,8 +2,9 @@
 
 namespace tryn::ent
 {
-	Model::Model(std::vector<glm::vec3> vertices, std::vector<int> indices)
+	Model::Model(std::vector<glm::vec3> vertices, std::vector<int> indices , std::string tag)
 	{
+		this->tag = tag;
 		gfx::VertexLayout layout;
 
 		layout.AppendElement(gfx::VertexLayout::VertexElement::Position3D);

@@ -5,10 +5,12 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11IndexBuffer::DX11IndexBuffer(Graphics& gfx, std::shared_ptr<const std::vector<int>> indices_)
+	DX11IndexBuffer::DX11IndexBuffer(Graphics& gfx, std::string tag, std::shared_ptr<const std::vector<int>> indices_)
 		:
 		gfx(gfx)
 	{
+		this->tag = tag;
+
 		indices = indices_;
 		count = (int)indices->size();
 		type = GraphicAPI::DX11;

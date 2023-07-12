@@ -24,19 +24,20 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 				0,1,4, 1,5,4
 	};
 
-	ent::Model testModel({},  indices);
+	ent::Model testModel({},  indices,"cube");
 	testEntity.model = std::make_shared<ent::Model>(testModel);
 
 	// Vertex Shader
 	std::string pathVS = "VertexShader.cso";
-	auto pVertexShader = Gfx().CreateVertexShader(pathVS);
+	auto pVertexShader = gfx::BindablePool::Resolve<gfx::IVertexShader>(Gfx(),pathVS);
 	testEntity.bindables.push_back(pVertexShader);
 
 	// Pixel Shader
 	testEntity.bindables.push_back(Gfx().CreatePixelShader("PixelShader.cso"));
 
 	// Index Buffer
-	testEntity.bindables.push_back(Gfx().CreateIndexBuffer(std::make_shared<std::vector<int>>(indices)));
+	testEntity.bindables.push_back(Gfx().CreateIndexBuffer("cubee",std::make_shared<std::vector<int>>(indices)));
+	auto dummyIB = gfx::BindablePool::Resolve<gfx::IIndexBuffer>(Gfx(), "cube", std::make_shared<std::vector<int>>(indices));
 
 	// PolyVertexBuffer
 	auto posCPUBuffer = ent::Cube::GetVertexBuffer();
@@ -58,14 +59,6 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	};
 	auto pPolyVB = Gfx().CreatePolyVertexBuffer(vertexBufferArr);
 	testEntity.bindables.push_back(pPolyVB);
-
-	auto dummyVB = gfx::BindablePool::ResolveVertexBuffer(Gfx(), posCPUBuffer);
-
-
-	auto dummyVB2 = gfx::BindablePool::ResolveVertexBuffer(Gfx(), posCPUBuffer);
-	auto dummyVB3 = gfx::BindablePool::ResolveVertexBuffer(Gfx(), posCPUBuffer);
-	auto dummyVB4 = gfx::BindablePool::ResolveVertexBuffer(Gfx(), posCPUBuffer);
-
 
 	auto dummyVB5 = gfx::BindablePool::Resolve<gfx::IVertexBuffer>(Gfx(),posCPUBuffer);
 
