@@ -6,7 +6,7 @@ namespace tryn::gfx
 	class IIndexBuffer : public IBindable
 	{
 	public:
-		static std::string GenerateID(IGraphics& gfx, std::string tag , std::shared_ptr<const std::vector<int>> indices)
+		static std::string GenerateID(IGraphics& gfx, std::shared_ptr<const std::vector<int>> indices, std::string tag = "?")
 		{
 			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
 			std::string UID(typeStr);

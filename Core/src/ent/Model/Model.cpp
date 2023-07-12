@@ -19,7 +19,8 @@ namespace tryn::ent
 	}
 	void Model::MakeBindables(gfx::IGraphics& gfx)
 	{
-		gfx.MakeBindablesForModel(*this);
+		// TODO
+		//gfx.MakeBindablesForModel(*this);
 	}
 	std::vector<std::shared_ptr<gfx::IBindable>>& Model::GetBindables()
 	{

@@ -12,31 +12,43 @@ namespace tryn::gfx
 	public:
 		virtual std::vector<char> GetLayoutFromVB() const = 0;
 		virtual std::vector<char> GetSlottedLayoutFromVB( int slot ) const = 0;
-		static std::string GenerateID(IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer)
+		static std::string GenerateID(IGraphics& gfx, VertexBuffer& cpuBuffer , std::string tag = "?")
 		{
-			std::string UID = toString(gfx.GetType()) + "#VertexBuffer";
-			for (auto& element : cpuBuffer->GetLayout().Elements)
+			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
+			std::string UID(typeStr);
+			UID += "#VertexBuffer#";
+			UID += std::to_string(cpuBuffer.Size());
+			UID += "#";
+			for (auto& element : cpuBuffer.GetLayout().Elements)
 			{
 				UID += element.first.GetName();
 				UID += element.second;
 			};
+			UID.append("#");
+			UID.append(tag);
+
 			return UID;
 		}
 		virtual void Init() = 0;
 		virtual ~IVertexBuffer() {}
 		VertexBuffer& Get()
 		{
-			return *pCPUBuffer;
+			return *CPUBuffer;
 		}
 		const VertexBuffer& ConstGet() const
 		{
-			return *pCPUBuffer.get();
+			return *CPUBuffer;
 		}
 		Vertex operator[](int i)
 		{
 			return Get()[i];
 		}
+		const std::string& GetTag() const
+		{
+			return tag;
+		}
 	protected:
-		std::shared_ptr<VertexBuffer> pCPUBuffer;
+		std::unique_ptr<VertexBuffer> CPUBuffer;
+		std::string tag;
 	};
 }

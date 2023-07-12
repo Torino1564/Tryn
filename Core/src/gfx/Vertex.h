@@ -2,6 +2,7 @@
 #include <Core/third/glm/glm.hpp>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <unordered_map>
 #include <typeinfo>
 #include <utility>

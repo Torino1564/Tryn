@@ -117,13 +117,6 @@ namespace tryn::gfx::dx11
 	{
 		return GraphicAPI::DX11;
 	}
-	void Graphics::MakeBindablesForModel(ent::Model& model)
-	{
-		auto& bindables = model.GetBindables();
-
-		bindables.push_back(std::make_unique<DX11VertexBuffer>(*this, model.GetBuffer()));
-		bindables.push_back(std::make_unique<DX11IndexBuffer>(*this, model.GetTag(), model.GetIndices()));
-	}
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Graphics::GetContext()
 	{
 		return pContext;
@@ -133,25 +126,19 @@ namespace tryn::gfx::dx11
 		return pDevice;
 	}
 
-	std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer)
+	std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(VertexBuffer cpuBuffer, std::string tag)
 	{
-		return std::make_shared<DX11VertexBuffer>(*this, cpuBuffer);
+		return std::make_shared<DX11VertexBuffer>(*this, std::move(cpuBuffer), tag);
 	}
 
-	std::shared_ptr<IPolyVBuffer> Graphics::CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers)
+	std::shared_ptr<IPolyVBuffer> Graphics::CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, VertexBuffer>, std::shared_ptr<IVertexBuffer>>> CpuVBs, std::string tag)
 	{
-		auto pPVB =  std::make_shared<DX11PolyVBuffer>(*this);
-		for (auto& buffer : buffers)
-		{
-			pPVB->Append(buffer);
-		}
-
-		return pPVB;
+		return std::make_shared<DX11PolyVBuffer>(*this, std::move(CpuVBs), tag);
 	}
 
-	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::string tag, std::shared_ptr<std::vector<int>> indices)
+	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::shared_ptr<std::vector<int>> indices, std::string tag)
 	{
-		return std::make_shared<DX11IndexBuffer>(*this, tag, indices);
+		return std::make_shared<DX11IndexBuffer>(*this, indices, tag);
 	}
 
 	std::shared_ptr<IVertexShader> Graphics::CreateVertexShader(std::string path)

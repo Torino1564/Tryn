@@ -7,8 +7,9 @@ namespace tryn::gfx::dx11
 	class DX11PolyVBuffer : public IPolyVBuffer
 	{
 	public:
-		DX11PolyVBuffer(Graphics& gfx);
-		void Append(std::shared_ptr<VertexBuffer>) override;
+		DX11PolyVBuffer(Graphics& gfx , std::vector<std::variant<std::pair<std::string,VertexBuffer>,std::shared_ptr<IVertexBuffer>>>, std::string tag = "?");
+		void Append(std::string, VertexBuffer&&) override;
+		void Append(std::shared_ptr<IVertexBuffer>) override;
 		void Bind() override;
 	private:
 		Graphics& gfx;

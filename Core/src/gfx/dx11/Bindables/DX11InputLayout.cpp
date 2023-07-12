@@ -18,10 +18,9 @@ namespace tryn::gfx::dx11
 
 		type = GraphicAPI::DX11;
 
-		auto layoutBuf = vb.GetLayoutFromVB();
-		auto layout = reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(layoutBuf.data());
+		buffer.push_back(*reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(vb.GetLayoutFromVB().data()));
 
-		gfx.GetDevice()->CreateInputLayout(layout, (UINT)vb.ConstGet().GetLayout().GetElementCount(), dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
+		gfx.GetDevice()->CreateInputLayout(buffer.data(), (UINT)vb.ConstGet().GetLayout().GetElementCount(), dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
 	}
 	DX11InputLayout::DX11InputLayout(Graphics& gfx, IPolyVBuffer& pvb, IVertexShader& vs)
 		:
@@ -39,9 +38,7 @@ namespace tryn::gfx::dx11
 		int slot = 0;
 		for (auto& buf : pvb.slots)
 		{
-			auto layoutBuf = buf->GetSlottedLayoutFromVB(slot++);
-			auto layout = reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(layoutBuf.data());
-			buffer.push_back(*layout);
+			buffer.push_back(*reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(buf->GetSlottedLayoutFromVB(slot++).data()));
 			totalElCount += buf->Get().GetLayout().GetElementCount();
 		}
 		gfx.GetDevice()->CreateInputLayout(buffer.data(), (UINT)totalElCount, dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;

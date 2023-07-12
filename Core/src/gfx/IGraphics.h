@@ -8,6 +8,7 @@
 #include <vector>
 #include <concepts>
 #include <memory>
+#include <variant>
 
 #define GRAPHIC_APIS \
 		X( DX11 ) \
@@ -54,14 +55,13 @@ namespace tryn::gfx
 			std::optional<int> height;
 			HWND hWnd;
 		};
-		
+
 		virtual ~IGraphics() {}
 		virtual void BeginFrame() = 0;
 		virtual void EndFrame() = 0;
 		virtual void ClearBuffer(float r, float g, float b) = 0;
 		virtual void DrawTriangle() = 0;
 		virtual void DrawIndexed(int count) = 0;
-		virtual void MakeBindablesForModel(ent::Model&) = 0;
 		template<typename T>
 		auto& QueryInterface()
 		{
@@ -82,15 +82,15 @@ namespace tryn::gfx
 			return GRAPHIC_APISTR;
 		}
 		// Resurce Creation
-		virtual std::shared_ptr<IVertexBuffer>		CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer) = 0;
-		virtual std::shared_ptr<IIndexBuffer>		CreateIndexBuffer(std::string tag, std::shared_ptr<std::vector<int>> indices) = 0;
-		virtual std::shared_ptr<IPolyVBuffer>		CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers) = 0;
+		virtual std::shared_ptr<IVertexBuffer>		CreateVertexBuffer(VertexBuffer, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IIndexBuffer>		CreateIndexBuffer(std::shared_ptr<std::vector<int>> indices, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IPolyVBuffer>		CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, VertexBuffer>, std::shared_ptr<IVertexBuffer>>>, std::string tag = "?") = 0;
 		virtual std::shared_ptr<IVertexShader>		CreateVertexShader(std::string path) = 0;
 		virtual std::shared_ptr<IPixelShader>		CreatePixelShader(std::string path) = 0;
 		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) = 0;
 		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) = 0;
-		virtual std::shared_ptr<IPrimitiveTopology> CreatePrimitiveTopology( ) = 0;
-		virtual std::shared_ptr<IConstantBuffer>	CreateConstantBuffer( ConstantBufferLayout&& ) = 0;
+		virtual std::shared_ptr<IPrimitiveTopology> CreatePrimitiveTopology() = 0;
+		virtual std::shared_ptr<IConstantBuffer>	CreateConstantBuffer(ConstantBufferLayout&&) = 0;
 
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
 	};

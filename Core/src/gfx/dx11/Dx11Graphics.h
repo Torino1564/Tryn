@@ -23,14 +23,13 @@ namespace tryn::gfx::dx11
 		void DrawTriangle() override;
 		void DrawIndexed(int count) override;
 		GraphicAPI GetType() override;
-		void MakeBindablesForModel(ent::Model&) override;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetContext();
 		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();
 
 		// Resurce Creation
-		std::shared_ptr<IVertexBuffer>			CreateVertexBuffer(std::shared_ptr<VertexBuffer> cpuBuffer) override;
-		std::shared_ptr<IPolyVBuffer>			CreatePolyVertexBuffer(std::vector<std::shared_ptr<VertexBuffer>>& buffers) override;
-		std::shared_ptr<IIndexBuffer>			CreateIndexBuffer(std::string tag, std::shared_ptr<std::vector<int>> indices) override;
+		std::shared_ptr<IVertexBuffer>			CreateVertexBuffer( VertexBuffer, std::string) override;
+		std::shared_ptr<IPolyVBuffer>			CreatePolyVertexBuffer( std::vector<std::variant<std::pair<std::string, VertexBuffer>, std::shared_ptr<IVertexBuffer>>> CpuVBs, std::string) override;
+		std::shared_ptr<IIndexBuffer>			CreateIndexBuffer( std::shared_ptr<std::vector<int>> indices, std::string) override;
 		std::shared_ptr<IVertexShader>			CreateVertexShader(std::string path) override;
 		std::shared_ptr<IPixelShader>			CreatePixelShader(std::string path) override;
 		std::shared_ptr<IInputLayout>			CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) override;
