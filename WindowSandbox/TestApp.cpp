@@ -89,9 +89,11 @@ void TestApp::DoFrame()
 {
 	static float angle = 0;
 	
+	static bool initialized = false;
 
 	for (auto& entity : entities)
 	{
+
 		glm::mat4 viewProjection2;
 		{
 			const auto eyePos = glm::vec3(0, 0, -6);
@@ -106,7 +108,8 @@ void TestApp::DoFrame()
 			glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0, 0)) *
 			glm::rotate(glm::mat4(0.5f), 2.5f * angle, glm::vec3(0, 1.0f, 0)));
 
+		angle += 0.0001f;
+
 		entity.Draw(Gfx());
 	}
-	angle += 0.01;
 }

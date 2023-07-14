@@ -117,6 +117,83 @@
     <ClInclude Include="src\win\Utilities.h" />
     <ClInclude Include="src\win\Window.h" />
     <ClInclude Include="src\win\WindowClass.h" />
+    <ClInclude Include="third\assimp\aabb.h" />
+    <ClInclude Include="third\assimp\ai_assert.h" />
+    <ClInclude Include="third\assimp\anim.h" />
+    <ClInclude Include="third\assimp\AssertHandler.h" />
+    <ClInclude Include="third\assimp\Base64.hpp" />
+    <ClInclude Include="third\assimp\BaseImporter.h" />
+    <ClInclude Include="third\assimp\Bitmap.h" />
+    <ClInclude Include="third\assimp\BlobIOSystem.h" />
+    <ClInclude Include="third\assimp\ByteSwapper.h" />
+    <ClInclude Include="third\assimp\camera.h" />
+    <ClInclude Include="third\assimp\cexport.h" />
+    <ClInclude Include="third\assimp\cfileio.h" />
+    <ClInclude Include="third\assimp\cimport.h" />
+    <ClInclude Include="third\assimp\ColladaMetaData.h" />
+    <ClInclude Include="third\assimp\color4.h" />
+    <ClInclude Include="third\assimp\commonMetaData.h" />
+    <ClInclude Include="third\assimp\CreateAnimMesh.h" />
+    <ClInclude Include="third\assimp\DefaultIOStream.h" />
+    <ClInclude Include="third\assimp\DefaultIOSystem.h" />
+    <ClInclude Include="third\assimp\DefaultLogger.hpp" />
+    <ClInclude Include="third\assimp\defs.h" />
+    <ClInclude Include="third\assimp\Exceptional.h" />
+    <ClInclude Include="third\assimp\Exporter.hpp" />
+    <ClInclude Include="third\assimp\fast_atof.h" />
+    <ClInclude Include="third\assimp\GenericProperty.h" />
+    <ClInclude Include="third\assimp\GltfMaterial.h" />
+    <ClInclude Include="third\assimp\Hash.h" />
+    <ClInclude Include="third\assimp\Importer.hpp" />
+    <ClInclude Include="third\assimp\importerdesc.h" />
+    <ClInclude Include="third\assimp\IOStream.hpp" />
+    <ClInclude Include="third\assimp\IOStreamBuffer.h" />
+    <ClInclude Include="third\assimp\IOSystem.hpp" />
+    <ClInclude Include="third\assimp\light.h" />
+    <ClInclude Include="third\assimp\LineSplitter.h" />
+    <ClInclude Include="third\assimp\LogAux.h" />
+    <ClInclude Include="third\assimp\Logger.hpp" />
+    <ClInclude Include="third\assimp\LogStream.hpp" />
+    <ClInclude Include="third\assimp\material.h" />
+    <ClInclude Include="third\assimp\MathFunctions.h" />
+    <ClInclude Include="third\assimp\matrix3x3.h" />
+    <ClInclude Include="third\assimp\matrix4x4.h" />
+    <ClInclude Include="third\assimp\MemoryIOWrapper.h" />
+    <ClInclude Include="third\assimp\mesh.h" />
+    <ClInclude Include="third\assimp\metadata.h" />
+    <ClInclude Include="third\assimp\NullLogger.hpp" />
+    <ClInclude Include="third\assimp\ObjMaterial.h" />
+    <ClInclude Include="third\assimp\ParsingUtils.h" />
+    <ClInclude Include="third\assimp\pbrmaterial.h" />
+    <ClInclude Include="third\assimp\postprocess.h" />
+    <ClInclude Include="third\assimp\Profiler.h" />
+    <ClInclude Include="third\assimp\ProgressHandler.hpp" />
+    <ClInclude Include="third\assimp\qnan.h" />
+    <ClInclude Include="third\assimp\quaternion.h" />
+    <ClInclude Include="third\assimp\RemoveComments.h" />
+    <ClInclude Include="third\assimp\scene.h" />
+    <ClInclude Include="third\assimp\SceneCombiner.h" />
+    <ClInclude Include="third\assimp\SGSpatialSort.h" />
+    <ClInclude Include="third\assimp\SkeletonMeshBuilder.h" />
+    <ClInclude Include="third\assimp\SmallVector.h" />
+    <ClInclude Include="third\assimp\SmoothingGroups.h" />
+    <ClInclude Include="third\assimp\SpatialSort.h" />
+    <ClInclude Include="third\assimp\StandardShapes.h" />
+    <ClInclude Include="third\assimp\StreamReader.h" />
+    <ClInclude Include="third\assimp\StreamWriter.h" />
+    <ClInclude Include="third\assimp\StringComparison.h" />
+    <ClInclude Include="third\assimp\StringUtils.h" />
+    <ClInclude Include="third\assimp\Subdivision.h" />
+    <ClInclude Include="third\assimp\texture.h" />
+    <ClInclude Include="third\assimp\TinyFormatter.h" />
+    <ClInclude Include="third\assimp\types.h" />
+    <ClInclude Include="third\assimp\vector2.h" />
+    <ClInclude Include="third\assimp\vector3.h" />
+    <ClInclude Include="third\assimp\version.h" />
+    <ClInclude Include="third\assimp\Vertex.h" />
+    <ClInclude Include="third\assimp\XmlParser.h" />
+    <ClInclude Include="third\assimp\XMLTools.h" />
+    <ClInclude Include="third\assimp\ZipArchiveIOSystem.h" />
     <ClInclude Include="third\backward.hpp" />
     <ClInclude Include="third\glm\common.hpp" />
     <ClInclude Include="third\glm\detail\compute_common.hpp" />
@@ -402,6 +479,16 @@
     <ClInclude Include="third\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="third\assimp\.editorconfig" />
+    <None Include="third\assimp\color4.inl" />
+    <None Include="third\assimp\config.h.in" />
+    <None Include="third\assimp\material.inl" />
+    <None Include="third\assimp\matrix3x3.inl" />
+    <None Include="third\assimp\matrix4x4.inl" />
+    <None Include="third\assimp\quaternion.inl" />
+    <None Include="third\assimp\SmoothingGroups.inl" />
+    <None Include="third\assimp\vector2.inl" />
+    <None Include="third\assimp\vector3.inl" />
     <None Include="third\glm\detail\func_common.inl" />
     <None Include="third\glm\detail\func_common_simd.inl" />
     <None Include="third\glm\detail\func_exponential.inl" />
@@ -621,6 +708,9 @@
     <FxCompile>
       <ObjectFileOutput>$(ProjectDir)%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>$(ProjectDir)src\third\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -47,6 +47,9 @@ namespace tryn::gfx::dx11
 #ifndef NDEBUG
 		swapCreateFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
+
+		ID3D11DeviceContext* pThunkContext = nullptr;
+
 		D3D11CreateDeviceAndSwapChain(
 			nullptr,
 			D3D_DRIVER_TYPE_HARDWARE,
@@ -59,8 +62,10 @@ namespace tryn::gfx::dx11
 			&pSwap,
 			&pDevice,
 			nullptr,
-			&pContext
+			&pThunkContext
 		) >> chk;
+
+		pThunkContext->QueryInterface(__uuidof(ID3D11DeviceContext1), (void**)&pContext);
 
 		// gain access to texture subresource in swap chain (back buffer)
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
@@ -117,7 +122,7 @@ namespace tryn::gfx::dx11
 	{
 		return GraphicAPI::DX11;
 	}
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Graphics::GetContext()
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext1>& Graphics::GetContext()
 	{
 		return pContext;
 	}

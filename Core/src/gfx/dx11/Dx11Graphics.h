@@ -2,7 +2,7 @@
 #include "TrynWLR.h"
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/spa/Dimensions.h>
-#include <d3d11.h>
+#include <d3d11_1.h>
 
 namespace tryn::gfx
 {
@@ -23,7 +23,7 @@ namespace tryn::gfx::dx11
 		void DrawTriangle() override;
 		void DrawIndexed(int count) override;
 		GraphicAPI GetType() override;
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetContext();
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext1>& GetContext();
 		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();
 
 		// Resurce Creation
@@ -40,7 +40,7 @@ namespace tryn::gfx::dx11
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext1> pContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
 	};
 
