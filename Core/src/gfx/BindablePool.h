@@ -122,9 +122,6 @@ namespace tryn::gfx
                 std::shared_ptr<IBindable> bind = it->second.lock();
                 return std::static_pointer_cast<T>(bind);
             }
-
-			ResolveHelper<T> functor;
-			return functor(gfx, std::forward<Args>(args)...);
 		}
 
 	private:

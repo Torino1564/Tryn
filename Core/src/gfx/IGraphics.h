@@ -90,7 +90,7 @@ namespace tryn::gfx
 		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) = 0;
 		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) = 0;
 		virtual std::shared_ptr<IPrimitiveTopology> CreatePrimitiveTopology() = 0;
-		virtual std::shared_ptr<IConstantBuffer>	CreateConstantBuffer(ConstantBufferLayout&&) = 0;
+		virtual std::shared_ptr<IConstantBuffer>	CreateConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
 
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
 	};

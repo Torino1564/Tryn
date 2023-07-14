@@ -3,10 +3,13 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11ConstantBuffer::DX11ConstantBuffer(Graphics& gfx, ConstantBufferLayout&& cbl)
+	DX11ConstantBuffer::DX11ConstantBuffer(Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag)
 		:
 		gfx(gfx)
 	{
+		this->slot = slot;
+		this->tag = tag;
+
 		trynass_msg(cbl.IsSolid(), L"ConstantBuffer cannot be created with a non solidified layout!");
 		type = GraphicAPI::DX11;
 		layout = std::move(cbl);

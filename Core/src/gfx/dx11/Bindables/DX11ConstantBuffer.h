@@ -8,7 +8,7 @@ namespace tryn::gfx::dx11
 	class DX11ConstantBuffer : public IConstantBuffer
 	{
 	public:
-		DX11ConstantBuffer(Graphics& gfx , ConstantBufferLayout&& cbl);
+		DX11ConstantBuffer(Graphics& gfx , ConstantBufferLayout&& cbl, int slot, std::string tag = "?");
 		void Bind() override;
 		char* Data();
 		void Update();

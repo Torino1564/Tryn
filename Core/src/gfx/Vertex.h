@@ -60,60 +60,70 @@ namespace tryn::gfx
 			using SysType = glm::vec2;
 			static constexpr Format format = Format::Vec2F;
 			static constexpr const char* semantic = "Position";
+			static constexpr const char* code = "P2";
 		};
 		template <> struct VertexElementAttr<VertexElement::Position3D>
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Position";
+			static constexpr const char* code = "P3";
 		};
 		template <> struct VertexElementAttr<VertexElement::Normal>
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Normal";
+			static constexpr const char* code = "N";
 		};
 		template <> struct VertexElementAttr<VertexElement::UV>
 		{
 			using SysType = glm::vec2;
 			static constexpr Format format = Format::Vec2F;
 			static constexpr const char* semantic = "Texcoord";
+			static constexpr const char* code = "UV";
 		};
 		template <> struct VertexElementAttr<VertexElement::Float3Color>
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Color";
+			static constexpr const char* code = "Cf3";
 		};
 		template <> struct VertexElementAttr<VertexElement::Float4Color>
 		{
 			using SysType = glm::vec4;
 			static constexpr Format format = Format::Vec4F;
 			static constexpr const char* semantic = "Color";
+			static constexpr const char* code = "Cf4";
 		};
 		template <> struct VertexElementAttr<VertexElement::Char4Color>
 		{
 			using SysType = BGRAColor;
 			static constexpr Format format = Format::Vec4C_UNorm;
 			static constexpr const char* semantic = "Color";
+			static constexpr const char* code = "Cc4";
 		};
 		template <> struct VertexElementAttr<VertexElement::Tangent>
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Tangent";
+			static constexpr const char* code = "T";
 		};
 		template <> struct VertexElementAttr<VertexElement::Bitangent>
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Bitangent";
+			static constexpr const char* code = "Bt";
 		};
 		template <> struct VertexElementAttr<VertexElement::Unknown>
 		{
 			using SysType = int;
 			static constexpr Format format = Format::Unknown;
 			static constexpr const char* semantic = "Unknown";
+			static constexpr const char* code = "?";
 		};
 		
 		template<template<VertexLayout::VertexElement> class F, typename... Args>
@@ -131,18 +141,66 @@ namespace tryn::gfx
 
 		class Element
 		{
+		private:
+			template<VertexLayout::VertexElement type>
+			struct VertexSysSizeLookup
+			{
+				static constexpr auto Exec() noexcept
+				{
+					return sizeof(VertexLayout::VertexElementAttr<type>::SysType);
+				}
+			};
+			template<VertexLayout::VertexElement type>
+			struct VertexNameLookup
+			{
+				static constexpr auto Exec() noexcept
+				{
+					return VertexLayout::VertexElementAttr<type>::semantic;
+				}
+			};
+			template<VertexLayout::VertexElement type>
+			struct VertexFormatLookup
+			{
+				static constexpr auto Exec() noexcept
+				{
+					return VertexLayout::VertexElementAttr<type>::format;
+				}
+			};
+			template<VertexLayout::VertexElement type>
+			struct VertexCodeLookup
+			{
+				static constexpr auto Exec() noexcept
+				{
+					return VertexLayout::VertexElementAttr<type>::code;
+				}
+			};
 		public:
 			Element(VertexElement type, size_t offset);
 			size_t GetOffsetAfter() const;
 			size_t GetOffset() const;
 			size_t Size() const;
-			static constexpr size_t SizeOf(VertexElement type);
-			static constexpr const char* NameOf(VertexElement type);
-			static constexpr Format FormatOf(VertexElement type);
+			const char* GetCode() const;
+			static constexpr size_t SizeOf(VertexElement type)
+			{
+				return Bridge<VertexSysSizeLookup>(type);
+			}
+			static constexpr const char* NameOf(VertexElement type)
+			{
+				return Bridge<VertexNameLookup>(type);
+			}
+			static constexpr Format FormatOf(VertexElement type)
+			{
+				return Bridge<VertexFormatLookup>(type);
+			}
+			static constexpr const char* CodeOf(VertexElement type)
+			{
+				return Bridge<VertexCodeLookup>(type);
+			}
 			Format GetFormat() const;
 			const char* GetName() const;
 			VertexElement GetType() const;
 		private:
+
 			VertexElement type;
 			size_t offset;
 		};
@@ -207,6 +265,7 @@ namespace tryn::gfx
 			}
 			Elements.emplace_back(VertexLayout::Element(element, offset), elCounter[static_cast<int>(element)]++);
 		}
+		std::string GetCode() const;
 	private:
 		template <typename Element>
 		void AppendElement( int& offset, Element element)

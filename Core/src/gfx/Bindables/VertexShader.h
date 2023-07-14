@@ -16,6 +16,10 @@ namespace tryn::gfx
 			
 			return UID;
 		}
+		std::string GetPath() const
+		{
+			return path;
+		}
 	protected:
 		std::string path;
 	};

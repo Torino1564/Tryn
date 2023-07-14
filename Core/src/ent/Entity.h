@@ -17,7 +17,6 @@ namespace tryn::ent
 		std::shared_ptr<gfx::IConstantBuffer> pConstantBuffer;
 		std::shared_ptr<Model> model;
 		std::vector<std::shared_ptr<gfx::IBindable>> bindables;
-		static std::vector<std::shared_ptr<gfx::IBindable>> staticBindables;
 	};
 
 	class Entity : public IEntity

@@ -23,42 +23,11 @@ namespace tryn::gfx
 		return SizeOf(type);
 	}
 
-	template<VertexLayout::VertexElement type>
-	struct VertexSysSizeLookup
+	const char* VertexLayout::Element::GetCode() const
 	{
-		static constexpr auto Exec() noexcept
-		{
-			return sizeof(VertexLayout::VertexElementAttr<type>::SysType);
-		}
-	};
-	template<VertexLayout::VertexElement type>
-	struct VertexNameLookup
-	{
-		static constexpr auto Exec() noexcept
-		{
-			return VertexLayout::VertexElementAttr<type>::semantic;
-		}
-	};
-	template<VertexLayout::VertexElement type>
-	struct VertexFormatLookup
-	{
-		static constexpr auto Exec() noexcept
-		{
-			return VertexLayout::VertexElementAttr<type>::format;
-		}
-	};
-	constexpr size_t VertexLayout::Element::SizeOf(VertexLayout::VertexElement type)
-	{
-		return Bridge<VertexSysSizeLookup>(type);
+		return CodeOf(type);
 	}
-	constexpr const char * VertexLayout::Element::NameOf(VertexLayout::VertexElement type)
-	{
-		return Bridge<VertexNameLookup>(type);
-	}
-	constexpr VertexLayout::Format VertexLayout::Element::FormatOf(VertexElement type)
-	{
-		return Bridge<VertexFormatLookup>(type);
-	}
+
 	VertexLayout::Format VertexLayout::Element::GetFormat() const
 	{
 		return FormatOf(type);
@@ -70,6 +39,16 @@ namespace tryn::gfx
 	VertexLayout::VertexElement VertexLayout::Element::GetType() const
 	{
 		return type;
+	}
+
+	std::string VertexLayout::GetCode() const
+	{
+		std::stringstream ss;
+		for (auto& [element,index]:Elements)
+		{
+			ss << element.GetCode();
+		}
+		return ss.str();
 	}
 
 }

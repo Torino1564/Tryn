@@ -9,7 +9,6 @@ namespace tryn::ent
 		{
 			bindable->Bind();
 		}
-		pConstantBuffer->Bind();
 		gfx.DrawIndexed((int)model->GetIndices()->size());
 	}
 }

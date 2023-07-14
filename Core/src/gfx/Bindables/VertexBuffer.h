@@ -4,6 +4,7 @@
 #include <Core/src/utl/String.h>
 #include <vector>
 #include <memory>
+#include <sstream>
 
 namespace tryn::gfx
 {
@@ -14,20 +15,18 @@ namespace tryn::gfx
 		virtual std::vector<char> GetSlottedLayoutFromVB( int slot ) const = 0;
 		static std::string GenerateID(IGraphics& gfx, VertexBuffer& cpuBuffer , std::string tag = "?")
 		{
+			if (tag == "?") return tag;
 			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
-			std::string UID(typeStr);
-			UID += "#VertexBuffer#";
-			UID += std::to_string(cpuBuffer.Size());
-			UID += "#";
+			std::stringstream ss;
+			ss << typeStr << "#VertexBuffer#" << std::to_string(cpuBuffer.Size()) << "#";
+
 			for (auto& element : cpuBuffer.GetLayout().Elements)
 			{
-				UID += element.first.GetName();
-				UID += element.second;
+				ss << element.first.GetName() << element.second;
 			};
-			UID.append("#");
-			UID.append(tag);
+			ss << "#" << tag;
 
-			return UID;
+			return ss.str();
 		}
 		virtual void Init() = 0;
 		virtual ~IVertexBuffer() {}

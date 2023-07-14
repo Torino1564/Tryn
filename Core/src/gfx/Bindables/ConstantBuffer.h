@@ -176,10 +176,28 @@ namespace tryn::gfx
 			ElementView temp(indexTo, buffer.data() + indexTo.GetOffset());
 			return temp;
 		}
+		std::string GetTag() const
+		{
+			return tag;
+		}
+		int GetSlot() const
+		{
+			return slot;
+		}
+		static std::string GenerateID(IGraphics& gfx, ConstantBufferLayout& cbl, int slot = 0, std::string tag = "?")
+		{
+			if (tag == "?") return tag;
+			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
+			std::stringstream ss;
+			ss << typeStr << "#ConstantBuffer#" << slot << '#' << tag;
+			return ss.str();
+		}
 
 	protected:
 		bool dirty = false;
 		ConstantBufferLayout layout;
 		std::vector<char> buffer;
+		int slot;
+		std::string tag;
 	};
 }

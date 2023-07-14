@@ -8,6 +8,7 @@ namespace tryn::gfx
 	public:
 		static std::string GenerateID(IGraphics& gfx, std::shared_ptr<const std::vector<int>> indices, std::string tag = "?")
 		{
+			if (tag == "?") return tag;
 			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
 			std::string UID(typeStr);
 			UID += "#IndexBuffer#";

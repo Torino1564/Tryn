@@ -166,8 +166,8 @@ namespace tryn::gfx::dx11
 		return std::make_shared<DX11PrimitiveTopology>(*this);
 	}
 
-	std::shared_ptr<IConstantBuffer> Graphics::CreateConstantBuffer(ConstantBufferLayout&& layout)
+	std::shared_ptr<IConstantBuffer> Graphics::CreateConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
 	{
-		return std::make_shared<DX11ConstantBuffer>(*this, std::move(layout));
+		return std::make_shared<DX11ConstantBuffer>(*this, std::move(layout) , slot , tag);
 	}
 }
