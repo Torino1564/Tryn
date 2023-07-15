@@ -13,7 +13,6 @@
   <ItemGroup>
     <ClCompile Include="src\app\App.cpp" />
     <ClCompile Include="src\ent\Model\Cube.cpp" />
-    <ClCompile Include="src\gfx\BindablePool.cpp" />
     <ClCompile Include="src\gfx\Bindables\ConstantBuffer.cpp" />
     <ClCompile Include="src\gfx\Bindables\PrimitiveTopology.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11ConstantBuffer.cpp" />

@@ -84,6 +84,8 @@ namespace tryn::gfx::dx11
 		vp.TopLeftX = 0.0f;
 		vp.TopLeftY = 0.0f;
 		pContext->RSSetViewports(1u, &vp);
+
+		pSwap->SetFullscreenState((BOOL)true , nullptr);
 	}
 
 	Graphics::~Graphics()
