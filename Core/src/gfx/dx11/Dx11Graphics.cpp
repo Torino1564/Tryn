@@ -50,9 +50,42 @@ namespace tryn::gfx::dx11
 
 		ID3D11DeviceContext* pThunkContext = nullptr;
 
-		D3D11CreateDeviceAndSwapChain(
+		ID3D11Device* pThunkDevice = nullptr;
+
+		D3D11CreateDevice(
 			nullptr,
 			D3D_DRIVER_TYPE_HARDWARE,
+			nullptr,
+			swapCreateFlags,
+			nullptr,
+			0,
+			D3D11_SDK_VERSION,
+			&pThunkDevice,
+			nullptr,
+			nullptr
+		);
+
+		IDXGIDevice* pDXGIDevice = nullptr;
+		pThunkDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDXGIDevice);
+
+		IDXGIAdapter* pDXGIAdapter = nullptr;
+		pDXGIDevice->GetAdapter(&pDXGIAdapter);
+
+		IDXGIFactory* pIDXGIFactory = nullptr;
+		pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&pIDXGIFactory);
+
+		UINT i = 0;
+		IDXGIAdapter* pAdapter;
+		std::vector <IDXGIAdapter*> vAdapters;
+		while (pIDXGIFactory->EnumAdapters(i, &pAdapter) != DXGI_ERROR_NOT_FOUND)
+		{
+			vAdapters.push_back(pAdapter);
+			++i;
+		}
+
+		D3D11CreateDeviceAndSwapChain(
+			vAdapters[0],
+			D3D_DRIVER_TYPE_UNKNOWN,
 			nullptr,
 			swapCreateFlags,
 			nullptr,
@@ -85,7 +118,7 @@ namespace tryn::gfx::dx11
 		vp.TopLeftY = 0.0f;
 		pContext->RSSetViewports(1u, &vp);
 
-		pSwap->SetFullscreenState((BOOL)true , nullptr);
+		pSwap->SetFullscreenState((BOOL)false , nullptr);
 	}
 
 	Graphics::~Graphics()

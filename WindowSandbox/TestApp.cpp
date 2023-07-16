@@ -93,22 +93,25 @@ void TestApp::DoFrame()
 
 	for (auto& entity : entities)
 	{
-
-		glm::mat4 viewProjection2;
+		//if (!initialized)
 		{
-			const auto eyePos = glm::vec3(0, 0, -6);
-			const auto focusPoint = glm::vec3(0, 0, 0);
-			const auto upDirection = glm::vec3(0, 1, 0);
-			const auto view = glm::lookAtLH(eyePos, focusPoint, upDirection);
-			const auto projection = glm::perspectiveFovLH(glm::radians(90.0f), (float)Gfx().dimensions.width, (float)Gfx().dimensions.height, 0.1f, 100.0f);
-			viewProjection2 = projection * view;
-		}
-		(*std::static_pointer_cast<gfx::IConstantBuffer>(entity.bindables.back()))["transformation"].Get<glm::mat4>() = glm::transpose(viewProjection2 *
-			glm::rotate(glm::mat4(1.0f), 0.6f * angle, glm::vec3(0, 0, 1.0f)) *
-			glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0, 0)) *
-			glm::rotate(glm::mat4(0.5f), 2.5f * angle, glm::vec3(0, 1.0f, 0)));
+			glm::mat4 viewProjection2;
+			{
+				const auto eyePos = glm::vec3(0, 0, -6);
+				const auto focusPoint = glm::vec3(0, 0, 0);
+				const auto upDirection = glm::vec3(0, 1, 0);
+				const auto view = glm::lookAtLH(eyePos, focusPoint, upDirection);
+				const auto projection = glm::perspectiveFovLH(glm::radians(90.0f), (float)Gfx().dimensions.width, (float)Gfx().dimensions.height, 0.1f, 100.0f);
+				viewProjection2 = projection * view;
+			}
+			(*std::static_pointer_cast<gfx::IConstantBuffer>(entity.bindables.back()))["transformation"].Get<glm::mat4>() = glm::transpose(viewProjection2 *
+				glm::rotate(glm::mat4(1.0f), 0.6f * angle, glm::vec3(0, 0, 1.0f)) *
+				glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0, 0)) *
+				glm::rotate(glm::mat4(0.5f), 2.5f * angle, glm::vec3(0, 1.0f, 0)));
 
-		angle += 0.0001f;
+			angle += 0.0001f;
+			//initialized = true;
+		}
 
 		entity.Draw(Gfx());
 	}
