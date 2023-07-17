@@ -2,6 +2,7 @@
 #include <Core/src/app/App.h>
 #include <Core/src/ent/Entity.h>
 #include <vector>
+#include <core/src/gfx/ImguiManager.h>
 
 using namespace tryn;
 
@@ -13,4 +14,5 @@ public:
 	void DoFrame() override;
 private:
 	std::vector<ent::Entity> entities;
+	gfx::ImguiManager imgui;
 };

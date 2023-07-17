@@ -7,6 +7,7 @@
 #include <Core/third/glm/gtc/matrix_transform.hpp>
 #include <Core/src/gfx/BindablePool.h>
 #include <utility>
+#include <Core/src/gfx/Profiler.h>
 
 TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraphics> gfx_)
 {
@@ -93,8 +94,8 @@ void TestApp::DoFrame()
 
 	for (auto& entity : entities)
 	{
-		//if (!initialized)
 		{
+			PROFILE_SCOPE("Update Cube");
 			glm::mat4 viewProjection2;
 			{
 				const auto eyePos = glm::vec3(0, 0, -6);
@@ -110,9 +111,13 @@ void TestApp::DoFrame()
 				glm::rotate(glm::mat4(0.5f), 2.5f * angle, glm::vec3(0, 1.0f, 0)));
 
 			angle += 0.0001f;
-			//initialized = true;
 		}
 
-		entity.Draw(Gfx());
+		{
+			PROFILE_SCOPE("Draw call");
+			entity.Draw(Gfx());
+		}
+		static bool show_demo_window = true;
+		ImGui::ShowDemoWindow(&show_demo_window);
 	}
 }

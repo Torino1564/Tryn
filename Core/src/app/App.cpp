@@ -1,5 +1,6 @@
 #include "App.h"
 #include <Core/src/ent/Entity.h>
+#include <Core/src/win/imgui_impl_win32.h>
 
 namespace tryn::app
 {
@@ -20,7 +21,9 @@ namespace tryn::app
 
     void App::PreFrame()
     {
+        ImGui_ImplWin32_NewFrame();
         gfx->BeginFrame();
+        ImGui::NewFrame();
     }
 
     void App::DoFrame()
@@ -30,6 +33,7 @@ namespace tryn::app
 
     void App::PostFrame()
     {
+        ImGui::Render();
         gfx->EndFrame();
     }
 

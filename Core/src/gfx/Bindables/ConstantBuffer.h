@@ -197,7 +197,7 @@ namespace tryn::gfx
 		bool dirty = false;
 		ConstantBufferLayout layout;
 		std::vector<char> buffer;
-		int slot;
+		int slot = 0;
 		std::string tag;
 	};
 }

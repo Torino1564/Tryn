@@ -26,6 +26,9 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexShader.cpp" />
     <ClCompile Include="src\ent\Entity.cpp" />
     <ClCompile Include="src\ent\Model\Model.cpp" />
+    <ClCompile Include="src\gfx\dx11\imgui_impl_dx11.cpp" />
+    <ClCompile Include="src\gfx\dx12\imgui_impl_dx12.cpp" />
+    <ClCompile Include="src\gfx\ImguiManager.cpp" />
     <ClCompile Include="src\gfx\Vertex.cpp" />
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp" />
     <ClCompile Include="src\ccr\GenericTaskQueue.cpp" />
@@ -33,6 +36,7 @@
     <ClCompile Include="src\gfx\dx11\Dx11Graphics.cpp" />
     <ClCompile Include="src\gfx\dx11\GraphicsError.cpp" />
     <ClCompile Include="src\gfx\dx11\TrynWLR.h" />
+    <ClCompile Include="src\gfx\vulkan\imgui_impl_vulkan.cpp" />
     <ClCompile Include="src\ioc\Container.cpp" />
     <ClCompile Include="src\ioc\Singletons.cpp" />
     <ClCompile Include="src\log\Channel.cpp" />
@@ -48,9 +52,15 @@
     <ClCompile Include="src\utl\StackTrace.cpp" />
     <ClCompile Include="src\utl\String.cpp" />
     <ClCompile Include="src\win\Boot.cpp" />
+    <ClCompile Include="src\win\imgui_impl_win32.cpp" />
     <ClCompile Include="src\win\Utilities.cpp" />
     <ClCompile Include="src\win\Window.cpp" />
     <ClCompile Include="src\win\WindowClass.cpp" />
+    <ClCompile Include="third\imgui\imgui.cpp" />
+    <ClCompile Include="third\imgui\imgui_demo.cpp" />
+    <ClCompile Include="third\imgui\imgui_draw.cpp" />
+    <ClCompile Include="third\imgui\imgui_tables.cpp" />
+    <ClCompile Include="third\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app\App.h" />
@@ -77,13 +87,18 @@
     <ClInclude Include="src\ent\Entity.h" />
     <ClInclude Include="src\ent\Model\Model.h" />
     <ClInclude Include="src\gfx\dx11\Dx11VertexShader.h" />
+    <ClInclude Include="src\gfx\dx11\imgui_impl_dx11.h" />
+    <ClInclude Include="src\gfx\dx12\imgui_impl_dx12.h" />
     <ClInclude Include="src\gfx\Gfx.h" />
     <ClInclude Include="src\gfx\dx11\Dx11Graphics.h" />
     <ClInclude Include="src\gfx\dx11\GraphicsError.h" />
     <ClInclude Include="src\gfx\GraphicsException.h" />
     <ClInclude Include="src\gfx\IGraphics.h" />
+    <ClInclude Include="src\gfx\ImguiManager.h" />
+    <ClInclude Include="src\gfx\Profiler.h" />
     <ClInclude Include="src\gfx\Vertex.h" />
     <ClInclude Include="src\gfx\vulkan\Graphics.h" />
+    <ClInclude Include="src\gfx\vulkan\imgui_impl_vulkan.h" />
     <ClInclude Include="src\ioc\Container.h" />
     <ClInclude Include="src\ioc\Exception.h" />
     <ClInclude Include="src\log\Driver.h" />
@@ -111,6 +126,7 @@
     <ClInclude Include="src\utl\Timer.h" />
     <ClInclude Include="src\win\Boot.h" />
     <ClInclude Include="src\win\Exception.h" />
+    <ClInclude Include="src\win\imgui_impl_win32.h" />
     <ClInclude Include="src\win\IWindow.h" />
     <ClInclude Include="src\win\TrynWin.h" />
     <ClInclude Include="src\win\Utilities.h" />
@@ -476,8 +492,17 @@
     <ClInclude Include="third\glm\vec3.hpp" />
     <ClInclude Include="third\glm\vec4.hpp" />
     <ClInclude Include="third\glm\vector_relational.hpp" />
+    <ClInclude Include="third\imgui\imconfig.h" />
+    <ClInclude Include="third\imgui\imgui.h" />
+    <ClInclude Include="third\imgui\imgui_internal.h" />
+    <ClInclude Include="third\imgui\imstb_rectpack.h" />
+    <ClInclude Include="third\imgui\imstb_textedit.h" />
+    <ClInclude Include="third\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\gfx\vulkan\vulkan\generate_spv.sh" />
+    <None Include="src\gfx\vulkan\vulkan\glsl_shader.frag" />
+    <None Include="src\gfx\vulkan\vulkan\glsl_shader.vert" />
     <None Include="third\assimp\.editorconfig" />
     <None Include="third\assimp\color4.inl" />
     <None Include="third\assimp\config.h.in" />
@@ -636,6 +661,9 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="third\imgui\LICENSE.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

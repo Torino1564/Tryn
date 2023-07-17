@@ -3,7 +3,8 @@
 #include "Exception.h" 
 #include <format> 
 #include <Core/src/log/Log.h> 
-#include <Core/src/utl/String.h> 
+#include <Core/src/utl/String.h>
+#include "imgui_impl_win32.h"
 
 namespace tryn::win
 {
@@ -38,6 +39,7 @@ namespace tryn::win
 				trylog.error(L"Failed creating window").hr();
 				throw WindowException{ "Failed creating window" };
 			}
+			ImGui_ImplWin32_Init(hWnd_);
 			});
 		startSignal_.release();
 		future.get();
@@ -65,6 +67,7 @@ namespace tryn::win
 	Window::~Window()
 	{
 		Dispatch_([this] {
+			ImGui_ImplWin32_Shutdown();
 			if (!DestroyWindow(hWnd_)) {
 				trylog.warn(L"Failed destroying window").hr();
 			}
@@ -74,6 +77,9 @@ namespace tryn::win
 	LRESULT Window::HandleMessage_(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 	{
 		try {
+			extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+			if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+				return true;
 			switch (msg) {
 			case WM_DESTROY:
 				hWnd_ = nullptr;
