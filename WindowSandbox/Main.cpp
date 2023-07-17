@@ -52,6 +52,9 @@ int WINAPI wWinMain(
 	auto window = ioc::Get().Resolve<win::IWindow>(win::IWindow::IocParams{.size = spa::DimensionsI{ .width = (1280), .height = (720) } });
 	window->SetTitle(L"Test WindowApp");
 
+	/*auto window2 = ioc::Get().Resolve<win::IWindow>(win::IWindow::IocParams{.size = spa::DimensionsI{ .width = (1280), .height = (720) } });
+	window->SetTitle(L"Test WindowApp2");*/
+
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{window->GetClientDimensions().width, window->GetClientDimensions().height, window->GetHandle()});
 
 	TestApp app(window, gfx);

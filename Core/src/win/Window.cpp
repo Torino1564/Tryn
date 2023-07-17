@@ -79,7 +79,9 @@ namespace tryn::win
 		try {
 			extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 			if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+			{
 				return true;
+			}
 			switch (msg) {
 			case WM_DESTROY:
 				hWnd_ = nullptr;
@@ -88,6 +90,9 @@ namespace tryn::win
 			case WM_CLOSE:
 				closing_ = true;
 				return 0;
+			case WM_MBUTTONDOWN:
+				//Do something
+				break;
 			case CustomTaskMessageId:
 				tasks_.PopExecute();
 				return 0;
@@ -102,6 +107,7 @@ namespace tryn::win
 		catch (...) {
 			trylog.error(L"Uncaught annonymous exception in Windows message handler");
 		}
+
 		return DefWindowProcW(hWnd, msg, wParam, lParam);
 	}
 	void Window::NotifyTaskDispatch_() const

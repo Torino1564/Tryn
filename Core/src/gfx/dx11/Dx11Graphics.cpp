@@ -68,7 +68,7 @@ namespace tryn::gfx::dx11
 
 		pThunkContext->QueryInterface(__uuidof(ID3D11DeviceContext1), (void**)&pContext);
 
-		// gain access to texture subresource in swap chain (back buffer)
+		// backbuffer
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
 		pSwap->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer) >> chk;
 		pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pTarget.ReleaseAndGetAddressOf());
@@ -76,7 +76,7 @@ namespace tryn::gfx::dx11
 		dimensions.height = height;
 		dimensions.width = width;
 
-		// viewport always fullscreen (for now)
+		// viewport
 		D3D11_VIEWPORT vp;
 		vp.Width = (float)width;
 		vp.Height = (float)height;
@@ -114,12 +114,6 @@ namespace tryn::gfx::dx11
 		const float color[]{ r, g, b, 1.0f };
 
 		pContext->ClearRenderTargetView(pTarget.Get(), color);
-	}
-
-	void Graphics::DrawTriangle()
-	{
-
-		pContext->DrawIndexed((UINT)36, 0u, 0u);
 	}
 	void Graphics::DrawIndexed(int count)
 	{

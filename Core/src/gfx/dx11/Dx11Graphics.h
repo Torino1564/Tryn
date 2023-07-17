@@ -20,7 +20,6 @@ namespace tryn::gfx::dx11
 		void BeginFrame() override;
 		void EndFrame() override;
 		void ClearBuffer(float r = 0, float g = 0, float b = 0) override;
-		void DrawTriangle() override;
 		void DrawIndexed(int count) override;
 		GraphicAPI GetType() override;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext1>& GetContext();

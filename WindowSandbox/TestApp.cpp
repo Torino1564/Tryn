@@ -119,5 +119,7 @@ void TestApp::DoFrame()
 		}
 		static bool show_demo_window = true;
 		ImGui::ShowDemoWindow(&show_demo_window);
+		ImGui::Begin("Test", &show_demo_window, 0);
+		ImGui::End();
 	}
 }

@@ -61,7 +61,6 @@ namespace tryn::gfx
 		virtual void BeginFrame() = 0;
 		virtual void EndFrame() = 0;
 		virtual void ClearBuffer(float r, float g, float b) = 0;
-		virtual void DrawTriangle() = 0;
 		virtual void DrawIndexed(int count) = 0;
 		template<typename T>
 		auto& QueryInterface()
