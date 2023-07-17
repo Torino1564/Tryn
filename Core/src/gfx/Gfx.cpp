@@ -14,6 +14,8 @@ namespace tryn::gfx
 				args.height.value_or(720)
 			);
 			});
+
+		static ImguiManager imgui; // ImGui initialization
 	}
 }
 

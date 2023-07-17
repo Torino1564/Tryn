@@ -9,6 +9,7 @@
 #include <concepts>
 #include <memory>
 #include <variant>
+#include "ImguiManager.h"
 
 #define GRAPHIC_APIS \
 		X( DX11 ) \
