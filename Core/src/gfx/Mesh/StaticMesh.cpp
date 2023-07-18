@@ -5,9 +5,10 @@
 
 namespace tryn::gfx
 {
-	StaticMesh::StaticMesh(std::string path, std::string tag)
+	StaticMesh::StaticMesh(std::string path)
 	{
 		// TODO ASSIMP
+		tag = path;
 	}
 	StaticMesh::StaticMesh(VertexBuffer&& buffer, std::vector<int>&& indices, std::string tag)
 	{

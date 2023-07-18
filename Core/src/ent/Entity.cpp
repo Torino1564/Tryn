@@ -5,11 +5,13 @@ namespace tryn::ent
 {
 	void IEntity::Draw(gfx::IGraphics& gfx)
 	{
-		for (auto& bindable : bindables)
+		for (auto& bindable : otherBindables)
 		{
 			bindable->Bind();
 		}
-		// TODO FIX
+		pVertexBuffer->Bind();
+		pIndexBuffer->Bind();
+		pConstantBuffer->Bind();
 		gfx.DrawIndexed((int)mesh->GetIndexCount());
 	}
 }

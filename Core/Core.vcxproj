@@ -94,6 +94,7 @@
     <ClInclude Include="src\gfx\IGraphics.h" />
     <ClInclude Include="src\gfx\ImguiManager.h" />
     <ClInclude Include="src\gfx\Mesh\StaticMesh.h" />
+    <ClInclude Include="src\gfx\Mesh\StaticMeshPool.h" />
     <ClInclude Include="src\gfx\Profiler.h" />
     <ClInclude Include="src\gfx\Vertex.h" />
     <ClInclude Include="src\gfx\vulkan\Graphics.h" />

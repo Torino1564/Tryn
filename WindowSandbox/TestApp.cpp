@@ -14,8 +14,8 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	wnd = wnd_;
 	gfx = gfx_;
 
-	ent::Entity testEntity;
-
+	// Mesh creation
+	
 	std::vector<int> indices = {
 				0,2,1, 2,3,1,
 				1,3,5, 3,7,5,
@@ -35,6 +35,15 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	posCPUBuffer[6].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { -1.0f,1.0f,1.0f };
 	posCPUBuffer[7].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { 1.0f,1.0f,1.0f };
 
+	std::vector bfarray = { posCPUBuffer };
+
+	gfx::StaticMesh cubeMesh(std::move(bfarray), std::move(indices), "cube");
+	cubeMesh.MakeBindables(Gfx());
+
+	// Static Object
+	ent::StaticObject cube1(std::make_shared<gfx::StaticMesh>(cubeMesh));
+	
+	// Vertex Buffer
 	gfx::VertexBuffer colorCPUBuffer(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Char4Color), 8);
 	colorCPUBuffer[0].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,0 };
 	colorCPUBuffer[1].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
@@ -45,36 +54,37 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	colorCPUBuffer[6].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,255 };
 	colorCPUBuffer[7].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
 
-	std::vector bfarray = { posCPUBuffer , colorCPUBuffer };
-
-	gfx::StaticMesh cube(std::move(bfarray), std::move(indices), "cube");
-	cube.MakeBindables(Gfx());
+	{
+		gfx::BufferArray extraData;
+		extraData.push_back(std::move(std::pair{ "coloredCube",std::make_shared<gfx::VertexBuffer>(colorCPUBuffer) }));
+		cube1.ExpandMeshVertexBuffer(Gfx(),extraData);
+	}
 
 	// Vertex Shader
 	std::string pathVS = "VertexShader.cso";
 	auto pVertexShader = gfx::IVertexShader::Resolve(Gfx(), pathVS);
-	testEntity.bindables.push_back(pVertexShader);
+	cube1.AddBindable(pVertexShader);
 
 	// Pixel Shader
 	auto pPixelShader = gfx::IPixelShader::Resolve(Gfx(), "PixelShader.cso");
-	testEntity.bindables.push_back(pPixelShader);
+	cube1.AddBindable(pPixelShader);
 
 	// InputLayout
-	auto pInputLayout = gfx::IInputLayout::Resolve(Gfx(), cube, *pVertexShader);
-	testEntity.bindables.push_back(pInputLayout);
+	auto pInputLayout = gfx::IInputLayout::Resolve(Gfx(), cube1.GetVertexBuffer(), *pVertexShader);
+	cube1.AddBindable(pInputLayout);
 
 	// Primitive Topology
 	auto pPrimitiveTopology = gfx::IPrimitiveTopology::Resolve(Gfx());
-	testEntity.bindables.push_back(pPrimitiveTopology);
+	cube1.AddBindable(pPrimitiveTopology);
 
 	// Constant Buffer
 	gfx::ConstantBufferLayout cBufLayout;
 	cBufLayout.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Matrix4, "transformation"));
 	cBufLayout.Solidify();
 	auto pConstantBuffer = gfx::IConstantBuffer::Resolve(Gfx(), std::move(cBufLayout), 0, "cubeTransformation");
-	testEntity.bindables.push_back(pConstantBuffer);
+	cube1.SetConstantBuffer(pConstantBuffer);
 
-	entities.push_back(std::move(testEntity));
+	entities.push_back(std::move(cube1));
 }
 
 void TestApp::DoFrame()
@@ -96,7 +106,7 @@ void TestApp::DoFrame()
 				const auto projection = glm::perspectiveFovLH(glm::radians(90.0f), (float)Gfx().dimensions.width, (float)Gfx().dimensions.height, 0.1f, 100.0f);
 				viewProjection2 = projection * view;
 			}
-			(*std::static_pointer_cast<gfx::IConstantBuffer>(entity.bindables.back()))["transformation"].Get<glm::mat4>() = glm::transpose(viewProjection2 *
+			entity.GetConstantBuffer()["transformation"].Get<glm::mat4>() = glm::transpose(viewProjection2 *
 				glm::rotate(glm::mat4(1.0f), 0.6f * angle, glm::vec3(0, 0, 1.0f)) *
 				glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0, 0)) *
 				glm::rotate(glm::mat4(0.5f), 2.5f * angle, glm::vec3(0, 1.0f, 0)));

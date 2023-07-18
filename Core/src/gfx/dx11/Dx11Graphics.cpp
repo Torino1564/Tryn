@@ -135,7 +135,7 @@ namespace tryn::gfx::dx11
 		return std::make_shared<DX11VertexBuffer>(*this, pCpuBuffer, tag);
 	}
 
-	std::shared_ptr<IPolyVBuffer> Graphics::CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>>>& pCpuVBs, std::string tag)
+	std::shared_ptr<IPolyVBuffer> Graphics::CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>& pCpuVBs, std::string tag)
 	{
 		return std::make_shared<DX11PolyVBuffer>(*this, pCpuVBs, tag);
 	}

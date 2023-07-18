@@ -10,7 +10,7 @@
 
 namespace tryn::gfx
 {
-	typedef std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>>> BufferArray;
+	typedef std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>,std::shared_ptr<tryn::gfx::IPolyVBuffer>>> BufferArray;
 	
 	class IPolyVBuffer : public IBindable
 	{
@@ -45,6 +45,20 @@ namespace tryn::gfx
 					{
 						ss << '#' << element.GetName() << std::to_string(index);
 					}
+				}
+				else if (std::holds_alternative<std::shared_ptr<IPolyVBuffer>>(buffer))
+				{
+					decltype(auto) ptr = std::get<std::shared_ptr<gfx::IPolyVBuffer>>(buffer);
+					ss << "$PVB:" << ptr->GetTag() << "{";
+					for (auto& element : ptr->slots)
+					{
+						ss << '$' << ptr->GetTag();
+						for (auto& [element, index] : element->Get().GetLayout().Elements)
+						{
+							ss << '#' << element.GetName() << std::to_string(index);
+						}
+					}
+					ss << "}";
 				}
 				else
 				{

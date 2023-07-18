@@ -13,5 +13,5 @@ public:
 
 	void DoFrame() override;
 private:
-	std::vector<ent::Entity> entities;
+	std::vector<ent::IEntity> entities;
 };

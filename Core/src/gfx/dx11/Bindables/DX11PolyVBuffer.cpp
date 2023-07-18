@@ -19,11 +19,31 @@ namespace tryn::gfx::dx11
 				decltype(auto) ptr = std::get<std::shared_ptr<IVertexBuffer>>(buffer);
 				Append(ptr);
 			}
-			else
+			else if (std::holds_alternative<std::pair<std::string, std::shared_ptr<VertexBuffer>>>(buffer))
 			{
 				auto [tag, vb] = std::get<std::pair<std::string, std::shared_ptr<VertexBuffer>>>(buffer);
 				Append(tag, vb);
 			}
+			else
+			{
+				auto& ptr = std::get<std::shared_ptr<gfx::IPolyVBuffer>>(buffer);
+				for (auto& buffer : ptr->slots)
+				{
+					Append(buffer);
+				}
+			}
+		}
+	}
+
+	DX11PolyVBuffer::DX11PolyVBuffer(Graphics& gfx, std::shared_ptr<IPolyVBuffer> pvb, std::string tag)
+		:
+		gfx(gfx)
+	{
+		this->tag = tag;
+		type = GraphicAPI::DX11;
+		for (auto& vb : pvb->slots)
+		{
+			Append(vb);
 		}
 	}
 
