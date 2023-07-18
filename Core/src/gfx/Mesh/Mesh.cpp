@@ -1,8 +1,8 @@
-#include "Model.h"
+#include "Mesh.h"
 
-namespace tryn::ent
+namespace tryn::gfx
 {
-	Model::Model(std::vector<glm::vec3> vertices, std::vector<int> indices , std::string tag)
+	Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<int> indices , std::string tag)
 	{
 		this->tag = tag;
 		gfx::VertexLayout layout;
@@ -17,24 +17,24 @@ namespace tryn::ent
 			(*buffer)[i].Attr< gfx::VertexLayout::VertexElement::Position3D>() = vertices[i];
 		}
 	}
-	void Model::MakeBindables(gfx::IGraphics& gfx)
+	void Mesh::MakeBindables(gfx::IGraphics& gfx)
 	{
 		// TODO
-		//gfx.MakeBindablesForModel(*this);
+		//gfx.MakeBindablesForMesh(*this);
 	}
-	std::vector<std::shared_ptr<gfx::IBindable>>& Model::GetBindables()
+	std::vector<std::shared_ptr<gfx::IBindable>>& Mesh::GetBindables()
 	{
 		return bindables;
 	}
-	std::shared_ptr<gfx::VertexBuffer> Model::GetBuffer()
+	std::shared_ptr<gfx::VertexBuffer> Mesh::GetBuffer()
 	{
 		return buffer;
 	}
-	const std::shared_ptr<const std::vector<int>>& Model::GetIndices() const
+	const std::shared_ptr<const std::vector<int>>& Mesh::GetIndices() const
 	{
 		return std::const_pointer_cast<const std::vector<int>>(indices);
 	}
-	bool Model::HasBindables() const
+	bool Mesh::HasBindables() const
 	{
 		return !bindables.empty();
 	}

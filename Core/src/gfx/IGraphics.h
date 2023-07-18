@@ -20,11 +20,6 @@
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
 
-namespace tryn::ent
-{
-	class Model;
-}
-
 namespace tryn::gfx
 {
 	enum class GraphicAPI

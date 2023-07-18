@@ -11,8 +11,6 @@
 #include <Core/src/gfx/dx11/Bindables/DX11ConstantBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PrimitiveTopology.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PolyVBuffer.h>
-#include <core/src/ent/Model/Model.h>
-#include <Core/src/ent/Model/Cube.h>
 #include "imgui_impl_dx11.h"
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE

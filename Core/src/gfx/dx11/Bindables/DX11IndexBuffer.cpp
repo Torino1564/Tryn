@@ -1,7 +1,6 @@
 #include "DX11IndexBuffer.h"
 #include <Core/src/gfx/dx11/GraphicsError.h>
 #include <Core/src/utl/Assert.h>
-#include <Core/src/ent/Model/Model.h>
 
 namespace tryn::gfx::dx11
 {

@@ -3,7 +3,7 @@
 #include <Core/src/gfx/Bindables/Bindable.h>
 #include <vector>
 #include <memory>
-#include "Model/Model.h"
+#include <Core/src/gfx/Mesh/Mesh.h>
 #include <Core/src/gfx/Gfx.h>
 
 namespace tryn::ent
@@ -15,7 +15,7 @@ namespace tryn::ent
 		void Draw( gfx::IGraphics& gfx );
 
 		std::shared_ptr<gfx::IConstantBuffer> pConstantBuffer;
-		std::shared_ptr<Model> model;
+		std::shared_ptr<gfx::Mesh> mesh;
 		std::vector<std::shared_ptr<gfx::IBindable>> bindables;
 	};
 

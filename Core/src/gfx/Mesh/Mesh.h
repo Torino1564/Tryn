@@ -5,12 +5,12 @@
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/gfx/IGraphics.h>
 
-namespace tryn::ent
+namespace tryn::gfx
 {
-	class Model
+	class Mesh
 	{
 	public:
-		Model(std::vector<glm::vec3> vertices, std::vector<int> indices , std::string tag);
+		Mesh(std::vector<glm::vec3> vertices, std::vector<int> indices , std::string tag);
 		void MakeBindables( gfx::IGraphics& gfx );
 		std::vector<std::shared_ptr<gfx::IBindable>>& GetBindables();
 		std::shared_ptr<gfx::VertexBuffer> GetBuffer();

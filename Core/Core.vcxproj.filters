@@ -87,7 +87,7 @@
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ent\Model\Model.cpp">
+    <ClCompile Include="src\gfx\Mesh\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ent\Entity.cpp">
@@ -124,9 +124,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ent\Model\Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\app\App.cpp">
@@ -1136,7 +1133,7 @@
     <ClInclude Include="src\gfx\Bindables\Bindable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Model\Model.h">
+    <ClInclude Include="src\gfx\Mesh\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Bindables\VertexShader.h">
@@ -1179,9 +1176,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ent\Model\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Bindables\VertexBuffer.h">

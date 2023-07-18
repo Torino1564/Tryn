@@ -1,6 +1,5 @@
 #include "TestApp.h"
 #include <Core/src/gfx/Bindables/BindableBase.h>
-#include <Core/src/ent/Model/Cube.h>
 #include <Core/src/gfx/dx11/TrynWLR.h>
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
 #include <Core/third/glm/glm.hpp>
@@ -25,9 +24,6 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 				0,1,4, 1,5,4
 	};
 
-	ent::Model testModel({},  indices,"cube");
-	testEntity.model = std::make_shared<ent::Model>(testModel);
-
 	// Vertex Shader
 	std::string pathVS = "VertexShader.cso";
 	auto pVertexShader = gfx::BindablePool::Resolve<gfx::IVertexShader>(Gfx(),pathVS);
@@ -42,9 +38,9 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	testEntity.bindables.push_back(pIndexBuffer);
 
 	// PolyVertexBuffer
-	auto posCPUBuffer = ent::Cube::GetVertexBuffer();
+	tryn::gfx::VertexBuffer posCPUBuffer(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Position3D),8) ;
 
-	gfx::VertexBuffer colorCPUBuffer(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Char4Color), posCPUBuffer->Size());
+	gfx::VertexBuffer colorCPUBuffer(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Char4Color), posCPUBuffer.Size());
 	colorCPUBuffer[0].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,0 };
 	colorCPUBuffer[1].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
 	colorCPUBuffer[2].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,0,255 };
@@ -55,7 +51,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	colorCPUBuffer[7].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
 
 	gfx::BufferArray vertexBufferArr;
-	std::pair<std::string, gfx::VertexBuffer> pair( "cube" , *posCPUBuffer );
+	std::pair<std::string, gfx::VertexBuffer> pair( "cube" , posCPUBuffer );
 	vertexBufferArr.push_back(pair);
 	pair.first = "cubeColor";
 	pair.second = colorCPUBuffer;

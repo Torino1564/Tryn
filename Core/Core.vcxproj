@@ -12,7 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\app\App.cpp" />
-    <ClCompile Include="src\ent\Model\Cube.cpp" />
     <ClCompile Include="src\gfx\Bindables\ConstantBuffer.cpp" />
     <ClCompile Include="src\gfx\Bindables\PrimitiveTopology.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11ConstantBuffer.cpp" />
@@ -25,7 +24,7 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexBuffer.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexShader.cpp" />
     <ClCompile Include="src\ent\Entity.cpp" />
-    <ClCompile Include="src\ent\Model\Model.cpp" />
+    <ClCompile Include="src\gfx\Mesh\Mesh.cpp" />
     <ClCompile Include="src\gfx\dx11\imgui_impl_dx11.cpp" />
     <ClCompile Include="src\gfx\dx12\imgui_impl_dx12.cpp" />
     <ClCompile Include="src\gfx\ImguiManager.cpp" />
@@ -65,7 +64,6 @@
   <ItemGroup>
     <ClInclude Include="src\app\App.h" />
     <ClInclude Include="src\ccr\GenericTaskQueue.h" />
-    <ClInclude Include="src\ent\Model\Cube.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
     <ClInclude Include="src\gfx\Bindables\ConstantBuffer.h" />
@@ -85,7 +83,7 @@
     <ClInclude Include="src\gfx\Bindables\VertexShader.h" />
     <ClInclude Include="src\gfx\Bindables\Bindable.h" />
     <ClInclude Include="src\ent\Entity.h" />
-    <ClInclude Include="src\ent\Model\Model.h" />
+    <ClInclude Include="src\gfx\Mesh\Mesh.h" />
     <ClInclude Include="src\gfx\dx11\Dx11VertexShader.h" />
     <ClInclude Include="src\gfx\dx11\imgui_impl_dx11.h" />
     <ClInclude Include="src\gfx\dx12\imgui_impl_dx12.h" />
