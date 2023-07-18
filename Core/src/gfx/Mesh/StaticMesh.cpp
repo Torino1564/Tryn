@@ -21,7 +21,9 @@ namespace tryn::gfx
 	StaticMesh::StaticMesh(std::vector<VertexBuffer>&& buffers, std::vector<int>&& indices, std::string tag)
 	{
 		this->tag = tag;
-
+		pCpuVertexData = std::make_shared<std::vector<VertexBuffer>>(buffers);
+		pCpuIndexData = std::make_shared<std::vector<int>>(indices);
+		indexCount = static_cast<int>(pCpuIndexData->size());
 	}
 	bool StaticMesh::IsStatic() const
 	{
@@ -38,6 +40,8 @@ namespace tryn::gfx
 
 		pVertexBuffer = IPolyVBuffer::Resolve(gfx, bfarray);
 		pIndexBuffer = IIndexBuffer::Resolve(gfx, pCpuIndexData);
+
+		hasBinds = true;
 	}
 }
 

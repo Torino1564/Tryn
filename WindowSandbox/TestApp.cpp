@@ -7,6 +7,7 @@
 #include <Core/src/gfx/BindablePool.h>
 #include <utility>
 #include <Core/src/gfx/Profiler.h>
+#include <Core/src/gfx/Mesh/StaticMesh.h>
 
 TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraphics> gfx_)
 {
@@ -24,68 +25,62 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 				0,1,4, 1,5,4
 	};
 
+	gfx::VertexBuffer posCPUBuffer(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Position3D), 8);
+	posCPUBuffer[0].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { -1.0f,-1.0f,-1.0f };
+	posCPUBuffer[1].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { 1.0f,-1.0f,-1.0f };
+	posCPUBuffer[2].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { -1.0f,1.0f,-1.0f };
+	posCPUBuffer[3].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { 1.0f,1.0f,-1.0f };
+	posCPUBuffer[4].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { -1.0f,-1.0f,1.0f };
+	posCPUBuffer[5].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { 1.0f,-1.0f,1.0f };
+	posCPUBuffer[6].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { -1.0f,1.0f,1.0f };
+	posCPUBuffer[7].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { 1.0f,1.0f,1.0f };
+
+	gfx::VertexBuffer colorCPUBuffer(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Char4Color), 8);
+	colorCPUBuffer[0].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,0 };
+	colorCPUBuffer[1].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
+	colorCPUBuffer[2].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,0,255 };
+	colorCPUBuffer[3].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,0 };
+	colorCPUBuffer[4].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,255 };
+	colorCPUBuffer[5].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,255 };
+	colorCPUBuffer[6].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,255 };
+	colorCPUBuffer[7].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
+
+	std::vector bfarray = { posCPUBuffer , colorCPUBuffer };
+
+	gfx::StaticMesh cube(std::move(bfarray), std::move(indices), "cube");
+	cube.MakeBindables(Gfx());
+
 	// Vertex Shader
 	std::string pathVS = "VertexShader.cso";
-	auto pVertexShader = gfx::BindablePool::Resolve<gfx::IVertexShader>(Gfx(),pathVS);
+	auto pVertexShader = gfx::IVertexShader::Resolve(Gfx(), pathVS);
 	testEntity.bindables.push_back(pVertexShader);
 
 	// Pixel Shader
-	auto pPixelShader = gfx::BindablePool::Resolve<gfx::IPixelShader>(Gfx(), "PixelShader.cso");
+	auto pPixelShader = gfx::IPixelShader::Resolve(Gfx(), "PixelShader.cso");
 	testEntity.bindables.push_back(pPixelShader);
 
-	// Index Buffer
-	auto pIndexBuffer = gfx::BindablePool::Resolve<gfx::IIndexBuffer>(Gfx(), std::make_shared<std::vector<int>>(indices), "cube");
-	testEntity.bindables.push_back(pIndexBuffer);
-
-	// PolyVertexBuffer
-	auto pPosCPUBuffer = std::make_shared<gfx::VertexBuffer>(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Position3D), 8);
-
-	auto pColorCPUBuffer = std::make_shared<gfx::VertexBuffer>(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Char4Color), pPosCPUBuffer->Size());
-	(*pColorCPUBuffer)[0].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,0 };
-	(*pColorCPUBuffer)[1].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
-	(*pColorCPUBuffer)[2].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,0,255 };
-	(*pColorCPUBuffer)[3].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,0 };
-	(*pColorCPUBuffer)[4].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,255 };
-	(*pColorCPUBuffer)[5].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,255 };
-	(*pColorCPUBuffer)[6].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,255 };
-	(*pColorCPUBuffer)[7].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
-
-	gfx::BufferArray vertexBufferArr;
-	std::pair<std::string, std::shared_ptr<gfx::VertexBuffer>> pair("cube", pPosCPUBuffer);
-	vertexBufferArr.push_back(pair);
-	pair.first = "cubeColor";
-	pair.second = pColorCPUBuffer;
-	vertexBufferArr.push_back(pair);
-
-	auto pPolyVB = gfx::BindablePool::Resolve<gfx::IPolyVBuffer>(Gfx(), vertexBufferArr, "coloredCube");
-	testEntity.bindables.push_back(pPolyVB);
-
-	auto dummyVB5 = gfx::BindablePool::Resolve<gfx::IVertexBuffer>(Gfx(),pPosCPUBuffer , "cube");
-
 	// InputLayout
-	auto pInputLayout = gfx::BindablePool::Resolve<gfx::IInputLayout>(Gfx(), *pPolyVB, *pVertexShader);
-
+	auto pInputLayout = gfx::IInputLayout::Resolve(Gfx(), cube, *pVertexShader);
 	testEntity.bindables.push_back(pInputLayout);
 
 	// Primitive Topology
-	auto pPrimitiveTopology = gfx::BindablePool::Resolve<gfx::IPrimitiveTopology>(Gfx());
+	auto pPrimitiveTopology = gfx::IPrimitiveTopology::Resolve(Gfx());
 	testEntity.bindables.push_back(pPrimitiveTopology);
 
 	// Constant Buffer
 	gfx::ConstantBufferLayout cBufLayout;
 	cBufLayout.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Matrix4, "transformation"));
 	cBufLayout.Solidify();
-	auto pConstantBuffer = gfx::BindablePool::Resolve<gfx::IConstantBuffer>(Gfx(), std::move(cBufLayout),0,"cubeTransformation");
+	auto pConstantBuffer = gfx::IConstantBuffer::Resolve(Gfx(), std::move(cBufLayout), 0, "cubeTransformation");
 	testEntity.bindables.push_back(pConstantBuffer);
 
-	
 	entities.push_back(std::move(testEntity));
 }
 
 void TestApp::DoFrame()
 {
 	static float angle = 0;
-	
+
 	static bool initialized = false;
 
 	for (auto& entity : entities)
