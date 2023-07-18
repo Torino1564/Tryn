@@ -38,29 +38,29 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	testEntity.bindables.push_back(pIndexBuffer);
 
 	// PolyVertexBuffer
-	tryn::gfx::VertexBuffer posCPUBuffer(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Position3D),8) ;
+	auto pPosCPUBuffer = std::make_shared<gfx::VertexBuffer>(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Position3D), 8);
 
-	gfx::VertexBuffer colorCPUBuffer(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Char4Color), posCPUBuffer.Size());
-	colorCPUBuffer[0].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,0 };
-	colorCPUBuffer[1].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
-	colorCPUBuffer[2].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,0,255 };
-	colorCPUBuffer[3].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,0 };
-	colorCPUBuffer[4].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,255 };
-	colorCPUBuffer[5].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,255 };
-	colorCPUBuffer[6].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,255 };
-	colorCPUBuffer[7].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
+	auto pColorCPUBuffer = std::make_shared<gfx::VertexBuffer>(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Char4Color), pPosCPUBuffer->Size());
+	(*pColorCPUBuffer)[0].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,0 };
+	(*pColorCPUBuffer)[1].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
+	(*pColorCPUBuffer)[2].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,0,255 };
+	(*pColorCPUBuffer)[3].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,0 };
+	(*pColorCPUBuffer)[4].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,255 };
+	(*pColorCPUBuffer)[5].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,255 };
+	(*pColorCPUBuffer)[6].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,255 };
+	(*pColorCPUBuffer)[7].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
 
 	gfx::BufferArray vertexBufferArr;
-	std::pair<std::string, gfx::VertexBuffer> pair( "cube" , posCPUBuffer );
+	std::pair<std::string, std::shared_ptr<gfx::VertexBuffer>> pair("cube", pPosCPUBuffer);
 	vertexBufferArr.push_back(pair);
 	pair.first = "cubeColor";
-	pair.second = colorCPUBuffer;
+	pair.second = pColorCPUBuffer;
 	vertexBufferArr.push_back(pair);
 
 	auto pPolyVB = gfx::BindablePool::Resolve<gfx::IPolyVBuffer>(Gfx(), vertexBufferArr, "coloredCube");
 	testEntity.bindables.push_back(pPolyVB);
 
-	auto dummyVB5 = gfx::BindablePool::Resolve<gfx::IVertexBuffer>(Gfx(),*posCPUBuffer , "cube");
+	auto dummyVB5 = gfx::BindablePool::Resolve<gfx::IVertexBuffer>(Gfx(),pPosCPUBuffer , "cube");
 
 	// InputLayout
 	auto pInputLayout = gfx::BindablePool::Resolve<gfx::IInputLayout>(Gfx(), *pPolyVB, *pVertexShader);

@@ -24,10 +24,10 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexBuffer.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexShader.cpp" />
     <ClCompile Include="src\ent\Entity.cpp" />
-    <ClCompile Include="src\gfx\Mesh\Mesh.cpp" />
     <ClCompile Include="src\gfx\dx11\imgui_impl_dx11.cpp" />
     <ClCompile Include="src\gfx\dx12\imgui_impl_dx12.cpp" />
     <ClCompile Include="src\gfx\ImguiManager.cpp" />
+    <ClCompile Include="src\gfx\Mesh\StaticMesh.cpp" />
     <ClCompile Include="src\gfx\Vertex.cpp" />
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp" />
     <ClCompile Include="src\ccr\GenericTaskQueue.cpp" />
@@ -93,6 +93,7 @@
     <ClInclude Include="src\gfx\GraphicsException.h" />
     <ClInclude Include="src\gfx\IGraphics.h" />
     <ClInclude Include="src\gfx\ImguiManager.h" />
+    <ClInclude Include="src\gfx\Mesh\StaticMesh.h" />
     <ClInclude Include="src\gfx\Profiler.h" />
     <ClInclude Include="src\gfx\Vertex.h" />
     <ClInclude Include="src\gfx\vulkan\Graphics.h" />

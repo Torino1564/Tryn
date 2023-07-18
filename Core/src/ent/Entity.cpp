@@ -9,6 +9,7 @@ namespace tryn::ent
 		{
 			bindable->Bind();
 		}
-		gfx.DrawIndexed((int)mesh->GetIndices()->size());
+		// TODO FIX
+		gfx.DrawIndexed((int)mesh->GetIndexCount());
 	}
 }

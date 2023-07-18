@@ -4,12 +4,12 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11VertexBuffer::DX11VertexBuffer(Graphics& gfx, VertexBuffer&& cpuBuffer , std::string tag)
+	DX11VertexBuffer::DX11VertexBuffer(Graphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag)
 		:
 		gfx(gfx)
 	{
 		this->tag = tag;
-		CPUBuffer = std::make_unique<VertexBuffer>(std::forward<VertexBuffer>(cpuBuffer));
+		CPUBuffer = cpuBuffer;
 		type = GraphicAPI::DX11;
 	}
 	void DX11VertexBuffer::Bind()

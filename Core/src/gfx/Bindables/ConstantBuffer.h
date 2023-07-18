@@ -8,6 +8,7 @@
 #include <memory>
 #include <Core/src/utl/Exception.h>
 #include <unordered_map>
+#include <Core/src/gfx/BindablePool.h>
 
 ZT_EX_DEF(DcbException);
 
@@ -168,6 +169,10 @@ namespace tryn::gfx
 	class IConstantBuffer : public IBindable
 	{
 	public:
+		static std::shared_ptr<IConstantBuffer> Resolve(IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
+		{
+			return BindablePool::Resolve<IConstantBuffer>(gfx, std::forward<ConstantBufferLayout>(cbl), slot, tag);
+		}
 		virtual ~IConstantBuffer() {}
 		ElementView operator[](std::string id)
 		{

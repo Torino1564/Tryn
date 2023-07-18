@@ -130,17 +130,17 @@ namespace tryn::gfx::dx11
 		return pDevice;
 	}
 
-	std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(VertexBuffer cpuBuffer, std::string tag)
+	std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(std::shared_ptr<VertexBuffer> pCpuBuffer, std::string tag)
 	{
-		return std::make_shared<DX11VertexBuffer>(*this, std::move(cpuBuffer), tag);
+		return std::make_shared<DX11VertexBuffer>(*this, pCpuBuffer, tag);
 	}
 
-	std::shared_ptr<IPolyVBuffer> Graphics::CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, VertexBuffer>, std::shared_ptr<IVertexBuffer>>> CpuVBs, std::string tag)
+	std::shared_ptr<IPolyVBuffer> Graphics::CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>>>& pCpuVBs, std::string tag)
 	{
-		return std::make_shared<DX11PolyVBuffer>(*this, std::move(CpuVBs), tag);
+		return std::make_shared<DX11PolyVBuffer>(*this, pCpuVBs, tag);
 	}
 
-	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::shared_ptr<std::vector<int>> indices, std::string tag)
+	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::shared_ptr<const std::vector<int>> indices, std::string tag)
 	{
 		return std::make_shared<DX11IndexBuffer>(*this, indices, tag);
 	}
@@ -163,6 +163,11 @@ namespace tryn::gfx::dx11
 	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(IPolyVBuffer& pvb, IVertexShader& vs)
 	{
 		return std::make_shared<DX11InputLayout>(*this, pvb, vs);
+	}
+
+	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(StaticMesh& mesh, IVertexShader& vs)
+	{
+		return std::make_shared<DX11InputLayout>(*this, mesh, vs);
 	}
 
 	std::shared_ptr<IPrimitiveTopology> Graphics::CreatePrimitiveTopology()

@@ -4,26 +4,52 @@
 #include <Core/src/gfx/Bindables/Bindable.h>
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/gfx/IGraphics.h>
+#include <Core/src/gfx/Bindables/PolyVBuffer.h>
+#include <Core/src/gfx/Bindables/IndexBuffer.h>
 
 namespace tryn::gfx
 {
 	class Mesh
 	{
 	public:
-		Mesh(std::vector<glm::vec3> vertices, std::vector<int> indices , std::string tag);
-		void MakeBindables( gfx::IGraphics& gfx );
-		std::vector<std::shared_ptr<gfx::IBindable>>& GetBindables();
-		std::shared_ptr<gfx::VertexBuffer> GetBuffer();
-		const std::shared_ptr<const std::vector<int>>& GetIndices() const;
-		bool HasBindables() const;
+		~Mesh() {}
+		virtual void MakeBindables( gfx::IGraphics& gfx ) = 0;
+		bool HasBindables() const
+		{
+			return hasBinds;
+		}
 		const std::string GetTag() const
 		{
 			return tag;
 		}
+		virtual bool IsStatic() const = 0;
+		const auto GetPolyVBufer() const
+		{
+			return pVertexBuffer;
+		}
+		const auto GetIndexBuffer() const
+		{
+			return pIndexBuffer;
+		}
+		void Bind( IGraphics& gfx )
+		{
+			trynass_msg(hasBinds, L"Attempted to bind a mesh with no bindings!");
+
+			pVertexBuffer->Bind();
+			pIndexBuffer->Bind();
+		}
+		const int GetIndexCount() const
+		{
+			return indexCount;
+		}
 	protected:
-		std::vector<std::shared_ptr<gfx::IBindable>> bindables;
-		std::shared_ptr<std::vector<int>> indices;
-		std::shared_ptr<gfx::VertexBuffer> buffer;
+		std::shared_ptr<IPolyVBuffer> pVertexBuffer;
+		std::shared_ptr<IIndexBuffer> pIndexBuffer;
+
+		std::shared_ptr<std::vector<int>> pCpuIndexData;
+		std::shared_ptr<std::vector<gfx::VertexBuffer>> pCpuVertexData;
 		std::string tag;
+		int indexCount = 0;
+		bool hasBinds = false;
 	};
 }

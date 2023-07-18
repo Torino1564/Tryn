@@ -6,11 +6,11 @@
 #include <string>
 #include <sstream>
 #include <variant>
-
+#include <Core/src/gfx/BindablePool.h>
 
 namespace tryn::gfx
 {
-	typedef std::vector<std::variant<std::pair<std::string, tryn::gfx::VertexBuffer>, std::shared_ptr<tryn::gfx::IVertexBuffer>>> BufferArray;
+	typedef std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>>> BufferArray;
 	
 	class IPolyVBuffer : public IBindable
 	{
@@ -20,17 +20,22 @@ namespace tryn::gfx
 		{
 			return slots.size();
 		}
-		virtual void Append(std::string , VertexBuffer&&) = 0;
+		virtual void Append(std::string, std::shared_ptr<VertexBuffer>) = 0;
 		virtual void Append(std::shared_ptr<IVertexBuffer>) = 0;
 
-		static std::string GenerateID(IGraphics& gfx, BufferArray& CpuVBs, std::string tag)
+		static std::shared_ptr<IPolyVBuffer> Resolve(IGraphics& gfx, BufferArray& cpuVBs, std::string tag = "?")
+		{
+			return BindablePool::Resolve<IPolyVBuffer>(gfx, cpuVBs, tag);
+		}
+
+		static std::string GenerateID(IGraphics& gfx, BufferArray& cpuVBs, std::string tag)
 		{
 			if (tag == "?") return tag;
 			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;
-			ss << typeStr << "#PolyVBuffer#" << std::to_string(CpuVBs.size()) << '#' << tag;
+			ss << typeStr << "#PolyVBuffer#" << std::to_string(cpuVBs.size()) << '#' << tag;
 
-			for (auto& buffer : CpuVBs)
+			for (auto& buffer : cpuVBs)
 			{
 				if (std::holds_alternative<std::shared_ptr<IVertexBuffer>>(buffer))
 				{
@@ -43,9 +48,9 @@ namespace tryn::gfx
 				}
 				else
 				{
-					const auto& [tag,vb] = std::get<std::pair<std::string, VertexBuffer>>(buffer);
+					const auto& [tag, vb] = std::get<std::pair<std::string, std::shared_ptr<VertexBuffer>>>(buffer);
 					ss << '$' << tag;
-					for (auto& [element, index] : vb.GetLayout().Elements)
+					for (auto& [element, index] : vb->GetLayout().Elements)
 					{
 						ss << '#' << element.GetName() << std::to_string(index);
 					}

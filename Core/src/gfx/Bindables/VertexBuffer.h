@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <sstream>
+#include <Core/src/gfx/BindablePool.h>
 
 namespace tryn::gfx
 {
@@ -13,14 +14,18 @@ namespace tryn::gfx
 	public:
 		virtual std::vector<char> GetLayoutFromVB() const = 0;
 		virtual std::vector<char> GetSlottedLayoutFromVB( int slot ) const = 0;
-		static std::string GenerateID(IGraphics& gfx, VertexBuffer& cpuBuffer , std::string tag = "?")
+		static std::shared_ptr<IVertexBuffer> Resolve(IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag = "?")
+		{
+			return BindablePool::Resolve<IVertexBuffer>(gfx, cpuBuffer, tag);
+		}
+		static std::string GenerateID(IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer , std::string tag = "?")
 		{
 			if (tag == "?") return tag;
 			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;
-			ss << typeStr << "#VertexBuffer#" << std::to_string(cpuBuffer.Size()) << "#";
+			ss << typeStr << "#VertexBuffer#" << std::to_string(cpuBuffer->Size()) << "#";
 
-			for (auto& element : cpuBuffer.GetLayout().Elements)
+			for (auto& element : cpuBuffer->GetLayout().Elements)
 			{
 				ss << element.first.GetName() << element.second;
 			};
@@ -47,7 +52,7 @@ namespace tryn::gfx
 			return tag;
 		}
 	protected:
-		std::unique_ptr<VertexBuffer> CPUBuffer;
+		std::shared_ptr<VertexBuffer> CPUBuffer;
 		std::string tag;
 	};
 }

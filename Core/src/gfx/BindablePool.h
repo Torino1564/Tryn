@@ -3,14 +3,8 @@
 #include "Gfx.h"
 #include <unordered_map>
 #include <memory>
-#include "Bindables/VertexBuffer.h"
 #include <string>
 #include <concepts>
-
-#define ElementInterface(el) I##el
-#define CreateElement(el) Create##el
-
-#define singleElement VertexBuffer
 
 #define BINDABLE_LIST \
 		X(VertexBuffer)\

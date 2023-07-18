@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/src/gfx/Bindables/Bindable.h>
+#include <Core/src/gfx/BindablePool.h>
 #include <string>
 
 namespace tryn::gfx
@@ -7,6 +8,10 @@ namespace tryn::gfx
 	class IVertexShader : public IBindable
 	{
 	public:
+		static std::shared_ptr<IVertexShader> Resolve(IGraphics& gfx, std::string path)
+		{
+			return BindablePool::Resolve<IVertexShader>(gfx, path);
+		}
 		static const std::string GenerateID(IGraphics& gfx, std::string path)
 		{
 			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];

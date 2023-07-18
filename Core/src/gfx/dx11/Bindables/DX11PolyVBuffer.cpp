@@ -6,7 +6,7 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11PolyVBuffer::DX11PolyVBuffer(Graphics& gfx, std::vector<std::variant<std::pair<std::string, VertexBuffer>, std::shared_ptr<IVertexBuffer>>> CpuVBs, std::string tag)
+	DX11PolyVBuffer::DX11PolyVBuffer(Graphics& gfx, BufferArray& CpuVBs, std::string tag)
 		:
 		gfx(gfx)
 	{
@@ -21,15 +21,15 @@ namespace tryn::gfx::dx11
 			}
 			else
 			{
-				auto [tag, vb] = std::get<std::pair<std::string, VertexBuffer>>(buffer);
-				Append(tag, std::forward<VertexBuffer>(vb));
+				auto [tag, vb] = std::get<std::pair<std::string, std::shared_ptr<VertexBuffer>>>(buffer);
+				Append(tag, vb);
 			}
 		}
 	}
 
-	void DX11PolyVBuffer::Append(std::string tag, VertexBuffer&& vb)
+	void DX11PolyVBuffer::Append(std::string tag, std::shared_ptr<VertexBuffer> vb)
 	{
-		std::shared_ptr<IVertexBuffer> vertexBuffer = BindablePool::Resolve<IVertexBuffer>(gfx, std::forward<VertexBuffer>(vb), tag);
+		std::shared_ptr<IVertexBuffer> vertexBuffer = BindablePool::Resolve<IVertexBuffer>(gfx, vb, tag);
 		slots.push_back(vertexBuffer);
 	}
 

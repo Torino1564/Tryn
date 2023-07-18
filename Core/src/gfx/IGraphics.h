@@ -41,6 +41,7 @@ namespace tryn::gfx
 	class IPrimitiveTopology;
 	class ConstantBufferLayout;
 	class IConstantBuffer;
+	class StaticMesh;
 
 	class IGraphics
 	{
@@ -77,13 +78,14 @@ namespace tryn::gfx
 			return GRAPHIC_APISTR;
 		}
 		// Resurce Creation
-		virtual std::shared_ptr<IVertexBuffer>		CreateVertexBuffer(VertexBuffer, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IIndexBuffer>		CreateIndexBuffer(std::shared_ptr<std::vector<int>> indices, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IPolyVBuffer>		CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, VertexBuffer>, std::shared_ptr<IVertexBuffer>>>, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IVertexBuffer>		CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IIndexBuffer>		CreateIndexBuffer(std::shared_ptr<const std::vector<int>> indices, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IPolyVBuffer>		CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>>>&, std::string tag = "?") = 0;
 		virtual std::shared_ptr<IVertexShader>		CreateVertexShader(std::string path) = 0;
 		virtual std::shared_ptr<IPixelShader>		CreatePixelShader(std::string path) = 0;
 		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) = 0;
 		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) = 0;
+		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(StaticMesh& vb, IVertexShader& vs) = 0;
 		virtual std::shared_ptr<IPrimitiveTopology> CreatePrimitiveTopology() = 0;
 		virtual std::shared_ptr<IConstantBuffer>	CreateConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
 

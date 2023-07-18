@@ -17,8 +17,6 @@ namespace tryn::gfx::dx11
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> pBuffer;
-		std::shared_ptr<const std::vector<int>> indices;
-		int count;
 		Graphics& gfx;
 	};
 }
