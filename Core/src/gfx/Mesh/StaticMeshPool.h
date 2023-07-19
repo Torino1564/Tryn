@@ -7,7 +7,7 @@ namespace tryn::gfx
 	class StaticMeshPool
 	{
 	public:
-		std::shared_ptr<StaticMesh> Resolve(std::string path)
+		static std::shared_ptr<StaticMesh> Resolve(std::string path)
 		{
 			const auto it = Get().pool.find(path);
 			if (it == Get().pool.end())
@@ -22,13 +22,13 @@ namespace tryn::gfx
 				return Get().pool[path].lock();
 			}
 		}
-		StaticMeshPool& Get()
+		static StaticMeshPool& Get()
 		{
 			static StaticMeshPool singleton;
 			return singleton;
 		}
 	private:
-		StaticMeshPool();
+		StaticMeshPool() {}
 		std::unordered_map<std::string, std::weak_ptr<StaticMesh>> pool;
 	};
 }

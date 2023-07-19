@@ -58,31 +58,27 @@ namespace tryn::gfx::dx11
 		}
 		return DXGI_FORMAT_UNKNOWN;
 	}
-	std::vector<char> DX11VertexBuffer::GetLayoutFromVB() const
+	std::vector<std::any> DX11VertexBuffer::GetLayoutFromVB() const
 	{
 		return GetSlottedLayoutFromVB(0);
 	}
-	std::vector<char> DX11VertexBuffer::GetSlottedLayoutFromVB(int slot) const
+	std::vector<std::any> DX11VertexBuffer::GetSlottedLayoutFromVB(int slot) const
 	{
 		const auto& vLayout = ConstGet().GetLayout();
 		const auto descSize = vLayout.GetElementCount();
-		const auto charVectorSize = descSize * sizeof(D3D11_INPUT_ELEMENT_DESC);
 
-		std::vector<char> layout;
-		layout.resize(charVectorSize);
-
-		std::vector<D3D11_INPUT_ELEMENT_DESC> layoutt;
-		layout.resize(descSize);
+		std::vector<std::any> layout;
 		for (int i = 0; i < descSize; i++)
 		{
-			auto fakePtr = reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(layout.data() + sizeof(D3D11_INPUT_ELEMENT_DESC) * i);
-			fakePtr->SemanticName = vLayout.Elements[i].first.GetName();
-			fakePtr->SemanticIndex = vLayout.Elements[i].second;
-			fakePtr->Format = MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
-			fakePtr->InputSlot = (UINT)slot;
-			fakePtr->InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-			fakePtr->AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-			fakePtr->InstanceDataStepRate = 0u;
+			D3D11_INPUT_ELEMENT_DESC descriptor = {};
+			descriptor.SemanticName = vLayout.Elements[i].first.GetName();
+			descriptor.SemanticIndex = vLayout.Elements[i].second;
+			descriptor.Format = MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
+			descriptor.InputSlot = (UINT)slot;
+			descriptor.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+			descriptor.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+			descriptor.InstanceDataStepRate = 0u;
+			layout.push_back(descriptor);
 		}
 
 		return layout;

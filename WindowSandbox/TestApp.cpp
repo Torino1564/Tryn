@@ -8,11 +8,19 @@
 #include <utility>
 #include <Core/src/gfx/Profiler.h>
 #include <Core/src/gfx/Mesh/StaticMesh.h>
+#include <Core/src/gfx/Mesh/StaticMeshPool.h>
+#include <Core/src/gfx/Assimp.h>
 
 TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraphics> gfx_)
 {
 	wnd = wnd_;
 	gfx = gfx_;
+
+	// Assimp Test
+	const auto suzanneModel = gfx::StaticMeshPool::Resolve("resources\\models\\suzanne.obj");
+	suzanneModel->MakeBindables(Gfx());
+	const auto boxModel = gfx::StaticMeshPool::Resolve("resources\\models\\box.obj");
+	boxModel->MakeBindables(Gfx());
 
 	// Mesh creation
 	
@@ -42,6 +50,8 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 
 	// Static Object
 	ent::StaticObject cube1(std::make_shared<gfx::StaticMesh>(cubeMesh));
+	ent::StaticObject suzanne(suzanneModel);
+	ent::StaticObject box(boxModel);
 	
 	// Vertex Buffer
 	gfx::VertexBuffer colorCPUBuffer(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Char4Color), 8);
@@ -61,30 +71,37 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	}
 
 	// Vertex Shader
-	std::string pathVS = "VertexShader.cso";
-	auto pVertexShader = gfx::IVertexShader::Resolve(Gfx(), pathVS);
-	cube1.AddBindable(pVertexShader);
+	auto pVertexShaderColor = gfx::IVertexShader::Resolve(Gfx(), "VertexShader.cso");
+	cube1.AddBindable(pVertexShaderColor);
+	auto pVertexShaderFlat = gfx::IVertexShader::Resolve(Gfx(), "VSFlat.cso");
+	suzanne.AddBindable(pVertexShaderFlat);
+	box.AddBindable(pVertexShaderFlat);
 
 	// Pixel Shader
-	auto pPixelShader = gfx::IPixelShader::Resolve(Gfx(), "PixelShader.cso");
-	cube1.AddBindable(pPixelShader);
+	cube1.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "PixelShader.cso"));
+	suzanne.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "PSFlat.cso"));
+	box.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "PSFlat.cso"));
 
 	// InputLayout
-	auto pInputLayout = gfx::IInputLayout::Resolve(Gfx(), cube1.GetVertexBuffer(), *pVertexShader);
-	cube1.AddBindable(pInputLayout);
+	cube1.AddBindable(gfx::IInputLayout::Resolve(Gfx(), cube1.GetVertexBuffer(), *pVertexShaderColor));
+	suzanne.AddBindable(gfx::IInputLayout::Resolve(Gfx(), suzanne.GetVertexBuffer(), *pVertexShaderFlat));
+	box.AddBindable(gfx::IInputLayout::Resolve(Gfx(), suzanne.GetVertexBuffer(), *pVertexShaderFlat));
 
 	// Primitive Topology
-	auto pPrimitiveTopology = gfx::IPrimitiveTopology::Resolve(Gfx());
-	cube1.AddBindable(pPrimitiveTopology);
+	cube1.AddBindable(gfx::IPrimitiveTopology::Resolve(Gfx()));
+	suzanne.AddBindable(gfx::IPrimitiveTopology::Resolve(Gfx()));
+	box.AddBindable(gfx::IPrimitiveTopology::Resolve(Gfx()));
 
 	// Constant Buffer
 	gfx::ConstantBufferLayout cBufLayout;
 	cBufLayout.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Matrix4, "transformation"));
 	cBufLayout.Solidify();
-	auto pConstantBuffer = gfx::IConstantBuffer::Resolve(Gfx(), std::move(cBufLayout), 0, "cubeTransformation");
+	auto pConstantBuffer = gfx::IConstantBuffer::Resolve(Gfx(), std::move(cBufLayout), 0, "transformation");
 	cube1.SetConstantBuffer(pConstantBuffer);
+	suzanne.SetConstantBuffer(pConstantBuffer);
+	box.SetConstantBuffer(pConstantBuffer);
 
-	entities.push_back(std::move(cube1));
+	entities.push_back(std::move(box));
 }
 
 void TestApp::DoFrame()

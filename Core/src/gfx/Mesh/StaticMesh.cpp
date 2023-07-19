@@ -2,13 +2,83 @@
 #include <Core/src/gfx/BindablePool.h>
 #include <Core/src/gfx/Bindables/IndexBuffer.h>
 #include <Core/src/gfx/Bindables/PolyVBuffer.h>
+#include <Core/src/gfx/Assimp.h>
 
 namespace tryn::gfx
 {
 	StaticMesh::StaticMesh(std::string path)
 	{
-		// TODO ASSIMP
 		tag = path;
+
+		const auto pModel = gfx::AssimpManager::Get().ReadFile(path,
+			aiProcess_Triangulate |
+			aiProcess_JoinIdenticalVertices);
+
+		if (pModel->mNumMeshes != 1) trylog.warn(L"The static mesh was created but there were some unused meshes!");
+
+		// TODO Deal with no existing path error
+
+		gfx::VertexLayout vertexLayout;
+
+		const auto aiMesh = pModel->mMeshes[0];
+
+		if (aiMesh->HasPositions()) vertexLayout.AppendElement(VertexLayout::VertexElement::Position3D);
+		if (aiMesh->HasNormals()) vertexLayout.AppendElement(VertexLayout::VertexElement::Normal);
+		if (aiMesh->HasTangentsAndBitangents())
+		{
+			vertexLayout.AppendElement(VertexLayout::VertexElement::Tangent);
+			vertexLayout.AppendElement(VertexLayout::VertexElement::Bitangent);
+		}
+
+		gfx::VertexBuffer vertexBuffer(std::move(vertexLayout), aiMesh->mNumVertices);
+
+		if (aiMesh->HasPositions())
+		{
+			for (int i = 0; i < aiMesh->mNumVertices; i++)
+			{
+				const auto pos = aiMesh->mVertices[i];
+				glm::vec3 position(pos.x, pos.y, pos.z);
+				vertexBuffer[i].Attr<VertexLayout::VertexElement::Position3D>() = position;
+			}
+		}
+		if (aiMesh->HasNormals())
+		{
+			for (int i = 0; i < aiMesh->mNumVertices; i++)
+			{
+				const auto norm = aiMesh->mNormals[i];
+				glm::vec3 normal(norm.x, norm.y, norm.z);
+				vertexBuffer[i].Attr<VertexLayout::VertexElement::Normal>() = normal;
+			}
+		}
+		if (aiMesh->HasTangentsAndBitangents())
+		{
+			for (int i = 0; i < aiMesh->mNumVertices; i++)
+			{
+				const auto tan = aiMesh->mTangents[i];
+				const auto btan = aiMesh->mBitangents[i];
+				glm::vec3 tangent(tan.x, tan.y, tan.z);
+				glm::vec3 bitangent(btan.x, btan.y, btan.z);
+				vertexBuffer[i].Attr<VertexLayout::VertexElement::Tangent>() = tangent;
+				vertexBuffer[i].Attr<VertexLayout::VertexElement::Bitangent>() = bitangent;
+			}
+		}
+
+		std::vector<int> indices;
+		indices.resize(aiMesh->mNumFaces * (size_t)3);
+
+		for (size_t i = 0; i < aiMesh->mNumFaces; i++)
+		{
+			const auto& triangle = aiMesh->mFaces[i];
+			indices[i] = triangle.mIndices[0];
+			indices[i + 1] = triangle.mIndices[0 + 1];
+			indices[i + 2] = triangle.mIndices[0 + 2];
+		}
+		indexCount = indices.size();
+
+		std::vector<VertexBuffer> temp;
+		temp.emplace_back(std::move(vertexBuffer));
+		pCpuVertexData = std::make_shared<std::vector<VertexBuffer>>(temp);
+		pCpuIndexData = std::make_shared<std::vector<int>>(indices);
 	}
 	StaticMesh::StaticMesh(VertexBuffer&& buffer, std::vector<int>&& indices, std::string tag)
 	{

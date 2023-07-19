@@ -6,14 +6,15 @@
 #include <memory>
 #include <sstream>
 #include <Core/src/gfx/BindablePool.h>
+#include <any>
 
 namespace tryn::gfx
 {
 	class IVertexBuffer : public IBindable
 	{
 	public:
-		virtual std::vector<char> GetLayoutFromVB() const = 0;
-		virtual std::vector<char> GetSlottedLayoutFromVB( int slot ) const = 0;
+		virtual std::vector<std::any> GetLayoutFromVB() const = 0;
+		virtual std::vector<std::any> GetSlottedLayoutFromVB( int slot ) const = 0;
 		static std::shared_ptr<IVertexBuffer> Resolve(IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag = "?")
 		{
 			return BindablePool::Resolve<IVertexBuffer>(gfx, cpuBuffer, tag);

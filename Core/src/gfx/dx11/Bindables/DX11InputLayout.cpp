@@ -37,7 +37,11 @@ namespace tryn::gfx::dx11
 		int slot = 0;
 		for (auto& buf : pvb.slots)
 		{
-			buffer.push_back(*reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(buf->GetSlottedLayoutFromVB(slot++).data()));
+			auto layout = buf->GetSlottedLayoutFromVB(slot++);
+			for (auto& element : layout)
+			{
+				buffer.push_back(std::any_cast<D3D11_INPUT_ELEMENT_DESC>(element));
+			}
 			totalElCount += buf->Get().GetLayout().GetElementCount();
 		}
 		gfx.GetDevice()->CreateInputLayout(buffer.data(), (UINT)totalElCount, dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
