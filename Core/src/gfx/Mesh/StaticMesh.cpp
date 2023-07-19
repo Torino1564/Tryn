@@ -20,7 +20,7 @@ namespace tryn::gfx
 
 		gfx::VertexLayout vertexLayout;
 
-		const auto aiMesh = pModel->mMeshes[0];
+		const auto aiMesh = pModel->mMeshes[1];
 
 		if (aiMesh->HasPositions()) vertexLayout.AppendElement(VertexLayout::VertexElement::Position3D);
 		if (aiMesh->HasNormals()) vertexLayout.AppendElement(VertexLayout::VertexElement::Normal);
@@ -69,9 +69,9 @@ namespace tryn::gfx
 		for (size_t i = 0; i < aiMesh->mNumFaces; i++)
 		{
 			const auto& triangle = aiMesh->mFaces[i];
-			indices[i] = triangle.mIndices[0];
-			indices[i + 1] = triangle.mIndices[0 + 1];
-			indices[i + 2] = triangle.mIndices[0 + 2];
+			indices[3 * i] = triangle.mIndices[0];
+			indices[(3 * i) + 1] = triangle.mIndices[1];
+			indices[(3 * i) + 2] = triangle.mIndices[2];
 		}
 		indexCount = indices.size();
 

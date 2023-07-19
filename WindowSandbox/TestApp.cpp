@@ -17,42 +17,15 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	gfx = gfx_;
 
 	// Assimp Test
-	const auto suzanneModel = gfx::StaticMeshPool::Resolve("resources\\models\\suzanne.obj");
+	const auto suzanneModel = gfx::StaticMeshPool::Resolve("resources\\models\\suzanneHp.obj");
 	suzanneModel->MakeBindables(Gfx());
-	const auto boxModel = gfx::StaticMeshPool::Resolve("resources\\models\\box.obj");
-	boxModel->MakeBindables(Gfx());
-
-	// Mesh creation
-	
-	std::vector<int> indices = {
-				0,2,1, 2,3,1,
-				1,3,5, 3,7,5,
-				2,6,3, 3,6,7,
-				4,5,7, 4,7,6,
-				0,4,2, 2,4,6,
-				0,1,4, 1,5,4
-	};
-
-	gfx::VertexBuffer posCPUBuffer(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Position3D), 8);
-	posCPUBuffer[0].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { -1.0f,-1.0f,-1.0f };
-	posCPUBuffer[1].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { 1.0f,-1.0f,-1.0f };
-	posCPUBuffer[2].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { -1.0f,1.0f,-1.0f };
-	posCPUBuffer[3].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { 1.0f,1.0f,-1.0f };
-	posCPUBuffer[4].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { -1.0f,-1.0f,1.0f };
-	posCPUBuffer[5].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { 1.0f,-1.0f,1.0f };
-	posCPUBuffer[6].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { -1.0f,1.0f,1.0f };
-	posCPUBuffer[7].Attr<gfx::VertexLayout::VertexElement::Position3D>() = { 1.0f,1.0f,1.0f };
-
-	std::vector bfarray = { posCPUBuffer };
-
-	gfx::StaticMesh cubeMesh(std::move(bfarray), std::move(indices), "cube");
-	cubeMesh.MakeBindables(Gfx());
+	//const auto boxModel = gfx::StaticMeshPool::Resolve("resources\\models\\box.obj");
+	//boxModel->MakeBindables(Gfx());
 
 	// Static Object
-	ent::StaticObject cube1(std::make_shared<gfx::StaticMesh>(cubeMesh));
 	ent::StaticObject suzanne(suzanneModel);
-	ent::StaticObject box(boxModel);
-	
+	//ent::StaticObject box(boxModel);
+
 	// Vertex Buffer
 	gfx::VertexBuffer colorCPUBuffer(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Char4Color), 8);
 	colorCPUBuffer[0].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,0 };
@@ -66,42 +39,37 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 
 	{
 		gfx::BufferArray extraData;
-		extraData.push_back(std::move(std::pair{ "coloredCube",std::make_shared<gfx::VertexBuffer>(colorCPUBuffer) }));
-		cube1.ExpandMeshVertexBuffer(Gfx(),extraData);
+		extraData.push_back(std::move(std::pair{ "coloredCube", std::make_shared<gfx::VertexBuffer>(colorCPUBuffer) }));
+		//box.ExpandMeshVertexBuffer(Gfx(), extraData);
 	}
 
 	// Vertex Shader
 	auto pVertexShaderColor = gfx::IVertexShader::Resolve(Gfx(), "VertexShader.cso");
-	cube1.AddBindable(pVertexShaderColor);
 	auto pVertexShaderFlat = gfx::IVertexShader::Resolve(Gfx(), "VSFlat.cso");
 	suzanne.AddBindable(pVertexShaderFlat);
-	box.AddBindable(pVertexShaderFlat);
+	//box.AddBindable(pVertexShaderColor);
 
 	// Pixel Shader
-	cube1.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "PixelShader.cso"));
 	suzanne.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "PSFlat.cso"));
-	box.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "PSFlat.cso"));
+	//box.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "PixelShader.cso"));
 
 	// InputLayout
-	cube1.AddBindable(gfx::IInputLayout::Resolve(Gfx(), cube1.GetVertexBuffer(), *pVertexShaderColor));
 	suzanne.AddBindable(gfx::IInputLayout::Resolve(Gfx(), suzanne.GetVertexBuffer(), *pVertexShaderFlat));
-	box.AddBindable(gfx::IInputLayout::Resolve(Gfx(), suzanne.GetVertexBuffer(), *pVertexShaderFlat));
+	//box.AddBindable(gfx::IInputLayout::Resolve(Gfx(), box.GetVertexBuffer(), *pVertexShaderColor));
 
 	// Primitive Topology
-	cube1.AddBindable(gfx::IPrimitiveTopology::Resolve(Gfx()));
 	suzanne.AddBindable(gfx::IPrimitiveTopology::Resolve(Gfx()));
-	box.AddBindable(gfx::IPrimitiveTopology::Resolve(Gfx()));
+	//box.AddBindable(gfx::IPrimitiveTopology::Resolve(Gfx()));
 
 	// Constant Buffer
 	gfx::ConstantBufferLayout cBufLayout;
 	cBufLayout.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Matrix4, "transformation"));
 	cBufLayout.Solidify();
 	auto pConstantBuffer = gfx::IConstantBuffer::Resolve(Gfx(), std::move(cBufLayout), 0, "transformation");
-	cube1.SetConstantBuffer(pConstantBuffer);
 	suzanne.SetConstantBuffer(pConstantBuffer);
-	box.SetConstantBuffer(pConstantBuffer);
+	//box.SetConstantBuffer(pConstantBuffer);
 
-	entities.push_back(std::move(box));
+	entities.push_back(std::move(suzanne));
 }
 
 void TestApp::DoFrame()
