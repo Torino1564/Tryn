@@ -162,6 +162,9 @@
     <ClCompile Include="src\gfx\Mesh\StaticMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gfx\PointLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1475,6 +1478,9 @@
     <ClInclude Include="src\gfx\Assimp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\gfx\PointLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">
@@ -1918,8 +1924,10 @@
   <ItemGroup>
     <FxCompile Include="src\gfx\dx11\VS\VertexShader.hlsl" />
     <FxCompile Include="src\gfx\dx11\PS\PixelShader.hlsl" />
-    <FxCompile Include="src\gfx\dx11\PS\PSFlat.hlsl" />
-    <FxCompile Include="src\gfx\dx11\VS\VSFlat.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\PhongFlat_PS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongFlat_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\Solid_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\Solid_PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="third\imgui\LICENSE.txt" />

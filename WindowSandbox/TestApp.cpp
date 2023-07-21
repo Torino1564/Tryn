@@ -19,55 +19,31 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	// Assimp Test
 	const auto suzanneModel = gfx::StaticMeshPool::Resolve("resources\\models\\suzanneHp.obj");
 	suzanneModel->MakeBindables(Gfx());
-	//const auto boxModel = gfx::StaticMeshPool::Resolve("resources\\models\\box.obj");
-	//boxModel->MakeBindables(Gfx());
 
 	// Static Object
 	ent::StaticObject suzanne(suzanneModel);
-	//ent::StaticObject box(boxModel);
-
-	// Vertex Buffer
-	gfx::VertexBuffer colorCPUBuffer(gfx::VertexLayout(gfx::VertexLayout::VertexElement::Char4Color), 8);
-	colorCPUBuffer[0].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,0 };
-	colorCPUBuffer[1].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
-	colorCPUBuffer[2].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,0,255 };
-	colorCPUBuffer[3].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,0 };
-	colorCPUBuffer[4].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,255 };
-	colorCPUBuffer[5].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,0,255 };
-	colorCPUBuffer[6].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 255,255,255 };
-	colorCPUBuffer[7].Attr<gfx::VertexLayout::VertexElement::Char4Color>() = BGRAColor{ 0,255,0 };
-
-	{
-		gfx::BufferArray extraData;
-		extraData.push_back(std::move(std::pair{ "coloredCube", std::make_shared<gfx::VertexBuffer>(colorCPUBuffer) }));
-		//box.ExpandMeshVertexBuffer(Gfx(), extraData);
-	}
 
 	// Vertex Shader
 	auto pVertexShaderColor = gfx::IVertexShader::Resolve(Gfx(), "VertexShader.cso");
 	auto pVertexShaderFlat = gfx::IVertexShader::Resolve(Gfx(), "VSFlat.cso");
 	suzanne.AddBindable(pVertexShaderFlat);
-	//box.AddBindable(pVertexShaderColor);
 
 	// Pixel Shader
 	suzanne.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "PSFlat.cso"));
-	//box.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "PixelShader.cso"));
 
 	// InputLayout
 	suzanne.AddBindable(gfx::IInputLayout::Resolve(Gfx(), suzanne.GetVertexBuffer(), *pVertexShaderFlat));
-	//box.AddBindable(gfx::IInputLayout::Resolve(Gfx(), box.GetVertexBuffer(), *pVertexShaderColor));
 
 	// Primitive Topology
 	suzanne.AddBindable(gfx::IPrimitiveTopology::Resolve(Gfx()));
-	//box.AddBindable(gfx::IPrimitiveTopology::Resolve(Gfx()));
 
 	// Constant Buffer
 	gfx::ConstantBufferLayout cBufLayout;
-	cBufLayout.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Matrix4, "transformation"));
+	cBufLayout.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Matrix4, "model"));
+	cBufLayout.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Matrix4, "modelViewProj"));
 	cBufLayout.Solidify();
 	auto pConstantBuffer = gfx::IConstantBuffer::Resolve(Gfx(), std::move(cBufLayout), 0, "transformation");
 	suzanne.SetConstantBuffer(pConstantBuffer);
-	//box.SetConstantBuffer(pConstantBuffer);
 
 	entities.push_back(std::move(suzanne));
 }
