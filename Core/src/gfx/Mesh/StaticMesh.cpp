@@ -3,12 +3,20 @@
 #include <Core/src/gfx/Bindables/IndexBuffer.h>
 #include <Core/src/gfx/Bindables/PolyVBuffer.h>
 #include <Core/src/gfx/Assimp.h>
+#include <format>
 
 namespace tryn::gfx
 {
-	StaticMesh::StaticMesh(std::string path)
+	StaticMesh::StaticMesh(std::string path, glm::vec3 scale = { 1.0f,1.0f,1.0f })
 	{
-		tag = path;
+		if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f)
+		{
+			tag = std::format("{}#Scale[X:{},Y:{},Z:{}]", path, scale.x, scale.y, scale.z);
+		}
+		else
+		{
+			tag = path;
+		}
 
 		const auto pModel = gfx::AssimpManager::Get().ReadFile(path,
 			aiProcess_Triangulate |
@@ -37,7 +45,7 @@ namespace tryn::gfx
 			for (int i = 0; i < aiMesh->mNumVertices; i++)
 			{
 				const auto pos = aiMesh->mVertices[i];
-				glm::vec3 position(pos.x, pos.y, pos.z);
+				glm::vec3 position(pos.x * scale.x, pos.y * scale.y , pos.z * scale.z);
 				vertexBuffer[i].Attr<VertexLayout::VertexElement::Position3D>() = position;
 			}
 		}

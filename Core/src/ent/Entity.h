@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <Core/src/gfx/Mesh/Mesh.h>
+#include <Core/src/gfx/Mesh/StaticMeshPool.h>
 #include <Core/src/gfx/Gfx.h>
 
 namespace tryn::ent
@@ -12,7 +13,7 @@ namespace tryn::ent
 	{
 	public:
 		virtual ~IEntity() {}
-		void Draw( gfx::IGraphics& gfx );
+		void Draw(gfx::IGraphics& gfx);
 		void SetConstantBuffer(std::shared_ptr<gfx::IConstantBuffer> pCb)
 		{
 			pConstantBuffer = pCb;
@@ -29,7 +30,7 @@ namespace tryn::ent
 		{
 			return *pIndexBuffer;
 		}
-		void AddBindable(std::shared_ptr<gfx::IBindable> bindable )
+		void AddBindable(std::shared_ptr<gfx::IBindable> bindable)
 		{
 			otherBindables.push_back(bindable);
 		}
@@ -52,6 +53,12 @@ namespace tryn::ent
 			pVertexBuffer = mesh->GetPolyVBufer();
 			pIndexBuffer = mesh->GetIndexBuffer();
 		}
+		StaticObject(std::string path, int size = 1)
+		{
+			mesh = gfx::StaticMeshPool::Resolve(path);
+			pVertexBuffer = mesh->GetPolyVBufer();
+			pIndexBuffer = mesh->GetIndexBuffer();
+		}
 		void ExpandMeshVertexBuffer(gfx::IGraphics& gfx, gfx::BufferArray& buffArray)
 		{
 			trynass_msg(mesh != nullptr, L"Cant expand a mesh vertex buffer without a mesh!");
@@ -59,8 +66,8 @@ namespace tryn::ent
 			gfx::BufferArray bfarray;
 			std::stringstream ss;
 			ss << "ExpandedFrom:" << mesh->GetTag() << "#Added:{";
-			
-			for (auto& element : buffArray )
+
+			for (auto& element : buffArray)
 			{
 				if (std::holds_alternative<std::shared_ptr<gfx::IVertexBuffer>>(element))
 				{
