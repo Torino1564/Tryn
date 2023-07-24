@@ -42,6 +42,7 @@ namespace tryn::gfx::dx11
 		Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext1> pContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 	};
 
 }

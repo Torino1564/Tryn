@@ -74,6 +74,36 @@ namespace tryn::gfx::dx11
 		dimensions.height = height;
 		dimensions.width = width;
 
+		// Z Buffer
+		D3D11_DEPTH_STENCIL_DESC dsd = {};
+		dsd.DepthEnable = TRUE;
+		dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		dsd.DepthFunc = D3D11_COMPARISON_LESS;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSState;
+		pDevice->CreateDepthStencilState(&dsd, &pDSState) >> chk;
+		pContext->OMSetDepthStencilState(pDSState.Get(), 1u);
+
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthStencil;
+		D3D11_TEXTURE2D_DESC td = {};
+		td.Height = height;
+		td.Width = width;
+		td.MipLevels = 1u;
+		td.ArraySize = 1u;
+		td.Format = DXGI_FORMAT_D32_FLOAT;
+		td.SampleDesc.Count = 1u;
+		td.SampleDesc.Quality = 0u;
+		td.Usage = D3D11_USAGE_DEFAULT;
+		td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		pDevice->CreateTexture2D(&td, nullptr, &pDepthStencil) >> chk;
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC dsvd = {};
+		dsvd.Format = DXGI_FORMAT_UNKNOWN;
+		dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		dsvd.Texture2D.MipSlice = 0u;
+		pDevice->CreateDepthStencilView(pDepthStencil.Get(), &dsvd, &pDSV) >> chk;
+
+		pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
+
 		// viewport
 		D3D11_VIEWPORT vp;
 		vp.Width = (float)width;
@@ -97,7 +127,6 @@ namespace tryn::gfx::dx11
 	void Graphics::BeginFrame()
 	{
 		ImGui_ImplDX11_NewFrame();
-		pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
 		ClearBuffer();
 	}
 
@@ -112,6 +141,7 @@ namespace tryn::gfx::dx11
 		const float color[]{ r, g, b, 1.0f };
 
 		pContext->ClearRenderTargetView(pTarget.Get(), color);
+		pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	}
 	void Graphics::DrawIndexed(int count)
 	{

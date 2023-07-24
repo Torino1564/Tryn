@@ -7,7 +7,7 @@
 
 namespace tryn::gfx
 {
-	StaticMesh::StaticMesh(std::string path, glm::vec3 scale = { 1.0f,1.0f,1.0f })
+	StaticMesh::StaticMesh(std::string path, glm::vec3 scale)
 	{
 		if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f)
 		{
