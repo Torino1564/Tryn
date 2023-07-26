@@ -11,7 +11,8 @@ namespace tryn::ent
 		}
 		pVertexBuffer->Bind();
 		pIndexBuffer->Bind();
-		pConstantBuffer->Bind();
+		// TODO FIX THIS SHIT
+		constantBuffers[0]->Bind();
 		gfx.DrawIndexed((int)mesh->GetIndexCount());
 	}
 }

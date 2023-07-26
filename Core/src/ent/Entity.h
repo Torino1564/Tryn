@@ -6,6 +6,9 @@
 #include <Core/src/gfx/Mesh/Mesh.h>
 #include <Core/src/gfx/Mesh/StaticMeshPool.h>
 #include <Core/src/gfx/Gfx.h>
+#include <Core/src/gfx/Technique/Technique.h>
+#include <Core/src/gfx/Bindables/ConstantBuffer.h>
+#include <Core/src/utl/Assert.h>
 
 namespace tryn::ent
 {
@@ -14,13 +17,29 @@ namespace tryn::ent
 	public:
 		virtual ~IEntity() {}
 		void Draw(gfx::IGraphics& gfx);
-		void SetConstantBuffer(std::shared_ptr<gfx::IConstantBuffer> pCb)
+		void SetConstantBuffer(std::vector<std::shared_ptr<gfx::IConstantBuffer>> constantBuffers)
 		{
-			pConstantBuffer = pCb;
+			this->constantBuffers = constantBuffers;
 		}
-		auto& GetConstantBuffer()
+		auto& GetConstantBufferVector()
 		{
-			return *pConstantBuffer;
+			return constantBuffers;
+		}
+		auto& GetConstantBufferByIndex(int i)
+		{
+			trynass_msg(constantBuffers.size() > i, L"Out of bounds Constant Buffer indexing!");
+			return *(constantBuffers[i]);
+		}
+		auto& GetConstantBufferByTag(std::string_view tag)
+		{
+			for (auto& buffer : constantBuffers)
+			{
+				if (buffer->GetTag() == tag)
+				{
+					return *buffer;
+				}
+			}
+			trynchk_fail.msg(L"No constant buffer matches the given tag");
 		}
 		auto& GetVertexBuffer()
 		{
@@ -34,9 +53,27 @@ namespace tryn::ent
 		{
 			otherBindables.push_back(bindable);
 		}
+		template <typename ... Args>
+		void AddTechnique(Args&& ... args)
+		{
+			AddTechnique_(std::forward(args));
+		}
+	private:
+		template <typename First, typename ... Rest>
+		void AddTechnique_(First&& first, Rest&& ... rest)
+		{
+			AddTechnique_(std::forward(first));
+			AddTechnique_(std::forward(rest));
+		}
+		template <typename T>
+		void AddTechnique_(T technique)
+		{
+			techniques.push_back(T);
+		}
 
 	protected:
-		std::shared_ptr<gfx::IConstantBuffer> pConstantBuffer;
+		std::vector<std::shared_ptr<gfx::IConstantBuffer>> constantBuffers;
+		std::vector<std::shared_ptr<gfx::Technique>> techniques;
 		std::shared_ptr<gfx::IPolyVBuffer> pVertexBuffer;
 		std::shared_ptr<gfx::IIndexBuffer> pIndexBuffer;
 		std::shared_ptr<gfx::Mesh> mesh;

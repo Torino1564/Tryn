@@ -24,12 +24,11 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	ent::StaticObject suzanne(suzanneModel);
 
 	// Vertex Shader
-	auto pVertexShaderColor = gfx::IVertexShader::Resolve(Gfx(), "VertexShader.cso");
-	auto pVertexShaderFlat = gfx::IVertexShader::Resolve(Gfx(), "VSFlat.cso");
+	auto pVertexShaderFlat = gfx::IVertexShader::Resolve(Gfx(), "FlatColor_VS.cso");
 	suzanne.AddBindable(pVertexShaderFlat);
 
 	// Pixel Shader
-	suzanne.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "PSFlat.cso"));
+	suzanne.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "FlatColor_PS.cso"));
 
 	// InputLayout
 	suzanne.AddBindable(gfx::IInputLayout::Resolve(Gfx(), suzanne.GetVertexBuffer(), *pVertexShaderFlat));
@@ -37,13 +36,14 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	// Primitive Topology
 	suzanne.AddBindable(gfx::IPrimitiveTopology::Resolve(Gfx()));
 
-	// Constant Buffer
+	// Constant Buffers
 	gfx::ConstantBufferLayout cBufLayout;
-	cBufLayout.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Matrix4, "model"));
-	cBufLayout.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Matrix4, "modelViewProj"));
+	cBufLayout.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Struct, "transformation"));
+	cBufLayout["transformation"].Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Matrix4, "modelViewProj"));
 	cBufLayout.Solidify();
 	auto pConstantBuffer = gfx::IConstantBuffer::Resolve(Gfx(), std::move(cBufLayout), 0, "transformation");
-	suzanne.SetConstantBuffer(pConstantBuffer);
+	auto vecConstantBuffers = { std::move(pConstantBuffer) };
+	suzanne.SetConstantBuffer(std::move(vecConstantBuffers));
 
 	entities.push_back(std::move(suzanne));
 }
@@ -67,10 +67,12 @@ void TestApp::DoFrame()
 				const auto projection = glm::perspectiveFovLH(glm::radians(90.0f), (float)Gfx().dimensions.width, (float)Gfx().dimensions.height, 0.1f, 100.0f);
 				viewProjection2 = projection * view;
 			}
-			entity.GetConstantBuffer()["transformation"].Get<glm::mat4>() = glm::transpose(viewProjection2 *
+			entity.GetConstantBufferByIndex(0)["transformation"]["modelViewProj"].Get<glm::mat4>() = glm::transpose(viewProjection2 *
 				glm::rotate(glm::mat4(1.0f), 0.6f * angle, glm::vec3(0, 0, 1.0f)) *
 				glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0, 0)) *
 				glm::rotate(glm::mat4(0.5f), 2.5f * angle, glm::vec3(0, 1.0f, 0)));
+
+			decltype(auto) test = entity.GetConstantBufferByIndex(0)["transformation"]["modelViewProj"].Get<glm::mat4>();
 
 			angle += 0.0001f;
 		}

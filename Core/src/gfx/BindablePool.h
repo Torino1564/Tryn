@@ -21,8 +21,6 @@ namespace tryn::gfx
 
 	class BindablePool
 	{
-		template<typename>
-		struct ResolveHelper;
         template <typename T>
         struct ResolveHelper;
 

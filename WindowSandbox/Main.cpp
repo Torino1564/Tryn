@@ -17,6 +17,7 @@
 #include <vector>
 #include <Core/src/gfx/Assimp.h>
 #include <fstream>
+#include <Core/src/gfx/Technique/Technique.h>
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <Core/third/glm/glm.hpp>
@@ -53,36 +54,11 @@ int WINAPI wWinMain(
 
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{window->GetClientDimensions().width, window->GetClientDimensions().height, window->GetHandle()});
 
+
+	auto tech = gfx::Technique::Resolve<gfx::Techniques::PhongFlatColor>(*gfx);
+
+
 	TestApp app(window, gfx);
-
-	Assimp::Importer importer;
-	unsigned int flags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices;
-	const aiScene* scene = importer.ReadFile("resources\\models\\box.obj", flags);
-
-	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-		std::cerr << "Error while loading model: " << importer.GetErrorString() << std::endl;
-		return 1;
-	}
-
-	aiMesh* mesh = scene->mMeshes[0];
-	aiVector3D* vertices = mesh->mVertices;
-	aiFace* faces = mesh->mFaces;
-
-	std::ofstream file("outputTest.txt");
-
-	for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-		aiVector3D vertex = vertices[i];
-		file << "Vertex " << i + 1 << ": (" << vertex.x << ", " << vertex.y << ", " << vertex.z << ")" << std::endl;
-	}
-
-	for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
-		aiFace& face = faces[i];
-		std::cout << "Face " << i + 1 << ": ";
-		for (unsigned int j = 0; j < face.mNumIndices; ++j) {
-			file << face.mIndices[j] << " ";
-		}
-		file << std::endl;
-	}
 
 	try
 	{

@@ -99,6 +99,7 @@
     <ClInclude Include="src\gfx\Mesh\StaticMeshPool.h" />
     <ClInclude Include="src\gfx\PointLight.h" />
     <ClInclude Include="src\gfx\Profiler.h" />
+    <ClInclude Include="src\gfx\Technique\Technique.h" />
     <ClInclude Include="src\gfx\Vertex.h" />
     <ClInclude Include="src\gfx\vulkan\Graphics.h" />
     <ClInclude Include="src\gfx\vulkan\imgui_impl_vulkan.h" />
@@ -654,7 +655,7 @@
     <None Include="third\glm\gtx\wrap.inl" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\gfx\dx11\PS\PhongFlat_PS.hlsl">
+    <FxCompile Include="src\gfx\dx11\PS\PhongFlatColor_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
@@ -662,15 +663,15 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="src\gfx\dx11\PS\Solid_PS.hlsl">
+    <FxCompile Include="src\gfx\dx11\PS\FlatColor_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="src\gfx\dx11\VS\PhongFlat_VS.hlsl">
+    <FxCompile Include="src\gfx\dx11\VS\PhongFlatColor_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="src\gfx\dx11\VS\Solid_VS.hlsl">
+    <FxCompile Include="src\gfx\dx11\VS\FlatColor_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>

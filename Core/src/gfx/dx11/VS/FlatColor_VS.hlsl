@@ -1,6 +1,5 @@
 cbuffer cbuf
 {
-    matrix model;
     matrix modelViewProj;
 };
 
