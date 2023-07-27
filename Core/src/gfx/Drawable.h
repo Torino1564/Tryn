@@ -2,6 +2,7 @@
 #include "Mesh/Mesh.h"
 #include "RenderQueue/Technique.h"
 #include "Mesh/StaticMeshPool.h"
+#include <core/src/gfx/Bindables/TransformCBuf.h>
 
 namespace tryn::gfx
 {
@@ -14,7 +15,7 @@ namespace tryn::gfx
 			pTransformCBuf->Bind();
 			for (auto& technique : techniques)
 			{
-
+				technique.Draw(gfx);
 			}
 		}
 		void InitTransformCBuf(IGraphics& gfx)
@@ -30,7 +31,7 @@ namespace tryn::gfx
 		{
 			return *pMesh->GetPolyVBufer();
 		}
-		const auto& GetIndexCount() const
+		uint32_t GetIndexCount() const
 		{
 			return pMesh->GetIndexCount();
 		}

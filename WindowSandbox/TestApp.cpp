@@ -17,12 +17,13 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	wnd = wnd_;
 	gfx = gfx_;
 
-	// Assimp Test
-	const auto suzanneModel = gfx::StaticMeshPool::Resolve("resources\\models\\suzanneHp.obj");
-	suzanneModel->MakeBindables(Gfx());
-
 	// Static Object
-	ent::StaticObject suzanne(suzanneModel);
+	ent::StaticObject suzanne(Gfx(), "resources\\models\\suzanneHp.obj");
+
+	gfx::Technique flat("flat");
+
+	gfx::Step first;
+
 
 	// Vertex Shader
 	auto pVertexShaderFlat = gfx::IVertexShader::Resolve(Gfx(), "FlatColor_VS.cso");
@@ -33,13 +34,6 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 
 	// InputLayout
 	suzanne.AddBindable(gfx::IInputLayout::Resolve(Gfx(), suzanne.GetVertexBuffer(), *pVertexShaderFlat));
-
-	// Primitive Topology
-	suzanne.AddBindable(gfx::IPrimitiveTopology::Resolve(Gfx()));
-
-	// Constant Buffers
-	auto pTransformCBuf = Gfx().CreateTransformCBuf();
-	pTransformCBuf->BindParentMesh(suzanne);
 
 	entities.push_back(std::move(suzanne));
 }

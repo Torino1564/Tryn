@@ -19,11 +19,12 @@ namespace tryn::gfx
 		{
 			steps.push_back(std::move(step));
 		}
-		void Draw()
+		void Draw(IGraphics& gfx)
 		{
 			for (auto& step : steps)
 			{
-
+				step.Bind(gfx);
+				step.Draw(gfx);
 			}
 		}
 	private:
