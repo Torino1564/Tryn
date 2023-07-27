@@ -147,11 +147,11 @@ namespace tryn::gfx
 			}
 		}
 		solid = true;
-		size = accumulatedOffset;
+		size = accumulatedOffset + (16 - accumulatedOffset % 16);
 	}
-	ConstantBufferLayout::Node& ConstantBufferLayout::operator[](std::string id)
+	ConstantBufferLayout::Node& ConstantBufferLayout::operator[](const std::string& id)
 	{
-		return (*root.get())[id];
+		return (*root)[id];
 	}
 
 	ElementView::ElementView(ConstantBufferLayout::Node& node, char* pBytes)

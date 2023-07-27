@@ -1947,6 +1947,7 @@
     <None Include="src\gfx\vulkan\vulkan\glsl_shader.vert" />
     <None Include="src\gfx\vulkan\vulkan\generate_spv.sh" />
     <None Include="src\gfx\vulkan\vulkan\glsl_shader.frag" />
+    <None Include="src\gfx\dx11\PS\LightVector.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\gfx\dx11\VS\VertexShader.hlsl" />

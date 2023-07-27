@@ -512,6 +512,7 @@
     <ClInclude Include="third\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\gfx\dx11\PS\LightVector.hlsli" />
     <None Include="src\gfx\vulkan\vulkan\generate_spv.sh" />
     <None Include="src\gfx\vulkan\vulkan\glsl_shader.frag" />
     <None Include="src\gfx\vulkan\vulkan\glsl_shader.vert" />

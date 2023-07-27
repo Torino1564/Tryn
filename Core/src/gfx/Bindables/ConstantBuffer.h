@@ -133,7 +133,7 @@ namespace tryn::gfx
 		void Solidify();
 		bool IsSolid() const;
 		size_t Size() const;
-		Node& operator[](std::string id);
+		Node& operator[](const std::string& id);
 	private:
 		std::unique_ptr<Node> root;
 		bool solid = false;

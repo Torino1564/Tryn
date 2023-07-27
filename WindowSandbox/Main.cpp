@@ -40,10 +40,9 @@ int WINAPI wWinMain(
 
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{window->GetClientDimensions().width, window->GetClientDimensions().height, window->GetHandle()});
 
-	TestApp app(window, gfx);
-
 	try
 	{
+		TestApp app(window, gfx);
 		app.Go();
 	}
 	catch (utl::BufferedException& e)

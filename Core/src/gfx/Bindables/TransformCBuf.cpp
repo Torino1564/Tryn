@@ -15,8 +15,8 @@ namespace tryn::gfx
 	void ITransformCBuf::Update() const
 	{
 		const auto model = parent->GetTransformMatrix();
-		const auto modelView = model * gfx.GetCameraMatrix();
-		const auto modelViewProj = modelView * gfx.GetProjectionMatrix();
+		const auto modelView = gfx.GetCameraMatrix() * model;
+		const auto modelViewProj = gfx.GetProjectionMatrix() * modelView;
 
 		(*pVCB)["model"].Get<glm::mat4>() = transpose(model);
 		(*pVCB)["modelView"].Get<glm::mat4>() = transpose(modelView);
