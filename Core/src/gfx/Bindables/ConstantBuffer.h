@@ -169,10 +169,6 @@ namespace tryn::gfx
 	class IConstantBuffer : public IBindable
 	{
 	public:
-		static std::shared_ptr<IConstantBuffer> Resolve(IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
-		{
-			return BindablePool::Resolve<IConstantBuffer>(gfx, std::forward<ConstantBufferLayout>(cbl), slot, tag);
-		}
 		virtual ~IConstantBuffer() {}
 		ElementView operator[](std::string id)
 		{
@@ -189,14 +185,6 @@ namespace tryn::gfx
 		{
 			return slot;
 		}
-		static std::string GenerateID(IGraphics& gfx, ConstantBufferLayout& cbl, int slot = 0, std::string tag = "?")
-		{
-			if (tag == "?") return tag;
-			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
-			std::stringstream ss;
-			ss << typeStr << "#ConstantBuffer#" << slot << '#' << tag;
-			return ss.str();
-		}
 
 	protected:
 		bool dirty = false;
@@ -204,5 +192,38 @@ namespace tryn::gfx
 		std::vector<char> buffer;
 		int slot = 0;
 		std::string tag;
+	};
+
+	class IVtxConstantBuffer : public IConstantBuffer
+	{
+	public:
+		static std::shared_ptr<IVtxConstantBuffer> Resolve(IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
+		{
+			return BindablePool::Resolve<IVtxConstantBuffer>(gfx, std::forward<ConstantBufferLayout>(cbl), slot, tag);
+		}
+		static std::string GenerateID(IGraphics& gfx, ConstantBufferLayout& cbl, int slot = 0, std::string tag = "?")
+		{
+			if (tag == "?") return tag;
+			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
+			std::stringstream ss;
+			ss << typeStr << "#VtxConstantBuffer#" << slot << '#' << tag;
+			return ss.str();
+		}
+	};
+	class IPxConstantBuffer : public IConstantBuffer
+	{
+	public:
+		static std::shared_ptr<IPxConstantBuffer> Resolve(IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
+		{
+			return BindablePool::Resolve<IPxConstantBuffer>(gfx, std::forward<ConstantBufferLayout>(cbl), slot, tag);
+		}
+		static std::string GenerateID(IGraphics& gfx, ConstantBufferLayout& cbl, int slot = 0, std::string tag = "?")
+		{
+			if (tag == "?") return tag;
+			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
+			std::stringstream ss;
+			ss << typeStr << "#PxConstantBuffer#" << slot << '#' << tag;
+			return ss.str();
+		}
 	};
 }

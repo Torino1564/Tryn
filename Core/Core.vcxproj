@@ -20,6 +20,7 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PixelShader.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.cpp" />
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11TransformCBuf.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexBuffer.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexShader.cpp" />
@@ -74,13 +75,16 @@
     <ClInclude Include="src\gfx\Bindables\PixelShader.h" />
     <ClInclude Include="src\gfx\Bindables\PolyVBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\PoliVertexBuffer.h" />
+    <ClInclude Include="src\gfx\Bindables\TransformCBuf.h" />
     <ClInclude Include="src\gfx\Bindables\VertexBuffer.h" />
+    <ClInclude Include="src\gfx\Drawable.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11ConstantBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11IndexBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11InputLayout.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PixelShader.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.h" />
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11TransformCBuf.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11VertexShader.h" />
     <ClInclude Include="src\gfx\Bindables\VertexShader.h" />
     <ClInclude Include="src\gfx\Bindables\Bindable.h" />
@@ -99,7 +103,8 @@
     <ClInclude Include="src\gfx\Mesh\StaticMeshPool.h" />
     <ClInclude Include="src\gfx\PointLight.h" />
     <ClInclude Include="src\gfx\Profiler.h" />
-    <ClInclude Include="src\gfx\Technique\Technique.h" />
+    <ClInclude Include="src\gfx\RenderQueue\Step.h" />
+    <ClInclude Include="src\gfx\RenderQueue\Technique.h" />
     <ClInclude Include="src\gfx\Vertex.h" />
     <ClInclude Include="src\gfx\vulkan\Graphics.h" />
     <ClInclude Include="src\gfx\vulkan\imgui_impl_vulkan.h" />

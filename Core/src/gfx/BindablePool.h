@@ -14,7 +14,8 @@
 		X(PixelShader)\
 		X(InputLayout)\
 		X(PrimitiveTopology)\
-		X(ConstantBuffer)
+		X(VtxConstantBuffer)\
+		X(PxConstantBuffer)
 
 namespace tryn::gfx
 {
@@ -80,12 +81,20 @@ namespace tryn::gfx
                 return gfx.CreatePrimitiveTopology(std::forward<Args>(args)...);
             }
         };
-        template <> struct ResolveHelper<IConstantBuffer>
+        template <> struct ResolveHelper<IVtxConstantBuffer>
         {
             template <class ... Args>
-            std::shared_ptr<IConstantBuffer> operator()(IGraphics& gfx, Args&&...args)
+            std::shared_ptr<IVtxConstantBuffer> operator()(IGraphics& gfx, Args&&...args)
             {
-                return gfx.CreateConstantBuffer(std::forward<Args>(args)...);
+                return gfx.CreateVtxConstantBuffer(std::forward<Args>(args)...);
+            }
+        };
+        template <> struct ResolveHelper<IPxConstantBuffer>
+        {
+            template <class ... Args>
+            std::shared_ptr<IPxConstantBuffer> operator()(IGraphics& gfx, Args&&...args)
+            {
+                return gfx.CreatePxConstantBuffer(std::forward<Args>(args)...);
             }
         };
 

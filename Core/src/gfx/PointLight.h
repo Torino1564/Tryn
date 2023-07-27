@@ -15,6 +15,6 @@ namespace tryn::gfx
 	private:
 		glm::vec3 position = { 0.0f,0.0f,0.0f };
 		std::shared_ptr<StaticMesh> mesh;
-		std::shared_ptr<IConstantBuffer> cbuf;
+		std::shared_ptr<IVtxConstantBuffer> cbuf;
 	};
 }

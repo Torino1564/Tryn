@@ -2,6 +2,7 @@
 #include <Core/src/gfx/BindablePool.h>
 #include <Core/src/gfx/Bindables/IndexBuffer.h>
 #include <Core/src/gfx/Bindables/PolyVBuffer.h>
+#include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 #include <Core/src/gfx/Assimp.h>
 #include <format>
 
@@ -119,6 +120,7 @@ namespace tryn::gfx
 
 		pVertexBuffer = IPolyVBuffer::Resolve(gfx, bfarray);
 		pIndexBuffer = IIndexBuffer::Resolve(gfx, pCpuIndexData);
+		pTopology = IPrimitiveTopology::Resolve(gfx);
 
 		hasBinds = true;
 	}

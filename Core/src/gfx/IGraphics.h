@@ -10,6 +10,7 @@
 #include <memory>
 #include <variant>
 #include "ImguiManager.h"
+#include <Core/third/glm/glm.hpp>
 
 #define GRAPHIC_APIS \
 		X( DX11 ) \
@@ -40,7 +41,9 @@ namespace tryn::gfx
 	class IIndexBuffer;
 	class IPrimitiveTopology;
 	class ConstantBufferLayout;
-	class IConstantBuffer;
+	class IVtxConstantBuffer;
+	class IPxConstantBuffer;
+	class ITransformCBuf;
 	class StaticMesh;
 
 	class IGraphics
@@ -58,6 +61,22 @@ namespace tryn::gfx
 		virtual void EndFrame() = 0;
 		virtual void ClearBuffer(float r, float g, float b) = 0;
 		virtual void DrawIndexed(int count) = 0;
+		glm::mat4& GetCameraMatrix()
+		{
+			return camera;
+		}
+		void SetCamera(glm::mat4 camera)
+		{
+			this->camera = std::move(camera);
+		}
+		glm::mat4& GetProjectionMatrix()
+		{
+			return projection;
+		}
+		void SetProjection(glm::mat4 projection)
+		{
+			this->projection = std::move(projection);
+		}
 		template<typename T>
 		auto& QueryInterface()
 		{
@@ -87,8 +106,13 @@ namespace tryn::gfx
 		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) = 0;
 		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(StaticMesh& vb, IVertexShader& vs) = 0;
 		virtual std::shared_ptr<IPrimitiveTopology> CreatePrimitiveTopology() = 0;
-		virtual std::shared_ptr<IConstantBuffer>	CreateConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IVtxConstantBuffer>	CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IPxConstantBuffer>	CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::unique_ptr<ITransformCBuf>		CreateTransformCBuf() = 0;
 
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
+	private:
+		glm::mat4 camera;
+		glm::mat4 projection;
 	};
 }

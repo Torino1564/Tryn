@@ -9,6 +9,7 @@
 #include <Core/src/gfx/Profiler.h>
 #include <Core/src/gfx/Mesh/StaticMesh.h>
 #include <Core/src/gfx/Mesh/StaticMeshPool.h>
+#include <Core/src/gfx/Bindables/TransformCBuf.h>
 #include <Core/src/gfx/Assimp.h>
 
 TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraphics> gfx_)
@@ -37,13 +38,8 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraph
 	suzanne.AddBindable(gfx::IPrimitiveTopology::Resolve(Gfx()));
 
 	// Constant Buffers
-	gfx::ConstantBufferLayout cBufLayout;
-	cBufLayout.Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Struct, "transformation"));
-	cBufLayout["transformation"].Append(gfx::ConstantBufferLayout::Node(gfx::ConstantBufferLayout::Type::Matrix4, "modelViewProj"));
-	cBufLayout.Solidify();
-	auto pConstantBuffer = gfx::IConstantBuffer::Resolve(Gfx(), std::move(cBufLayout), 0, "transformation");
-	auto vecConstantBuffers = { std::move(pConstantBuffer) };
-	suzanne.SetConstantBuffer(std::move(vecConstantBuffers));
+	auto pTransformCBuf = Gfx().CreateTransformCBuf();
+	pTransformCBuf->BindParentMesh(suzanne);
 
 	entities.push_back(std::move(suzanne));
 }
@@ -67,12 +63,10 @@ void TestApp::DoFrame()
 				const auto projection = glm::perspectiveFovLH(glm::radians(90.0f), (float)Gfx().dimensions.width, (float)Gfx().dimensions.height, 0.1f, 100.0f);
 				viewProjection2 = projection * view;
 			}
-			entity.GetConstantBufferByIndex(0)["transformation"]["modelViewProj"].Get<glm::mat4>() = glm::transpose(viewProjection2 *
+			entity.GetVtxConstantBufferByIndex(0)["transformation"]["modelViewProj"].Get<glm::mat4>() = glm::transpose(viewProjection2 *
 				glm::rotate(glm::mat4(1.0f), 0.6f * angle, glm::vec3(0, 0, 1.0f)) *
 				glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0, 0)) *
 				glm::rotate(glm::mat4(0.5f), 2.5f * angle, glm::vec3(0, 1.0f, 0)));
-
-			decltype(auto) test = entity.GetConstantBufferByIndex(0)["transformation"]["modelViewProj"].Get<glm::mat4>();
 
 			angle += 0.0001f;
 		}

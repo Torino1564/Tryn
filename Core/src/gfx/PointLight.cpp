@@ -14,7 +14,7 @@ namespace tryn::gfx
 		cbuflayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float3, "position"));
 		cbuflayout.Solidify();
 
-		cbuf = IConstantBuffer::Resolve(gfx, std::move(cbuflayout), 0, "position");
+		cbuf = IVtxConstantBuffer::Resolve(gfx, std::move(cbuflayout), 0, "position");
 	}
 	void PointLight::ShowControls()
 	{

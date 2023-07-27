@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <Core/third/glm/glm.hpp>
+#include <Core/third/glm/gtx/euler_angles.hpp>
 #include <Core/src/gfx/Bindables/Bindable.h>
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/gfx/IGraphics.h>
@@ -37,6 +38,7 @@ namespace tryn::gfx
 
 			pVertexBuffer->Bind();
 			pIndexBuffer->Bind();
+			pTopology->Bind();
 		}
 		const int GetIndexCount() const
 		{
@@ -45,7 +47,7 @@ namespace tryn::gfx
 	protected:
 		std::shared_ptr<IPolyVBuffer> pVertexBuffer;
 		std::shared_ptr<IIndexBuffer> pIndexBuffer;
-
+		std::shared_ptr<IPrimitiveTopology> pTopology;
 		std::shared_ptr<std::vector<int>> pCpuIndexData;
 		std::shared_ptr<std::vector<gfx::VertexBuffer>> pCpuVertexData;
 		std::string tag;

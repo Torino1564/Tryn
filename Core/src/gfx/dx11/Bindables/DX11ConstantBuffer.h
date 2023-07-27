@@ -5,16 +5,30 @@
 
 namespace tryn::gfx::dx11
 {
-	class DX11ConstantBuffer : public IConstantBuffer
+	class DX11VtxConstantBuffer : public IVtxConstantBuffer
 	{
 	public:
-		DX11ConstantBuffer(Graphics& gfx , ConstantBufferLayout&& cbl, int slot, std::string tag = "?");
+		DX11VtxConstantBuffer(Graphics& gfx , ConstantBufferLayout&& cbl, int slot, std::string tag = "?");
 		void Bind() override;
 		char* Data();
 		void Update();
-		
+
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> pCBuff;
 		Graphics& gfx;
 	};
+
+	class DX11PxConstantBuffer : public IPxConstantBuffer
+	{
+	public:
+		DX11PxConstantBuffer(Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag = "?");
+		void Bind() override;
+		char* Data();
+		void Update();
+
+	private:
+		Microsoft::WRL::ComPtr<ID3D11Buffer> pCBuff;
+		Graphics& gfx;
+	};
+
 }

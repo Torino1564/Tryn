@@ -165,6 +165,9 @@
     <ClCompile Include="src\gfx\PointLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11TransformCBuf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1481,7 +1484,19 @@
     <ClInclude Include="src\gfx\PointLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\Technique\Technique.h">
+    <ClInclude Include="src\gfx\RenderQueue\Technique.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\RenderQueue\Step.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Bindables\TransformCBuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11TransformCBuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Drawable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

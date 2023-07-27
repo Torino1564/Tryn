@@ -17,7 +17,6 @@
 #include <vector>
 #include <Core/src/gfx/Assimp.h>
 #include <fstream>
-#include <Core/src/gfx/Technique/Technique.h>
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <Core/third/glm/glm.hpp>
@@ -53,10 +52,6 @@ int WINAPI wWinMain(
 	window->SetTitle(L"Test WindowApp");
 
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{window->GetClientDimensions().width, window->GetClientDimensions().height, window->GetHandle()});
-
-
-	auto tech = gfx::Technique::Resolve<gfx::Techniques::PhongFlatColor>(*gfx);
-
 
 	TestApp app(window, gfx);
 

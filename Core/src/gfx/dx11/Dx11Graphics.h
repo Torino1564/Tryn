@@ -35,7 +35,9 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<IInputLayout>			CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) override;
 		std::shared_ptr<IInputLayout>			CreateInputLayout(StaticMesh& mesh, IVertexShader& vs) override;
 		std::shared_ptr<IPrimitiveTopology>		CreatePrimitiveTopology() override;
-		std::shared_ptr<IConstantBuffer>		CreateConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IVtxConstantBuffer>		CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IPxConstantBuffer>		CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::unique_ptr<ITransformCBuf>			CreateTransformCBuf() override;
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> pDevice;

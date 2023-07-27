@@ -11,6 +11,7 @@
 #include <Core/src/gfx/dx11/Bindables/DX11ConstantBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PrimitiveTopology.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PolyVBuffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11TransformCBuf.h>
 #include "imgui_impl_dx11.h"
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -205,8 +206,19 @@ namespace tryn::gfx::dx11
 		return std::make_shared<DX11PrimitiveTopology>(*this);
 	}
 
-	std::shared_ptr<IConstantBuffer> Graphics::CreateConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	std::shared_ptr<IVtxConstantBuffer> Graphics::CreateVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
 	{
-		return std::make_shared<DX11ConstantBuffer>(*this, std::move(layout) , slot , tag);
+		return std::make_shared<DX11VtxConstantBuffer>(*this, std::move(layout) , slot , tag);
 	}
+
+	std::shared_ptr<IPxConstantBuffer> Graphics::CreatePxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	{
+		return std::make_shared<DX11PxConstantBuffer>(*this, std::move(layout), slot, tag);
+	}
+
+	std::unique_ptr<ITransformCBuf> Graphics::CreateTransformCBuf()
+	{
+		return std::make_unique<DX11TransformCBuf>(*this);
+	}
+
 }
