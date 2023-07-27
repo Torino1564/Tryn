@@ -1,7 +1,6 @@
 #pragma once
 #include "Mesh/Mesh.h"
 #include "RenderQueue/Technique.h"
-#include "Mesh/StaticMeshPool.h"
 #include <core/src/gfx/Bindables/TransformCBuf.h>
 
 namespace tryn::gfx
@@ -9,45 +8,28 @@ namespace tryn::gfx
 	class Drawable
 	{
 	public:
-		void Draw(IGraphics& gfx)
-		{
-			pMesh->Bind(gfx);
-			pTransformCBuf->Bind();
-			for (auto& technique : techniques)
-			{
-				technique.Draw(gfx);
-			}
-		}
-		void InitTransformCBuf(IGraphics& gfx)
-		{
-			pTransformCBuf = gfx.CreateTransformCBuf();
-			pTransformCBuf->BindParent(*this);
-		}
-		auto& GetMesh()
-		{
-			return *pMesh;
-		}
-		const auto& GetVertexBuffer() const
-		{
-			return *pMesh->GetPolyVBufer();
-		}
-		uint32_t GetIndexCount() const
-		{
-			return pMesh->GetIndexCount();
-		}
-		void AddTechnique(Technique technique)
-		{
-			techniques.push_back(std::move(technique));
-		}
-		glm::mat4 GetTransformMatrix() const
-		{
-			return glm::translate(glm::yawPitchRoll(yaw, pitch, roll), pos);
-		}
+		Drawable() = default;
+		Drawable(Drawable&& moveFrom) noexcept;
+		Drawable(const Drawable& copyFrom) = delete;
+		Drawable operator=(const Drawable& copyFrom) = delete;
+		virtual ~Drawable() = default;
+		void Draw(IGraphics& gfx);
+		void InitTransformCBuf(IGraphics& gfx);
+		Mesh& GetMesh() const;
+		IPolyVBuffer& GetVertexBuffer() const;
+		uint32_t GetIndexCount() const;
+		void AddTechnique(Technique technique);
+		glm::mat4 GetTransformMatrix() const;
+		void BindParent();
+		void SetYaw(float yaw);
+		void SetPitch(float pitch);
+		void SetRoll(float roll);
+		float& GetYaw();
+		float& GetPitch();
+		float& GetRoll();
 	public:
 		// Position and orientation in world space
-		float yaw = 0.0f;
-		float pitch = 0.0f;
-		float roll = 0.0f;
+		glm::vec3 angles{};
 		glm::vec3 pos = { 0.0f,0.0f,0.0f };
 	protected:
 		std::shared_ptr<Mesh> pMesh;

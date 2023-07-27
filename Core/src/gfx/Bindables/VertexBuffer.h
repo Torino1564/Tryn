@@ -22,7 +22,7 @@ namespace tryn::gfx
 		static std::string GenerateID(IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer , std::string tag = "?")
 		{
 			if (tag == "?") return tag;
-			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
+			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;
 			ss << typeStr << "#VertexBuffer#" << std::to_string(cpuBuffer->Size()) << "#";
 

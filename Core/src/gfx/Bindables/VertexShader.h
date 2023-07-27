@@ -14,7 +14,7 @@ namespace tryn::gfx
 		}
 		static const std::string GenerateID(IGraphics& gfx, std::string path)
 		{
-			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
+			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::string UID(typeStr);
 			UID += "#VertexShader#";
 			UID += path;

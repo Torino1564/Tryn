@@ -1,77 +1,75 @@
 #include "TestApp.h"
 #include <Core/src/gfx/Bindables/BindableBase.h>
-#include <Core/src/gfx/dx11/TrynWLR.h>
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
 #include <Core/third/glm/glm.hpp>
 #include <Core/third/glm/gtc/matrix_transform.hpp>
-#include <Core/src/gfx/BindablePool.h>
 #include <utility>
 #include <Core/src/gfx/Profiler.h>
 #include <Core/src/gfx/Mesh/StaticMesh.h>
-#include <Core/src/gfx/Mesh/StaticMeshPool.h>
-#include <Core/src/gfx/Bindables/TransformCBuf.h>
+#include <Core/src/gfx/Bindables/InputLayout.h>
+#include <core/src/gfx/RenderQueue/Technique.h>
+#include <Core/src/gfx/RenderQueue/Step.h>
 #include <Core/src/gfx/Assimp.h>
 
-TestApp::TestApp(std::shared_ptr<win::IWindow> wnd_, std::shared_ptr<gfx::IGraphics> gfx_)
+TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphics> gfx)
 {
-	wnd = wnd_;
-	gfx = gfx_;
+	this->wnd = std::move(wnd);
+	this->gfx = std::move(gfx);
+
+	// Graphic Matrices
+	constexpr auto eyePos = glm::vec3(0, 0, -10);
+	constexpr auto focusPoint = glm::vec3(0, 0, 0);
+	constexpr auto upDirection = glm::vec3(0, 1, 0);
+	Gfx().SetCamera(glm::lookAtLH(eyePos, focusPoint, upDirection));
+	Gfx().SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(Gfx().dimensions.width), static_cast<float>(Gfx().dimensions.height), 0.1f, 100.0f));
 
 	// Static Object
 	ent::StaticObject suzanne(Gfx(), "resources\\models\\suzanneHp.obj");
 
 	gfx::Technique flat("flat");
+	{
+		gfx::Step first;
+		{
+			// Pixel Shader
+			first.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "FlatColor_PS.cso"));
 
-	gfx::Step first;
+			// Vertex Shader
+			auto pVertexShaderFlat = gfx::IVertexShader::Resolve(Gfx(), "FlatColor_VS.cso");
 
-
-	// Vertex Shader
-	auto pVertexShaderFlat = gfx::IVertexShader::Resolve(Gfx(), "FlatColor_VS.cso");
-	suzanne.AddBindable(pVertexShaderFlat);
-
-	// Pixel Shader
-	suzanne.AddBindable(gfx::IPixelShader::Resolve(Gfx(), "FlatColor_PS.cso"));
-
-	// InputLayout
-	suzanne.AddBindable(gfx::IInputLayout::Resolve(Gfx(), suzanne.GetVertexBuffer(), *pVertexShaderFlat));
-
+			// InputLayout
+			first.AddBindable(gfx::IInputLayout::Resolve(Gfx(), suzanne.GetVertexBuffer(), *pVertexShaderFlat));
+			first.AddBindable(std::move(pVertexShaderFlat));
+		}
+		flat.AddStep(std::move(first));
+	}
+	suzanne.AddTechnique(std::move(flat));
 	entities.push_back(std::move(suzanne));
+	for (auto& entity : entities)
+	{
+		entity.BindParent();
+	}
 }
 
 void TestApp::DoFrame()
 {
 	static float angle = 0;
 
-	static bool initialized = false;
-
 	for (auto& entity : entities)
 	{
 		{
-			PROFILE_SCOPE("Update Cube");
-			glm::mat4 viewProjection2;
-			{
-				const auto eyePos = glm::vec3(0, 0, -6);
-				const auto focusPoint = glm::vec3(0, 0, 0);
-				const auto upDirection = glm::vec3(0, 1, 0);
-				const auto view = glm::lookAtLH(eyePos, focusPoint, upDirection);
-				const auto projection = glm::perspectiveFovLH(glm::radians(90.0f), (float)Gfx().dimensions.width, (float)Gfx().dimensions.height, 0.1f, 100.0f);
-				viewProjection2 = projection * view;
-			}
-			entity.GetVtxConstantBufferByIndex(0)["transformation"]["modelViewProj"].Get<glm::mat4>() = glm::transpose(viewProjection2 *
-				glm::rotate(glm::mat4(1.0f), 0.6f * angle, glm::vec3(0, 0, 1.0f)) *
-				glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0, 0)) *
-				glm::rotate(glm::mat4(0.5f), 2.5f * angle, glm::vec3(0, 1.0f, 0)));
-
-			angle += 0.0001f;
+			PROFILE_SCOPE("Update Rotation");
+			entity.GetYaw() += 0.3f * angle;
+			entity.GetPitch() += 0.1f * angle;
+			entity.GetRoll() += 0.7f * angle;
 		}
-
 		{
 			PROFILE_SCOPE("Draw call");
 			entity.Draw(Gfx());
 		}
-		static bool show_demo_window = true;
-		ImGui::ShowDemoWindow(&show_demo_window);
-		ImGui::Begin("Test", &show_demo_window, 0);
-		ImGui::End();
+		/*static bool showDemoWindow = true;
+		ImGui::ShowDemoWindow(&showDemoWindow);
+		ImGui::Begin("Test", &showDemoWindow, 0);
+		ImGui::End();*/
 	}
+	angle += 0.1f;
 }

@@ -4,7 +4,6 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
-#include <concepts>
 
 #define BINDABLE_LIST \
 		X(VertexBuffer)\
@@ -115,7 +114,7 @@ namespace tryn::gfx
             {
                 if (it == Get().pool.end())
                 {
-                    // The key doesnt exist in the map, have to add a new element
+                    // The key doesn't exist in the map, have to add a new element
                     // Get ptr to newly created element
                     ResolveHelper<T> functor;
                     std::shared_ptr<T> bind = functor(gfx, std::forward<Args>(args)...);
@@ -128,7 +127,7 @@ namespace tryn::gfx
                 else
                 {
                     // The key exists, returns a shared ptr to the queried resource
-                    std::shared_ptr<IBindable> bind = it->second.lock();
+                    const std::shared_ptr<IBindable> bind = it->second.lock();
                     return std::static_pointer_cast<T>(bind);
                 }
             }

@@ -8,9 +8,5 @@ namespace tryn::gfx::dx11
 	{
 	public:
 		DX11TransformCBuf(Graphics& gfx);
-		void Bind() override;
-		void Update( Graphics& gfx );
-	private:
-		Graphics& gfx;
 	};
 }

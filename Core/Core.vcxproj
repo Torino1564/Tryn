@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\gfx\Bindables\TransformCBuf.cpp" />
+    <ClCompile Include="src\gfx\Drawable.cpp" />
     <ClCompile Include="src\app\App.cpp" />
     <ClCompile Include="src\gfx\Bindables\ConstantBuffer.cpp" />
     <ClCompile Include="src\gfx\Bindables\PrimitiveTopology.h" />
@@ -30,6 +32,7 @@
     <ClCompile Include="src\gfx\ImguiManager.cpp" />
     <ClCompile Include="src\gfx\Mesh\StaticMesh.cpp" />
     <ClCompile Include="src\gfx\PointLight.cpp" />
+    <ClCompile Include="src\gfx\RenderQueue\Step.cpp" />
     <ClCompile Include="src\gfx\Vertex.cpp" />
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp" />
     <ClCompile Include="src\ccr\GenericTaskQueue.cpp" />

@@ -53,10 +53,10 @@ namespace tryn::gfx
 		{
 			std::optional<int> width;
 			std::optional<int> height;
-			HWND hWnd;
+			HWND hWnd{};
 		};
 
-		virtual ~IGraphics() {}
+		virtual ~IGraphics() = default;
 		virtual void BeginFrame() = 0;
 		virtual void EndFrame() = 0;
 		virtual void ClearBuffer(float r, float g, float b) = 0;
@@ -87,16 +87,16 @@ namespace tryn::gfx
 			return *ptr;
 		}
 		virtual GraphicAPI GetType() = 0;
-		static const std::vector<std::string>& GetAPIArray()
+		static const std::vector<std::string>& GetApiArray()
 		{
-			static std::vector<std::string> GRAPHIC_APISTR = {
+			static std::vector<std::string> graphicApiString = {
 	#define X(el) GENERATE_STRING(el)
 			GRAPHIC_APIS
 	#undef X
 			};
-			return GRAPHIC_APISTR;
+			return graphicApiString;
 		}
-		// Resurce Creation
+		// Resource Creation
 		virtual std::shared_ptr<IVertexBuffer>		CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string tag = "?") = 0;
 		virtual std::shared_ptr<IIndexBuffer>		CreateIndexBuffer(std::shared_ptr<const std::vector<int>> indices, std::string tag = "?") = 0;
 		virtual std::shared_ptr<IPolyVBuffer>		CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>&, std::string tag = "?") = 0;
@@ -112,7 +112,7 @@ namespace tryn::gfx
 
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
 	private:
-		glm::mat4 camera;
-		glm::mat4 projection;
+		glm::mat4 camera = {};
+		glm::mat4 projection = {};
 	};
 }

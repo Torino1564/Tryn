@@ -107,15 +107,15 @@ namespace tryn::gfx::dx11
 
 		// viewport
 		D3D11_VIEWPORT vp;
-		vp.Width = (float)width;
-		vp.Height = (float)height;
+		vp.Width = static_cast<float>(width);
+		vp.Height = static_cast<float>(height);
 		vp.MinDepth = 0.0f;
 		vp.MaxDepth = 1.0f;
 		vp.TopLeftX = 0.0f;
 		vp.TopLeftY = 0.0f;
 		pContext->RSSetViewports(1u, &vp);
 
-		pSwap->SetFullscreenState((BOOL)false , nullptr);
+		pSwap->SetFullscreenState((BOOL)false , nullptr) >> chk;
 
 		ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 	}

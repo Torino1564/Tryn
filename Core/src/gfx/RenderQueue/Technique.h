@@ -1,9 +1,6 @@
 #pragma once
-#include <memory>
 #include <Core/src/gfx/IGraphics.h>
 #include <string>
-#include <Core/src/gfx/Bindables/VertexShader.h>
-#include <Core/src/gfx/Bindables/PixelShader.h>
 #include "Step.h"
 
 namespace tryn::gfx
@@ -27,8 +24,17 @@ namespace tryn::gfx
 				step.Draw(gfx);
 			}
 		}
+		void BindParent(Drawable& parent);
 	private:
 		std::string name;
 		std::vector<Step> steps;
 	};
+
+	inline void Technique::BindParent(Drawable& parent)
+	{
+		for (auto& step : steps)
+		{
+			step.parent = &parent;
+		}
+	}
 }

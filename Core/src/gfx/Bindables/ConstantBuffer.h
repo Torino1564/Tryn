@@ -204,7 +204,7 @@ namespace tryn::gfx
 		static std::string GenerateID(IGraphics& gfx, ConstantBufferLayout& cbl, int slot = 0, std::string tag = "?")
 		{
 			if (tag == "?") return tag;
-			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
+			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;
 			ss << typeStr << "#VtxConstantBuffer#" << slot << '#' << tag;
 			return ss.str();
@@ -220,7 +220,7 @@ namespace tryn::gfx
 		static std::string GenerateID(IGraphics& gfx, ConstantBufferLayout& cbl, int slot = 0, std::string tag = "?")
 		{
 			if (tag == "?") return tag;
-			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
+			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;
 			ss << typeStr << "#PxConstantBuffer#" << slot << '#' << tag;
 			return ss.str();

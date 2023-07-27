@@ -26,7 +26,7 @@ namespace tryn::gfx
 		}
 		static std::string GenerateID(IGraphics& gfx, IVertexBuffer& vb, IVertexShader& vs)
 		{
-			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
+			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;
 			ss << typeStr << "#InputLayout#FromVB:" << vb.GetTag() << '#';
 			ss << "Accepts:" << vs.GetPath();
@@ -37,7 +37,7 @@ namespace tryn::gfx
 		}
 		static std::string GenerateID(IGraphics& gfx, IPolyVBuffer& pvb, IVertexShader& vs)
 		{
-			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
+			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;
 			ss << typeStr << "#InputLayout#FromPVB:" << pvb.GetTag() << '#';
 			ss << "Accepts:" << vs.GetPath() << '#';
@@ -52,7 +52,7 @@ namespace tryn::gfx
 		}
 		static std::string GenerateID(IGraphics& gfx, StaticMesh& mesh, IVertexShader& vs)
 		{
-			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
+			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;
 			ss << typeStr << "#InputLayout#FromStaticMesh:" << mesh.GetTag() << '#';
 			ss << "Accepts:" << vs.GetPath() << '#';

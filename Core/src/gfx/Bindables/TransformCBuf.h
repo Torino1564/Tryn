@@ -1,20 +1,19 @@
 #pragma once
 #include "Bindable.h"
-#include <Core/src/gfx/IGraphics.h>
-#include <Core/third/glm/glm.hpp>
-#include <Core/src/ent/Entity.h>
 #include <Core/src/gfx/Bindables/ConstantBuffer.h>
 
 namespace tryn::gfx
 {
+	class Drawable;
 	class ITransformCBuf : public IBindable
 	{
 	public:
-		void BindParent(Drawable& parent)
-		{
-			this->parent = &parent;
-		}
+		void BindParent(Drawable& parent);
+		void Bind() override;
+		void Update() const;
 	protected:
+		ITransformCBuf(IGraphics& gfx) :gfx(gfx){}
+		IGraphics& gfx;
 		static std::unique_ptr<IVtxConstantBuffer> pVCB;
 		Drawable* parent = nullptr;
 	};

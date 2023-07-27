@@ -7,26 +7,13 @@
 #include <Core/src/win/Window.h>
 #include <Core/src/gfx/Gfx.h>
 #include <Core/src/utl/Exception.h>
-#include <Core/src/utl/Timer.h>
 #include "TestApp.h"
-#include <iostream>
-#include <array>
 #include <memory>
-#include <format>
 #include <ranges>
-#include <vector>
-#include <Core/src/gfx/Assimp.h>
-#include <fstream>
-
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <Core/third/glm/glm.hpp>
-#include <Core/third/glm/gtc/matrix_transform.hpp>
 
 
 using namespace tryn;
 using namespace std::chrono_literals;
-namespace rn = std::ranges;
-namespace vi = rn::views;
 
 void Boot()
 {
@@ -59,13 +46,13 @@ int WINAPI wWinMain(
 	{
 		app.Go();
 	}
-	catch (utl::BufferedException e)
+	catch (utl::BufferedException& e)
 	{
-		MessageBoxA(nullptr, e.what(), 0u, MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(nullptr, e.what(), nullptr, MB_OK | MB_ICONEXCLAMATION);
 	}
 	catch (...)
 	{
-		MessageBoxA(nullptr, "Unknown error", 0u, MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(nullptr, "Unknown error", nullptr, MB_OK | MB_ICONEXCLAMATION);
 	}
 
 	return 0;

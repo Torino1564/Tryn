@@ -14,7 +14,7 @@ namespace tryn::gfx
 		}
 		static std::string GenerateID( IGraphics& gfx )
 		{
-			decltype(auto) typeStr = IGraphics::GetAPIArray()[static_cast<int>(gfx.GetType())];
+			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;
 			ss << typeStr << "#PrimitiveTopology#TriangleList";
 			return ss.str();
