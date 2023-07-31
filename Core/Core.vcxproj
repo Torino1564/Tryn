@@ -11,6 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Texture.cpp" />
     <ClCompile Include="src\gfx\Material.cpp" />
     <ClCompile Include="src\gfx\Bindables\TransformCBuf.cpp" />
@@ -32,6 +35,7 @@
     <ClCompile Include="src\gfx\dx11\imgui_impl_dx11.cpp" />
     <ClCompile Include="src\gfx\dx12\imgui_impl_dx12.cpp" />
     <ClCompile Include="src\gfx\ImguiManager.cpp" />
+    <ClCompile Include="src\gfx\Model\Model.cpp" />
     <ClCompile Include="src\gfx\Model\StaticMesh.cpp" />
     <ClCompile Include="src\gfx\PointLight.cpp" />
     <ClCompile Include="src\gfx\RenderQueue\Step.cpp" />
@@ -80,6 +84,8 @@
     <ClInclude Include="src\gfx\Bindables\PixelShader.h" />
     <ClInclude Include="src\gfx\Bindables\PolyVBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\PoliVertexBuffer.h" />
+    <ClInclude Include="src\gfx\Bindables\Rasterizer.h" />
+    <ClInclude Include="src\gfx\Bindables\Sampler.h" />
     <ClInclude Include="src\gfx\Bindables\Texture.h" />
     <ClInclude Include="src\gfx\Bindables\TransformCBuf.h" />
     <ClInclude Include="src\gfx\Bindables\VertexBuffer.h" />
@@ -90,6 +96,7 @@
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PixelShader.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.h" />
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11Rasterizer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11Texture.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11TransformCBuf.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11VertexShader.h" />

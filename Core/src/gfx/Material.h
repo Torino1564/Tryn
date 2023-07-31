@@ -4,6 +4,9 @@
 #include <Core/src/gfx/Vertex.h>
 #include <filesystem>
 
+struct aiMaterial;
+struct aiMesh;
+
 namespace tryn::gfx
 {
 	class IIndexBuffer;

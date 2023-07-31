@@ -1,11 +1,10 @@
 #pragma once
 #include <memory>
+#include "Node.h"
 #include <Core/src/gfx/IGraphics.h>
 
 namespace tryn::gfx
 {
-	class Node;
-
 	class Model
 	{
 	public:

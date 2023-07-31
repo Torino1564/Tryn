@@ -9,7 +9,7 @@
 #include <Core/src/utl/Exception.h>
 #include <Core/src/gfx/Bindables/Bindable.h>
 #include <Core/src/log/Log.h>
-#include <Core/third/assimp/scene.h>
+#include <assimp/scene.h>
 
 #define DVTX_ELEMENT_AI_EXTRACTOR(member) static SysType Extract( const aiMesh& mesh,size_t i ) noexcept {return *reinterpret_cast<const SysType*>(&mesh.member[i]);}
 
@@ -193,7 +193,7 @@ namespace tryn::gfx
 				{
 					for (auto end = mesh.mNumVertices, i = 0u; i < end; i++)
 					{
-						(*pBuf)[i].Attr<type>() = VertexLayout::VertexElementAttr<type>::Extract(mesh, i);
+						(*pBuf)[i].Attr<type>(0) = VertexLayout::VertexElementAttr<type>::Extract(mesh, i);
 					}
 				}
 			};

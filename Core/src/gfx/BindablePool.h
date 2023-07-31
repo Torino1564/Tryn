@@ -14,7 +14,10 @@
 		X(InputLayout)\
 		X(PrimitiveTopology)\
 		X(VtxConstantBuffer)\
-		X(PxConstantBuffer)
+		X(PxConstantBuffer)\
+		X(Rasterizer)\
+		X(Sampler)\
+		X(Texture)
 
 namespace tryn::gfx
 {
@@ -94,6 +97,30 @@ namespace tryn::gfx
             std::shared_ptr<IPxConstantBuffer> operator()(IGraphics& gfx, Args&&...args)
             {
                 return gfx.CreatePxConstantBuffer(std::forward<Args>(args)...);
+            }
+        };
+        template <> struct ResolveHelper<ITexture>
+        {
+            template <class ... Args>
+            std::shared_ptr<ITexture> operator()(IGraphics& gfx, Args&&...args)
+            {
+                return gfx.CreateTexture(std::forward<Args>(args)...);
+            }
+        };
+        template <> struct ResolveHelper<IRasterizer>
+        {
+            template <class ... Args>
+            std::shared_ptr<IRasterizer> operator()(IGraphics& gfx, Args&&...args)
+            {
+                return gfx.CreateRasterizer(std::forward<Args>(args)...);
+            }
+        };
+        template <> struct ResolveHelper<ISampler>
+        {
+            template <class ... Args>
+            std::shared_ptr<ISampler> operator()(IGraphics& gfx, Args&&...args)
+            {
+                return gfx.CreateSampler(std::forward<Args>(args)...);
             }
         };
 

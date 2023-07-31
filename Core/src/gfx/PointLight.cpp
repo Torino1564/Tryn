@@ -7,14 +7,8 @@ namespace tryn::gfx
 	PointLight::PointLight(IGraphics& gfx, float radius)
 	{
 		// Mesh
-		mesh = StaticMeshPool::Resolve("resources/models/sphere.fbx");
+		//mesh = StaticMeshPool::Resolve("resources/models/sphere.fbx");
 
-		// Constant Buffer
-		ConstantBufferLayout cbuflayout;
-		cbuflayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float3, "position"));
-		cbuflayout.Solidify();
-
-		cbuf = IVtxConstantBuffer::Resolve(gfx, std::move(cbuflayout), 0, "position");
 	}
 	void PointLight::ShowControls()
 	{

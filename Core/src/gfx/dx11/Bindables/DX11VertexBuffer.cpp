@@ -39,25 +39,6 @@ namespace tryn::gfx::dx11
 
 		Get().GetDirty() = false;
 	}
-	DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
-	{
-		switch (format)
-		{
-		case VertexLayout::Format::Vec2F:
-			return DXGI_FORMAT_R32G32_FLOAT;
-			break;
-		case VertexLayout::Format::Vec3F:
-			return DXGI_FORMAT_R32G32B32_FLOAT;
-			break;
-		case VertexLayout::Format::Vec4F:
-			return DXGI_FORMAT_R32G32B32A32_FLOAT;
-			break;
-		case VertexLayout::Format::Vec4C_UNorm:
-			return DXGI_FORMAT_R8G8B8A8_UNORM;
-			break;
-		}
-		return DXGI_FORMAT_UNKNOWN;
-	}
 	std::vector<std::any> DX11VertexBuffer::GetLayoutFromVB() const
 	{
 		return GetSlottedLayoutFromVB(0);
@@ -73,7 +54,7 @@ namespace tryn::gfx::dx11
 			D3D11_INPUT_ELEMENT_DESC descriptor = {};
 			descriptor.SemanticName = vLayout.Elements[i].first.GetName();
 			descriptor.SemanticIndex = vLayout.Elements[i].second;
-			descriptor.Format = MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
+			descriptor.Format = Graphics::MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
 			descriptor.InputSlot = (UINT)slot;
 			descriptor.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 			descriptor.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;

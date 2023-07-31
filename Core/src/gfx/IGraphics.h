@@ -7,6 +7,7 @@
 #include <Core/src/utl/String.h>
 #include <vector>
 #include <concepts>
+#include <filesystem>
 #include <memory>
 #include <variant>
 #include "ImguiManager.h"
@@ -44,7 +45,12 @@ namespace tryn::gfx
 	class IVtxConstantBuffer;
 	class IPxConstantBuffer;
 	class ITransformCBuf;
+	class ITexture;
+	class ISampler;
+	enum class SamplerType;
+	class IRasterizer;
 	class StaticMesh;
+	class VertexLayout;
 
 	class IGraphics
 	{
@@ -104,10 +110,13 @@ namespace tryn::gfx
 		virtual std::shared_ptr<IPixelShader>		CreatePixelShader(std::string path) = 0;
 		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) = 0;
 		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) = 0;
-		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(StaticMesh& vb, IVertexShader& vs) = 0;
+		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) = 0;
 		virtual std::shared_ptr<IPrimitiveTopology> CreatePrimitiveTopology() = 0;
 		virtual std::shared_ptr<IVtxConstantBuffer>	CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
 		virtual std::shared_ptr<IPxConstantBuffer>	CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<ITexture>			CreateTexture(std::filesystem::path path, int slot = 0) = 0;
+		virtual std::shared_ptr<IRasterizer>		CreateRasterizer(const bool twoSided = true) = 0;
+		virtual std::shared_ptr<ISampler>			CreateSampler(SamplerType type, bool reflect, int slot) = 0;
 		virtual std::unique_ptr<ITransformCBuf>		CreateTransformCBuf() = 0;
 
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);

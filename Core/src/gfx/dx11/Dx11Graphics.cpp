@@ -10,6 +10,9 @@
 #include <Core/src/gfx/dx11/Bindables/DX11PrimitiveTopology.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PolyVBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11TransformCBuf.h>
+#include <Core/src/gfx/dx11/Bindables/DX11Texture.h>
+#include <Core/src/gfx/dx11/Bindables/DX11Rasterizer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11Sampler.h>
 #include "imgui_impl_dx11.h"
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -157,6 +160,51 @@ namespace tryn::gfx::dx11
 		return pDevice;
 	}
 
+	DXGI_FORMAT Graphics::MapDXGIFormat(VertexLayout::Format format)
+	{
+		{
+			switch (format)
+			{
+			case VertexLayout::Format::Vec2F:
+				return DXGI_FORMAT_R32G32_FLOAT;
+				break;
+			case VertexLayout::Format::Vec3F:
+				return DXGI_FORMAT_R32G32B32_FLOAT;
+				break;
+			case VertexLayout::Format::Vec4F:
+				return DXGI_FORMAT_R32G32B32A32_FLOAT;
+				break;
+			case VertexLayout::Format::Vec4C_UNorm:
+				return DXGI_FORMAT_R8G8B8A8_UNORM;
+				break;
+			}
+			return DXGI_FORMAT_UNKNOWN;
+		}
+	}
+
+	std::vector<D3D11_INPUT_ELEMENT_DESC> Graphics::GetSlottedLayout(const VertexLayout& vLayout, int slot)
+	{
+		{
+			const auto descSize = vLayout.GetElementCount();
+
+			std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
+			for (int i = 0; i < descSize; i++)
+			{
+				D3D11_INPUT_ELEMENT_DESC descriptor = {};
+				descriptor.SemanticName = vLayout.Elements[i].first.GetName();
+				descriptor.SemanticIndex = vLayout.Elements[i].second;
+				descriptor.Format = MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
+				descriptor.InputSlot = (UINT)slot;
+				descriptor.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+				descriptor.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+				descriptor.InstanceDataStepRate = 0u;
+				layout.push_back(descriptor);
+			}
+
+			return layout;
+		}
+	}
+
 	std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(std::shared_ptr<VertexBuffer> pCpuBuffer, std::string tag)
 	{
 		return std::make_shared<DX11VertexBuffer>(*this, pCpuBuffer, tag);
@@ -192,9 +240,9 @@ namespace tryn::gfx::dx11
 		return std::make_shared<DX11InputLayout>(*this, pvb, vs);
 	}
 
-	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(StaticMesh& mesh, IVertexShader& vs)
+	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs)
 	{
-		return std::make_shared<DX11InputLayout>(*this, mesh, vs);
+		return std::make_shared<DX11InputLayout>(*this,vLayout,vs);
 	}
 
 	std::shared_ptr<IPrimitiveTopology> Graphics::CreatePrimitiveTopology()
@@ -217,4 +265,16 @@ namespace tryn::gfx::dx11
 		return std::make_unique<DX11TransformCBuf>(*this);
 	}
 
+	std::shared_ptr<ITexture> Graphics::CreateTexture(const std::filesystem::path path, const int slot)
+	{
+		return std::make_shared<DX11Texture>(*this, path.string(), slot);
+	}
+	std::shared_ptr<IRasterizer> Graphics::CreateRasterizer(const bool twoSided)
+	{
+		return std::make_shared<DX11Rasterizer>(*this,twoSided);
+	}
+	std::shared_ptr<ISampler> Graphics::CreateSampler(SamplerType type, bool reflect, int slot)
+	{
+		return std::make_shared<DX11Sampler>(*this, type, reflect, slot);
+	}
 }

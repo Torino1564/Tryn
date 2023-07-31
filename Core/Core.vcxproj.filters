@@ -183,6 +183,18 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Model\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1527,6 +1539,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\dx11\Bindables\DX11Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Bindables\Rasterizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11Rasterizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Bindables\Sampler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

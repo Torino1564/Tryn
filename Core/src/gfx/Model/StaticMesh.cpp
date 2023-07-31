@@ -80,7 +80,7 @@ namespace tryn::gfx
 		bfArray.push_back(std::pair<std::string, std::shared_ptr<VertexBuffer>>{"?", std::make_shared<VertexBuffer>(vertexBuffer)});
 
 		pVertexBuffer = IPolyVBuffer::Resolve(gfx, bfArray , this->tag);
-		pIndexBuffer = IIndexBuffer::Resolve(gfx, pCpuIndexData);
+		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<std::vector<int>>(indices));
 		pTopology = IPrimitiveTopology::Resolve(gfx);
 	}
 

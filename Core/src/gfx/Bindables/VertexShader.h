@@ -8,11 +8,11 @@ namespace tryn::gfx
 	class IVertexShader : public IBindable
 	{
 	public:
-		static std::shared_ptr<IVertexShader> Resolve(IGraphics& gfx, std::string path)
+		static std::shared_ptr<IVertexShader> Resolve(IGraphics& gfx, const std::string& path)
 		{
 			return BindablePool::Resolve<IVertexShader>(gfx, path);
 		}
-		static const std::string GenerateID(IGraphics& gfx, std::string path)
+		static std::string GenerateID(IGraphics& gfx, const std::string& path)
 		{
 			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::string UID(typeStr);
@@ -21,7 +21,7 @@ namespace tryn::gfx
 			
 			return UID;
 		}
-		std::string GetPath() const
+		std::string_view GetPath() const
 		{
 			return path;
 		}

@@ -23,7 +23,7 @@ namespace tryn::gfx
 
 	Drawable::Drawable(IGraphics& gfx, const Material& mat, const aiMesh& mesh, float scale)
 	{
-		pMesh = std::make_shared<StaticMesh>();
+		
 	}
 
 	void Drawable::Draw(IGraphics& gfx)
@@ -45,7 +45,7 @@ namespace tryn::gfx
 	}
 	IPolyVBuffer& Drawable::GetVertexBuffer() const
 	{
-		return *pMesh->GetPolyVBufer();
+		return *pMesh->GetPolyVBuffer();
 	}
 	uint32_t Drawable::GetIndexCount() const
 	{

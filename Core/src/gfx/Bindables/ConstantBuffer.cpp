@@ -32,7 +32,7 @@ namespace tryn::gfx
 	{
 		return children.empty();
 	}
-	ConstantBufferLayout::Node& ConstantBufferLayout::Node::GetEmpty() const
+	ConstantBufferLayout::Node& ConstantBufferLayout::Node::GetEmpty()
 	{
 		static Node empty(Type::Empty , "Empty");
 		return empty;

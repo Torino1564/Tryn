@@ -13,6 +13,7 @@
 ZT_EX_DEF(DcbException);
 
 #define CONSTANT_BUFFER_ELEMENTS \
+		X( Bool ) \
 		X( Float ) \
 		X( Float2 ) \
 		X( Float3 ) \
@@ -40,6 +41,11 @@ namespace tryn::gfx
 		struct TypeAttr
 		{
 			using TrueType = float;
+			static constexpr size_t TrueTypeSize = 4;
+		};
+		template <> struct TypeAttr<Bool>
+		{
+			using TrueType = bool;
 			static constexpr size_t TrueTypeSize = 4;
 		};
 		template <> struct TypeAttr<Float>
@@ -72,6 +78,20 @@ namespace tryn::gfx
 			using TrueType = glm::mat3;
 			static constexpr size_t TrueTypeSize = sizeof(glm::mat3);
 		};
+
+		template<typename T>
+		struct ReverseTypeAttr
+		{
+			static constexpr bool valid = false;
+		};
+#define X(el) \
+	template<> struct ReverseTypeAttr<typename TypeAttr<el>::TrueType> \
+	{ \
+		static constexpr Type type = el; \
+		static constexpr bool valid = true; \
+	};
+		CONSTANT_BUFFER_ELEMENTS
+#undef X
 
 		template <typename T>
 		struct TypeAttrLookup
@@ -112,7 +132,7 @@ namespace tryn::gfx
 			void Append(Node child);
 			bool IsRoot() const;
 			bool IsLeaf() const;
-			Node& GetEmpty() const;
+			static Node& GetEmpty();
 			Node& operator[](std::string id);
 			Node& IndexByName(std::string id);
 			bool Validate() const;
@@ -161,6 +181,26 @@ namespace tryn::gfx
 
 			return *reinterpret_cast<T*>(pBytes);
 		}
+
+		bool Exists() const
+		{
+			if (node.GetType() == ConstantBufferLayout::Type::Empty)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+
+		template<typename T>
+		T& operator=(const T& rhs) const
+		{
+			static_assert(ConstantBufferLayout::ReverseTypeAttr<std::remove_const_t<T>>::valid, "Unsupported SysType used in assignment");
+			*(reinterpret_cast<T*>(pBytes)) = rhs;
+			return *(reinterpret_cast<T*>(pBytes));
+		}
 	private:
 		ConstantBufferLayout::Node& node;
 		char* pBytes;
@@ -174,8 +214,7 @@ namespace tryn::gfx
 		{
 			dirty = true;
 			auto& indexTo = layout.root.get()->IndexByName(id);
-			ElementView temp(indexTo, buffer.data() + indexTo.GetOffset());
-			return temp;
+			return ElementView{ indexTo, buffer.data() + indexTo.GetOffset() };
 		}
 		std::string GetTag() const
 		{

@@ -2,6 +2,7 @@
 #include "TrynWLR.h"
 #include <Core/src/gfx/IGraphics.h>
 #include <d3d11_1.h>
+#include <Core/src/gfx/Vertex.h>
 
 namespace tryn::gfx
 {
@@ -24,6 +25,10 @@ namespace tryn::gfx::dx11
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext1>& GetContext();
 		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();
 
+		static DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format);
+
+		static std::vector<D3D11_INPUT_ELEMENT_DESC> GetSlottedLayout(const VertexLayout& vLayout, int slot);
+
 		// Resource Creation
 		std::shared_ptr<IVertexBuffer>			CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string) override;
 		std::shared_ptr<IPolyVBuffer>			CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>& CpuVBs, std::string) override;
@@ -32,10 +37,13 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<IPixelShader>			CreatePixelShader(std::string path) override;
 		std::shared_ptr<IInputLayout>			CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) override;
 		std::shared_ptr<IInputLayout>			CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) override;
-		std::shared_ptr<IInputLayout>			CreateInputLayout(StaticMesh& mesh, IVertexShader& vs) override;
+		std::shared_ptr<IInputLayout>			CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) override;
 		std::shared_ptr<IPrimitiveTopology>		CreatePrimitiveTopology() override;
 		std::shared_ptr<IVtxConstantBuffer>		CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
 		std::shared_ptr<IPxConstantBuffer>		CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<ITexture>				CreateTexture(std::filesystem::path path, int slot = 0) override;
+		std::shared_ptr<IRasterizer>			CreateRasterizer(const bool twoSided = true) override;
+		std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) override;
 		std::unique_ptr<ITransformCBuf>			CreateTransformCBuf() override;
 
 	private:
