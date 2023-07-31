@@ -1,7 +1,6 @@
 #pragma once
 #include "TrynWLR.h"
 #include <Core/src/gfx/IGraphics.h>
-#include <Core/src/spa/Dimensions.h>
 #include <d3d11_1.h>
 
 namespace tryn::gfx
@@ -25,7 +24,7 @@ namespace tryn::gfx::dx11
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext1>& GetContext();
 		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();
 
-		// Resurce Creation
+		// Resource Creation
 		std::shared_ptr<IVertexBuffer>			CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string) override;
 		std::shared_ptr<IPolyVBuffer>			CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>& CpuVBs, std::string) override;
 		std::shared_ptr<IIndexBuffer>			CreateIndexBuffer(std::shared_ptr<const std::vector<int>> indices, std::string) override;

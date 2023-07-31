@@ -1,5 +1,5 @@
 #include "PointLight.h"
-#include <Core/src/gfx/Mesh/StaticMeshPool.h>
+#include <Core/src/gfx/Model/StaticMeshPool.h>
 #include "Bindables/ConstantBuffer.h"
 
 namespace tryn::gfx

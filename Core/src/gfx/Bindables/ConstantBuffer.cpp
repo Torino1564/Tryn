@@ -116,6 +116,7 @@ namespace tryn::gfx
 			q.pop();
 
 			remainingSpace = 16 - (accumulatedOffset % 16);
+			// ReSharper disable once CppTooWideScope
 			const auto type = current->GetType();
 			switch (type)
 			{
@@ -127,7 +128,6 @@ namespace tryn::gfx
 				break;
 			default:
 				const auto size = SizeOf(type);
-				current->offset = accumulatedOffset;
 				if (size > remainingSpace)
 				{
 					if (size < 16)
@@ -135,6 +135,7 @@ namespace tryn::gfx
 						accumulatedOffset += remainingSpace;
 					}
 				}
+				current->offset = accumulatedOffset;
 				accumulatedOffset += size;
 				break;
 			}

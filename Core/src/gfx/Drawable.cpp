@@ -1,6 +1,8 @@
 #include "Drawable.h"
 #include <Core/third/glm/gtx/wrap.hpp>
 
+#include "Model/StaticMesh.h"
+
 namespace tryn::gfx
 {
 	template<typename T>
@@ -19,15 +21,9 @@ namespace tryn::gfx
 		return mod;
 	}
 
-	Drawable::Drawable(Drawable&& moveFrom) noexcept
+	Drawable::Drawable(IGraphics& gfx, const Material& mat, const aiMesh& mesh, float scale)
 	{
-		angles = std::move(moveFrom.angles);
-
-		pos = std::move(moveFrom.pos);
-
-		pMesh = std::move(moveFrom.pMesh);
-		pTransformCBuf = std::move(moveFrom.pTransformCBuf);
-		techniques = std::move(moveFrom.techniques);
+		pMesh = std::make_shared<StaticMesh>();
 	}
 
 	void Drawable::Draw(IGraphics& gfx)

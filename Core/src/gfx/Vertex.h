@@ -2,7 +2,6 @@
 #include <Core/third/glm/glm.hpp>
 #include <vector>
 #include <string>
-#include <sstream>
 #include <unordered_map>
 #include <typeinfo>
 #include <utility>
@@ -10,6 +9,9 @@
 #include <Core/src/utl/Exception.h>
 #include <Core/src/gfx/Bindables/Bindable.h>
 #include <Core/src/log/Log.h>
+#include <Core/third/assimp/scene.h>
+
+#define DVTX_ELEMENT_AI_EXTRACTOR(member) static SysType Extract( const aiMesh& mesh,size_t i ) noexcept {return *reinterpret_cast<const SysType*>(&mesh.member[i]);}
 
 ZT_EX_DEF(DvtxException);
 
@@ -55,79 +57,89 @@ namespace tryn::gfx
 
 		template <VertexElement>
 		struct VertexElementAttr {};
-		template <> struct VertexElementAttr<VertexElement::Position2D>
+		template <> struct VertexElementAttr<Position2D>
 		{
 			using SysType = glm::vec2;
 			static constexpr Format format = Format::Vec2F;
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P2";
+			DVTX_ELEMENT_AI_EXTRACTOR(mVertices)
 		};
-		template <> struct VertexElementAttr<VertexElement::Position3D>
+		template <> struct VertexElementAttr<Position3D>
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P3";
+			DVTX_ELEMENT_AI_EXTRACTOR(mVertices)
 		};
-		template <> struct VertexElementAttr<VertexElement::Normal>
+		template <> struct VertexElementAttr<Normal>
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Normal";
 			static constexpr const char* code = "N";
+			DVTX_ELEMENT_AI_EXTRACTOR(mNormals)
 		};
-		template <> struct VertexElementAttr<VertexElement::UV>
+		template <> struct VertexElementAttr<UV>
 		{
 			using SysType = glm::vec2;
 			static constexpr Format format = Format::Vec2F;
 			static constexpr const char* semantic = "Texcoord";
 			static constexpr const char* code = "UV";
+			DVTX_ELEMENT_AI_EXTRACTOR(mTextureCoords[0])
 		};
-		template <> struct VertexElementAttr<VertexElement::Float3Color>
+		template <> struct VertexElementAttr<Float3Color>
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "Cf3";
+			DVTX_ELEMENT_AI_EXTRACTOR(mColors[0])
 		};
-		template <> struct VertexElementAttr<VertexElement::Float4Color>
+		template <> struct VertexElementAttr<Float4Color>
 		{
 			using SysType = glm::vec4;
 			static constexpr Format format = Format::Vec4F;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "Cf4";
+			DVTX_ELEMENT_AI_EXTRACTOR(mColors[0])
 		};
-		template <> struct VertexElementAttr<VertexElement::Char4Color>
+		template <> struct VertexElementAttr<Char4Color>
 		{
 			using SysType = BGRAColor;
 			static constexpr Format format = Format::Vec4C_UNorm;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "Cc4";
+			DVTX_ELEMENT_AI_EXTRACTOR(mColors[0])
 		};
-		template <> struct VertexElementAttr<VertexElement::Tangent>
+		template <> struct VertexElementAttr<Tangent>
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Tangent";
 			static constexpr const char* code = "T";
+			DVTX_ELEMENT_AI_EXTRACTOR(mTangents)
 		};
-		template <> struct VertexElementAttr<VertexElement::Bitangent>
+		template <> struct VertexElementAttr<Bitangent>
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Bitangent";
 			static constexpr const char* code = "Bt";
+			DVTX_ELEMENT_AI_EXTRACTOR(mBitangents)
 		};
-		template <> struct VertexElementAttr<VertexElement::Unknown>
+		template <> struct VertexElementAttr<Unknown>
 		{
 			using SysType = int;
 			static constexpr Format format = Format::Unknown;
 			static constexpr const char* semantic = "Unknown";
 			static constexpr const char* code = "?";
+			DVTX_ELEMENT_AI_EXTRACTOR(mFaces)
 		};
 		
-		template<template<VertexLayout::VertexElement> class F, typename... Args>
-		static constexpr auto Bridge(VertexLayout::VertexElement type, Args&&... args)
+		template<template<VertexElement> class F, typename... Args>
+		static constexpr auto Bridge(VertexElement type, Args&&... args)
 		{
 			switch (type)
 			{
@@ -172,6 +184,17 @@ namespace tryn::gfx
 				static constexpr auto Exec() noexcept
 				{
 					return VertexLayout::VertexElementAttr<type>::code;
+				}
+			};
+			template<VertexLayout::VertexElement type>
+			struct AttributeAiMeshFill
+			{
+				static constexpr void Exec(VertexBuffer* pBuf, const aiMesh& mesh)
+				{
+					for (auto end = mesh.mNumVertices, i = 0u; i < end; i++)
+					{
+						(*pBuf)[i].Attr<type>() = VertexLayout::VertexElementAttr<type>::Extract(mesh, i);
+					}
 				}
 			};
 		public:

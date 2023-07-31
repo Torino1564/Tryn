@@ -5,7 +5,6 @@
 #include <Core/third/glm/gtc/matrix_transform.hpp>
 #include <utility>
 #include <Core/src/gfx/Profiler.h>
-#include <Core/src/gfx/Mesh/StaticMesh.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>
 #include <core/src/gfx/RenderQueue/Technique.h>
 #include <Core/src/gfx/RenderQueue/Step.h>

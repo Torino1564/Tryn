@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11Texture.cpp" />
+    <ClCompile Include="src\gfx\Material.cpp" />
     <ClCompile Include="src\gfx\Bindables\TransformCBuf.cpp" />
     <ClCompile Include="src\gfx\Drawable.cpp" />
     <ClCompile Include="src\app\App.cpp" />
@@ -30,7 +32,7 @@
     <ClCompile Include="src\gfx\dx11\imgui_impl_dx11.cpp" />
     <ClCompile Include="src\gfx\dx12\imgui_impl_dx12.cpp" />
     <ClCompile Include="src\gfx\ImguiManager.cpp" />
-    <ClCompile Include="src\gfx\Mesh\StaticMesh.cpp" />
+    <ClCompile Include="src\gfx\Model\StaticMesh.cpp" />
     <ClCompile Include="src\gfx\PointLight.cpp" />
     <ClCompile Include="src\gfx\RenderQueue\Step.cpp" />
     <ClCompile Include="src\gfx\Vertex.cpp" />
@@ -78,6 +80,7 @@
     <ClInclude Include="src\gfx\Bindables\PixelShader.h" />
     <ClInclude Include="src\gfx\Bindables\PolyVBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\PoliVertexBuffer.h" />
+    <ClInclude Include="src\gfx\Bindables\Texture.h" />
     <ClInclude Include="src\gfx\Bindables\TransformCBuf.h" />
     <ClInclude Include="src\gfx\Bindables\VertexBuffer.h" />
     <ClInclude Include="src\gfx\Drawable.h" />
@@ -87,12 +90,14 @@
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PixelShader.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.h" />
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11Texture.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11TransformCBuf.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11VertexShader.h" />
     <ClInclude Include="src\gfx\Bindables\VertexShader.h" />
     <ClInclude Include="src\gfx\Bindables\Bindable.h" />
     <ClInclude Include="src\ent\Entity.h" />
-    <ClInclude Include="src\gfx\Mesh\Mesh.h" />
+    <ClInclude Include="src\gfx\Material.h" />
+    <ClInclude Include="src\gfx\Model\Mesh.h" />
     <ClInclude Include="src\gfx\dx11\Dx11VertexShader.h" />
     <ClInclude Include="src\gfx\dx11\imgui_impl_dx11.h" />
     <ClInclude Include="src\gfx\dx12\imgui_impl_dx12.h" />
@@ -102,8 +107,10 @@
     <ClInclude Include="src\gfx\GraphicsException.h" />
     <ClInclude Include="src\gfx\IGraphics.h" />
     <ClInclude Include="src\gfx\ImguiManager.h" />
-    <ClInclude Include="src\gfx\Mesh\StaticMesh.h" />
-    <ClInclude Include="src\gfx\Mesh\StaticMeshPool.h" />
+    <ClInclude Include="src\gfx\Model\Model.h" />
+    <ClInclude Include="src\gfx\Model\Node.h" />
+    <ClInclude Include="src\gfx\Model\StaticMesh.h" />
+    <ClInclude Include="src\gfx\Model\StaticMeshPool.h" />
     <ClInclude Include="src\gfx\PointLight.h" />
     <ClInclude Include="src\gfx\Profiler.h" />
     <ClInclude Include="src\gfx\RenderQueue\Step.h" />
@@ -729,6 +736,9 @@
     <Import Project="..\Baseline.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>false</VcpkgEnableManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -742,7 +752,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <FxCompile>
-      <ObjectFileOutput>$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput>$(SolutionDir)$(Platform)\$(Configuration)\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -762,7 +772,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <FxCompile>
-      <ObjectFileOutput>$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput>$(SolutionDir)$(Platform)\$(Configuration)\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)src\third\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

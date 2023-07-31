@@ -34,7 +34,7 @@ namespace tryn::gfx::dx11
 			Update();
 			dirty = false;
 		}
-		gfx.GetContext()->VSSetConstantBuffers(0u, 1u, pCBuff.GetAddressOf());
+		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
 	}
 	char* DX11VtxConstantBuffer::Data()
 	{
@@ -70,7 +70,7 @@ namespace tryn::gfx::dx11
 		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		cbd.MiscFlags = 0u;
 		cbd.StructureByteStride = 0u;
-		cbd.ByteWidth = (UINT)layout.Size();
+		cbd.ByteWidth = static_cast<UINT>(layout.Size());
 		D3D11_SUBRESOURCE_DATA csrd = {};
 		csrd.pSysMem = Data();
 
@@ -83,7 +83,7 @@ namespace tryn::gfx::dx11
 			Update();
 			dirty = false;
 		}
-		gfx.GetContext()->PSSetConstantBuffers(0u, 1u, pCBuff.GetAddressOf());
+		gfx.GetContext()->PSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
 	}
 	char* DX11PxConstantBuffer::Data()
 	{

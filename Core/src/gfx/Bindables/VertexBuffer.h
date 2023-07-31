@@ -36,7 +36,7 @@ namespace tryn::gfx
 		}
 		virtual void Init() = 0;
 		virtual ~IVertexBuffer() {}
-		VertexBuffer& Get()
+		VertexBuffer& Get() const
 		{
 			return *CPUBuffer;
 		}

@@ -1,7 +1,6 @@
 #pragma once
 #include "IGraphics.h"
-#include "Mesh/StaticMesh.h"
-#include "BindablePool.h"
+#include "Model/StaticMesh.h"
 
 namespace tryn::gfx
 {

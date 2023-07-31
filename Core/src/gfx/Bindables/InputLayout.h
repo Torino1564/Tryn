@@ -3,9 +3,8 @@
 #include "VertexBuffer.h"
 #include "VertexShader.h"
 #include "PolyVBuffer.h"
-#include <variant>
 #include <Core/src/gfx/BindablePool.h>
-#include <Core/src/gfx/Mesh/StaticMesh.h>
+#include <Core/src/gfx/Model/StaticMesh.h>
 
 namespace tryn::gfx
 {
@@ -24,7 +23,7 @@ namespace tryn::gfx
 		{
 			return BindablePool::Resolve<IInputLayout>(gfx, mesh, vs);
 		}
-		static std::string GenerateID(IGraphics& gfx, IVertexBuffer& vb, IVertexShader& vs)
+		static std::string GenerateID(IGraphics& gfx, const IVertexBuffer& vb, const IVertexShader& vs)
 		{
 			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;
@@ -35,7 +34,7 @@ namespace tryn::gfx
 
 			return ss.str();
 		}
-		static std::string GenerateID(IGraphics& gfx, IPolyVBuffer& pvb, IVertexShader& vs)
+		static std::string GenerateID(IGraphics& gfx, const IPolyVBuffer& pvb, const IVertexShader& vs)
 		{
 			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;
@@ -50,7 +49,7 @@ namespace tryn::gfx
 
 			return ss.str();
 		}
-		static std::string GenerateID(IGraphics& gfx, StaticMesh& mesh, IVertexShader& vs)
+		static std::string GenerateID(IGraphics& gfx, const StaticMesh& mesh, const IVertexShader& vs)
 		{
 			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;

@@ -1,25 +1,26 @@
+// ReSharper disable CppInconsistentNaming
 #pragma once
-#include "Mesh/Mesh.h"
+#include "Model/Mesh.h"
 #include "RenderQueue/Technique.h"
 #include <core/src/gfx/Bindables/TransformCBuf.h>
 
 namespace tryn::gfx
 {
+	class Material;
+	struct aiMesh;
+
 	class Drawable
 	{
 	public:
-		Drawable() = default;
-		Drawable(Drawable&& moveFrom) noexcept;
-		Drawable(const Drawable& copyFrom) = delete;
-		Drawable operator=(const Drawable& copyFrom) = delete;
-		virtual ~Drawable() = default;
+		Drawable(IGraphics& gfx, const Material& mat, const aiMesh& mesh, float scale = 1.0f);
+
 		void Draw(IGraphics& gfx);
 		void InitTransformCBuf(IGraphics& gfx);
-		Mesh& GetMesh() const;
-		IPolyVBuffer& GetVertexBuffer() const;
-		uint32_t GetIndexCount() const;
+		[[nodiscard]] Mesh& GetMesh() const;
+		[[nodiscard]] IPolyVBuffer& GetVertexBuffer() const;
+		[[nodiscard]] uint32_t GetIndexCount() const;
 		void AddTechnique(Technique technique);
-		glm::mat4 GetTransformMatrix() const;
+		[[nodiscard]] glm::mat4 GetTransformMatrix() const;
 		void BindParent();
 		void SetYaw(float yaw);
 		void SetPitch(float pitch);

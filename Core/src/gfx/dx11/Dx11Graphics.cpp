@@ -1,8 +1,6 @@
 #include "Dx11Graphics.h"
 #include "GraphicsError.h"
-#include <iostream>
 #include <d3dcompiler.h>
-#include <fstream>
 #include <Core/src/gfx/dx11/Bindables/DX11VertexBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11InputLayout.h>
 #include <Core/src/gfx/dx11/Bindables/DX11VertexShader.h>
@@ -15,8 +13,6 @@
 #include "imgui_impl_dx11.h"
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <Core/third/glm/glm.hpp>
-#include <Core/third/glm/gtc/matrix_transform.hpp>
 
 
 #pragma comment (lib,"d3d11.lib")

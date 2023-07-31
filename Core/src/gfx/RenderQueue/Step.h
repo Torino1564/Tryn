@@ -13,6 +13,6 @@ namespace tryn::gfx
 		void Bind(IGraphics& gfx) const;
 		void Draw(IGraphics& gfx) const;
 		std::vector<std::shared_ptr<gfx::IBindable>> bindables;
-		Drawable* parent;
+		Drawable* parent = nullptr;
 	};
 }
