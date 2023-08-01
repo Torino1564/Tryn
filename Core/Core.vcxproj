@@ -36,6 +36,7 @@
     <ClCompile Include="src\gfx\dx12\imgui_impl_dx12.cpp" />
     <ClCompile Include="src\gfx\ImguiManager.cpp" />
     <ClCompile Include="src\gfx\Model\Model.cpp" />
+    <ClCompile Include="src\gfx\Model\Node.cpp" />
     <ClCompile Include="src\gfx\Model\StaticMesh.cpp" />
     <ClCompile Include="src\gfx\PointLight.cpp" />
     <ClCompile Include="src\gfx\RenderQueue\Step.cpp" />
@@ -115,6 +116,7 @@
     <ClInclude Include="src\gfx\IGraphics.h" />
     <ClInclude Include="src\gfx\ImguiManager.h" />
     <ClInclude Include="src\gfx\Model\Model.h" />
+    <ClInclude Include="src\gfx\Model\ModelException.h" />
     <ClInclude Include="src\gfx\Model\Node.h" />
     <ClInclude Include="src\gfx\Model\StaticMesh.h" />
     <ClInclude Include="src\gfx\Model\StaticMeshPool.h" />
