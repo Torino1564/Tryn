@@ -51,4 +51,13 @@ namespace tryn::gfx
 		return ss.str();
 	}
 
+	VertexBuffer::VertexBuffer(VertexLayout layout, const aiMesh& mesh)
+	{
+		VertexBuffer vBuffer(layout, mesh.mNumVertices);
+		for (int i = 0; i < mesh.mNumVertices; i++)
+		{
+			VertexLayout::Bridge<VertexLayout::Element::AttributeAiMeshFill>(layout.ResolveByIndex(i).GetType(), this, mesh);
+		}
+	}
+
 }

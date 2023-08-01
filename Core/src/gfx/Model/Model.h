@@ -11,8 +11,9 @@ namespace tryn::gfx
 	public:
 		Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = {1.0f,1.0f,1.0f});
 	private:
-		std::unique_ptr<Node> ParseNode(int& nextId, const aiNode& node, glm::vec3 scale);
+		Node ParseNode(int& nextId, const aiNode& node, glm::vec3 scale);
 	private:
+		std::string name;
 		std::unique_ptr<Node> root;
 		std::vector<std::shared_ptr<Mesh>> pMeshes;
 	};

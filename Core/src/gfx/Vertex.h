@@ -153,6 +153,8 @@ namespace tryn::gfx
 
 		class Element
 		{
+			friend class VertexLayout;
+			friend class VertexBuffer;
 		private:
 			template<VertexLayout::VertexElement type>
 			struct VertexSysSizeLookup
@@ -380,7 +382,7 @@ namespace tryn::gfx
 		const VertexLayout& layout;
 	};
 
-	class VertexBuffer : public IBindable
+	class VertexBuffer
 	{
 	public:
 		VertexBuffer(VertexLayout layout_, size_t size = 0)
@@ -389,6 +391,7 @@ namespace tryn::gfx
 			this->layout = std::move(layout_);
 			Resize(layout.Size() * size);
 		}
+		VertexBuffer(VertexLayout layout, const aiMesh& mesh);
 		void Resize(size_t newSize)
 		{
 			buffer.resize(newSize);
@@ -441,11 +444,6 @@ namespace tryn::gfx
 		{
 			trylog.error(L"GetLayoutFromVB member on the VertexBuffer virtual class was called");
 			return {};
-		}
-
-		void Bind() override
-		{
-			trylog.error(L"Bind member on the VertexBuffer virtual class was called");
 		}
 
 	protected:       

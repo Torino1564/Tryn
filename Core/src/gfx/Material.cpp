@@ -4,6 +4,7 @@
 #include <Core/src/gfx/Bindables/Texture.h>
 #include <Core/src/gfx/Bindables/Rasterizer.h>
 #include <Core/src/gfx/Bindables/ConstantBuffer.h>
+#include <Core/src/gfx/Bindables/VertexBuffer.h>
 #include <Core/src/gfx/Bindables/VertexShader.h>
 #include <Core/src/gfx/Bindables/PixelShader.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>
@@ -148,5 +149,27 @@ namespace tryn::gfx
 				step.AddBindable(std::move(buf));
 			}
 		}
+	}
+	VertexBuffer Material::ExtractVertices(const aiMesh& mesh) const noexcept
+	{
+		return { vLayout,mesh };
+	}
+	std::vector<int> Material::ExtractIndices(const aiMesh& mesh) const noexcept
+	{
+		std::vector<int> indices;
+		indices.resize(mesh.mNumFaces * 3);
+
+		for (int i = 0; i < mesh.mNumFaces; i++)
+		{
+			const auto& triangle = mesh.mFaces[i];
+			indices[i] = triangle.mIndices[0];
+			indices[i + 1] = triangle.mIndices[1];
+			indices[i + 2] = triangle.mIndices[2];
+		}
+		return indices;
+	}
+	std::vector<Technique> Material::GetTechniques() const noexcept
+	{
+		return techniques;
 	}
 }
