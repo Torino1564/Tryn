@@ -148,6 +148,10 @@ namespace tryn::gfx
 
 				step.AddBindable(std::move(buf));
 			}
+
+			Phong.AddStep(std::move(step));
+
+			techniques.push_back(std::move(Phong));
 		}
 	}
 	VertexBuffer Material::ExtractVertices(const aiMesh& mesh) const noexcept
