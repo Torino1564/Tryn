@@ -1,7 +1,7 @@
-#include "Exception.h" 
-#include "String.h" 
-#include <format> 
-#include <typeinfo> 
+#include "Exception.h"
+#include "String.h"
+#include <format>
+#include <typeinfo>
 
 namespace tryn::utl
 {

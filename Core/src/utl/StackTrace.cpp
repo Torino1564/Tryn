@@ -18,7 +18,7 @@ tryn::utl::StackTrace::StackTrace(int depth)
 
 tryn::utl::StackTrace::StackTrace(const StackTrace& src)
 	:
-	pTrace{std::make_unique<backward::StackTrace>(*pTrace) }
+	pTrace{ std::make_unique<backward::StackTrace>(*pTrace) }
 {
 }
 

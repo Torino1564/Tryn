@@ -10,8 +10,8 @@
 
 namespace tryn::gfx
 {
-	typedef std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>,std::shared_ptr<tryn::gfx::IPolyVBuffer>>> BufferArray;
-	
+	typedef std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>> BufferArray;
+
 	class IPolyVBuffer : public IBindable
 	{
 	public:
@@ -41,7 +41,7 @@ namespace tryn::gfx
 				{
 					decltype(auto) ptr = std::get<std::shared_ptr<IVertexBuffer>>(buffer);
 					ss << '$' << ptr->GetTag();
-					for (auto& [element,index] : ptr->Get().GetLayout().Elements)
+					for (auto& [element, index] : ptr->Get().GetLayout().Elements)
 					{
 						ss << '#' << element.GetName() << std::to_string(index);
 					}
@@ -73,7 +73,7 @@ namespace tryn::gfx
 
 			return ss.str();
 		}
-		
+
 		std::string GetTag() const
 		{
 			return tag;

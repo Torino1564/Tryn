@@ -5,7 +5,7 @@ namespace tryn::log
 {
 	SimpleFileDriver::SimpleFileDriver(std::filesystem::path path, std::shared_ptr<ITextFormatter> pFormatter)
 		:
-		pFormatter_{std::move(pFormatter)}
+		pFormatter_{ std::move(pFormatter) }
 	{
 		// create dirs
 		std::filesystem::create_directories(path.parent_path());
@@ -14,7 +14,7 @@ namespace tryn::log
 	}
 	void SimpleFileDriver::Submit(const Entry& e)
 	{
-		if(pFormatter_)
+		if (pFormatter_)
 		{
 			file_ << pFormatter_->Format(e).c_str();
 		}

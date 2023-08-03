@@ -2000,8 +2000,8 @@
   <ItemGroup>
     <FxCompile Include="src\gfx\dx11\VS\VertexShader.hlsl" />
     <FxCompile Include="src\gfx\dx11\PS\PixelShader.hlsl" />
-    <FxCompile Include="src\gfx\dx11\PS\PhongFlatColor_PS.hlsl" />
-    <FxCompile Include="src\gfx\dx11\VS\PhongFlatColor_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\Phong_PS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\Phong_VS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\FlatColor_VS.hlsl" />
     <FxCompile Include="src\gfx\dx11\PS\FlatColor_PS.hlsl" />
   </ItemGroup>

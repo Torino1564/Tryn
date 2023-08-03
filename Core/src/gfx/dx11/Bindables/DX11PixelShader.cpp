@@ -7,7 +7,7 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11PixelShader::DX11PixelShader( Graphics& gfx, std::string path )
+	DX11PixelShader::DX11PixelShader(Graphics& gfx, std::string path)
 		:
 		gfx(gfx)
 	{

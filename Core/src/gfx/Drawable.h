@@ -1,23 +1,21 @@
-// ReSharper disable CppInconsistentNaming
 #pragma once
-#include "Model/Mesh.h"
 #include "RenderQueue/Technique.h"
 #include <core/src/gfx/Bindables/TransformCBuf.h>
+
+struct aiMesh;
 
 namespace tryn::gfx
 {
 	class Material;
-	struct aiMesh;
 
 	class Drawable
 	{
 	public:
-		Drawable(IGraphics& gfx, const Material& mat, const aiMesh& mesh, float scale = 1.0f);
+		virtual ~Drawable() = default;
 
 		void Draw(IGraphics& gfx);
 		void InitTransformCBuf(IGraphics& gfx);
-		[[nodiscard]] Mesh& GetMesh() const;
-		[[nodiscard]] IPolyVBuffer& GetVertexBuffer() const;
+		[[nodiscard]] IVertexBuffer& GetVertexBuffer() const;
 		[[nodiscard]] uint32_t GetIndexCount() const;
 		void AddTechnique(Technique technique);
 		[[nodiscard]] glm::mat4 GetTransformMatrix() const;
@@ -33,8 +31,12 @@ namespace tryn::gfx
 		glm::vec3 angles{};
 		glm::vec3 pos = { 0.0f,0.0f,0.0f };
 	protected:
-		std::shared_ptr<Mesh> pMesh;
+
+		std::shared_ptr<IVertexBuffer> pVertexBuffer;
+		std::shared_ptr<IIndexBuffer> pIndexBuffer;
+		std::shared_ptr<IPrimitiveTopology> pTopology;
 		std::unique_ptr<ITransformCBuf> pTransformCBuf;
+		uint32_t indexCount = 0;
 		std::vector<Technique> techniques;
 	};
 }

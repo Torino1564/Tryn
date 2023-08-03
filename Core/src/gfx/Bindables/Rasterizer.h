@@ -11,7 +11,7 @@ namespace tryn::gfx
 		{
 			return BindablePool::Resolve<IRasterizer>(gfx, twoSided);
 		}
-		static std::string GenerateID(IGraphics& gfx , bool twoSided = true)
+		static std::string GenerateID(IGraphics& gfx, bool twoSided = true)
 		{
 			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::string UID(typeStr);

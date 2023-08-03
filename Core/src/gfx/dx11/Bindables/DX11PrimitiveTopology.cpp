@@ -2,7 +2,7 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11PrimitiveTopology::DX11PrimitiveTopology(Graphics& gfx , D3D_PRIMITIVE_TOPOLOGY type)
+	DX11PrimitiveTopology::DX11PrimitiveTopology(Graphics& gfx, D3D_PRIMITIVE_TOPOLOGY type)
 		:
 		gfx(gfx),
 		topologyType(type)
@@ -14,4 +14,3 @@ namespace tryn::gfx::dx11
 		gfx.GetContext()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 }
-

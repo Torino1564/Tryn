@@ -2,32 +2,32 @@
 #include "Channel.h"
 #include <Core/src/win/TrynWin.h>
 
-#pragma warning(push) 
-#pragma warning(disable: 26815) 
+#pragma warning(push)
+#pragma warning(disable: 26815)
 namespace tryn::log
 {
-    EntryBuilder::EntryBuilder(const wchar_t* sourceFile, const wchar_t* sourceFunctionName, int sourceLine)
-        :
-        Entry{
-            .level_ = Level::Error,
-            .sourceFile_ = sourceFile,
-            .sourceFunctionName_ = sourceFunctionName,
-            .sourceLine_ = sourceLine,
+	EntryBuilder::EntryBuilder(const wchar_t* sourceFile, const wchar_t* sourceFunctionName, int sourceLine)
+		:
+		Entry{
+			.level_ = Level::Error,
+			.sourceFile_ = sourceFile,
+			.sourceFunctionName_ = sourceFunctionName,
+			.sourceLine_ = sourceLine,
 			.timestamp_ = std::chrono::system_clock::now(),
-        }
-    {}
+		}
+	{}
 
-    EntryBuilder& tryn::log::EntryBuilder::note(std::wstring note)
-    {
-        note_ = std::move(note);
-        return *this;
-    }
+	EntryBuilder& tryn::log::EntryBuilder::note(std::wstring note)
+	{
+		note_ = std::move(note);
+		return *this;
+	}
 
-    EntryBuilder& tryn::log::EntryBuilder::level(Level lv)
-    {
-        level_ = lv;
-        return *this;
-    }
+	EntryBuilder& tryn::log::EntryBuilder::level(Level lv)
+	{
+		level_ = lv;
+		return *this;
+	}
 	EntryBuilder& EntryBuilder::verbose(std::wstring note)
 	{
 		note_ = std::move(note);
@@ -64,11 +64,11 @@ namespace tryn::log
 		level_ = Level::Fatal;
 		return *this;
 	}
-    EntryBuilder& tryn::log::EntryBuilder::chan(IChannel* pChan)
-    {
-        pDest_ = pChan;
-        return *this;
-    }
+	EntryBuilder& tryn::log::EntryBuilder::chan(IChannel* pChan)
+	{
+		pDest_ = pChan;
+		return *this;
+	}
 	EntryBuilder& EntryBuilder::trace_skip(int depth)
 	{
 		traceSkipDepth_ = depth;
@@ -104,18 +104,17 @@ namespace tryn::log
 		hResult_ = hr;
 		return *this;
 	}
-    EntryBuilder::~EntryBuilder()
-    {
-        if (pDest_ != nullptr)
-        {
+	EntryBuilder::~EntryBuilder()
+	{
+		if (pDest_ != nullptr)
+		{
 			if (captureTrace_.value_or((int)level_ <= (int)Level::Error))
 			{
 				trace_.emplace(traceSkipDepth_);
 			}
-            pDest_->Submit(*this);
-        }
-    }
+			pDest_->Submit(*this);
+		}
+	}
 }
 
 #pragma warning(pop)
-

@@ -8,7 +8,7 @@ namespace tryn::gfx
 	void Boot()
 	{
 		ioc::Get().Register<IGraphics>([](IGraphics::IocParams args) {
-			return std::make_shared<dx11::Graphics> (
+			return std::make_shared<dx11::Graphics>(
 				args.hWnd,
 				args.width.value_or(1280),
 				args.height.value_or(720)
@@ -18,4 +18,3 @@ namespace tryn::gfx
 		static ImguiManager imgui; // ImGui initialization
 	}
 }
-

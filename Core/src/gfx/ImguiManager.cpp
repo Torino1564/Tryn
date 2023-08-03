@@ -5,7 +5,7 @@ namespace tryn::gfx
 	ImguiManager::ImguiManager()
 	{
 		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();	
+		ImGui::CreateContext();
 		auto& io = ImGui::GetIO();
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
@@ -23,4 +23,3 @@ namespace tryn::gfx
 		ImGui::DestroyContext();
 	}
 }
-

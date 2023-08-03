@@ -22,26 +22,21 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	Gfx().SetCamera(glm::lookAtLH(eyePos, focusPoint, upDirection));
 	Gfx().SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(Gfx().dimensions.width), static_cast<float>(Gfx().dimensions.height), 0.1f, 100.0f));
 
-
-	for (auto& entity : entities)
-	{
-	}
+	suzanne = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne", "resources/models/suzanneHp.obj");
 }
 
 void TestApp::DoFrame()
 {
-	for (auto& entity : entities)
 	{
-		{
-			static constexpr float angle = 0.001f;
-			PROFILE_SCOPE("Update Rotation");
-		}
-		{
-			PROFILE_SCOPE("Draw call");
-		}
-		static bool showDemoWindow = true;
-		ImGui::ShowDemoWindow(&showDemoWindow);
-		ImGui::Begin("Test", &showDemoWindow, 0);
-		ImGui::End();
+		static constexpr float angle = 0.001f;
+		PROFILE_SCOPE("Update Rotation");
 	}
+	{
+		PROFILE_SCOPE("Draw call");
+		suzanne->Draw();
+	}
+	static bool showDemoWindow = true;
+	ImGui::ShowDemoWindow(&showDemoWindow);
+	ImGui::Begin("Test", &showDemoWindow, 0);
+	ImGui::End();
 }

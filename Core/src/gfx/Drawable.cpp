@@ -1,7 +1,11 @@
 #include "Drawable.h"
+#include <Core/src/gfx/Bindables/VertexBuffer.h>
+#include <Core/src/gfx/Bindables/IndexBuffer.h>
+#include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 #include <Core/third/glm/gtx/wrap.hpp>
-
-#include "Model/StaticMesh.h"
+#include <Core/third/glm/gtx/transform.hpp>
+#include <Core/third/glm/glm.hpp>
+#include <Core/third/glm/gtx/euler_angles.hpp>
 
 namespace tryn::gfx
 {
@@ -21,35 +25,29 @@ namespace tryn::gfx
 		return mod;
 	}
 
-	Drawable::Drawable(IGraphics& gfx, const Material& mat, const aiMesh& mesh, float scale)
-	{
-		
-	}
-
 	void Drawable::Draw(IGraphics& gfx)
 	{
-		pMesh->Bind(gfx);
-		pTransformCBuf->Bind();
+		pVertexBuffer->Bind();
+		pIndexBuffer->Bind();
+		pTopology->Bind();
+		pTransformCBuf->BindTransformCBuf(this);
+
 		for (auto& technique : techniques)
 		{
-			technique.Draw(gfx);
+			technique.Draw(gfx,this);
 		}
 	}
 	void Drawable::InitTransformCBuf(IGraphics& gfx)
 	{
 		pTransformCBuf = gfx.CreateTransformCBuf();
 	}
-	Mesh& Drawable::GetMesh() const
+	IVertexBuffer& Drawable::GetVertexBuffer() const
 	{
-		return *pMesh;
-	}
-	IPolyVBuffer& Drawable::GetVertexBuffer() const
-	{
-		return *pMesh->GetPolyVBuffer();
+		return *pVertexBuffer;
 	}
 	uint32_t Drawable::GetIndexCount() const
 	{
-		return pMesh->GetIndexCount();
+		return indexCount;
 	}
 	void Drawable::AddTechnique(Technique technique)
 	{
@@ -58,14 +56,6 @@ namespace tryn::gfx
 	glm::mat4 Drawable::GetTransformMatrix() const
 	{
 		return glm::translate(glm::yawPitchRoll(angles.x, angles.y, angles.z), pos);
-	}
-	void Drawable::BindParent()
-	{
-		pTransformCBuf->BindParent(*this);
-		for (auto& tech : techniques)
-		{
-			tech.BindParent(*this);
-		}
 	}
 
 	void Drawable::SetYaw(const float yaw)

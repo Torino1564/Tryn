@@ -25,7 +25,7 @@ namespace tryn::gfx
 			name = tempName.C_Str();
 		}
 
-		// Default Techniques 
+		// Default Techniques
 
 		{
 			// Phong
@@ -37,9 +37,9 @@ namespace tryn::gfx
 			vLayout.AppendElement(VertexLayout::Position3D);
 			vLayout.AppendElement(VertexLayout::Normal);
 			ConstantBufferLayout cbLayout;
-			bool isTextured;
-			bool usesGlossAlphaChannel;
-			
+			bool isTextured = false;
+			bool usesGlossAlphaChannel = false;
+
 			Step step;
 
 			// Albedo
@@ -98,14 +98,14 @@ namespace tryn::gfx
 			// Common
 			{
 				auto pvs = IVertexShader::Resolve(gfx, shaderCode + "_VS.cso");
-				step.AddBindable(IInputLayout::Resolve(gfx,vLayout,*pvs));
+				step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 				step.AddBindable(std::move(pvs));
 				step.AddBindable(IPixelShader::Resolve(gfx, shaderCode + "_PS.cso"));
 				if (isTextured)
 				{
 					step.AddBindable(ISampler::Resolve(gfx));
 				}
-
+				cbLayout.Solidify();
 				auto buf = IPxConstantBuffer::Resolve(gfx, std::move(cbLayout), 1);
 				if (auto param = (*buf)["materialColor"]; param.Exists())
 				{
@@ -159,7 +159,7 @@ namespace tryn::gfx
 		std::vector<int> indices;
 		indices.resize(mesh.mNumFaces * 3);
 
-		for (int i = 0; i < mesh.mNumFaces; i++)
+		for (unsigned int i = 0; i < mesh.mNumFaces; i++)
 		{
 			const auto& triangle = mesh.mFaces[i];
 			indices[i] = triangle.mIndices[0];

@@ -18,7 +18,7 @@ namespace tryn::gfx
 			std::string UID(typeStr);
 			UID += "#VertexShader#";
 			UID += path;
-			
+
 			return UID;
 		}
 		std::string_view GetPath() const

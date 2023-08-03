@@ -17,7 +17,6 @@
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
-
 #pragma comment (lib,"d3d11.lib")
 #pragma comment (lib,"D3DCompiler.lib")
 
@@ -114,7 +113,7 @@ namespace tryn::gfx::dx11
 		vp.TopLeftY = 0.0f;
 		pContext->RSSetViewports(1u, &vp);
 
-		pSwap->SetFullscreenState((BOOL)false , nullptr) >> chk;
+		pSwap->SetFullscreenState((BOOL)false, nullptr) >> chk;
 
 		ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 	}
@@ -242,7 +241,7 @@ namespace tryn::gfx::dx11
 
 	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs)
 	{
-		return std::make_shared<DX11InputLayout>(*this,vLayout,vs);
+		return std::make_shared<DX11InputLayout>(*this, vLayout, vs);
 	}
 
 	std::shared_ptr<IPrimitiveTopology> Graphics::CreatePrimitiveTopology()
@@ -252,7 +251,7 @@ namespace tryn::gfx::dx11
 
 	std::shared_ptr<IVtxConstantBuffer> Graphics::CreateVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
 	{
-		return std::make_shared<DX11VtxConstantBuffer>(*this, std::move(layout) , slot , tag);
+		return std::make_shared<DX11VtxConstantBuffer>(*this, std::move(layout), slot, tag);
 	}
 
 	std::shared_ptr<IPxConstantBuffer> Graphics::CreatePxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
@@ -271,7 +270,7 @@ namespace tryn::gfx::dx11
 	}
 	std::shared_ptr<IRasterizer> Graphics::CreateRasterizer(const bool twoSided)
 	{
-		return std::make_shared<DX11Rasterizer>(*this,twoSided);
+		return std::make_shared<DX11Rasterizer>(*this, twoSided);
 	}
 	std::shared_ptr<ISampler> Graphics::CreateSampler(SamplerType type, bool reflect, int slot)
 	{

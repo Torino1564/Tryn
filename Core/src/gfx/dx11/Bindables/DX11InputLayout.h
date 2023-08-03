@@ -6,7 +6,6 @@
 
 struct D3D11_INPUT_ELEMENT_DESC;
 
-
 namespace tryn::gfx::dx11
 {
 	class DX11VertexBuffer;

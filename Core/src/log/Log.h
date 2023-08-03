@@ -10,7 +10,7 @@ namespace tryn::log
 
 #ifdef NDEBUG
 	inline constexpr int defaultTraceSkip = 2;
-#else 
+#else
 	inline constexpr int defaultTraceSkip = 6;
 #endif
 }

@@ -5,7 +5,6 @@
 #include <Core/src/log/Policy.h>
 #include <Core/src/log/SeverityLevelPolicy.h>
 
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace tryn;
 using namespace std::string_literals;
@@ -77,5 +76,4 @@ namespace Log
 			Assert::AreEqual((int)log::Level::Info, (int)pDriver1->entry_.level_);
 		}
 	};
-	
 }

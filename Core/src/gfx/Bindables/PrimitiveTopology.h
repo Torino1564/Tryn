@@ -12,7 +12,7 @@ namespace tryn::gfx
 		{
 			return BindablePool::Resolve<IPrimitiveTopology>(gfx);
 		}
-		static std::string GenerateID( IGraphics& gfx )
+		static std::string GenerateID(IGraphics& gfx)
 		{
 			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;

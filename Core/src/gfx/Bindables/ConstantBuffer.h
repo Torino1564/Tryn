@@ -29,9 +29,9 @@ namespace tryn::gfx
 	public:
 		enum Type
 		{
-			#define X(el) el,
+#define X(el) el,
 			CONSTANT_BUFFER_ELEMENTS
-			#undef X
+#undef X
 			Struct,
 			Array,
 			Empty
@@ -93,22 +93,22 @@ namespace tryn::gfx
 		CONSTANT_BUFFER_ELEMENTS
 #undef X
 
-		template <typename T>
+			template <typename T>
 		struct TypeAttrLookup
 		{
 			static constexpr bool valid = false;
 		};
 
-		#define X(el) \
+#define X(el) \
 		template<> struct TypeAttrLookup<typename TypeAttr<el>::TrueType> \
 		{\
 			static constexpr Type type = el; \
 			static constexpr bool valid = true; \
 		};
 		CONSTANT_BUFFER_ELEMENTS
-		#undef X
+#undef X
 
-		template<template<ConstantBufferLayout::Type> class F, typename... Args>
+			template<template<ConstantBufferLayout::Type> class F, typename... Args>
 		static constexpr auto Bridge(ConstantBufferLayout::Type type, Args&&... args)
 		{
 			switch (type)
@@ -120,7 +120,6 @@ namespace tryn::gfx
 			throw DcbException("Invalid element type");
 			return F<ConstantBufferLayout::Type::Empty>::Exec(std::forward<Args>(args)...);
 		}
-
 
 		static constexpr size_t SizeOf(ConstantBufferLayout::Type type);
 

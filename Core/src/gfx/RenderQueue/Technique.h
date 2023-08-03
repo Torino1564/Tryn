@@ -16,25 +16,16 @@ namespace tryn::gfx
 		{
 			steps.push_back(std::move(step));
 		}
-		void Draw(IGraphics& gfx)
+		void Draw(IGraphics& gfx, Drawable* parent)
 		{
 			for (auto& step : steps)
 			{
 				step.Bind(gfx);
-				step.Draw(gfx);
+				step.Draw(gfx, parent);
 			}
 		}
-		void BindParent(Drawable& parent);
 	private:
 		std::string name;
 		std::vector<Step> steps;
 	};
-
-	inline void Technique::BindParent(Drawable& parent)
-	{
-		for (auto& step : steps)
-		{
-			step.parent = &parent;
-		}
-	}
 }

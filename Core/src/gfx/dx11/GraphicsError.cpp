@@ -8,7 +8,6 @@
 namespace rn = std::ranges;
 namespace vi = rn::views;
 
-
 namespace tryn::gfx::dx11
 {
 	CheckerToken chk;
@@ -18,7 +17,7 @@ namespace tryn::gfx::dx11
 		hr(hr),
 		loc(loc)
 	{}
-	void operator>>(HrGrabber g , CheckerToken)
+	void operator>>(HrGrabber g, CheckerToken)
 	{
 		if (FAILED(g.hr))
 		{
@@ -33,4 +32,3 @@ namespace tryn::gfx::dx11
 		}
 	}
 }
-

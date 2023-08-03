@@ -11,7 +11,6 @@ namespace tryn::gfx
 
 namespace tryn::gfx::dx11
 {
-
 	class Graphics : public IGraphics
 	{
 	public:
@@ -53,5 +52,4 @@ namespace tryn::gfx::dx11
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 	};
-
 }

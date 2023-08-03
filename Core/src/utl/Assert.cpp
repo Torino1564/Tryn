@@ -1,6 +1,5 @@
-#include "Assert.h" 
+#include "Assert.h"
 #include <Core/src/log/Log.h>
-
 
 namespace tryn::utl
 {
@@ -14,7 +13,7 @@ namespace tryn::utl
 #endif
 	}
 
-	Assertion::Assertion(std::wstring expression, const wchar_t* file, const wchar_t* function, int line, Consequence consequence , std::wstring msg)
+	Assertion::Assertion(std::wstring expression, const wchar_t* file, const wchar_t* function, int line, Consequence consequence, std::wstring msg)
 		:
 		file_{ file },
 		function_{ function },
@@ -27,7 +26,7 @@ namespace tryn::utl
 	Assertion::~Assertion()
 	{
 		log::EntryBuilder{ file_, function_, line_ }
-			.trace_skip(skip_depth_)
+		.trace_skip(skip_depth_)
 			.chan(log::GetDefaultChannel())
 			.level(consequence_ == Consequence::Terminate ? log::Level::Fatal : log::Level::Error)
 			.note(stream_.str());

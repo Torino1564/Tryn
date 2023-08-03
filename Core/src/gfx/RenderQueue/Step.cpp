@@ -14,7 +14,7 @@ namespace tryn::gfx
 			bind->Bind();
 		}
 	}
-	void Step::Draw(IGraphics& gfx) const
+	void Step::Draw(IGraphics& gfx, Drawable* parent) const
 	{
 		gfx.DrawIndexed(parent->GetIndexCount());
 	}

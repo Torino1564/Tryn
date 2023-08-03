@@ -1,5 +1,5 @@
-#pragma once 
-#include <Core/src/utl/Exception.h> 
+#pragma once
+#include <Core/src/utl/Exception.h>
 
 namespace tryn::win
 {

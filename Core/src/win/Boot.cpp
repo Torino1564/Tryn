@@ -1,11 +1,11 @@
-#include "Boot.h" 
-#include <Core/src/ioc/Container.h> 
-#include <Core/src/ioc/Singletons.h> 
-#include "WindowClass.h" 
+#include "Boot.h"
+#include <Core/src/ioc/Container.h>
+#include <Core/src/ioc/Singletons.h>
+#include "WindowClass.h"
 #include "Window.h"
 
-// how to forward this for rval goodness? 
-// how to do this for const bois? 
+// how to forward this for rval goodness?
+// how to do this for const bois?
 template<class T>
 auto operator|(std::shared_ptr<T> lhs, std::shared_ptr<T> rhs)
 {
@@ -21,7 +21,7 @@ namespace tryn::win
 {
 	void Boot()
 	{
-		// container 
+		// container
 		ioc::Get().Register<IWindow>([](IWindow::IocParams args) {
 			return std::make_shared<Window>(
 				(args.pClass.value_or(ioc::Sing().Resolve<IWindowClass>())),
@@ -31,11 +31,11 @@ namespace tryn::win
 			);
 			});
 
-		ioc::Get().Register<IWindowClass>([] { // passthru here? 
+		ioc::Get().Register<IWindowClass>([] { // passthru here?
 			return std::make_shared<WindowClass>();
 			});
 
-		// Singleton 
+		// Singleton
 		ioc::Sing().RegisterPassthru<IWindowClass>();
 	}
 }

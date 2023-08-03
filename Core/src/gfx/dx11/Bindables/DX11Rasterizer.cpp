@@ -19,4 +19,3 @@ namespace tryn::gfx::dx11
 		gfx.GetContext()->RSSetState(pRasterizer.Get());
 	}
 }
-

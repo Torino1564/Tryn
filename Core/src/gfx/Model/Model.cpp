@@ -33,7 +33,7 @@ namespace tryn::gfx
 
 	Model::Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale)
 		:
-		name(path.data())
+		name(path.data()), gfx(gfx)
 	{
 		auto& imp = AssimpManager::Get();
 		const auto pScene = imp.ReadFile(path.data(),
@@ -65,6 +65,10 @@ namespace tryn::gfx
 
 		int nextId = 0;
 		root = std::make_unique<Node>(ParseNode(nextId, *pScene->mRootNode, scale));
+	}
+	void Model::Draw()
+	{
+		root->Draw(gfx, glm::identity<glm::mat4>());
 	}
 	Node Model::ParseNode(int& nextId, const aiNode& node, glm::vec3 scale)
 	{

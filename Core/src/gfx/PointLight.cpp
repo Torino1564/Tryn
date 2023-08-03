@@ -8,7 +8,6 @@ namespace tryn::gfx
 	{
 		// Mesh
 		//mesh = StaticMeshPool::Resolve("resources/models/sphere.fbx");
-
 	}
 	void PointLight::ShowControls()
 	{
@@ -31,7 +30,5 @@ namespace tryn::gfx
 	}
 	void PointLight::Draw() const
 	{
-
 	}
 }
-

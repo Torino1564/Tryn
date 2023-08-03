@@ -7,18 +7,14 @@
 #include <Core/src/gfx/Bindables/PolyVBuffer.h>
 #include <Core/src/gfx/Bindables/IndexBuffer.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
+#include <Core/src/gfx/Drawable.h>
 
 namespace tryn::gfx
 {
-	class Mesh
+	class Mesh : public Drawable
 	{
 	public:
 		virtual ~Mesh() = default;
-
-		[[nodiscard]] bool HasBindables() const
-		{
-			return hasBinds;
-		}
 
 		[[nodiscard]] std::string GetTag() const
 		{
@@ -26,35 +22,7 @@ namespace tryn::gfx
 		}
 
 		[[nodiscard]] virtual bool IsStatic() const = 0;
-
-		[[nodiscard]] auto GetPolyVBuffer() const
-		{
-			return pVertexBuffer;
-		}
-
-		[[nodiscard]] auto GetIndexBuffer() const
-		{
-			return pIndexBuffer;
-		}
-		void Bind( IGraphics& gfx ) const
-		{
-			trynass_msg(hasBinds, L"Attempted to bind a mesh with no bindings!");
-
-			pVertexBuffer->Bind();
-			pIndexBuffer->Bind();
-			pTopology->Bind();
-		}
-
-		[[nodiscard]] uint32_t GetIndexCount() const
-		{
-			return indexCount;
-		}
 	protected:
-		std::shared_ptr<IPolyVBuffer> pVertexBuffer;
-		std::shared_ptr<IIndexBuffer> pIndexBuffer;
-		std::shared_ptr<IPrimitiveTopology> pTopology;
 		std::string tag;
-		uint32_t indexCount = 0;
-		bool hasBinds = false;
 	};
 }

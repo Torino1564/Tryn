@@ -1,11 +1,11 @@
 cbuffer cbuf
 {
-    matrix model;
-    matrix modelView;
-    matrix modelViewProj;
+	matrix model;
+	matrix modelView;
+	matrix modelViewProj;
 };
 
-float4 main( float3 pos : POSITION ) : SV_POSITION
+float4 main(float3 pos : POSITION) : SV_POSITION
 {
-    return mul(float4(pos, 1.0f), modelViewProj);
+	return mul(float4(pos, 1.0f), modelViewProj);
 }

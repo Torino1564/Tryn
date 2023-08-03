@@ -1,6 +1,6 @@
-#pragma once 
-#include <exception> 
-#include <string> 
+#pragma once
+#include <exception>
+#include <string>
 
 namespace tryn::utl
 {
@@ -19,5 +19,5 @@ namespace tryn::utl
 	};
 }
 
-#define ZT_EX_DEF_FROM(NewType, BaseType) class NewType : public BaseType {using Base = BaseType; public: using Base::Base;} 
+#define ZT_EX_DEF_FROM(NewType, BaseType) class NewType : public BaseType {using Base = BaseType; public: using Base::Base;}
 #define ZT_EX_DEF(NewType) ZT_EX_DEF_FROM(NewType, tryn::utl::BufferedException)

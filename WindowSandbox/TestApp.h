@@ -13,4 +13,5 @@ public:
 	void DoFrame() override;
 private:
 	std::vector<ent::IEntity> entities;
+	std::unique_ptr<ent::IEntity> suzanne;
 };

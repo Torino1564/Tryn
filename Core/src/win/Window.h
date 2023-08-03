@@ -1,14 +1,14 @@
-#pragma once 
-#include "IWindow.h" 
-#include "WindowClass.h" 
-#include <string> 
-#include <thread> 
-#include <semaphore> 
-#include <atomic> 
+#pragma once
+#include "IWindow.h"
+#include "WindowClass.h"
+#include <string>
+#include <thread>
+#include <semaphore>
+#include <atomic>
 #include <optional>
-#include <Core/src/spa/Dimensions.h> 
+#include <Core/src/spa/Dimensions.h>
 #include <Core/src/spa/Vec2.h>
-#include <Core/src/ccr/GenericTaskQueue.h> 
+#include <Core/src/ccr/GenericTaskQueue.h>
 
 namespace tryn::win
 {
@@ -23,7 +23,7 @@ namespace tryn::win
 		std::future<void> SetTitle(std::wstring title) override;
 		~Window() override;
 	protected:
-		// constants 
+		// constants
 		static constexpr UINT CustomTaskMessageId = WM_USER + 0;
 		// functions
 		virtual void MessageKernel_() noexcept;

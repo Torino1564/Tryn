@@ -11,7 +11,6 @@
 #include <memory>
 #include <ranges>
 
-
 using namespace tryn;
 using namespace std::chrono_literals;
 

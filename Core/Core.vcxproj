@@ -680,7 +680,7 @@
     <None Include="third\glm\gtx\wrap.inl" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\gfx\dx11\PS\PhongFlatColor_PS.hlsl">
+    <FxCompile Include="src\gfx\dx11\PS\Phong_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
@@ -692,7 +692,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="src\gfx\dx11\VS\PhongFlatColor_VS.hlsl">
+    <FxCompile Include="src\gfx\dx11\VS\Phong_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>

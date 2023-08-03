@@ -14,12 +14,12 @@ namespace tryn::gfx
 	{
 	public:
 		virtual std::vector<std::any> GetLayoutFromVB() const = 0;
-		virtual std::vector<std::any> GetSlottedLayoutFromVB( int slot ) const = 0;
+		virtual std::vector<std::any> GetSlottedLayoutFromVB(int slot) const = 0;
 		static std::shared_ptr<IVertexBuffer> Resolve(IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag = "?")
 		{
 			return BindablePool::Resolve<IVertexBuffer>(gfx, cpuBuffer, tag);
 		}
-		static std::string GenerateID(IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer , std::string tag = "?")
+		static std::string GenerateID(IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag = "?")
 		{
 			if (tag == "?") return tag;
 			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];

@@ -191,11 +191,11 @@ namespace tryn::gfx
 			template<VertexLayout::VertexElement type>
 			struct AttributeAiMeshFill
 			{
-				static constexpr void Exec(VertexBuffer* pBuf, const aiMesh& mesh)
+				static constexpr void Exec(VertexBuffer& pBuf, const aiMesh& mesh)
 				{
 					for (auto end = mesh.mNumVertices, i = 0u; i < end; i++)
 					{
-						(*pBuf)[i].Attr<type>(0) = VertexLayout::VertexElementAttr<type>::Extract(mesh, i);
+						pBuf[i].Attr<type>(0) = VertexLayout::VertexElementAttr<type>::Extract(mesh, i);
 					}
 				}
 			};
@@ -231,11 +231,7 @@ namespace tryn::gfx
 		};
 
 	public:
-		VertexLayout()
-		{
-			size = 0;
-			elCounter.resize(static_cast<int>(VertexElement::Unknown));
-		}
+		VertexLayout();
 		template <typename...Args>
 		VertexLayout( Args... args )
 		{
@@ -246,10 +242,7 @@ namespace tryn::gfx
 			size = Elements.back().first.GetOffsetAfter();
 		}
 		// Returns size in bytes
-		size_t Size() const
-		{
-			return Elements.back().first.GetOffsetAfter();
-		}
+		size_t Size() const;
 		template <VertexLayout::VertexElement Type>
 		const Element& Resolve(int i = 0) const
 		{
@@ -266,16 +259,9 @@ namespace tryn::gfx
 			}
 			throw DvtxException("Could not resolve an element");
 		}
-		const Element& ResolveByIndex(size_t i) const
-		{
-			trynass_msg(i < Size(), L"Layout Indexed out of bounds!");
-			return Elements[i].first;
-		}
+		const Element& ResolveByIndex(size_t i) const;
 		// Returns number of elements
-		size_t GetElementCount() const
-		{
-			return Elements.size();
-		}
+		size_t GetElementCount() const;
 		template <typename Element>
 		void AppendElement(Element element)
 		{
@@ -325,13 +311,7 @@ namespace tryn::gfx
 			}
 		};
 	protected:
-		Vertex(char* pData, const VertexLayout& layout)
-			:
-			pData(pData),
-			layout(layout)
-		{
-			trynass_msg(pData != nullptr, L"Vertex constructed from a nullptr!");
-		}
+		Vertex(char* pData, const VertexLayout& layout);
 
 	public:
 		template<VertexLayout::VertexElement Type>
@@ -385,31 +365,17 @@ namespace tryn::gfx
 	class VertexBuffer
 	{
 	public:
-		VertexBuffer(VertexLayout layout_, size_t size = 0)
-		{
-			trynass_msg(layout_.GetElementCount() != 0, L"Attempted to create a VertexBuffer with an empty layout");
-			this->layout = std::move(layout_);
-			Resize(layout.Size() * size);
-		}
+		VertexBuffer(VertexLayout layout_, size_t size = 0);
 		VertexBuffer(VertexLayout layout, const aiMesh& mesh);
-		void Resize(size_t newSize)
-		{
-			buffer.resize(newSize);
-		}
-		size_t Size() const
-		{
-			return buffer.size() / layout.Size();
-		}
-		Vertex operator[](int i)
-		{
-			trynass_msg(i < Size() , L"VertexBuffer indexed out of bounds");
-			return Vertex{ buffer.data() + layout.Size() * i, layout };
-		}
-		Vertex Back()
-		{
-			trynass_msg(buffer.size() != 0u , L"Back called on an empty VertexBuffer");
-			return Vertex{ buffer.data() + buffer.size() - layout.Size(),layout };
-		}
+		void Resize(size_t newSize);
+		size_t Size() const;
+		Vertex operator[](int i);
+		Vertex Back();
+		char* Data();
+		size_t BufferSize() const;
+		size_t Stride() const;
+		const VertexLayout& GetLayout() const;
+		bool& GetDirty();
 
 		template<typename ... Args>
 		void EmplaceBack(Args&& ... args)
@@ -418,32 +384,6 @@ namespace tryn::gfx
 			trynass_msg(sizeof...(args) == layout.GetElementCount(), L"Different number of parameters where passed to the EmplaceBack function for a VertexLayout");
 			Resize(buffer.size() + layout.Size());
 			Back().SetAttributeByIndex(0u, std::forward<Args>(args)...);
-		}
-		char* Data() 
-		{
-			return buffer.data();
-		}
-		size_t BufferSize() const
-		{
-			return buffer.size();
-		}
-		size_t Stride() const
-		{
-			return layout.Size();
-		}
-		const VertexLayout& GetLayout() const
-		{
-			return layout;
-		}
-		bool& GetDirty()
-		{
-			return dirty;
-		}
-
-		virtual std::vector<char> GetLayoutFromVB() const
-		{
-			trylog.error(L"GetLayoutFromVB member on the VertexBuffer virtual class was called");
-			return {};
 		}
 
 	protected:       

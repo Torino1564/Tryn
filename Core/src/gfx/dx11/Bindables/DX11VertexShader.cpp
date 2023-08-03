@@ -5,10 +5,9 @@
 #pragma comment (lib,"D3DCompiler.lib")
 #include <Core/src/utl/String.h>
 
-
 namespace tryn::gfx::dx11
 {
-	DX11VertexShader::DX11VertexShader(Graphics& gfx , std::string& path)
+	DX11VertexShader::DX11VertexShader(Graphics& gfx, std::string& path)
 		:
 		gfx(gfx)
 	{
@@ -23,7 +22,7 @@ namespace tryn::gfx::dx11
 			&pVS) >> chk;
 	}
 
-	void DX11VertexShader::Bind( )
+	void DX11VertexShader::Bind()
 	{
 		gfx.GetContext()->VSSetShader(pVS.Get(), nullptr, 0u);
 	}
@@ -32,5 +31,3 @@ namespace tryn::gfx::dx11
 		return pBlob;
 	}
 }
-
-

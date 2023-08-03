@@ -2,7 +2,6 @@
 #include "Bindable.h"
 #include <Core/src/gfx/BindablePool.h>
 
-
 namespace tryn::gfx
 {
 	enum class SamplerType

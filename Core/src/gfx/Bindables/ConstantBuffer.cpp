@@ -15,8 +15,8 @@ namespace tryn::gfx
 
 	void ConstantBufferLayout::Node::Append(Node child)
 	{
-		trynass_msg( !(type != Type::Struct && type != Type::Array), L"Attempted to append an element to a non array/struct node");
-		
+		trynass_msg(!(type != Type::Struct && type != Type::Array), L"Attempted to append an element to a non array/struct node");
+
 		for (auto& existingChild : children)
 		{
 			trynass_msg(existingChild.id != child.id, L"Attempted to append an element with a duplicate ID");
@@ -34,7 +34,7 @@ namespace tryn::gfx
 	}
 	ConstantBufferLayout::Node& ConstantBufferLayout::Node::GetEmpty()
 	{
-		static Node empty(Type::Empty , "Empty");
+		static Node empty(Type::Empty, "Empty");
 		return empty;
 	}
 	ConstantBufferLayout::Node& ConstantBufferLayout::Node::operator[](std::string id)
@@ -161,4 +161,3 @@ namespace tryn::gfx
 		pBytes(pBytes)
 	{}
 }
-

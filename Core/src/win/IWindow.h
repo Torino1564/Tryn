@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 #include "TrynWin.h"
 #include <future>
 #include <string>
@@ -10,10 +10,10 @@ namespace tryn::win
 {
 	class IWindow
 	{
-		// allow WindowClasses access to the message handling function 
+		// allow WindowClasses access to the message handling function
 		friend class IWindowClass;
 	public:
-		// types 
+		// types
 		struct IocParams
 		{
 			std::optional<std::shared_ptr<IWindowClass>> pClass;
@@ -21,7 +21,7 @@ namespace tryn::win
 			std::optional<spa::DimensionsI> size;
 			std::optional<spa::Vec2I> position;
 		};
-		// functions 
+		// functions
 		virtual ~IWindow() = default;
 		virtual HWND GetHandle() const = 0;
 		virtual bool IsClosing() const = 0;

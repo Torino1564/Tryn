@@ -1,7 +1,7 @@
-#pragma once 
-#include <deque> 
-#include <future> 
-#include <functional> 
+#pragma once
+#include <deque>
+#include <future>
+#include <functional>
 
 namespace tryn::ccr
 {
@@ -20,9 +20,9 @@ namespace tryn::ccr
 		}
 		void PopExecute();
 	private:
-		// functions 
+		// functions
 		void PushWrappedTask_(Task task);
-		// data 
+		// data
 		std::mutex mtx_;
 		std::deque<Task> tasks_;
 	};

@@ -3,7 +3,6 @@
 #include <Core/src/gfx/Bindables/IndexBuffer.h>
 #include <Core/src/gfx/Bindables/PolyVBuffer.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
-#include <Core/src/gfx/Assimp.h>
 #include <format>
 #include <utility>
 
@@ -25,12 +24,10 @@ namespace tryn::gfx
 
 		indexCount = static_cast<uint32_t>(indices.size());
 
-		BufferArray bfArray;
-		bfArray.push_back(std::pair<std::string, std::shared_ptr<VertexBuffer>>{"?", std::make_shared<VertexBuffer>(vertexBuffer)});
-
-		pVertexBuffer = IPolyVBuffer::Resolve(gfx, bfArray , this->tag);
+		pVertexBuffer = IVertexBuffer::Resolve(gfx, std::make_shared<VertexBuffer>(vertexBuffer), this->tag);
 		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<std::vector<int>>(indices));
 		pTopology = IPrimitiveTopology::Resolve(gfx);
+		InitTransformCBuf(gfx);
 	}
 
 	bool StaticMesh::IsStatic() const
@@ -38,4 +35,3 @@ namespace tryn::gfx
 		return true;
 	}
 }
-

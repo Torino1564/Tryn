@@ -1,4 +1,4 @@
-#include "GenericTaskQueue.h" 
+#include "GenericTaskQueue.h"
 
 namespace tryn::ccr
 {

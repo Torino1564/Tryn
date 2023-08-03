@@ -13,13 +13,12 @@ namespace tryn::utl
 		{ c(name, duration) } -> std::same_as<void>;
 	};
 
-
 	class DefaultTimerCallback
 	{
 	public:
 		void operator()(const char* name, float duration)
 		{
-			printf( "%.3f  %s", duration, name);
+			printf("%.3f  %s", duration, name);
 		}
 
 		static DefaultTimerCallback& Get()
@@ -33,9 +32,9 @@ namespace tryn::utl
 	class Timer
 	{
 	public:
-		Timer( const char* name , TimerCallback callback = DefaultTimerCallback::Get())
+		Timer(const char* name, TimerCallback callback = DefaultTimerCallback::Get())
 			:
-			name(name) , callback(callback) , isStopped(false)
+			name(name), callback(callback), isStopped(false)
 		{
 			start = ch::high_resolution_clock::now();
 		}
@@ -45,7 +44,7 @@ namespace tryn::utl
 
 			float duration = static_cast<float>(ch::duration_cast<ch::milliseconds>(end - start).count());
 
-			callback( name , duration );
+			callback(name, duration);
 		}
 
 	private:

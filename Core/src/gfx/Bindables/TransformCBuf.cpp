@@ -3,16 +3,21 @@
 
 namespace tryn::gfx
 {
-	void ITransformCBuf::BindParent(Drawable& parent)
+	void ITransformCBuf::BindTransformCBuf(Drawable* parent)
 	{
-		this->parent = &parent;
+		BindParent(parent);
+		Bind();
+	}
+	void ITransformCBuf::BindParent(Drawable* parent)
+	{
+		this->parent = parent;
 	}
 	void ITransformCBuf::Bind()
 	{
-		Update();
+		Update(parent);
 		pVCB->Bind();
 	}
-	void ITransformCBuf::Update() const
+	void ITransformCBuf::Update(Drawable* parent) const
 	{
 		const auto model = parent->GetTransformMatrix();
 		const auto modelView = gfx.GetCameraMatrix() * model;

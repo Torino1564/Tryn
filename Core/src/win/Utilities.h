@@ -1,8 +1,8 @@
-#pragma once 
-#include <string> 
-#include "TrynWin.h" 
-#include <Core/src/spa/Dimensions.h> 
-#include <Core/src/spa/Rect.h> 
+#pragma once
+#include <string>
+#include "TrynWin.h"
+#include <Core/src/spa/Dimensions.h>
+#include <Core/src/spa/Rect.h>
 
 namespace tryn::win
 {

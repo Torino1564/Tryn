@@ -4,7 +4,7 @@
 
 tryn::log::Channel::Channel(std::vector<std::shared_ptr<IDriver>> driverPtrs)
 	:
-	driverPtrs_{std::move(driverPtrs)}
+	driverPtrs_{ std::move(driverPtrs) }
 {
 }
 

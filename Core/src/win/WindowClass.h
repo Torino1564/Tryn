@@ -11,7 +11,7 @@ namespace tryn::win
 		virtual ATOM GetAtom() const = 0;
 		virtual HINSTANCE GetInstance() const = 0;
 	protected:
-		// allows descendents of IWindowClass access to the IWindow virtual message handler 
+		// allows descendents of IWindowClass access to the IWindow virtual message handler
 		static LRESULT ForwardMessage_(class IWindow* pWnd, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	};
 
@@ -23,10 +23,10 @@ namespace tryn::win
 		HINSTANCE GetInstance() const override;
 		~WindowClass() override;
 	private:
-		// functions 
+		// functions
 		static LRESULT CALLBACK HandleMessageSetup_(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 		static LRESULT CALLBACK HandleMessageThunk_(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
-		// data 
+		// data
 		HINSTANCE hInstance_;
 		ATOM atom_;
 	};

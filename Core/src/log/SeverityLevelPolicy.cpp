@@ -3,7 +3,7 @@
 
 tryn::log::SeverityLevelPolicy::SeverityLevelPolicy(Level level)
 	:
-	level_{level}
+	level_{ level }
 {}
 
 bool tryn::log::SeverityLevelPolicy::TransformFilter(Entry& e)

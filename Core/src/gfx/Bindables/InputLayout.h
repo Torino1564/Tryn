@@ -10,7 +10,7 @@ namespace tryn::gfx
 {
 	class IInputLayout : public IBindable
 	{
-	public: 
+	public:
 
 		static std::shared_ptr<IInputLayout> Resolve(IGraphics& gfx, IVertexBuffer& vb, IVertexShader& vs)
 		{

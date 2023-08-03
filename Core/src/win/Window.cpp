@@ -1,8 +1,8 @@
-#include "Window.h" 
-#include "Utilities.h" 
-#include "Exception.h" 
-#include <format> 
-#include <Core/src/log/Log.h> 
+#include "Window.h"
+#include "Utilities.h"
+#include "Exception.h"
+#include <format>
+#include <Core/src/log/Log.h>
 #include <Core/src/utl/String.h>
 #include "imgui_impl_win32.h"
 
@@ -52,7 +52,7 @@ namespace tryn::win
 	{
 		return closing_;
 	}
-	spa::DimensionsI Window::GetClientDimensions() const 
+	spa::DimensionsI Window::GetClientDimensions() const
 	{
 		return clientDimensions;
 	}

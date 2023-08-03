@@ -18,12 +18,12 @@ namespace tryn::log
 		// container
 		ioc::Get().Register<log::IChannel>([] {
 			std::vector<std::shared_ptr<log::IDriver>> drivers{
-				 ioc::Get().Resolve<log::IMsvcDebugDriver>(),
-				 ioc::Get().Resolve<log::ISimpleFileDriver>()
+				ioc::Get().Resolve<log::IMsvcDebugDriver>(),
+					ioc::Get().Resolve<log::ISimpleFileDriver>()
 			};
 			auto pChan = std::make_shared<log::Channel>(std::move(drivers));
 			pChan->AttachPolicy(ioc::Get().Resolve<log::ISeverityLevelPolicy>());
-			
+
 			return pChan;
 			});
 
@@ -32,7 +32,7 @@ namespace tryn::log
 			});
 
 		ioc::Get().Register<log::ISimpleFileDriver>([] {
-			return std::make_shared<log::SimpleFileDriver>("logs\\log.txt",ioc::Get().Resolve<log::ITextFormatter>());
+			return std::make_shared<log::SimpleFileDriver>("logs\\log.txt", ioc::Get().Resolve<log::ITextFormatter>());
 			});
 
 		ioc::Get().Register<log::ITextFormatter>([] {

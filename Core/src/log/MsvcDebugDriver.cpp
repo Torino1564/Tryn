@@ -4,7 +4,7 @@
 
 tryn::log::MsvcDebugDriver::MsvcDebugDriver(std::shared_ptr<ITextFormatter> pFormatter)
 	:
-	pFormatter_{std::move(pFormatter)}
+	pFormatter_{ std::move(pFormatter) }
 {
 }
 

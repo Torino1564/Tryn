@@ -69,5 +69,4 @@ namespace tryn::gfx::dx11
 	{
 		return *pBuffer.GetAddressOf();
 	}
-
 }
