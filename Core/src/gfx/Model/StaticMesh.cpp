@@ -28,6 +28,11 @@ namespace tryn::gfx
 		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<std::vector<int>>(indices));
 		pTopology = IPrimitiveTopology::Resolve(gfx);
 		InitTransformCBuf(gfx);
+
+		for (auto& technique : material.GetTechniques())
+		{
+			techniques.push_back(technique);
+		}
 	}
 
 	bool StaticMesh::IsStatic() const
