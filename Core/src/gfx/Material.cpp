@@ -166,9 +166,9 @@ namespace tryn::gfx
 		for (unsigned int i = 0; i < mesh.mNumFaces; i++)
 		{
 			const auto& triangle = mesh.mFaces[i];
-			indices[i] = triangle.mIndices[0];
-			indices[i + 1] = triangle.mIndices[1];
-			indices[i + 2] = triangle.mIndices[2];
+			indices[3 * i] = triangle.mIndices[0];
+			indices[(3 * i) + 1] = triangle.mIndices[1];
+			indices[(3 * i) + 2] = triangle.mIndices[2];
 		}
 		return indices;
 	}

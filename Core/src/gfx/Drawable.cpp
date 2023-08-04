@@ -25,8 +25,9 @@ namespace tryn::gfx
 		return mod;
 	}
 
-	void Drawable::Draw(IGraphics& gfx)
+	void Drawable::Draw(IGraphics& gfx, glm::mat4 transform)
 	{
+		this->transform = transform;
 		pVertexBuffer->Bind();
 		pIndexBuffer->Bind();
 		pTopology->Bind();
@@ -55,36 +56,6 @@ namespace tryn::gfx
 	}
 	glm::mat4 Drawable::GetTransformMatrix() const
 	{
-		return glm::translate(glm::yawPitchRoll(angles.x, angles.y, angles.z), pos);
-	}
-
-	void Drawable::SetYaw(const float yaw)
-	{
-		angles.x = std::clamp(yaw, -glm::pi<float>(), glm::pi<float>());
-	}
-
-	void Drawable::SetPitch(const float pitch)
-	{
-		angles.x = std::clamp(pitch, -glm::half_pi<float>(), glm::half_pi<float>());
-	}
-
-	void Drawable::SetRoll(const float roll)
-	{
-		angles.x = std::clamp(roll, -glm::pi<float>(), glm::pi<float>());
-	}
-
-	float& Drawable::GetYaw()
-	{
-		return angles.x;
-	}
-
-	float& Drawable::GetPitch()
-	{
-		return angles.y;
-	}
-
-	float& Drawable::GetRoll()
-	{
-		return angles.z;
+		return transform;
 	}
 }

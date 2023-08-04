@@ -9,6 +9,11 @@ namespace tryn::ent
 	public:
 		virtual ~IEntity() = default;
 		void Draw();
+		// TODO Remove this:
+		gfx::Model& GetModel()
+		{
+			return *model;
+		}
 	protected:
 		std::string name;
 		std::unique_ptr<gfx::Model> model;

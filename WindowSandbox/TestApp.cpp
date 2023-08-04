@@ -30,13 +30,14 @@ void TestApp::DoFrame()
 	{
 		static constexpr float angle = 0.001f;
 		PROFILE_SCOPE("Update Rotation");
+		suzanne->GetModel().SpawnControlWindow();
 	}
 	{
 		PROFILE_SCOPE("Draw call");
-		suzanne->Draw();
+ 		suzanne->Draw();
 	}
-	static bool showDemoWindow = true;
-	ImGui::ShowDemoWindow(&showDemoWindow);
-	ImGui::Begin("Test", &showDemoWindow, 0);
-	ImGui::End();
+	//static bool showDemoWindow = true;
+	//ImGui::ShowDemoWindow(&showDemoWindow);
+	//ImGui::Begin("Test", &showDemoWindow, 0);
+	//ImGui::End();
 }

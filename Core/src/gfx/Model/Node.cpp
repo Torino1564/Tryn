@@ -14,7 +14,7 @@ namespace tryn::gfx
 		const auto finalTransform = accumulatedTransform * transform * appliedTransform;
 		for (auto& mesh : pMeshes)
 		{
-			mesh->Draw(gfx);
+			mesh->Draw(gfx,finalTransform);
 		}
 		for (auto& child : children)
 		{

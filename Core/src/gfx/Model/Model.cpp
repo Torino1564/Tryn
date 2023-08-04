@@ -68,7 +68,21 @@ namespace tryn::gfx
 	}
 	void Model::Draw()
 	{
-		root->Draw(gfx, glm::identity<glm::mat4>());
+		const auto transform = glm::translate(glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z), settings.position);
+		root->Draw(gfx, transform);
+	}
+	void Model::SpawnControlWindow()
+	{
+		ImGui::Begin(name.c_str());
+		ImGui::Text("Orientation");
+		ImGui::SliderAngle("Yaw", &settings.angles.x, -180.f, 180.f);
+		ImGui::SliderAngle("Pitch", &settings.angles.y, -90.f, 90.f);
+		ImGui::SliderAngle("Roll", &settings.angles.z, -180.f, 180.f);
+		ImGui::Text("Position");
+		ImGui::SliderFloat("X", &settings.position.x, -20.0f, 20.0f);
+		ImGui::SliderFloat("Y", &settings.position.y, -20.0f, 20.0f);
+		ImGui::SliderFloat("Z", &settings.position.z, -20.0f, 20.0f);
+		ImGui::End();
 	}
 	Node Model::ParseNode(int& nextId, const aiNode& node, glm::vec3 scale)
 	{
