@@ -6,12 +6,12 @@ namespace tryn::gfx
 		:
 		id(id), name(name.data()), pMeshes(std::move(pMeshes))
 	{
-		parentTransform = std::move(transform);
-		selfTransform = glm::identity<glm::mat4>();
+		this->transform = std::move(transform);
+		this->appliedTransform = glm::identity<glm::mat4>();
 	}
 	void Node::Draw(IGraphics& gfx, glm::mat4 accumulatedTransform)
 	{
-		const auto finalTransform = accumulatedTransform * selfTransform * parentTransform;
+		const auto finalTransform = accumulatedTransform * transform * appliedTransform;
 		for (auto& mesh : pMeshes)
 		{
 			mesh->Draw(gfx);
