@@ -33,8 +33,11 @@ void TestApp::DoFrame()
 		suzanne->GetModel().SpawnControlWindow();
 	}
 	{
-		PROFILE_SCOPE("Draw call");
- 		suzanne->Draw();
+		if (!(wnd->keyboard.IsKeyPressed(VK_SPACE) && wnd->keyboard.IsKeyPressed(VK_MENU)))
+		{
+			PROFILE_SCOPE("Draw call");
+ 			suzanne->Draw();			
+		}
 	}
 	//static bool showDemoWindow = true;
 	//ImGui::ShowDemoWindow(&showDemoWindow);

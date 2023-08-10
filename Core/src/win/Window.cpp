@@ -90,9 +90,25 @@ namespace tryn::win
 			case WM_CLOSE:
 				closing_ = true;
 				return 0;
-			case WM_MBUTTONDOWN:
-				//Do something
+			case WM_KILLFOCUS:
+				ClearKeyboardState();
 				break;
+			/******************** KEYBOARD MESSAGES *****************/
+			case WM_KEYDOWN:
+			case WM_SYSKEYDOWN:
+				if (!(lParam & 0x40000000) || keyboard.IsAutoRepeatEnabled())
+				{
+					OnKeyPress(static_cast<uint8_t>(wParam));
+				}
+				break;
+			case WM_KEYUP:
+			case WM_SYSKEYUP:
+				OnKeyRelease(static_cast<uint8_t>(wParam));
+				break;
+			case WM_CHAR:
+				OnChar(static_cast<char>(wParam));
+				break;
+			/******************** END KEYBOARD MESSAGES *****************/
 			case CustomTaskMessageId:
 				tasks_.PopExecute();
 				return 0;
