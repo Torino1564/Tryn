@@ -64,6 +64,8 @@
     <ClCompile Include="src\utl\String.cpp" />
     <ClCompile Include="src\win\Boot.cpp" />
     <ClCompile Include="src\win\imgui_impl_win32.cpp" />
+    <ClCompile Include="src\win\IWindow.cpp" />
+    <ClCompile Include="src\win\Keyboard.cpp" />
     <ClCompile Include="src\win\Utilities.cpp" />
     <ClCompile Include="src\win\Window.cpp" />
     <ClCompile Include="src\win\WindowClass.cpp" />
@@ -157,6 +159,7 @@
     <ClInclude Include="src\win\Exception.h" />
     <ClInclude Include="src\win\imgui_impl_win32.h" />
     <ClInclude Include="src\win\IWindow.h" />
+    <ClInclude Include="src\win\Keyboard.h" />
     <ClInclude Include="src\win\TrynWin.h" />
     <ClInclude Include="src\win\Utilities.h" />
     <ClInclude Include="src\win\Window.h" />
