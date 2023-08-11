@@ -132,7 +132,7 @@ namespace tryn::gfx::dx11
 	void Graphics::EndFrame()
 	{
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-		pSwap->Present(0u, 0u) >> chk;
+		pSwap->Present(1u, 0u) >> chk;
 	}
 
 	void Graphics::ClearBuffer(float r, float g, float b)

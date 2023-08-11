@@ -66,6 +66,7 @@ namespace tryn::gfx
 		int nextId = 0;
 		root = std::make_unique<Node>(ParseNode(nextId, *pScene->mRootNode, scale));
 	}
+
 	void Model::Draw()
 	{
 		const auto transform = glm::translate(glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z), settings.position);
@@ -83,6 +84,10 @@ namespace tryn::gfx
 		ImGui::SliderFloat("Y", &settings.position.y, -20.0f, 20.0f);
 		ImGui::SliderFloat("Z", &settings.position.z, -20.0f, 20.0f);
 		ImGui::End();
+	}
+	glm::vec3 Model::GetPosition() const
+	{
+		return settings.position;
 	}
 	Node Model::ParseNode(int& nextId, const aiNode& node, glm::vec3 scale)
 	{

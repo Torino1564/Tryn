@@ -16,24 +16,29 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	this->gfx = std::move(gfx);
 
 	// Graphic Matrices
-	constexpr auto eyePos = glm::vec3(0, 0, -6);
+	constexpr auto eyePos = glm::vec3(0, 0, -3);
 	constexpr auto focusPoint = glm::vec3(0, 0, 0);
 	constexpr auto upDirection = glm::vec3(0, 1, 0);
 	Gfx().SetCamera(glm::lookAtLH(eyePos, focusPoint, upDirection));
 	Gfx().SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(Gfx().dimensions.width), static_cast<float>(Gfx().dimensions.height), 0.1f, 100.0f));
 
 	suzanne = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne", "resources/models/suzanneHp.obj");
+	pPointLight = std::make_unique<gfx::PointLight>(Gfx());
 }
 
 void TestApp::DoFrame()
 {
+	pPointLight->Bind();
 	{
 		static constexpr float angle = 0.001f;
 		PROFILE_SCOPE("Update Rotation");
 		suzanne->GetModel().SpawnControlWindow();
+		pPointLight->ShowControls();
+		pPointLight->GetModel().SpawnControlWindow();
 	}
 	{
 		PROFILE_SCOPE("Draw call");
+		pPointLight->Draw();
  		suzanne->Draw();
 	}
 	//static bool showDemoWindow = true;

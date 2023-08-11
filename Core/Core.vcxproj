@@ -90,6 +90,7 @@
     <ClInclude Include="src\gfx\Bindables\Texture.h" />
     <ClInclude Include="src\gfx\Bindables\TransformCBuf.h" />
     <ClInclude Include="src\gfx\Bindables\VertexBuffer.h" />
+    <ClInclude Include="src\gfx\Camera.h" />
     <ClInclude Include="src\gfx\Drawable.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11ConstantBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11IndexBuffer.h" />

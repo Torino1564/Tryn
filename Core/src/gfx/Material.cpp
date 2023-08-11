@@ -78,7 +78,7 @@ namespace tryn::gfx
 					cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Bool, "useSpecularMap"));
 				}
 				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float3, "specularColor"));
-				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "specularWeigh"));
+				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "specularWeight"));
 				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "specularGloss"));
 			}
 			// Normal

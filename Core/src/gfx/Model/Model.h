@@ -13,6 +13,7 @@ namespace tryn::gfx
 		Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f });
 		void Draw();
 		void SpawnControlWindow();
+		glm::vec3 GetPosition() const;
 	private:
 		Node ParseNode(int& nextId, const aiNode& node, glm::vec3 scale);
 		struct Settings
