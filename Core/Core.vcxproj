@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="src\win\imgui_impl_win32.h" />
     <ClInclude Include="src\win\IWindow.h" />
     <ClInclude Include="src\win\Keyboard.h" />
+    <ClInclude Include="src\win\Mouse.h" />
     <ClInclude Include="src\win\TrynWin.h" />
     <ClInclude Include="src\win\Utilities.h" />
     <ClInclude Include="src\win\Window.h" />

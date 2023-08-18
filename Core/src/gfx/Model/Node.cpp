@@ -11,7 +11,7 @@ namespace tryn::gfx
 	}
 	void Node::Draw(IGraphics& gfx, glm::mat4 accumulatedTransform)
 	{
-		const auto finalTransform = appliedTransform * transform * accumulatedTransform;
+		const auto finalTransform = glm::transpose(accumulatedTransform * transform * appliedTransform);
 		for (auto& mesh : pMeshes)
 		{
 			mesh->Draw(gfx,finalTransform);
