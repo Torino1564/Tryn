@@ -34,5 +34,7 @@ float4 main(const float3 viewPos : POSITION, const float3 viewNormal : NORMAL) :
 	// viewing vector and reflection vector, narrow with power function
 	const float3 specular = attenuation * specularColor * specularWeight * pow(max(0.0f, dot(-r, viewCamToFrag)), specularGloss);
 
+	//return float4(saturate((diffuse + ambient) * materialColor), 1.0f);
 	return float4(saturate((diffuse + ambient) * materialColor + specular), 1.0f);
+	//return float4(1.0f, 1.0f, 1.0f, 1.0f);
 }

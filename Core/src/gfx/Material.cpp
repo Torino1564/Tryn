@@ -50,7 +50,7 @@ namespace tryn::gfx
 					isTextured = true;
 					shaderCode += "Dif";
 					vLayout.AppendElement(VertexLayout::UV);
-					const auto tex = ITexture::Resolve(gfx, path.string(), 0);
+					const auto tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 0);
 					if (tex->HasAlpha())
 					{
 						hasAlpha = true;

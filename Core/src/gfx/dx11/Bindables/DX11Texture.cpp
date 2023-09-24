@@ -20,7 +20,7 @@ namespace tryn::gfx
 			hasAlpha = true;
 		}
 
-		trynass_msg(texture == nullptr, L"The specified file could not be loaded!");
+		trynass_msg(texture != nullptr, L"The specified file could not be loaded!");
 
 		D3D11_TEXTURE2D_DESC td = {};
 		td.Width = width;
@@ -46,7 +46,7 @@ namespace tryn::gfx
 		srvd.Format = td.Format;
 		srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvd.Texture2D.MostDetailedMip = 0;
-		srvd.Texture2D.MostDetailedMip = -1;
+		srvd.Texture2D.MipLevels = -1;
 
 		gfx.GetDevice()->CreateShaderResourceView(
 			pTexture.Get(), &srvd, &pTextureView

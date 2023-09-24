@@ -9,11 +9,14 @@ namespace tryn::gfx
 	{
 	public:
 		void Bind(IGraphics& gfx);
+		void Update();
 		glm::vec3& GetPosition();
+		glm::vec3& GetDirection();
 		glm::vec3& GetAngles();
 		glm::mat4 GetViewMatrix() const;
 	private:
 		glm::vec3 position;
-		glm::vec3 angles;
+		glm::vec3 direction;
+		glm::vec3 angles = {0,0,0};
 	};
 }

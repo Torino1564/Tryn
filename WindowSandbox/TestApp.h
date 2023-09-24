@@ -17,6 +17,6 @@ private:
 	std::unique_ptr<gfx::PointLight> pPointLight;
 	std::vector<ent::IEntity> entities;
 	std::unique_ptr<ent::IEntity> suzanne;
-	std::unique_ptr<ent::IEntity> oldBuilding;
+	std::unique_ptr<ent::IEntity> sponza;
 	gfx::Camera camera;
 };

@@ -9,8 +9,8 @@ namespace tryn::gfx
 		// Model
 		pModel = std::make_unique<Model>(gfx, "resources/models/sphere.fbx", glm::vec3{0.5f,0.5f,0.5f});
 
-		parameters.ambient = glm::vec3(0.01f, 0.01f, 0.01f);
-		parameters.viewLightPos = glm::vec3(0.0f, 0.0f, 0.0f);
+		parameters.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
+		parameters.viewLightPos = glm::vec3(0.0f, 3.0f, 0.0f);
 		parameters.diffuseColor = glm::normalize(color);
 		parameters.constantAtt = 1.0f;
 		parameters.linearAtt = 0.045f;

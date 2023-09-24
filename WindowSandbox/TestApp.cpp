@@ -20,8 +20,8 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};
 
-	suzanne = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne", "resources/models/suzanneHp.obj");
-	oldBuilding = std::make_unique<ent::BasicEntity>(Gfx(), "old_building", "resources/models/Old_Building/Old_Building_obj.obj");
+	suzanne = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne", "resources/models/suzanne.obj");
+	sponza = std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj");
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx());
 }
 
@@ -32,45 +32,65 @@ void TestApp::DoFrame()
 	{
 		static constexpr float angle = 0.001f;
 		PROFILE_SCOPE("Update Rotation");
-		//suzanne->GetModel().SpawnControlWindow();
-		oldBuilding->GetModel().SpawnControlWindow();
+		suzanne->GetModel().SpawnControlWindow();
 		pPointLight->ShowControls();
 		pPointLight->GetModel().SpawnControlWindow();
 	}
 	{
 		PROFILE_SCOPE("Draw call");
 		pPointLight->Draw();
- 		//suzanne->Draw();
-		oldBuilding->Draw();
+ 		suzanne->Draw();
+		sponza->Draw();
 	}
 	{
 		PROFILE_SCOPE("Update Camera");
 		auto& cameraPos = camera.GetPosition();
 		auto& cameraAngles = camera.GetAngles();
+		auto& cameraDirection = camera.GetDirection();
+
+		constexpr auto upDirection = glm::vec3(0, 1.0f, 0);
+
 		if (wnd->keyboard.IsKeyPressed('A'))
 		{
-			cameraPos.x -= 0.3;
+			cameraPos += 0.3f * glm::normalize(glm::cross(cameraDirection,upDirection));
 		}
 		if (wnd->keyboard.IsKeyPressed('S'))
 		{
-			cameraPos.y -= 0.3;
+			cameraPos -= 0.3f * cameraDirection;
 		}
 		if (wnd->keyboard.IsKeyPressed('D'))
 		{
-			cameraPos.x += 0.3;
+			cameraPos -= 0.3f * glm::normalize(glm::cross(cameraDirection, upDirection));
 		}
 		if (wnd->keyboard.IsKeyPressed('W'))
 		{
-			cameraPos.y += 0.3;
+			cameraPos += 0.3f * cameraDirection;
 		}
 		if (wnd->keyboard.IsKeyPressed(VK_SPACE))
 		{
-			cameraPos.z += 0.3;
+			cameraPos.y += 0.3;
 		}
 		if (wnd->keyboard.IsKeyPressed(VK_MENU))
 		{
-			cameraPos.z -= 0.3;
+			cameraPos.y -= 0.3;
 		}
+		if (wnd->keyboard.IsKeyPressed(VK_UP))
+		{
+			cameraAngles.y += 2;
+		}
+		if (wnd->keyboard.IsKeyPressed(VK_DOWN))
+		{
+			cameraAngles.y -= 2;
+		}
+		if (wnd->keyboard.IsKeyPressed(VK_LEFT))
+		{
+			cameraAngles.x += 2;
+		}
+		if (wnd->keyboard.IsKeyPressed(VK_RIGHT))
+		{
+			cameraAngles.x -= 2;
+		}
+		camera.Update();
 	}
 	static bool showDemoWindow = true;
 	ImGui::ShowDemoWindow(&showDemoWindow);
