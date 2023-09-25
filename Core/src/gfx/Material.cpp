@@ -48,7 +48,7 @@ namespace tryn::gfx
 				if (material.GetTexture(aiTextureType_DIFFUSE, 0, &tempFileName) == aiReturn_SUCCESS)
 				{
 					isTextured = true;
-					shaderCode += "Dif";
+					//shaderCode += "Dif";
 					vLayout.AppendElement(VertexLayout::UV);
 					const auto tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 0);
 					if (tex->HasAlpha())
@@ -68,7 +68,7 @@ namespace tryn::gfx
 				if (material.GetTexture(aiTextureType_SPECULAR, 0, &tempFileName) == aiReturn_SUCCESS)
 				{
 					isTextured = true;
-					shaderCode += "Spc";
+					//shaderCode += "Spc";
 					vLayout.AppendElement(VertexLayout::UV);
 					auto tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 1);
 					usesGlossAlphaChannel = tex->HasAlpha();
@@ -86,7 +86,7 @@ namespace tryn::gfx
 				if (material.GetTexture(aiTextureType_NORMALS, 0, &tempFileName) == aiReturn_SUCCESS)
 				{
 					isTextured = true;
-					shaderCode += "Nrm";
+					//shaderCode += "Nrm";
 					vLayout.AppendElement(VertexLayout::UV);
 					vLayout.AppendElement(VertexLayout::Tangent);
 					vLayout.AppendElement(VertexLayout::Bitangent);

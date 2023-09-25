@@ -120,7 +120,11 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="resources\models\nanosuit.obj" />
+    <Resource Include="resources\models\nanosuit.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Resource>
     <Object Include="resources\models\Sponza\sponza.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

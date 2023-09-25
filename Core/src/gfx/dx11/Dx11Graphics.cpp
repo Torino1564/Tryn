@@ -126,7 +126,7 @@ namespace tryn::gfx::dx11
 	void Graphics::BeginFrame()
 	{
 		ImGui_ImplDX11_NewFrame();
-		ClearBuffer();
+		ClearBuffer(0.0f,0.0f,0.2f);
 	}
 
 	void Graphics::EndFrame()

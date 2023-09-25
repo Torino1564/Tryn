@@ -39,9 +39,9 @@
     <Resource Include="resources\models\suzanne.obj" />
     <Resource Include="resources\models\suzanneHp.obj" />
     <Resource Include="resources\models\box.obj" />
+    <Resource Include="resources\models\nanosuit.obj" />
   </ItemGroup>
   <ItemGroup>
-    <Object Include="resources\models\nanosuit.obj" />
     <Object Include="resources\models\Sponza\sponza.obj" />
   </ItemGroup>
 </Project>

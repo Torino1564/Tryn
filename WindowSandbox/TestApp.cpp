@@ -16,12 +16,12 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	this->gfx = std::move(gfx);
 
 	// Graphic Matrices
-	Gfx().SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(Gfx().dimensions.width), static_cast<float>(Gfx().dimensions.height), 0.1f, 100.0f));
+	Gfx().SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(Gfx().dimensions.width), static_cast<float>(Gfx().dimensions.height), 0.1f, 1000.0f));
 
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};
 
 	suzanne = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne", "resources/models/suzanne.obj");
-	sponza = std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj");
+	sponza = std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{0.01f,0.01f,0.01f});
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx());
 }
 
@@ -33,6 +33,7 @@ void TestApp::DoFrame()
 		static constexpr float angle = 0.001f;
 		PROFILE_SCOPE("Update Rotation");
 		suzanne->GetModel().SpawnControlWindow();
+		sponza->GetModel().SpawnControlWindow();
 		pPointLight->ShowControls();
 		pPointLight->GetModel().SpawnControlWindow();
 	}
