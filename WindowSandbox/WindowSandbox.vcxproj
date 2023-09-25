@@ -98,6 +98,10 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\models\boxy.gltf" />
+    <None Include="resources\models\nano_hierarchy.gltf" />
+    <None Include="resources\models\sphere.fbx" />
+    <None Include="resources\models\Sponza\sponza.mtl" />
     <None Include="resources\models\suzanne.fbx" />
     <None Include="resources\models\suzanneHp.fbx" />
   </ItemGroup>
@@ -114,6 +118,13 @@
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="resources\models\nanosuit.obj" />
+    <Object Include="resources\models\Sponza\sponza.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Object>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

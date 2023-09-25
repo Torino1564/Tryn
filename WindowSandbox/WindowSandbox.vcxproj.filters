@@ -30,10 +30,18 @@
   <ItemGroup>
     <None Include="resources\models\suzanne.fbx" />
     <None Include="resources\models\suzanneHp.fbx" />
+    <None Include="resources\models\nano_hierarchy.gltf" />
+    <None Include="resources\models\boxy.gltf" />
+    <None Include="resources\models\sphere.fbx" />
+    <None Include="resources\models\Sponza\sponza.mtl" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="resources\models\suzanne.obj" />
     <Resource Include="resources\models\suzanneHp.obj" />
     <Resource Include="resources\models\box.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="resources\models\nanosuit.obj" />
+    <Object Include="resources\models\Sponza\sponza.obj" />
   </ItemGroup>
 </Project>
