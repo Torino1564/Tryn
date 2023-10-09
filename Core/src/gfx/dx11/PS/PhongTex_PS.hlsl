@@ -19,7 +19,10 @@ cbuffer ObjectCBuf : register(b1)
 	float specularGloss;
 };
 
-float4 main(const float3 viewPos : POSITION, const float3 viewNormal : NORMAL) : SV_TARGET
+Texture2D tex : register(t0);
+SamplerState splr : register(s0);
+
+float4 main(const float3 viewPos : POSITION, const float3 viewNormal : NORMAL, const float4 pos : SV_POSITION,const float2 tc : Texcoord) : SV_TARGET
 {
 	const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewPos);
 
@@ -34,7 +37,6 @@ float4 main(const float3 viewPos : POSITION, const float3 viewNormal : NORMAL) :
 	// viewing vector and reflection vector, narrow with power function
 	const float3 specular = attenuation * specularColor * specularWeight * pow(max(0.0f, dot(-r, viewCamToFrag)), specularGloss);
 
-	//return float4(saturate((diffuse + ambient) * materialColor), 1.0f);
-	return float4(saturate((diffuse + ambient) * materialColor + specular), 1.0f);
-	//return float4(1.0f, 1.0f, 1.0f, 1.0f);
+	//return float4(saturate((diffuse + ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
+	return float4(saturate((diffuse + ambient) * tex.Sample(splr,tc).rgb), 1.0f);
 }

@@ -18,5 +18,64 @@ namespace tryn::win
 	{
 		keyboard.Clear();
 	}
+	void IWindow::OnMouseMove(int x, int y) noexcept
+	{
+		mouse.OnMouseMove(x, y);
+	}
+	void IWindow::OnMouseLeave() noexcept
+	{
+		mouse.OnMouseLeave();
+	}
+	void IWindow::OnMouseEnter() noexcept
+	{
+		mouse.OnMouseEnter();
+	}
+	void IWindow::OnLeftPressed(int x, int y) noexcept
+	{
+		mouse.OnLeftPressed(x, y);
+	}
+	void IWindow::OnLeftReleased(int x, int y) noexcept
+	{
+		mouse.OnLeftReleased(x, y);
+	}
+	void IWindow::OnRightPressed(int x, int y) noexcept
+	{
+		mouse.OnRightPressed(x, y);
+	}
+
+	void IWindow::OnRightReleased(int x, int y) noexcept
+	{
+		mouse.OnRightReleased(x, y);
+	}
+
+	void IWindow::OnWheelPressed(int x, int y) noexcept
+	{
+		mouse.OnWheelPressed(x, y);
+	}
+
+	void IWindow::OnWheelReleased(int x, int y) noexcept
+	{
+		mouse.OnWheelReleased(x, y);
+	}
+
+	void IWindow::OnWheelUp(int x, int y) noexcept
+	{
+		mouse.OnWheelUp(x, y);
+	}
+
+	void IWindow::OnWheelDown(int x, int y) noexcept
+	{
+		mouse.OnWheelDown(x, y);
+	}
+
+	void IWindow::TrimBuffer() noexcept
+	{
+		mouse.TrimBuffer();
+	}
+
+	void IWindow::OnWheelDelta(int x, int y, int delta) noexcept
+	{
+		mouse.OnWheelDelta(x, y, delta);
+	}
 }
 

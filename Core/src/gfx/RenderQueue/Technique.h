@@ -5,6 +5,13 @@
 
 namespace tryn::gfx
 {
+	enum class Techniques
+	{
+		Phong,
+		Flat,
+		Garaoud,
+	};
+
 	class Technique
 	{
 	public:

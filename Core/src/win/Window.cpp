@@ -82,6 +82,9 @@ namespace tryn::win
 			{
 				return true;
 			}
+
+			const auto& imio = ImGui::GetIO();
+
 			switch (msg) {
 			case WM_DESTROY:
 				hWnd_ = nullptr;
@@ -109,6 +112,113 @@ namespace tryn::win
 				OnChar(static_cast<char>(wParam));
 				break;
 			/******************** END KEYBOARD MESSAGES *****************/
+			/************************ MOUSE MESSAGES *********************/
+			case WM_MOUSEMOVE:
+			if (imio.WantCaptureMouse)
+			{
+				break;
+			}
+			{
+				const POINTS pt = MAKEPOINTS(lParam);
+				// in client region -> log move, and log enter + capture mouse (if not previously in window)
+				if (pt.x >= 0 && pt.x < clientDimensions.width && pt.y >= 0 && pt.y < clientDimensions.height)
+				{
+					OnMouseMove(pt.x, pt.y);
+					if (!mouse.IsInWindow())
+					{
+						SetCapture(hWnd);
+						OnMouseEnter();
+					}
+				}
+				// not in client -> log move / maintain capture if button down
+				else
+				{
+					if (wParam & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON))
+					{
+						OnMouseMove(pt.x, pt.y);
+					}
+					// button up -> release capture / log event for leaving
+					else
+					{
+						ReleaseCapture();
+						OnMouseLeave();
+					}
+				}
+				break;
+			}
+			case WM_LBUTTONDOWN:
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+				{
+					const POINTS pt = MAKEPOINTS(lParam);
+					OnLeftPressed(pt.x, pt.y);
+					break;
+				}
+			case WM_RBUTTONDOWN:
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+				{
+					const POINTS pt = MAKEPOINTS(lParam);
+					OnRightPressed(pt.x, pt.y);
+					break;
+				}
+			case WM_MBUTTONDOWN:
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+				{
+					const POINTS pt = MAKEPOINTS(lParam);
+					OnWheelPressed(pt.x, pt.y);
+					break;
+				}
+			case WM_LBUTTONUP:
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+				{
+					const POINTS pt = MAKEPOINTS(lParam);
+					OnLeftReleased(pt.x, pt.y);
+					break;
+				}
+			case WM_RBUTTONUP:
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+				{
+					const POINTS pt = MAKEPOINTS(lParam);
+					OnRightReleased(pt.x, pt.y);
+					break;
+				}
+			case WM_MBUTTONUP:
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+				{
+					const POINTS pt = MAKEPOINTS(lParam);
+					OnWheelReleased(pt.x, pt.y);
+					break;
+				}
+			case WM_MOUSEWHEEL:
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+				{
+					const POINTS pt = MAKEPOINTS(lParam);
+					const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+					OnWheelDelta(pt.x, pt.y, delta);
+					break;
+				}
+
+			/********************** END MOUSE MESSAGES *******************/
 			case CustomTaskMessageId:
 				tasks_.PopExecute();
 				return 0;

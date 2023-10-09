@@ -6,6 +6,7 @@
 #include <Core/src/spa/Dimensions.h>
 #include <Core/src/spa/Vec2.h>
 #include "Keyboard.h"
+#include "Mouse.h"
 
 namespace tryn::win
 {
@@ -30,6 +31,7 @@ namespace tryn::win
 		virtual spa::DimensionsI GetClientDimensions() const = 0;
 	public:
 		Keyboard keyboard;
+		Mouse mouse;
 	protected:
 		virtual LRESULT HandleMessage_(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept = 0;
 
@@ -38,5 +40,20 @@ namespace tryn::win
 		void OnKeyRelease(uint8_t keyCode);
 		void OnChar(char character);
 		void ClearKeyboardState();
+
+		// Mouse Window Interface
+		void OnMouseMove(int x, int y) noexcept;
+		void OnMouseLeave() noexcept;
+		void OnMouseEnter() noexcept;
+		void OnLeftPressed(int x, int y) noexcept;
+		void OnLeftReleased(int x, int y) noexcept;
+		void OnRightPressed(int x, int y) noexcept;
+		void OnRightReleased(int x, int y) noexcept;
+		void OnWheelPressed(int x, int y) noexcept;
+		void OnWheelReleased(int x, int y) noexcept;
+		void OnWheelUp(int x, int y) noexcept;
+		void OnWheelDown(int x, int y) noexcept;
+		void TrimBuffer() noexcept;
+		void OnWheelDelta(int x, int y, int delta) noexcept;
 	};
 }

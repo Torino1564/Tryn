@@ -18,5 +18,7 @@ private:
 	std::vector<ent::IEntity> entities;
 	std::unique_ptr<ent::IEntity> suzanne;
 	std::unique_ptr<ent::IEntity> sponza;
+	std::unique_ptr<ent::IEntity> wall;
 	gfx::Camera camera;
+	glm::vec2 mousepos;
 };
