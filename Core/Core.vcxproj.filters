@@ -2023,8 +2023,8 @@
     <FxCompile Include="src\gfx\dx11\PS\PixelShader.hlsl" />
     <FxCompile Include="src\gfx\dx11\PS\PhongFlat_PS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\PhongFlat_VS.hlsl" />
-    <FxCompile Include="src\gfx\dx11\VS\FlatColor_VS.hlsl" />
-    <FxCompile Include="src\gfx\dx11\PS\FlatColor_PS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\Flat_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\Flat_PS.hlsl" />
     <FxCompile Include="src\gfx\dx11\PS\PhongTex_PS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\PhongTex_VS.hlsl" />
   </ItemGroup>

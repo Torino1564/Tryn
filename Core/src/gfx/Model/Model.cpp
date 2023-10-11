@@ -31,7 +31,7 @@ namespace tryn::gfx
 		return glmMatrix;
 	}
 
-	Model::Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale)
+	Model::Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale , Techniques defaultTechnique)
 		:
 		name(path.data()), gfx(gfx)
 	{
@@ -69,7 +69,7 @@ namespace tryn::gfx
 		materials.reserve(pScene->mNumMaterials);
 		for (size_t i = 0; i < pScene->mNumMaterials; i++)
 		{
-			materials.emplace_back(gfx, *pScene->mMaterials[i], path);
+			materials.emplace_back(gfx, *pScene->mMaterials[i], path, defaultTechnique);
 		}
 
 		for (size_t i = 0; i < pScene->mNumMeshes; i++)

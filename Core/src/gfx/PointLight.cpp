@@ -7,7 +7,7 @@ namespace tryn::gfx
 	PointLight::PointLight(IGraphics& gfx, float radius, glm::vec3 color)
 	{
 		// Model
-		pModel = std::make_unique<Model>(gfx, "resources/models/sphere.fbx", glm::vec3{0.5f,0.5f,0.5f});
+		pModel = std::make_unique<Model>(gfx, "resources/models/sphere.obj", glm::vec3{0.5f,0.5f,0.5f}, Techniques::Flat);
 
 		parameters.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
 		parameters.viewLightPos = glm::vec3(0.0f, 3.0f, 0.0f);

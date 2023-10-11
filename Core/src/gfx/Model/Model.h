@@ -10,7 +10,7 @@ namespace tryn::gfx
 	class Model
 	{
 	public:
-		Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f });
+		Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, Techniques defaultTechnique = Techniques::Phong );
 		void Draw();
 		void SpawnControlWindow();
 		glm::vec3 GetPosition() const;
