@@ -22,7 +22,7 @@ cbuffer ObjectCBuf : register(b1)
 Texture2D tex : register(t0);
 SamplerState splr : register(s0);
 
-float4 main(const float3 viewPos : POSITION, const float3 viewNormal : NORMAL, const float4 pos : SV_POSITION,const float2 tc : Texcoord) : SV_TARGET
+float4 main(const float3 viewPos : POSITION, const float3 viewNormal : NORMAL, const float2 tc : Texcoord ,const float4 pos : SV_POSITION) : SV_TARGET
 {
 	const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewPos);
 

@@ -7,7 +7,7 @@ namespace tryn::gfx
 	PointLight::PointLight(IGraphics& gfx, float radius, glm::vec3 color)
 	{
 		// Model
-		pModel = std::make_unique<Model>(gfx, "resources/models/sphere.obj", glm::vec3{0.5f,0.5f,0.5f}, Techniques::Flat);
+		pModel = std::make_unique<Model>(gfx, "resources/models/sphere.obj", glm::vec3{0.1f,0.1f,0.1f}, Techniques::Flat);
 
 		parameters.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
 		parameters.viewLightPos = glm::vec3(0.0f, 3.0f, 0.0f);
@@ -57,9 +57,10 @@ namespace tryn::gfx
 	{
 		pModel->Draw();
 	}
-	void PointLight::Bind() const
+	void PointLight::Bind( const glm::mat4 view ) const
 	{
-		(*pCBuf)["viewLightPos"].Get<glm::vec3>() = pModel->GetPosition();
+		const auto temp = view * glm::vec4(pModel->GetPosition(), 1.0f);
+		(*pCBuf)["viewLightPos"].Get<glm::vec3>() = temp;
 		(*pCBuf)["ambient"].Get<glm::vec3>() = parameters.ambient;
 		(*pCBuf)["diffuseColor"].Get<glm::vec3>() = parameters.diffuseColor;
 		(*pCBuf)["diffuseIntensity"].Get<float>() = parameters.diffuseIntensity;

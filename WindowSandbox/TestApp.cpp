@@ -20,7 +20,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};
 
-	suzanne = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne", "resources/models/suzanne.obj");
+	suzanne = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne", "resources/models/suzanneNn.obj");
 	//sponza = std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{0.01f,0.01f,0.01f});
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 	wall = std::make_unique<ent::BasicEntity>(Gfx(), "wall", "resources/models/brick_wall/brick_wall.obj");
@@ -29,7 +29,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 void TestApp::DoFrame()
 {
 	camera.Bind(Gfx());
-	pPointLight->Bind();
+	pPointLight->Bind(camera.GetViewMatrix());
 	{
 		static constexpr float angle = 0.001f;
 		PROFILE_SCOPE("Update Rotation");

@@ -11,7 +11,7 @@ namespace tryn::gfx
 		void ShowControls();
 		void Reset();
 		void Draw() const;
-		void Bind() const;
+		void Bind(const glm::mat4 view) const;
 		Model& GetModel();
 	public:
 		struct Parameters
