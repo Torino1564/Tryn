@@ -27,7 +27,7 @@ namespace tryn::gfx
 		td.Height = height;
 		td.MipLevels = 0;
 		td.ArraySize = 1;
-		td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		td.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		td.SampleDesc.Count = 1;
 		td.SampleDesc.Quality = 0;
 		td.Usage = D3D11_USAGE_DEFAULT;

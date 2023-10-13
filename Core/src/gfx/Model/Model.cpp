@@ -84,7 +84,9 @@ namespace tryn::gfx
 
 	void Model::Draw()
 	{
-		const auto transform = glm::translate(glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z), settings.position);
+		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
+		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
+		const auto transform = translation * rotation;
 		root->Draw(gfx, transform);
 	}
 	void Model::SpawnControlWindow()
