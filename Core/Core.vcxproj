@@ -76,6 +76,7 @@
     <ClCompile Include="third\imgui\imgui_draw.cpp" />
     <ClCompile Include="third\imgui\imgui_tables.cpp" />
     <ClCompile Include="third\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="third\lodepng\lodepng.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app\App.h" />
@@ -533,6 +534,7 @@
     <ClInclude Include="third\imgui\imstb_rectpack.h" />
     <ClInclude Include="third\imgui\imstb_textedit.h" />
     <ClInclude Include="third\imgui\imstb_truetype.h" />
+    <ClInclude Include="third\lodepng\lodepng.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\gfx\dx11\PS\LightVector.hlsli" />

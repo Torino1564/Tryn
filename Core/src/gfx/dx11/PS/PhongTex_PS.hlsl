@@ -38,5 +38,5 @@ float4 main(const float3 viewPos : POSITION, const float3 viewNormal : NORMAL, c
 	const float3 specular = attenuation * specularColor * specularWeight * pow(max(0.0f, dot(-r, viewCamToFrag)), specularGloss);
 
 	//return float4(saturate((diffuse + ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
-	return float4(saturate((diffuse + ambient) * tex.Sample(splr,tc)), 1.0f);
+	return float4(saturate((diffuse + ambient) * tex.Sample(splr,tc).rgb), 1.0f);
 }
