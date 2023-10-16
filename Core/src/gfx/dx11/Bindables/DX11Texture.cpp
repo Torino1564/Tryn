@@ -14,7 +14,7 @@ namespace tryn::gfx
 		int width, height, numChannels;
 		auto texture = stbi_load(this->path.c_str(), &width, &height, &numChannels, STBI_rgb_alpha);
 
-		//trynass_msg(texture != nullptr, L"The specified file could not be loaded!");
+		trynass_msg(texture != nullptr, L"The specified file could not be loaded!");
 
 		D3D11_TEXTURE2D_DESC td = {};
 		td.Width = width;
@@ -32,8 +32,10 @@ namespace tryn::gfx
 		gfx.GetDevice()->CreateTexture2D(&td, nullptr, &pTexture) >> chk;
 
 		gfx.GetContext()->UpdateSubresource(
-			pTexture.Get(), 0u, nullptr, texture, width * numChannels, 0u
+			pTexture.Get(), 0u, nullptr, texture, width * STBI_rgb_alpha, 0u
 		);
+
+		stbi_image_free(texture);
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvd = {};
 		srvd.Format = td.Format;
