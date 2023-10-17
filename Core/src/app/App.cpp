@@ -1,6 +1,7 @@
 #include "App.h"
 #include <Core/src/ent/Entity.h>
 #include <Core/src/win/imgui_impl_win32.h>
+#include <chrono>
 
 namespace tryn::app
 {
@@ -13,9 +14,14 @@ namespace tryn::app
 	{
 		while (!wnd->IsClosing())
 		{
+			auto start = std::chrono::high_resolution_clock::now();
 			PreFrame();
 			DoFrame();
 			PostFrame();
+			auto end = std::chrono::high_resolution_clock::now();
+			auto duration = end - start;
+			dt = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+			trylog.info(std::to_wstring(dt));
 		}
 	}
 
@@ -24,6 +30,7 @@ namespace tryn::app
 		ImGui_ImplWin32_NewFrame();
 		gfx->BeginFrame();
 		ImGui::NewFrame();
+
 	}
 
 	void App::DoFrame()

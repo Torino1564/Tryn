@@ -51,6 +51,21 @@ namespace tryn::win
 		return wheelIsPressed;
 	}
 
+	void Mouse::EnableRaw() noexcept
+	{
+		rawEnabled = true;
+	}
+
+	void Mouse::DisableRaw() noexcept
+	{
+		rawEnabled = false;
+	}
+
+	bool Mouse::IsRawEnabled() const noexcept
+	{
+		return rawEnabled;
+	}
+
 	Mouse::Event Mouse::Read() noexcept
 	{
 		if (buffer.size() > 0u)

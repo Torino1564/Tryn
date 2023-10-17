@@ -104,6 +104,9 @@ namespace tryn::win
 		bool LeftIsPressed() const noexcept;
 		bool RightIsPressed() const noexcept;
 		bool WheelIsPressed() const noexcept;
+		void EnableRaw() noexcept;
+		void DisableRaw() noexcept;
+		bool IsRawEnabled() const noexcept;
 		Mouse::Event Read() noexcept;
 		bool IsEmpty() const noexcept
 		{
@@ -135,6 +138,7 @@ namespace tryn::win
 		bool wheelIsPressed = false;
 		bool isInWindow = false;
 		int wheelDeltaCarry = 0;
+		bool rawEnabled = false;
 		std::queue<Event> buffer;
 		std::queue<RawDelta> rawDeltaBuffer;
 

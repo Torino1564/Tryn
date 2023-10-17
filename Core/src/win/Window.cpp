@@ -40,7 +40,13 @@ namespace tryn::win
 				throw WindowException{ "Failed creating window" };
 			}
 			ImGui_ImplWin32_Init(hWnd_);
+			RAWINPUTDEVICE rid;
+			rid.usUsage = 0x02;
+			rid.usUsagePage = 0x01;
+			rid.dwFlags = 0;
+			rid.hwndTarget = nullptr;
 
+			RegisterRawInputDevices(&rid, 1, sizeof(rid));
 			});
 		startSignal_.release();
 		future.get();
@@ -113,6 +119,7 @@ namespace tryn::win
 					}
 				}
 			}
+				break;
 			/******************** KEYBOARD MESSAGES *****************/
 			case WM_KEYDOWN:
 				[[fallthrough]];
@@ -130,6 +137,46 @@ namespace tryn::win
 				OnChar(static_cast<char>(wParam));
 				break;
 			/******************** END KEYBOARD MESSAGES *****************/
+			/********************** RAW MOUSE MESSAGES *******************/
+			case WM_INPUT:
+			{
+				if (!mouse.IsRawEnabled())
+				{
+					break;
+				}
+				UINT size = 0;
+				if (GetRawInputData(
+					reinterpret_cast<HRAWINPUT>(lParam),
+					RID_INPUT,
+					nullptr,
+					&size,
+					sizeof(RAWINPUTHEADER)) == -1)
+				{
+					trylog.warn(L"Failed to receive raw mouse input data");
+					break;
+				}
+				rawBufer.resize(size);
+
+				if (GetRawInputData(
+					reinterpret_cast<HRAWINPUT>(lParam),
+					RID_INPUT,
+					rawBufer.data(),
+					&size,
+					sizeof(RAWINPUTHEADER)) != size)
+				{
+					trylog.warn(L"Failed to receive raw mouse input data");
+					break;
+				}
+
+				auto& rawInput = reinterpret_cast<const RAWINPUT&>(*rawBufer.data());
+				if (rawInput.header.dwType == RIM_TYPEMOUSE &&
+					(rawInput.data.mouse.lLastX != 0 || rawInput.data.mouse.lLastY != 0))
+				{
+					OnRawDelta(rawInput.data.mouse.lLastX, rawInput.data.mouse.lLastY);
+				}
+			}
+				break;
+			/******************** END RAW MOUSE MESSAGES *****************/
 			/************************ MOUSE MESSAGES *********************/
 			case WM_MOUSEMOVE:
 			if (imio.WantCaptureMouse)
@@ -236,45 +283,10 @@ namespace tryn::win
 					break;
 				}
 
-				/********************** END MOUSE MESSAGES *******************/
-				/********************** RAW MOUSE MESSAGES *******************/
-			case WM_INPUT:
-			{
-				UINT size;
-				if (GetRawInputData(
-					reinterpret_cast<HRAWINPUT>(lParam),
-					RID_INPUT,
-					nullptr,
-					&size,
-					sizeof(RAWINPUTHEADER)) == -1)
-				{
-					trylog.warn(L"Failed to receive raw mouse input data");
-					break;
-				}
-				rawBufer.resize(size);
-
-				if (GetRawInputData(
-					reinterpret_cast<HRAWINPUT>(lParam),
-					RID_INPUT,
-					rawBufer.data(),
-					&size,
-					sizeof(RAWINPUTHEADER)) != size)
-				{
-					trylog.warn(L"Failed to receive raw mouse input data");
-					break;
-				}
-
-				auto& rawInput = reinterpret_cast<const RAWINPUT&>(*rawBufer.data());
-				if (rawInput.header.dwType == RIM_TYPEMOUSE &&
-					(rawInput.data.mouse.lLastX != 0 || rawInput.data.mouse.lLastY != 0))
-				{
-					OnRawDelta(rawInput.data.mouse.lLastX, rawInput.data.mouse.lLastY);
-				}
-			}
-			/******************** END RAW MOUSE MESSAGES *****************/
+			/********************** END MOUSE MESSAGES *******************/
 			case CustomTaskMessageId:
 				tasks_.PopExecute();
-				return 0;
+				break;
 			}
 		}
 		catch (const std::exception& e) {
@@ -298,11 +310,17 @@ namespace tryn::win
 	}
 	void Window::HideCursor()
 	{
-		while (::ShowCursor(FALSE) >= 0);
+		Dispatch_([=,this]
+			{
+				while (::ShowCursor(FALSE) >= 0);
+			});
 	}
 	void Window::ShowCursor()
 	{
-		while (::ShowCursor(TRUE) <= 0);
+		Dispatch_([=, this]
+			{
+				while (::ShowCursor(TRUE) < 0);
+			});
 	}
 	void Window::ConfineCursor()
 	{

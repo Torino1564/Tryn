@@ -10,13 +10,18 @@ namespace tryn::gfx
 	public:
 		void Bind(IGraphics& gfx);
 		void Update();
+		void Rotate(float dx, float dy) noexcept;
+		void Translate(glm::vec3 translation) noexcept;
 		glm::vec3& GetPosition();
 		glm::vec3& GetDirection();
-		glm::vec3& GetAngles();
 		glm::mat4 GetViewMatrix() const;
+		void ShowDebugInfo() const;
 	private:
 		glm::vec3 position;
 		glm::vec3 direction;
-		glm::vec3 angles = {0,0,0};
+		float yaw;
+		float pitch;
+		float travelSpeed = 0.005f;
+		float rotationSpeed = 0.1f;
 	};
 }

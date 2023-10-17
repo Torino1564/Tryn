@@ -21,5 +21,6 @@ namespace tryn::app
 	protected:
 		std::shared_ptr<win::IWindow> wnd;
 		std::shared_ptr<gfx::IGraphics> gfx;
+		long double dt;
 	};
 }

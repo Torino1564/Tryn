@@ -1,5 +1,6 @@
 #include "IWindow.h"
 #include <Core/third/imgui/imgui.h>
+#include <Core/src/log/Log.h>
 
 namespace tryn::win
 {
@@ -100,6 +101,7 @@ namespace tryn::win
 		ShowCursor();
 		EnableImGuiMouse();
 		FreeCursor();
+		mouse.DisableRaw();
 	}
 	void IWindow::DisableCursor()
 	{
@@ -107,6 +109,7 @@ namespace tryn::win
 		HideCursor();
 		DisableImGuiMouse();
 		ConfineCursor();
+		mouse.EnableRaw();
 	}
 }
 
