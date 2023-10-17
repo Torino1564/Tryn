@@ -29,8 +29,8 @@ float4 main(const float3 viewPos : POSITION, const float3 viewNormal : NORMAL, c
 {
 	const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewPos);
 
-	const float attenuation = Attenuate(constantAtt,linearAtt,quadraticAtt,lv.distToL);
-	const float3 diffuse = Diffuse(diffuseColor,diffuseIntensity,attenuation,lv.distToL,viewNormal);
+    const float attenuation = Attenuate(constantAtt, linearAtt, quadraticAtt, lv.distToL);
+    const float3 diffuse = Diffuse(diffuseColor, diffuseIntensity, attenuation, lv.dirToL, viewNormal);
 
 	const float4 specularSample = spec.Sample(splr, tc);
     

@@ -186,6 +186,12 @@ namespace tryn::gfx
 					cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float3, "materialColor"));
 					step.AddBindable(std::move(IRasterizer::Resolve(gfx)));
 				}
+				// Specular
+				{
+					cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float3, "specularColor"));
+					cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "specularWeight"));
+					cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "specularGloss"));
+				}
 
 				{
 					auto pvs = IVertexShader::Resolve(gfx, shaderCode + "_VS.cso");
@@ -194,11 +200,32 @@ namespace tryn::gfx
 					step.AddBindable(IPixelShader::Resolve(gfx, shaderCode + "_PS.cso"));
 					cbLayout.Solidify();
 					auto buf = IPxConstantBuffer::Resolve(gfx, std::move(cbLayout), 1);
-					if (auto param = (*buf)["materialColor"]; param.Exists())
+
+					if ((*buf)["materialColor"].Exists())
 					{
+						auto& param = (*buf)["materialColor"].Get<glm::vec3>();
 						aiColor3D color = { 0.45f,0.45f,0.85f };
 						material.Get(AI_MATKEY_COLOR_DIFFUSE, color);
 						param = reinterpret_cast<glm::vec3&>(color);
+					}
+					if ((*buf)["specularColor"].Exists())
+					{
+						auto& param = (*buf)["specularColor"].Get<glm::vec3>();
+						aiColor3D color = { 0.18f,0.18f,0.18f };
+						material.Get(AI_MATKEY_COLOR_SPECULAR, color);
+						param = reinterpret_cast<glm::vec3&>(color);
+					}
+					if ((*buf)["specularWeight"].Exists())
+					{
+						auto& param = (*buf)["specularWeight"].Get<float>();
+						param = 1.0f;
+					}
+					if ((*buf)["specularGloss"].Exists())
+					{
+						auto& param = (*buf)["specularGloss"].Get<float>();
+						float gloss = 8.0f;
+						material.Get(AI_MATKEY_SHININESS, gloss);
+						param = gloss;
 					}
 
 					step.AddBindable(std::move(buf));

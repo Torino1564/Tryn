@@ -21,7 +21,6 @@ private:
 	std::unique_ptr<ent::IEntity> wall;
 	std::unique_ptr<ent::IEntity> desk;
 	gfx::Camera camera;
-	glm::vec2 mousepos;
 
 	int tallyX = 0, tallyY = 0;
 };

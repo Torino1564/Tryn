@@ -1,4 +1,5 @@
 #include "LightVector.hlsli"
+#include "Operations.hlsli"
 
 cbuffer PointLightCBuf : register(b0)
 {
@@ -19,22 +20,14 @@ cbuffer ObjectCBuf : register(b1)
 	float specularGloss;
 };
 
-float4 main(const float3 viewPos : POSITION, const float3 viewNormal : NORMAL) : SV_TARGET
+float4 main(const float3 viewPos : POSITION, float3 viewNormal : NORMAL) : SV_TARGET
 {
+    viewNormal = normalize(viewNormal);
 	const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewPos);
-
-	const float attenuation = 1.0f / (constantAtt + linearAtt * lv.distToL + quadraticAtt * pow(lv.distToL, 2));
-	const float3 diffuse = diffuseColor * diffuseIntensity * attenuation * max(0.0f, dot(lv.dirToL, viewNormal));
-
-	const float3 w = viewNormal * dot(lv.vToL, viewNormal);
-	const float3 r = normalize(w * 2.0f - lv.vToL);
-	// vector from camera to fragment (in view space)
-	const float3 viewCamToFrag = normalize(viewPos);
-	// calculate specular component color based on angle between
-	// viewing vector and reflection vector, narrow with power function
-	const float3 specular = attenuation * specularColor * specularWeight * pow(max(0.0f, dot(-r, viewCamToFrag)), specularGloss);
-
-	return float4(saturate((diffuse + ambient) * materialColor), 1.0f);
-	//return float4(saturate((diffuse + ambient) * materialColor + specular), 1.0f);
-	//return float4(1.0f, 1.0f, 1.0f, 1.0f);
+	
+    const float attenuation = Attenuate(constantAtt, linearAtt, quadraticAtt, lv.distToL);
+    const float3 diffuse = Diffuse(diffuseColor, diffuseIntensity, attenuation, lv.dirToL, viewNormal);
+    const float3 specular = Speculate(specularColor, specularWeight, viewNormal, lv.vToL, viewPos, attenuation, specularGloss);
+	
+	return float4(saturate((diffuse + ambient) * materialColor + specular), 1.0f);
 }
