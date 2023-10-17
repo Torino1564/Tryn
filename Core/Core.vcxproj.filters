@@ -2029,6 +2029,7 @@
     <None Include="src\gfx\vulkan\vulkan\generate_spv.sh" />
     <None Include="src\gfx\vulkan\vulkan\glsl_shader.frag" />
     <None Include="src\gfx\dx11\PS\LightVector.hlsli" />
+    <None Include="src\gfx\dx11\PS\Operations.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\gfx\dx11\VS\VertexShader.hlsl" />
@@ -2039,6 +2040,12 @@
     <FxCompile Include="src\gfx\dx11\PS\Flat_PS.hlsl" />
     <FxCompile Include="src\gfx\dx11\PS\PhongTex_PS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\PhongTex_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\PhongTexSpc_PS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpc_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\PhongTexSpcNrm_PS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcNrm_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\PhongTexNrm_PS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexNrm_VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="third\imgui\LICENSE.txt" />

@@ -14,6 +14,11 @@ namespace tryn::gfx
 		int width, height, numChannels;
 		auto texture = stbi_load(this->path.c_str(), &width, &height, &numChannels, STBI_rgb_alpha);
 
+		if (numChannels == 4)
+		{
+			hasAlpha = true;
+		}
+
 		trynass_msg(texture != nullptr, L"The specified file could not be loaded!");
 
 		D3D11_TEXTURE2D_DESC td = {};

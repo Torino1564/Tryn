@@ -213,7 +213,14 @@ namespace tryn::gfx
 		{
 			dirty = true;
 			auto& indexTo = layout.root.get()->IndexByName(id);
-			return ElementView{ indexTo, buffer.data() + indexTo.GetOffset() };
+			if (indexTo.GetType() == gfx::ConstantBufferLayout::Type::Empty)
+			{
+				return ElementView{ indexTo, nullptr };
+			}
+			else
+			{
+				return ElementView{ indexTo, buffer.data() + indexTo.GetOffset() };
+			}
 		}
 		std::string GetTag() const
 		{

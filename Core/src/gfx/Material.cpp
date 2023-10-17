@@ -71,7 +71,7 @@ namespace tryn::gfx
 					if (material.GetTexture(aiTextureType_SPECULAR, 0, &tempFileName) == aiReturn_SUCCESS)
 					{
 						isTextured = true;
-						//shaderCode += "Spc";
+						shaderCode += "Spc";
 						vLayout.AppendElement(VertexLayout::UV);
 						auto tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 1);
 						usesGlossAlphaChannel = tex->HasAlpha();
@@ -89,7 +89,7 @@ namespace tryn::gfx
 					if (material.GetTexture(aiTextureType_NORMALS, 0, &tempFileName) == aiReturn_SUCCESS)
 					{
 						isTextured = true;
-						//shaderCode += "Nrm";
+						shaderCode += "Nrm";
 						vLayout.AppendElement(VertexLayout::UV);
 						vLayout.AppendElement(VertexLayout::Tangent);
 						vLayout.AppendElement(VertexLayout::Bitangent);
@@ -110,42 +110,50 @@ namespace tryn::gfx
 					}
 					cbLayout.Solidify();
 					auto buf = IPxConstantBuffer::Resolve(gfx, std::move(cbLayout), 1);
-					if (auto param = (*buf)["materialColor"]; param.Exists())
+					if ((*buf)["materialColor"].Exists())
 					{
+						auto& param = (*buf)["materialColor"].Get<glm::vec3>();
 						aiColor3D color = { 0.45f,0.45f,0.85f };
 						material.Get(AI_MATKEY_COLOR_DIFFUSE, color);
 						param = reinterpret_cast<glm::vec3&>(color);
 					}
-					if (auto param = (*buf)["useGlossAlpha"]; param.Exists())
+					if ((*buf)["useGlossAlpha"].Exists())
 					{
+						auto& param = (*buf)["useGlossAlpha"].Get<bool>();
 						param = usesGlossAlphaChannel;
 					}
-					if (auto param = (*buf)["useSpecularMap"]; param.Exists())
+					if ((*buf)["useSpecularMap"].Exists())
 					{
+						auto& param = (*buf)["useSpecularMap"].Get<bool>();
 						param = true;
 					}
-					if (auto param = (*buf)["specularColor"]; param.Exists())
+					if ((*buf)["specularColor"].Exists())
 					{
+						auto& param = (*buf)["specularColor"].Get<glm::vec3>();
 						aiColor3D color = { 0.18f,0.18f,0.18f };
 						material.Get(AI_MATKEY_COLOR_SPECULAR, color);
 						param = reinterpret_cast<glm::vec3&>(color);
 					}
-					if (auto param = (*buf)["specularWeight"]; param.Exists())
+					if ((*buf)["specularWeight"].Exists())
 					{
+						auto& param = (*buf)["specularWeight"].Get<float>();
 						param = 1.0f;
 					}
-					if (auto param = (*buf)["specularGloss"]; param.Exists())
+					if ((*buf)["specularGloss"].Exists())
 					{
+						auto& param = (*buf)["specularGloss"].Get<float>();
 						float gloss = 8.0f;
 						material.Get(AI_MATKEY_SHININESS, gloss);
 						param = gloss;
 					}
-					if (auto param = (*buf)["useNormalMap"]; param.Exists())
+					if ((*buf)["useNormalMap"].Exists())
 					{
+						auto& param = (*buf)["useNormalMap"].Get<bool>();
 						param = true;
 					}
-					if (auto param = (*buf)["normalMapWeight"]; param.Exists())
+					if ((*buf)["normalMapWeight"].Exists())
 					{
+						auto& param = (*buf)["normalMapWeight"].Get<float>();
 						param = 1.0f;
 					}
 

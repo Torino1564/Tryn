@@ -75,7 +75,7 @@ namespace tryn::gfx
 	{
 		static constexpr auto Exec() noexcept
 		{
-			return sizeof(ConstantBufferLayout::TypeAttr<type>::TrueType);
+			return ConstantBufferLayout::TypeAttr<type>::TrueTypeSize;
 		}
 	};
 	constexpr size_t ConstantBufferLayout::SizeOf(ConstantBufferLayout::Type type)
