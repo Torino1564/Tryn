@@ -1,4 +1,5 @@
 #include "IWindow.h"
+#include <Core/third/imgui/imgui.h>
 
 namespace tryn::win
 {
@@ -76,6 +77,36 @@ namespace tryn::win
 	void IWindow::OnWheelDelta(int x, int y, int delta) noexcept
 	{
 		mouse.OnWheelDelta(x, y, delta);
+	}
+	void IWindow::OnRawDelta(int dx, int dy) noexcept
+	{
+		mouse.OnRawDelta(dx, dy);
+	}
+	void IWindow::EnableImGuiMouse()
+	{
+		ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+	}
+	void IWindow::DisableImGuiMouse()
+	{
+		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
+	}
+	bool IWindow::IsCursorEnabled() const
+	{
+		return isCursorEnabled;
+	}
+	void IWindow::EnableCursor()
+	{
+		isCursorEnabled = true;
+		ShowCursor();
+		EnableImGuiMouse();
+		FreeCursor();
+	}
+	void IWindow::DisableCursor()
+	{
+		isCursorEnabled = false;
+		HideCursor();
+		DisableImGuiMouse();
+		ConfineCursor();
 	}
 }
 

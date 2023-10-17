@@ -12,9 +12,9 @@ namespace tryn::win
 		spa::DimensionsI clientAreaSize, std::optional<spa::Vec2I> position)
 		:
 		pWindowClass_{ std::move(pWindowClass) },
-		kernelThread_{ &Window::MessageKernel_, this },
-		clientDimensions(clientAreaSize)
+		kernelThread_{ &Window::MessageKernel_, this }
 	{
+		clientDimensions = clientAreaSize;
 		auto future = tasks_.Push([=, this] {
 			const DWORD styles = WS_VISIBLE | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
 			const DWORD exStyles = 0;
@@ -40,6 +40,7 @@ namespace tryn::win
 				throw WindowException{ "Failed creating window" };
 			}
 			ImGui_ImplWin32_Init(hWnd_);
+
 			});
 		startSignal_.release();
 		future.get();
@@ -96,8 +97,25 @@ namespace tryn::win
 			case WM_KILLFOCUS:
 				ClearKeyboardState();
 				break;
+			case WM_ACTIVATE:
+			{
+				if (!isCursorEnabled)
+				{
+					if (wParam & WA_ACTIVE || wParam & WA_CLICKACTIVE)
+					{
+						ConfineCursor();
+						HideCursor();
+					}
+					else
+					{
+						FreeCursor();
+						ShowCursor();
+					}
+				}
+			}
 			/******************** KEYBOARD MESSAGES *****************/
 			case WM_KEYDOWN:
+				[[fallthrough]];
 			case WM_SYSKEYDOWN:
 				if (!(lParam & 0x40000000) || keyboard.IsAutoRepeatEnabled())
 				{
@@ -218,7 +236,42 @@ namespace tryn::win
 					break;
 				}
 
-			/********************** END MOUSE MESSAGES *******************/
+				/********************** END MOUSE MESSAGES *******************/
+				/********************** RAW MOUSE MESSAGES *******************/
+			case WM_INPUT:
+			{
+				UINT size;
+				if (GetRawInputData(
+					reinterpret_cast<HRAWINPUT>(lParam),
+					RID_INPUT,
+					nullptr,
+					&size,
+					sizeof(RAWINPUTHEADER)) == -1)
+				{
+					trylog.warn(L"Failed to receive raw mouse input data");
+					break;
+				}
+				rawBufer.resize(size);
+
+				if (GetRawInputData(
+					reinterpret_cast<HRAWINPUT>(lParam),
+					RID_INPUT,
+					rawBufer.data(),
+					&size,
+					sizeof(RAWINPUTHEADER)) != size)
+				{
+					trylog.warn(L"Failed to receive raw mouse input data");
+					break;
+				}
+
+				auto& rawInput = reinterpret_cast<const RAWINPUT&>(*rawBufer.data());
+				if (rawInput.header.dwType == RIM_TYPEMOUSE &&
+					(rawInput.data.mouse.lLastX != 0 || rawInput.data.mouse.lLastY != 0))
+				{
+					OnRawDelta(rawInput.data.mouse.lLastX, rawInput.data.mouse.lLastY);
+				}
+			}
+			/******************** END RAW MOUSE MESSAGES *****************/
 			case CustomTaskMessageId:
 				tasks_.PopExecute();
 				return 0;
@@ -242,6 +295,25 @@ namespace tryn::win
 			trylog.error().hr();
 			throw WindowException{ "Failed to post task notification message" };
 		}
+	}
+	void Window::HideCursor()
+	{
+		while (::ShowCursor(FALSE) >= 0);
+	}
+	void Window::ShowCursor()
+	{
+		while (::ShowCursor(TRUE) <= 0);
+	}
+	void Window::ConfineCursor()
+	{
+		RECT rect;
+		GetClientRect(hWnd_, &rect);
+		MapWindowPoints(hWnd_, nullptr, reinterpret_cast<POINT*>(&rect), 2);
+		ClipCursor(&rect);
+	}
+	void Window::FreeCursor()
+	{
+		ClipCursor(nullptr);
 	}
 	void Window::MessageKernel_() noexcept
 	{

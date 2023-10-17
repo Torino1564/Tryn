@@ -36,6 +36,10 @@ namespace tryn::win
 			return future;
 		}
 		void NotifyTaskDispatch_() const;
+		void HideCursor() override;
+		void ShowCursor() override;
+		void ConfineCursor() override;
+		void FreeCursor() override;
 		// data
 		std::shared_ptr<IWindowClass> pWindowClass_;
 		mutable ccr::GenericTaskQueue tasks_;
@@ -43,6 +47,5 @@ namespace tryn::win
 		std::thread kernelThread_;
 		HWND hWnd_ = nullptr;
 		std::atomic<bool> closing_ = false;
-		spa::DimensionsI clientDimensions;
 	};
 }

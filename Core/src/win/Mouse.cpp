@@ -10,6 +10,17 @@ namespace tryn::win
 		return { x,y };
 	}
 
+	std::optional<Mouse::RawDelta> Mouse::ReadRawDelta() noexcept
+	{
+		if (rawDeltaBuffer.empty())
+		{
+			return std::nullopt;
+		}
+		const RawDelta delta = rawDeltaBuffer.front();
+		rawDeltaBuffer.pop();
+		return delta;
+	}
+
 	int Mouse::GetPosX() const noexcept
 	{
 		return x;
@@ -82,6 +93,12 @@ namespace tryn::win
 		TrimBuffer();
 	}
 
+	void Mouse::OnRawDelta(int dx, int dy) noexcept
+	{
+		rawDeltaBuffer.push({ dx,dy });
+		TrimRawDeltaBuffer();
+	}
+
 	void Mouse::OnLeftPressed(int x, int y) noexcept
 	{
 		leftIsPressed = true;
@@ -147,6 +164,14 @@ namespace tryn::win
 		while (buffer.size() > bufferSize)
 		{
 			buffer.pop();
+		}
+	}
+
+	void Mouse::TrimRawDeltaBuffer() noexcept
+	{
+		while (rawDeltaBuffer.size() > bufferSize)
+		{
+			rawDeltaBuffer.pop();
 		}
 	}
 

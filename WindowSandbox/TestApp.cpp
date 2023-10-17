@@ -21,7 +21,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};
 
 	//suzanne = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne", "resources/models/suzanne.obj");
-	sponza = std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{0.01f,0.01f,0.01f});
+	//sponza = std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{0.01f,0.01f,0.01f});
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 	//wall = std::make_unique<ent::BasicEntity>(Gfx(), "wall", "resources/models/brick_wall/brick_wall.obj");
 }
@@ -34,7 +34,7 @@ void TestApp::DoFrame()
 		static constexpr float angle = 0.001f;
 		PROFILE_SCOPE("Update Rotation");
 		//suzanne->GetModel().SpawnControlWindow();
-		sponza->GetModel().SpawnControlWindow();
+		//sponza->GetModel().SpawnControlWindow();
 		//wall->GetModel().SpawnControlWindow();
 		pPointLight->ShowControls();
 		pPointLight->GetModel().SpawnControlWindow();
@@ -43,7 +43,7 @@ void TestApp::DoFrame()
 		PROFILE_SCOPE("Draw call");
 		pPointLight->Draw();
  		//suzanne->Draw();
-		sponza->Draw();
+		//sponza->Draw();
 		//wall->Draw();
 	}
 	{
@@ -96,24 +96,18 @@ void TestApp::DoFrame()
 		{
 			cameraAngles.x -= 2;
 		}
-		/* {
-			if (newMousePos.first > mousepos.x)
+		
+		if (wnd->keyboard.IsKeyPressed(VK_ESCAPE))
+		{
+			if (wnd->IsCursorEnabled())
 			{
-				cameraAngles.x -= 2;
+				wnd->DisableCursor();
 			}
-			if (newMousePos.first < mousepos.x)
+			else
 			{
-				cameraAngles.x += 2;
+				wnd->EnableCursor();
 			}
-			if (newMousePos.second > mousepos.y)
-			{
-				cameraAngles.y += 2;
-			}
-			if (newMousePos.second < mousepos.y)
-			{
-				cameraAngles.y -= 2;
-			}
-		}*/
+		}
 
 		mousepos.x = newMousePos.first;
 		mousepos.y = newMousePos.second;

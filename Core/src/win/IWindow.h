@@ -29,9 +29,16 @@ namespace tryn::win
 		virtual bool IsClosing() const = 0;
 		virtual std::future<void> SetTitle(std::wstring title) = 0;
 		virtual spa::DimensionsI GetClientDimensions() const = 0;
+		bool IsCursorEnabled() const;
+		void EnableCursor();
+		void DisableCursor();
 	public:
 		Keyboard keyboard;
 		Mouse mouse;
+	protected:
+		bool isCursorEnabled = true;
+		spa::DimensionsI clientDimensions;
+		std::vector<char> rawBufer;
 	protected:
 		virtual LRESULT HandleMessage_(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept = 0;
 
@@ -55,5 +62,12 @@ namespace tryn::win
 		void OnWheelDown(int x, int y) noexcept;
 		void TrimBuffer() noexcept;
 		void OnWheelDelta(int x, int y, int delta) noexcept;
+		void OnRawDelta(int dx, int dy) noexcept;
+		virtual void HideCursor() = 0;
+		virtual void ShowCursor() = 0;
+		void EnableImGuiMouse();
+		void DisableImGuiMouse();
+		virtual void ConfineCursor() = 0;
+		virtual void FreeCursor() = 0;
 	};
 }
