@@ -56,6 +56,7 @@ namespace tryn::gfx
 						if (tex->HasAlpha())
 						{
 							hasAlpha = true;
+							shaderCode += "Msk";
 						}
 						step.AddBindable(std::move(tex));
 					}

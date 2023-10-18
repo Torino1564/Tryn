@@ -1,4 +1,5 @@
 #include "LightVector.hlsli"
+#include "Operations.hlsli"
 
 cbuffer PointLightCBuf : register(b0)
 {
@@ -22,21 +23,24 @@ cbuffer ObjectCBuf : register(b1)
 Texture2D tex : register(t0);
 SamplerState splr : register(s0);
 
-float4 main(const float3 viewPos : POSITION, const float3 viewNormal : NORMAL, const float2 tc : Texcoord ,const float4 pos : SV_POSITION) : SV_TARGET
+float4 main(const float3 viewPos : POSITION, float3 viewNormal : NORMAL, const float2 tc : Texcoord ,const float4 pos : SV_POSITION) : SV_TARGET
 {
+    const float4 dtex = tex.Sample(splr, tc);
+#ifdef MASK
+    // bail if highly translucent
+    clip(dtex.a < 0.1f ? -1 : 1);
+    // flip normal when backface
+    if (dot(viewNormal, viewPos) >= 0.0f)
+    {
+        viewNormal = -viewNormal;
+    }
+#endif
+	
 	const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewPos);
-
-	const float attenuation = 1.0f / (constantAtt + linearAtt * lv.distToL + quadraticAtt * pow(lv.distToL, 2));
-	const float3 diffuse = diffuseColor * diffuseIntensity * attenuation * max(0.0f, dot(lv.dirToL, viewNormal));
-
-	const float3 w = viewNormal * dot(lv.vToL, viewNormal);
-	const float3 r = normalize(w * 2.0f - lv.vToL);
-	// vector from camera to fragment (in view space)
-	const float3 viewCamToFrag = normalize(viewPos);
-	// calculate specular component color based on angle between
-	// viewing vector and reflection vector, narrow with power function
-	const float3 specular = attenuation * specularColor * specularWeight * pow(max(0.0f, dot(-r, viewCamToFrag)), specularGloss);
-
-	//return float4(saturate((diffuse + ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
-	return float4(saturate((diffuse + ambient) * tex.Sample(splr,tc).rgb), 1.0f);
+    viewNormal = normalize(viewNormal);
+    const float attenuation = Attenuate(constantAtt, linearAtt, quadraticAtt, lv.distToL);
+    const float3 diffuse = Diffuse(diffuseColor, diffuseIntensity, attenuation, lv.dirToL, viewNormal);
+    const float3 specular = Speculate(specularColor, specularWeight, viewNormal, lv.vToL, viewPos, attenuation, specularGloss);
+	
+    return float4(saturate((diffuse + ambient) * dtex.rgb + specular), 1.0f);
 }

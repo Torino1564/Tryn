@@ -2046,6 +2046,14 @@
     <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcNrm_VS.hlsl" />
     <FxCompile Include="src\gfx\dx11\PS\PhongTexNrm_PS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\PhongTexNrm_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\PhongTexMsk_PS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\PhongTexMskNrm_PS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\PhongTexMskSpc_PS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\PhongTexMskSpcNrm_PS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMsk_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskNrm_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpc_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcNrm_VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="third\imgui\LICENSE.txt" />

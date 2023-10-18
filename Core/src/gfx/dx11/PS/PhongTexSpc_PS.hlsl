@@ -25,8 +25,20 @@ Texture2D tex : register(t0);
 Texture2D spec : register(t1);
 SamplerState splr : register(s0);
 
-float4 main(const float3 viewPos : POSITION, const float3 viewNormal : NORMAL, const float2 tc : Texcoord, const float4 pos : SV_POSITION) : SV_TARGET
+float4 main(const float3 viewPos : POSITION, float3 viewNormal : NORMAL, const float2 tc : Texcoord, const float4 pos : SV_POSITION) : SV_TARGET
 {
+    const float4 dtex = tex.Sample(splr, tc);
+#ifdef MASK
+    // bail if highly translucent
+    clip(dtex.a < 0.1f ? -1 : 1);
+    // flip normal when backface
+    if (dot(viewNormal, viewPos) >= 0.0f)
+    {
+        viewNormal = -viewNormal;
+    }
+#endif
+    
+    viewNormal = normalize(viewNormal);
 	const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewPos);
 
     const float attenuation = Attenuate(constantAtt, linearAtt, quadraticAtt, lv.distToL);
@@ -47,5 +59,5 @@ float4 main(const float3 viewPos : POSITION, const float3 viewNormal : NORMAL, c
 
 	float3 specular = Speculate(diffuseColor * specularSample.rgb, specularWeight, viewNormal, lv.vToL, viewPos, attenuation, specularPower);
 
-	return float4(saturate((diffuse + ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
+	return float4(saturate((diffuse + ambient) * dtex.rgb + specular), 1.0f);
 }
