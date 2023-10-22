@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\app\Initialization.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
@@ -50,6 +51,7 @@
     <ClCompile Include="src\gfx\dx11\TrynWLR.h" />
     <ClCompile Include="src\gfx\vulkan\imgui_impl_vulkan.cpp" />
     <ClCompile Include="src\ioc\Container.cpp" />
+    <ClCompile Include="src\ioc\Ioc.cpp" />
     <ClCompile Include="src\ioc\Singletons.cpp" />
     <ClCompile Include="src\log\Channel.cpp" />
     <ClCompile Include="src\log\EntryBuilder.cpp" />
@@ -63,7 +65,7 @@
     <ClCompile Include="src\utl\Exception.cpp" />
     <ClCompile Include="src\utl\StackTrace.cpp" />
     <ClCompile Include="src\utl\String.cpp" />
-    <ClCompile Include="src\win\Boot.cpp" />
+    <ClCompile Include="src\win\Win.cpp" />
     <ClCompile Include="src\win\imgui_impl_win32.cpp" />
     <ClCompile Include="src\win\IWindow.cpp" />
     <ClCompile Include="src\win\Keyboard.cpp" />
@@ -81,6 +83,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app\App.h" />
+    <ClInclude Include="src\app\EntryPoint.h" />
+    <ClInclude Include="src\app\Initialization.h" />
     <ClInclude Include="src\ccr\GenericTaskQueue.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
@@ -136,6 +140,7 @@
     <ClInclude Include="src\gfx\vulkan\imgui_impl_vulkan.h" />
     <ClInclude Include="src\ioc\Container.h" />
     <ClInclude Include="src\ioc\Exception.h" />
+    <ClInclude Include="src\ioc\Ioc.h" />
     <ClInclude Include="src\log\Driver.h" />
     <ClInclude Include="src\ioc\Singletons.h" />
     <ClInclude Include="src\log\Channel.h" />
@@ -159,7 +164,7 @@
     <ClInclude Include="src\utl\StackTrace.h" />
     <ClInclude Include="src\utl\String.h" />
     <ClInclude Include="src\utl\Timer.h" />
-    <ClInclude Include="src\win\Boot.h" />
+    <ClInclude Include="src\win\Win.h" />
     <ClInclude Include="src\win\Exception.h" />
     <ClInclude Include="src\win\imgui_impl_win32.h" />
     <ClInclude Include="src\win\IWindow.h" />

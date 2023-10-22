@@ -23,6 +23,7 @@ private:
 	std::unique_ptr<ent::IEntity> sponza;
 	std::unique_ptr<ent::IEntity> wall;
 	std::unique_ptr<ent::IEntity> desk;
+	std::unique_ptr<ent::IEntity> gobber;
 	gfx::Camera camera;
 
 	int tallyX = 0, tallyY = 0;

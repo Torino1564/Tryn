@@ -1,11 +1,9 @@
-#include "Boot.h"
+#include "Win.h"
 #include <Core/src/ioc/Container.h>
 #include <Core/src/ioc/Singletons.h>
 #include "WindowClass.h"
 #include "Window.h"
 
-// how to forward this for rval goodness?
-// how to do this for const bois?
 template<class T>
 auto operator|(std::shared_ptr<T> lhs, std::shared_ptr<T> rhs)
 {
@@ -31,7 +29,7 @@ namespace tryn::win
 			);
 			});
 
-		ioc::Get().Register<IWindowClass>([] { // passthru here?
+		ioc::Get().Register<IWindowClass>([] {
 			return std::make_shared<WindowClass>();
 			});
 

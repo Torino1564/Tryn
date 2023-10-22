@@ -14,7 +14,6 @@ cbuffer PointLightCBuf : register(b0)
 
 cbuffer ObjectCBuf : register(b1)
 {
-	float3 materialColor;
 	float3 specularColor;
 	float specularWeight;
 	float specularGloss;

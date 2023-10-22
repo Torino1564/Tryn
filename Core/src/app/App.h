@@ -23,4 +23,6 @@ namespace tryn::app
 		std::shared_ptr<gfx::IGraphics> gfx;
 		long double dt;
 	};
+
+	App* CreateApp(int argc, char** argv);
 }

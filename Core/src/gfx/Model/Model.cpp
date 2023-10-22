@@ -109,7 +109,7 @@ namespace tryn::gfx
 	}
 	Node Model::ParseNode(int& nextId, const aiNode& node, glm::vec3 scale)
 	{
-		const auto transform = ScaleTranslation(glm::transpose(glm::make_mat4(reinterpret_cast<const float*>(&node.mTransformation))), scale);
+		const auto transform = ScaleTranslation(transpose(glm::make_mat4(reinterpret_cast<const float*>(&node.mTransformation))), scale);
 
 		std::vector<Mesh*> meshes;
 		meshes.reserve(node.mNumMeshes);

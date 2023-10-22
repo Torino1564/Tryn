@@ -1,6 +1,7 @@
 #include "DX11Texture.h"
 #include <Core/src/gfx/dx11/GraphicsError.h>
 #include <Core/third/stb_image/stb_image.h>
+#include <Core/src/utl/String.h>
 
 namespace tryn::gfx
 {
@@ -19,7 +20,7 @@ namespace tryn::gfx
 			hasAlpha = true;
 		}
 
-		trynass_msg(texture != nullptr, L"The specified file could not be loaded!");
+		trynass_msg(texture != nullptr, utl::ToWide(std::format("The specified file could not be loaded! File: {}", this->path.c_str())));
 
 		D3D11_TEXTURE2D_DESC td = {};
 		td.Width = width;

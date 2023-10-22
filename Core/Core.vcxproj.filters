@@ -69,7 +69,7 @@
     <ClCompile Include="src\ccr\GenericTaskQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\win\Boot.cpp">
+    <ClCompile Include="src\win\Win.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\dx11\Dx11Graphics.cpp">
@@ -216,6 +216,12 @@
     <ClCompile Include="third\stb_image\stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ioc\Ioc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\Initialization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -311,7 +317,7 @@
     <ClInclude Include="src\ccr\GenericTaskQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\win\Boot.h">
+    <ClInclude Include="src\win\Win.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\dx11\Dx11Graphics.h">
@@ -1587,6 +1593,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="third\stb_image\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\EntryPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\Initialization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ioc\Ioc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

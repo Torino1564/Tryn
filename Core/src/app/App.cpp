@@ -21,8 +21,8 @@ namespace tryn::app
 			auto end = std::chrono::high_resolution_clock::now();
 			auto duration = end - start;
 			dt = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-			trylog.info(std::to_wstring(dt));
 		}
+		trylog.info(L"Closing window");
 	}
 
 	void App::PreFrame()
