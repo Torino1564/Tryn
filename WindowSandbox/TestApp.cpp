@@ -20,8 +20,11 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};
 
-	//suzanne = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne", "resources/models/greenSuzanne.fbx", glm::vec3{ 0.01f,0.01f,0.01f });
-	sponza = std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{0.01f,0.01f,0.01f});
+	suzanne1 = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne1", "resources/models/suzanneHp.obj", glm::vec3{ 0.01f,0.01f,0.01f });
+	suzanne2 = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne2", "resources/models/suzanneHp.obj", glm::vec3{ 0.01f,0.01f,0.01f });
+	suzanne3 = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne3", "resources/models/suzanneHp.obj", glm::vec3{ 0.01f,0.01f,0.01f });
+	suzanne4 = std::make_unique<ent::BasicEntity>(Gfx(), "suzanne4", "resources/models/suzanneHp.obj", glm::vec3{ 0.01f,0.01f,0.01f });
+	//sponza = std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{0.01f,0.01f,0.01f});
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 	//wall = std::make_unique<ent::BasicEntity>(Gfx(), "wall", "resources/models/brick_wall/brick_wall.obj");
 	this->wnd->keyboard.DisableAutoRepeat();
@@ -34,8 +37,11 @@ void TestApp::DoFrame()
 	{
 		static constexpr float angle = 0.001f;
 		PROFILE_SCOPE("Update Rotation");
-		//suzanne->GetModel().SpawnControlWindow();
-		sponza->GetModel().SpawnControlWindow();
+		suzanne1->SpawnControlWindow();
+		//suzanne2->SpawnControlWindow();
+		//suzanne3->SpawnControlWindow();
+		//suzanne4->SpawnControlWindow();
+		//sponza->SpawnControlWindow();
 		//wall->GetModel().SpawnControlWindow();
 		pPointLight->ShowControls();
 		pPointLight->GetModel().SpawnControlWindow();
@@ -43,8 +49,11 @@ void TestApp::DoFrame()
 	{
 		PROFILE_SCOPE("Draw call");
 		pPointLight->Draw();
- 		//suzanne->Draw();
-		sponza->Draw();
+		suzanne1->Draw();
+		//suzanne2->Draw();
+		//suzanne3->Draw();
+		//suzanne4->Draw();
+		//sponza->Draw();
 		//wall->Draw();
 	}
 	{

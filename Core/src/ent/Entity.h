@@ -7,16 +7,23 @@ namespace tryn::ent
 	class IEntity
 	{
 	public:
+		struct Settings
+		{
+		public:
+			glm::vec3 angles;
+			glm::vec3 position;
+		};
+	public:
 		virtual ~IEntity() = default;
 		void Draw();
-		// TODO Remove this:
-		gfx::Model& GetModel()
-		{
-			return *model;
-		}
+		void SpawnControlWindow();
+	public:
+		Settings settings = {};
+
 	protected:
 		std::string name;
 		std::unique_ptr<gfx::Model> model;
+		glm::mat4 transform = {};
 	};
 
 	class BasicEntity : public IEntity

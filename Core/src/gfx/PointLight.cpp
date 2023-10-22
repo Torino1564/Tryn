@@ -35,6 +35,7 @@ namespace tryn::gfx
 	void PointLight::ShowControls()
 	{
 		ImGui::Begin("PointLight Parameters");
+		ImGui::SliderFloat3("Position", reinterpret_cast<float*>(&position), -20.0f, 20.0f);
 		ImGui::ColorEdit3("Diffuse Color", reinterpret_cast<float*>(&parameters.diffuseColor));
 		ImGui::ColorEdit3("Ambient Color", reinterpret_cast<float*>(&parameters.ambient));
 		ImGui::SliderFloat("Diffuse Intensity", &parameters.diffuseIntensity, 0.0f, 1.0f);
@@ -45,6 +46,7 @@ namespace tryn::gfx
 	}
 	void PointLight::Reset()
 	{
+		position = { 0.0f,0.0f,0.0f };
 		parameters.ambient = glm::vec3(0.01f, 0.01f, 0.01f);
 		parameters.viewLightPos = glm::vec3(0.0f, 0.0f, 0.0f);
 		parameters.diffuseColor = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -53,14 +55,14 @@ namespace tryn::gfx
 		parameters.linearAtt = 0.045f;
 		parameters.quadraticAtt = 0.0075f;
 	}
-	void PointLight::Draw() const
+	void PointLight::Draw()
 	{
-		pModel->Draw();
+		transformation = glm::translate(glm::mat4(1.0f), position);
+		pModel->Draw(transformation);
 	}
-	void PointLight::Bind( const glm::mat4 view ) const
+	void PointLight::Bind( const glm::mat4 view )
 	{
-		const auto temp = view * glm::vec4(pModel->GetPosition(), 1.0f);
-		(*pCBuf)["viewLightPos"].Get<glm::vec3>() = temp;
+		(*pCBuf)["viewLightPos"].Get<glm::vec3>() = view * glm::vec4(position + GetModel().GetPosition(), 1.0f);
 		(*pCBuf)["ambient"].Get<glm::vec3>() = parameters.ambient;
 		(*pCBuf)["diffuseColor"].Get<glm::vec3>() = parameters.diffuseColor;
 		(*pCBuf)["diffuseIntensity"].Get<float>() = parameters.diffuseIntensity;

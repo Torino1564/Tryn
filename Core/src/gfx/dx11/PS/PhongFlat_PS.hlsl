@@ -29,5 +29,5 @@ float4 main(const float3 viewPos : POSITION, float3 viewNormal : NORMAL) : SV_TA
     const float3 diffuse = Diffuse(diffuseColor, diffuseIntensity, attenuation, lv.dirToL, viewNormal);
     const float3 specular = Speculate(specularColor, specularWeight, viewNormal, lv.vToL, viewPos, attenuation, specularGloss);
 	
-	return float4(saturate((diffuse + ambient) * materialColor + specular), 1.0f);
+    return float4(saturate((diffuse + ambient) * materialColor + specular), 1.0f);
 }

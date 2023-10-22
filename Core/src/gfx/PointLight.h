@@ -10,8 +10,8 @@ namespace tryn::gfx
 		PointLight(IGraphics& gfx, float radius = 0.5f, glm::vec3 color = { 1.0f,1.0f,1.0f });
 		void ShowControls();
 		void Reset();
-		void Draw() const;
-		void Bind(const glm::mat4 view) const;
+		void Draw();
+		void Bind(const glm::mat4 view);
 		Model& GetModel();
 	public:
 		struct Parameters
@@ -27,6 +27,7 @@ namespace tryn::gfx
 	private:
 		Parameters parameters = {};
 		glm::vec3 position = { 0.0f,0.0f,0.0f };
+		glm::mat4 transformation;
 		std::unique_ptr<Model> pModel;
 		static std::shared_ptr<IPxConstantBuffer> pCBuf;
 	};

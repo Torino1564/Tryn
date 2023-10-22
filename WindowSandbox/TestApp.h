@@ -16,7 +16,10 @@ public:
 private:
 	std::unique_ptr<gfx::PointLight> pPointLight;
 	std::vector<ent::IEntity> entities;
-	std::unique_ptr<ent::IEntity> suzanne;
+	std::unique_ptr<ent::IEntity> suzanne1;
+	std::unique_ptr<ent::IEntity> suzanne2;
+	std::unique_ptr<ent::IEntity> suzanne3;
+	std::unique_ptr<ent::IEntity> suzanne4;
 	std::unique_ptr<ent::IEntity> sponza;
 	std::unique_ptr<ent::IEntity> wall;
 	std::unique_ptr<ent::IEntity> desk;
