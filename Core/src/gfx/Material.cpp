@@ -18,6 +18,20 @@ namespace tryn::gfx
 		modelPath(path.string())
 	{
 		const auto rootPath = path.parent_path().string() + "\\";
+		static bool isInitialized = false;
+		static std::string shaderRootPath;
+		if (!isInitialized)
+		{
+			shaderRootPath += __FILE__;
+			size_t trynPos = shaderRootPath.rfind("Tryn");
+			if (trynPos != std::string::npos)
+			{
+				shaderRootPath.erase(trynPos + 4);
+			}
+
+			shaderRootPath += "\\bin\\Shaders\\";
+			isInitialized = true;
+		}
 
 		{
 			aiString tempName;
@@ -101,10 +115,10 @@ namespace tryn::gfx
 				}
 				// Common
 				{
-					auto pvs = IVertexShader::Resolve(gfx, shaderCode + "_VS.cso");
+					auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + "_VS.cso");
 					step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 					step.AddBindable(std::move(pvs));
-					step.AddBindable(IPixelShader::Resolve(gfx, shaderCode + "_PS.cso"));
+					step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
 					if (isTextured)
 					{
 						step.AddBindable(ISampler::Resolve(gfx));
@@ -195,10 +209,10 @@ namespace tryn::gfx
 				}
 
 				{
-					auto pvs = IVertexShader::Resolve(gfx, shaderCode + "_VS.cso");
+					auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + "_VS.cso");
 					step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 					step.AddBindable(std::move(pvs));
-					step.AddBindable(IPixelShader::Resolve(gfx, shaderCode + "_PS.cso"));
+					step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
 					cbLayout.Solidify();
 					auto buf = IPxConstantBuffer::Resolve(gfx, std::move(cbLayout), 1);
 

@@ -15,6 +15,12 @@ namespace tryn::log
 	}
 	void Boot()
 	{
+		// Severy Level Policy
+		ioc::Get().Register<log::ISeverityLevelPolicy>([]
+			{
+				return std::make_shared<log::SeverityLevelPolicy>(log::Level::Info);
+			});
+
 		// container
 		ioc::Get().Register<log::IChannel>([] {
 			std::vector<std::shared_ptr<log::IDriver>> drivers{
@@ -37,11 +43,6 @@ namespace tryn::log
 
 		ioc::Get().Register<log::ITextFormatter>([] {
 			return std::make_shared<log::TextFormatter>();
-			});
-
-		ioc::Get().Register<log::ISeverityLevelPolicy>([]
-			{
-				return std::make_shared<log::SeverityLevelPolicy>(log::Level::Error);
 			});
 
 		// singleton

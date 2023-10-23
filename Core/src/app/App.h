@@ -24,5 +24,5 @@ namespace tryn::app
 		long double dt;
 	};
 
-	App* CreateApp(int argc, char** argv);
+	App* CreateApp(int argc, wchar_t** argv);
 }

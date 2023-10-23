@@ -3,13 +3,12 @@
 #include <Core/src/app/Initialization.h>
 #include <Core/src/utl/Assert.h>
 
-extern tryn::app::App* tryn::app::CreateApp(int argc, char** argv);
+extern tryn::app::App* tryn::app::CreateApp(int argc, wchar_t** argv);
 
 namespace tryn::app
 {
-	int Main(int argc, char** argv)
+	int Main(int argc, wchar_t** argv)
 	{
-
 		BootCore();
 		App* app = tryn::app::CreateApp(argc, argv);
 		trynass_msg(app, L"Application is null. Failed to run the client CreateApp function");
@@ -42,6 +41,8 @@ int WINAPI wWinMain(
 	PWSTR pCmdLine,
 	int nCmdShow)
 {
-	tryn::app::Main(__argc, __argv);
+	const auto argc = __argc;
+	wchar_t** argv = __wargv;
+	tryn::app::Main(argc, argv);
 }
 #endif
