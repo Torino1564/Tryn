@@ -11,7 +11,7 @@
 #include <Core/src/gfx/RenderQueue/Step.h>
 #include <Core/src/gfx/Assimp.h>
 
-tryn::app::App* tryn::app::CreateApp(int argc, wchar_t** argv)
+tryn::app::App* tryn::app::CreateApp(int argc, char** argv)
 {
 	auto window = ioc::Get().Resolve<win::IWindow>(win::IWindow::IocParams{ .size = spa::DimensionsI{.width = (1280), .height = (720) } });
 	window->SetTitle(L"Test WindowApp");

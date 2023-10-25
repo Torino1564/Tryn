@@ -3,14 +3,14 @@
 #include <Core/src/app/Initialization.h>
 #include <Core/src/utl/Assert.h>
 
-extern tryn::app::App* tryn::app::CreateApp(int argc, wchar_t** argv);
+extern tryn::app::App* tryn::app::CreateApp(int argc, char** argv);
 
 namespace tryn::app
 {
-	int Main(int argc, wchar_t** argv)
+	int Main(int argc, char** argv)
 	{
 		BootCore();
-		App* app = tryn::app::CreateApp(argc, argv);
+		std::unique_ptr<App> app(tryn::app::CreateApp(argc, argv));
 		trynass_msg(app, L"Application is null. Failed to run the client CreateApp function");
 		try
 		{
@@ -25,7 +25,6 @@ namespace tryn::app
 			MessageBoxA(nullptr, "Unknown error", nullptr, MB_OK | MB_ICONEXCLAMATION);
 		}
 
-		delete app;
 		return 0;
 	}
 }
@@ -41,8 +40,6 @@ int WINAPI wWinMain(
 	PWSTR pCmdLine,
 	int nCmdShow)
 {
-	const auto argc = __argc;
-	wchar_t** argv = __wargv;
-	tryn::app::Main(argc, argv);
+	tryn::app::Main(__argc, __argv);
 }
 #endif
