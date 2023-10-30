@@ -15,7 +15,8 @@ public:
 	void DoFrame() override;
 private:
 	std::unique_ptr<gfx::PointLight> pPointLight;
-	std::vector<ent::IEntity> entities;
+	std::vector<std::unique_ptr<ent::IEntity>> entities;
+	std::vector<std::future<void>> futures;
 	std::unique_ptr<ent::IEntity> suzanne1;
 	std::unique_ptr<ent::IEntity> suzanne2;
 	std::unique_ptr<ent::IEntity> suzanne3;
@@ -25,6 +26,8 @@ private:
 	std::unique_ptr<ent::IEntity> desk;
 	std::unique_ptr<ent::IEntity> gobber;
 	gfx::Camera camera;
+
+	static constexpr const int entityCount1D = 3;
 
 	int tallyX = 0, tallyY = 0;
 };
