@@ -98,7 +98,7 @@ namespace tryn::gfx
 		template<std::invocable F>
 		auto Dispatch(F&& f) const
 		{
-			return Dispatch_(f);
+			return Dispatch_(std::forward<F>(f));
 		}
 
 		// Resource Creation
@@ -141,7 +141,6 @@ namespace tryn::gfx
 			cv.notify_all();
 			return future;
 		}
-		void Stop_();
 	};
 	template<typename T>
 	auto& IGraphics::QueryInterface()

@@ -22,7 +22,6 @@ namespace tryn::app
 			auto duration = end - start;
 			dt = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 		}
-		gfx->Stop_();
 		trylog.info(L"Closing window");
 	}
 

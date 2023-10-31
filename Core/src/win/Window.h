@@ -32,6 +32,7 @@ namespace tryn::win
 		auto Dispatch_(F&& f) const
 		{
 			auto future = tasks_.Push(std::forward<F>(f));
+			NotifyTaskDispatch_();
 			return future;
 		}
 		void NotifyTaskDispatch_() const;
