@@ -6,7 +6,9 @@ namespace tryn::gfx
 {
     void Camera::Bind(IGraphics& gfx)
     {
-        gfx.SetCamera(GetViewMatrix());
+        gfx.Dispatch([&] {
+            gfx.SetCamera(GetViewMatrix());
+            });
     }
     void Camera::Update()
     {

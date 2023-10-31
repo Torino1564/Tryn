@@ -26,6 +26,11 @@
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
 
+namespace tryn::app
+{
+	class App;
+}
+
 namespace tryn::gfx
 {
 	enum class GraphicAPI
@@ -58,6 +63,7 @@ namespace tryn::gfx
 
 	class IGraphics
 	{
+		friend class app::App;
 	public:
 		struct IocParams
 		{
@@ -92,8 +98,7 @@ namespace tryn::gfx
 		template<std::invocable F>
 		auto Dispatch(F&& f) const
 		{
-			auto future = tasks_.Push(std::forward<F>(f));
-			return future;
+			return Dispatch_(f);
 		}
 
 		// Resource Creation
@@ -136,6 +141,7 @@ namespace tryn::gfx
 			cv.notify_all();
 			return future;
 		}
+		void Stop_();
 	};
 	template<typename T>
 	auto& IGraphics::QueryInterface()

@@ -158,7 +158,7 @@ namespace tryn::gfx::dx11
 
 	void Graphics::ClearBuffer(float r, float g, float b)
 	{
-		Dispatch_([&]
+		Dispatch_([=]
 		{
 			const float color[]{ r, g, b, 1.0f };
 			pContext->ClearRenderTargetView(pTarget.Get(), color);

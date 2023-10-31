@@ -339,7 +339,7 @@ namespace tryn::win
 		tasks_.PopExecute();
 
 		MSG msg{};
-		while (GetMessageW(&msg, hWnd_, 0, 0)) {
+		while (GetMessageW(&msg, hWnd_, 0, 0) && !closing_) {
 			TranslateMessage(&msg);
 			DispatchMessageW(&msg);
 		}

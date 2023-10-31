@@ -29,7 +29,7 @@ namespace tryn::gfx
 	{
 		this->transform = transform;
 
-		gfx.Dispatch([&] {
+		auto future = gfx.Dispatch([&] {
 			pVertexBuffer->Bind();
 			pIndexBuffer->Bind();
 			pTopology->Bind();
@@ -40,6 +40,7 @@ namespace tryn::gfx
 				technique.Draw(gfx, this);
 			}
 			});
+		future.get();
 	}
 	void Drawable::InitTransformCBuf(IGraphics& gfx)
 	{

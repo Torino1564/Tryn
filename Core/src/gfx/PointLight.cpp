@@ -5,6 +5,8 @@
 namespace tryn::gfx
 {
 	PointLight::PointLight(IGraphics& gfx, float radius, glm::vec3 color)
+		:
+		gfx(gfx)
 	{
 		// Model
 		pModel = std::make_unique<Model>(gfx, "resources/models/sphere.obj", glm::vec3{0.1f,0.1f,0.1f}, Techniques::Flat);
@@ -70,7 +72,9 @@ namespace tryn::gfx
 		(*pCBuf)["linearAtt"].Get<float>() = parameters.linearAtt;
 		(*pCBuf)["quadraticAtt"].Get<float>() = parameters.quadraticAtt;
 
-		pCBuf->Bind();
+		gfx.Dispatch([view] {
+			pCBuf->Bind();
+			});
 	}
 	Model& PointLight::GetModel()
 	{

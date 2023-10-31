@@ -38,10 +38,15 @@ void tryn::gfx::IGraphics::KernelLoop_()
 
 	while (!closing_)
 	{
-		cv.wait(lock, [&] {return !tasks_.Empty(); });
+		//cv.wait(lock, [&] {return !tasks_.Empty(); });
 		while (!tasks_.Empty())
 		{
 			tasks_.PopExecute();
 		}
 	}
+}
+
+void tryn::gfx::IGraphics::Stop_()
+{
+	closing_ = true;
 }

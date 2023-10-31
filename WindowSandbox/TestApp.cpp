@@ -61,7 +61,7 @@ void TestApp::DoFrame()
 		pPointLight->Draw();
 		//suzanne1->Draw();
 		//suzanne2->Draw();
-		gobber->Draw();
+		//gobber->Draw();
 		//suzanne3->Draw();
 		//suzanne4->Draw();
 		//sponza->Draw();
@@ -138,7 +138,6 @@ void TestApp::DoFrame()
 				wnd->EnableCursor();
 			}
 		}
-		
 		camera.Update();
 	}
 }
