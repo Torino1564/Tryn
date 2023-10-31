@@ -24,7 +24,25 @@ namespace tryn::gfx::dx11
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext1>& GetContext();
 		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();
 
-		static DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format);
+		static constexpr DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
+		{
+			switch (format)
+			{
+			case VertexLayout::Format::Vec2F:
+				return DXGI_FORMAT_R32G32_FLOAT;
+				break;
+			case VertexLayout::Format::Vec3F:
+				return DXGI_FORMAT_R32G32B32_FLOAT;
+				break;
+			case VertexLayout::Format::Vec4F:
+				return DXGI_FORMAT_R32G32B32A32_FLOAT;
+				break;
+			case VertexLayout::Format::Vec4C_UNorm:
+				return DXGI_FORMAT_R8G8B8A8_UNORM;
+				break;
+			}
+			return DXGI_FORMAT_UNKNOWN;
+		}
 
 		static std::vector<D3D11_INPUT_ELEMENT_DESC> GetSlottedLayout(const VertexLayout& vLayout, int slot);
 

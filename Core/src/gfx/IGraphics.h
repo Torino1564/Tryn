@@ -12,6 +12,10 @@
 #include <variant>
 #include "ImguiManager.h"
 #include <Core/third/glm/glm.hpp>
+#include <thread>
+#include <atomic>
+#include <semaphore>
+#include <Core/src/ccr/GenericTaskQueue.h>
 
 #define GRAPHIC_APIS \
 		X( DX11 ) \
@@ -67,31 +71,13 @@ namespace tryn::gfx
 		virtual void EndFrame() = 0;
 		virtual void ClearBuffer(float r, float g, float b) = 0;
 		virtual void DrawIndexed(int count) = 0;
-		glm::mat4& GetCameraMatrix()
-		{
-			return camera;
-		}
-		void SetCamera(glm::mat4 camera)
-		{
-			this->camera = std::move(camera);
-		}
-		glm::mat4& GetProjectionMatrix()
-		{
-			return projection;
-		}
-		void SetProjection(glm::mat4 projection)
-		{
-			this->projection = std::move(projection);
-		}
+		glm::mat4& GetCameraMatrix();
+		void SetCamera(glm::mat4 camera);
+		glm::mat4& GetProjectionMatrix();
+		void Wait() const;
+		void SetProjection(glm::mat4 projection);
 		template<typename T>
-		auto& QueryInterface()
-		{
-			auto ptr = static_cast<T*>(this);
-#ifdef _DEBUG
-			trynass_msg(typeid(T) == typeid(this), L"Attempt to cast query IGraphics interface to an invalid type");
-#endif
-			return *ptr;
-		}
+		auto& QueryInterface();
 		virtual GraphicAPI GetType() = 0;
 		static const std::vector<std::string>& GetApiArray()
 		{
@@ -102,6 +88,14 @@ namespace tryn::gfx
 			};
 			return graphicApiString;
 		}
+
+		template<std::invocable F>
+		auto Dispatch(F&& f) const
+		{
+			auto future = tasks_.Push(std::forward<F>(f));
+			return future;
+		}
+
 		// Resource Creation
 		virtual std::shared_ptr<IVertexBuffer>		CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string tag = "?") = 0;
 		virtual std::shared_ptr<IIndexBuffer>		CreateIndexBuffer(std::shared_ptr<const std::vector<int>> indices, std::string tag = "?") = 0;
@@ -120,8 +114,36 @@ namespace tryn::gfx
 		virtual std::unique_ptr<ITransformCBuf>		CreateTransformCBuf() = 0;
 
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
-	private:
+	protected:
 		glm::mat4 camera = {};
 		glm::mat4 projection = {};
+
+		// Multithreading stuff
+		std::mutex mtx;
+		mutable std::condition_variable cv;
+		std::binary_semaphore startSignal_{ 0 };
+		mutable ccr::GenericTaskQueue tasks_;
+		std::jthread kernelThread_;
+		std::atomic<bool> closing_;
+		std::atomic<bool> frameReady_;
+
+		void InitThread();
+		virtual void KernelLoop_();
+		template<std::invocable F>
+		auto Dispatch_(F&& f) const
+		{
+			auto future = tasks_.Push(std::forward<F>(f));
+			cv.notify_all();
+			return future;
+		}
 	};
+	template<typename T>
+	auto& IGraphics::QueryInterface()
+	{
+		auto ptr = static_cast<T*>(this);
+#ifdef _DEBUG
+		trynass_msg(typeid(T) == typeid(this), L"Attempt to cast query IGraphics interface to an invalid type");
+#endif
+		return *ptr;
+	}
 }

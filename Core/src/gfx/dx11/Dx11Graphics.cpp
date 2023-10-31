@@ -24,127 +24,153 @@ namespace tryn::gfx::dx11
 {
 	Graphics::Graphics(HWND hWnd, int width, int height)
 	{
-		DXGI_SWAP_CHAIN_DESC swapDesc = {};
-		swapDesc.BufferDesc.Width = width;
-		swapDesc.BufferDesc.Height = height;
-		swapDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		swapDesc.BufferDesc.RefreshRate.Numerator = 0;
-		swapDesc.BufferDesc.RefreshRate.Denominator = 0;
-		swapDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-		swapDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		swapDesc.SampleDesc.Count = 1;
-		swapDesc.SampleDesc.Quality = 0;
-		swapDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swapDesc.BufferCount = 1;
-		swapDesc.OutputWindow = hWnd;
-		swapDesc.Windowed = TRUE;
-		swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-		swapDesc.Flags = 0;
+		InitThread();
 
-		UINT swapCreateFlags = 0u;
+		auto future = Dispatch_([=, this] {
+			
+			DXGI_SWAP_CHAIN_DESC swapDesc = {};
+			swapDesc.BufferDesc.Width = width;
+			swapDesc.BufferDesc.Height = height;
+			swapDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			swapDesc.BufferDesc.RefreshRate.Numerator = 0;
+			swapDesc.BufferDesc.RefreshRate.Denominator = 0;
+			swapDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+			swapDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+			swapDesc.SampleDesc.Count = 1;
+			swapDesc.SampleDesc.Quality = 0;
+			swapDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+			swapDesc.BufferCount = 1;
+			swapDesc.OutputWindow = hWnd;
+			swapDesc.Windowed = TRUE;
+			swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+			swapDesc.Flags = 0;
+
+			UINT swapCreateFlags = 0u;
 #ifndef NDEBUG
-		swapCreateFlags |= D3D11_CREATE_DEVICE_DEBUG;
+			swapCreateFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-		ID3D11DeviceContext* pThunkContext = nullptr;
+			ID3D11DeviceContext* pThunkContext = nullptr;
 
-		D3D11CreateDeviceAndSwapChain(
-			nullptr,
-			D3D_DRIVER_TYPE_HARDWARE,
-			nullptr,
-			swapCreateFlags,
-			nullptr,
-			0,
-			D3D11_SDK_VERSION,
-			&swapDesc,
-			&pSwap,
-			&pDevice,
-			nullptr,
-			&pThunkContext
-		) >> chk;
+			D3D11CreateDeviceAndSwapChain(
+				nullptr,
+				D3D_DRIVER_TYPE_HARDWARE,
+				nullptr,
+				swapCreateFlags,
+				nullptr,
+				0,
+				D3D11_SDK_VERSION,
+				&swapDesc,
+				&pSwap,
+				&pDevice,
+				nullptr,
+				&pThunkContext
+			) >> chk;
 
-		pThunkContext->QueryInterface(__uuidof(ID3D11DeviceContext1), (void**)&pContext);
+			pThunkContext->QueryInterface(__uuidof(ID3D11DeviceContext1), (void**)&pContext);
 
-		// backbuffer
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
-		pSwap->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer) >> chk;
-		pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pTarget.ReleaseAndGetAddressOf());
+			// backbuffer
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
+			pSwap->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer) >> chk;
+			pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pTarget.ReleaseAndGetAddressOf());
 
-		dimensions.height = height;
-		dimensions.width = width;
+			dimensions.height = height;
+			dimensions.width = width;
 
-		// Z Buffer
-		D3D11_DEPTH_STENCIL_DESC dsd = {};
-		dsd.DepthEnable = TRUE;
-		dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		dsd.DepthFunc = D3D11_COMPARISON_LESS;
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSState;
-		pDevice->CreateDepthStencilState(&dsd, &pDSState) >> chk;
-		pContext->OMSetDepthStencilState(pDSState.Get(), 1u);
+			// Z Buffer
+			D3D11_DEPTH_STENCIL_DESC dsd = {};
+			dsd.DepthEnable = TRUE;
+			dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+			dsd.DepthFunc = D3D11_COMPARISON_LESS;
+			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSState;
+			pDevice->CreateDepthStencilState(&dsd, &pDSState) >> chk;
+			pContext->OMSetDepthStencilState(pDSState.Get(), 1u);
 
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthStencil;
-		D3D11_TEXTURE2D_DESC td = {};
-		td.Height = height;
-		td.Width = width;
-		td.MipLevels = 1u;
-		td.ArraySize = 1u;
-		td.Format = DXGI_FORMAT_D32_FLOAT;
-		td.SampleDesc.Count = 1u;
-		td.SampleDesc.Quality = 0u;
-		td.Usage = D3D11_USAGE_DEFAULT;
-		td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		pDevice->CreateTexture2D(&td, nullptr, &pDepthStencil) >> chk;
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthStencil;
+			D3D11_TEXTURE2D_DESC td = {};
+			td.Height = height;
+			td.Width = width;
+			td.MipLevels = 1u;
+			td.ArraySize = 1u;
+			td.Format = DXGI_FORMAT_D32_FLOAT;
+			td.SampleDesc.Count = 1u;
+			td.SampleDesc.Quality = 0u;
+			td.Usage = D3D11_USAGE_DEFAULT;
+			td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+			pDevice->CreateTexture2D(&td, nullptr, &pDepthStencil) >> chk;
 
-		D3D11_DEPTH_STENCIL_VIEW_DESC dsvd = {};
-		dsvd.Format = DXGI_FORMAT_UNKNOWN;
-		dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-		dsvd.Texture2D.MipSlice = 0u;
-		pDevice->CreateDepthStencilView(pDepthStencil.Get(), &dsvd, &pDSV) >> chk;
+			D3D11_DEPTH_STENCIL_VIEW_DESC dsvd = {};
+			dsvd.Format = DXGI_FORMAT_UNKNOWN;
+			dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+			dsvd.Texture2D.MipSlice = 0u;
+			pDevice->CreateDepthStencilView(pDepthStencil.Get(), &dsvd, &pDSV) >> chk;
 
-		pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
+			pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
 
-		// viewport
-		D3D11_VIEWPORT vp;
-		vp.Width = static_cast<float>(width);
-		vp.Height = static_cast<float>(height);
-		vp.MinDepth = 0.0f;
-		vp.MaxDepth = 1.0f;
-		vp.TopLeftX = 0.0f;
-		vp.TopLeftY = 0.0f;
-		pContext->RSSetViewports(1u, &vp);
+			// viewport
+			D3D11_VIEWPORT vp;
+			vp.Width = static_cast<float>(width);
+			vp.Height = static_cast<float>(height);
+			vp.MinDepth = 0.0f;
+			vp.MaxDepth = 1.0f;
+			vp.TopLeftX = 0.0f;
+			vp.TopLeftY = 0.0f;
+			pContext->RSSetViewports(1u, &vp);
 
-		pSwap->SetFullscreenState((BOOL)false, nullptr) >> chk;
+			pSwap->SetFullscreenState((BOOL)false, nullptr) >> chk;
 
-		ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
+			ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
+
+			});
+
+		startSignal_.release();
+		future.get();
 	}
 
 	Graphics::~Graphics()
 	{
-		ImGui_ImplDX11_Shutdown();
+		Dispatch_([this] {
+			ImGui_ImplDX11_Shutdown();
+			closing_ = true;
+			});
 	}
 
 	void Graphics::BeginFrame()
 	{
-		ImGui_ImplDX11_NewFrame();
-		ClearBuffer(0.0f,0.0f,0.2f);
+		auto future = Dispatch_([this]
+			{
+				frameReady_ = false;
+				ImGui_ImplDX11_NewFrame();
+				ClearBuffer(0.0f,0.0f,0.2f);
+			});
+		future.get();
 	}
 
 	void Graphics::EndFrame()
 	{
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-		pSwap->Present(1u, 0u) >> chk;
+		auto future = Dispatch_([&] {
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			pSwap->Present(1u, 0u) >> chk;
+			frameReady_ = true;
+			});
+		future.wait();
 	}
 
 	void Graphics::ClearBuffer(float r, float g, float b)
 	{
-		const float color[]{ r, g, b, 1.0f };
-
-		pContext->ClearRenderTargetView(pTarget.Get(), color);
-		pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+		Dispatch_([&]
+		{
+			const float color[]{ r, g, b, 1.0f };
+			pContext->ClearRenderTargetView(pTarget.Get(), color);
+			pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+		});
 	}
 	void Graphics::DrawIndexed(int count)
 	{
-		pContext->DrawIndexed(count, 0u, 0u);
+		Dispatch_([this,count]
+		{
+			pContext->DrawIndexed(count, 0u, 0u);
+		});
 	}
 	GraphicAPI Graphics::GetType()
 	{
@@ -157,28 +183,6 @@ namespace tryn::gfx::dx11
 	Microsoft::WRL::ComPtr<ID3D11Device>& Graphics::GetDevice()
 	{
 		return pDevice;
-	}
-
-	DXGI_FORMAT Graphics::MapDXGIFormat(VertexLayout::Format format)
-	{
-		{
-			switch (format)
-			{
-			case VertexLayout::Format::Vec2F:
-				return DXGI_FORMAT_R32G32_FLOAT;
-				break;
-			case VertexLayout::Format::Vec3F:
-				return DXGI_FORMAT_R32G32B32_FLOAT;
-				break;
-			case VertexLayout::Format::Vec4F:
-				return DXGI_FORMAT_R32G32B32A32_FLOAT;
-				break;
-			case VertexLayout::Format::Vec4C_UNorm:
-				return DXGI_FORMAT_R8G8B8A8_UNORM;
-				break;
-			}
-			return DXGI_FORMAT_UNKNOWN;
-		}
 	}
 
 	std::vector<D3D11_INPUT_ELEMENT_DESC> Graphics::GetSlottedLayout(const VertexLayout& vLayout, int slot)
@@ -206,74 +210,123 @@ namespace tryn::gfx::dx11
 
 	std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(std::shared_ptr<VertexBuffer> pCpuBuffer, std::string tag)
 	{
-		return std::make_shared<DX11VertexBuffer>(*this, pCpuBuffer, tag);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11VertexBuffer>(*this, pCpuBuffer, tag);
+
+		});
+		return future.get();
 	}
 
 	std::shared_ptr<IPolyVBuffer> Graphics::CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>& pCpuVBs, std::string tag)
 	{
-		return std::make_shared<DX11PolyVBuffer>(*this, pCpuVBs, tag);
+		auto future = Dispatch_([&]
+		{
+			return std::make_shared<DX11PolyVBuffer>(*this, pCpuVBs, tag);
+		});
+		return future.get();
 	}
 
 	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::shared_ptr<const std::vector<int>> indices, std::string tag)
 	{
-		return std::make_shared<DX11IndexBuffer>(*this, indices, tag);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11IndexBuffer>(*this, indices, tag);
+			});
+		return future.get();
 	}
 
 	std::shared_ptr<IVertexShader> Graphics::CreateVertexShader(std::string path)
 	{
-		return std::make_shared<DX11VertexShader>(*this, path);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11VertexShader>(*this, path);
+			});
+		return future.get();
 	}
 
 	std::shared_ptr<IPixelShader> Graphics::CreatePixelShader(std::string path)
 	{
-		return std::make_shared<DX11PixelShader>(*this, path);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11PixelShader>(*this, path);
+			});
+		return future.get();
 	}
 
 	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs)
 	{
-		return std::make_shared<DX11InputLayout>(*this, vb, vs);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11InputLayout>(*this, vb, vs);
+			});
+		return future.get();
 	}
 
 	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(IPolyVBuffer& pvb, IVertexShader& vs)
 	{
-		return std::make_shared<DX11InputLayout>(*this, pvb, vs);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11InputLayout>(*this, pvb, vs);
+			});
+		return future.get();
 	}
 
 	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs)
 	{
-		return std::make_shared<DX11InputLayout>(*this, vLayout, vs);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11InputLayout>(*this, vLayout, vs);
+			});
+		return future.get();
 	}
 
 	std::shared_ptr<IPrimitiveTopology> Graphics::CreatePrimitiveTopology()
 	{
-		return std::make_shared<DX11PrimitiveTopology>(*this);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11PrimitiveTopology>(*this);
+			});
+		return future.get();
 	}
 
 	std::shared_ptr<IVtxConstantBuffer> Graphics::CreateVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
 	{
-		return std::make_shared<DX11VtxConstantBuffer>(*this, std::move(layout), slot, tag);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11VtxConstantBuffer>(*this, std::move(layout), slot, tag);
+			});
+		return future.get();
 	}
 
 	std::shared_ptr<IPxConstantBuffer> Graphics::CreatePxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
 	{
-		return std::make_shared<DX11PxConstantBuffer>(*this, std::move(layout), slot, tag);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11PxConstantBuffer>(*this, std::move(layout), slot, tag);
+			});
+		return future.get();
 	}
 
 	std::unique_ptr<ITransformCBuf> Graphics::CreateTransformCBuf()
 	{
-		return std::make_unique<DX11TransformCBuf>(*this);
+		auto future = Dispatch_([&] {
+			return std::make_unique<DX11TransformCBuf>(*this);
+			});
+		return future.get();
 	}
 
 	std::shared_ptr<ITexture> Graphics::CreateTexture(const std::filesystem::path path, const int slot)
 	{
-		return std::make_shared<DX11Texture>(*this, path.string(), slot);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11Texture>(*this, path.string(), slot);
+			});
+		return future.get();
 	}
+
 	std::shared_ptr<IRasterizer> Graphics::CreateRasterizer(const bool twoSided)
 	{
-		return std::make_shared<DX11Rasterizer>(*this, twoSided);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11Rasterizer>(*this, twoSided);
+			});
+		return future.get();
 	}
+
 	std::shared_ptr<ISampler> Graphics::CreateSampler(SamplerType type, bool reflect, int slot)
 	{
-		return std::make_shared<DX11Sampler>(*this, type, reflect, slot);
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11Sampler>(*this, type, reflect, slot);
+			});
+		return future.get();
 	}
 }

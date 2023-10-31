@@ -44,6 +44,7 @@ namespace tryn::app
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
 		gfx->EndFrame();
+		gfx->Wait();
 	}
 
 	gfx::IGraphics& App::Gfx()

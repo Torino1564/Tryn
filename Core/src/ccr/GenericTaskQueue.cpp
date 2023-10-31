@@ -12,6 +12,10 @@ namespace tryn::ccr
 		}
 		task();
 	}
+	bool GenericTaskQueue::Empty() const
+	{
+		return tasks_.empty();
+	}
 	void GenericTaskQueue::PushWrappedTask_(Task task)
 	{
 		std::lock_guard lck{ mtx_ };

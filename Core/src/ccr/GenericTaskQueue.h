@@ -19,6 +19,7 @@ namespace tryn::ccr
 			return future;
 		}
 		void PopExecute();
+		bool Empty() const;
 	private:
 		// functions
 		void PushWrappedTask_(Task task);
