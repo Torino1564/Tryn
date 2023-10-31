@@ -39,10 +39,6 @@ namespace tryn::app
 
 	void App::PostFrame()
 	{
-		ImGui::EndFrame();
-		ImGui::Render();
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
 		gfx->EndFrame();
 	}
 
