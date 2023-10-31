@@ -10,8 +10,9 @@ namespace tryn::gfx
 		PointLight(IGraphics& gfx, float radius = 0.5f, glm::vec3 color = { 1.0f,1.0f,1.0f });
 		void ShowControls();
 		void Reset();
-		void Draw();
 		void Bind(const glm::mat4 view);
+		void SubmitLight(IGraphics& gfx);
+		void Submit(IGraphics& gfx);
 		Model& GetModel();
 	public:
 		struct Parameters

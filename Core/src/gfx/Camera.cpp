@@ -6,9 +6,10 @@ namespace tryn::gfx
 {
     void Camera::Bind(IGraphics& gfx)
     {
-        gfx.Dispatch([&] {
+        auto future = gfx.Dispatch([&] {
             gfx.SetCamera(GetViewMatrix());
             });
+        future.get();
     }
     void Camera::Update()
     {
@@ -20,6 +21,11 @@ namespace tryn::gfx
     {
         yaw += dx * rotationSpeed;
         pitch = std::clamp(pitch + dy * rotationSpeed, -89.0f, 89.0f);
+    }
+    void Camera::Submit(IGraphics& gfx)
+    {
+        gfx.GetRenderGraph().AddCamera(this);
+        gfx.SetCamera(GetViewMatrix());
     }
     void Camera::Translate(glm::vec3 translation) noexcept
     {

@@ -29,17 +29,29 @@ namespace tryn::gfx
 	{
 		this->transform = transform;
 
-		gfx.Dispatch([&,transform] {
-			pVertexBuffer->Bind();
-			pIndexBuffer->Bind();
-			pTopology->Bind();
-			pTransformCBuf->BindTransformCBuf(this);
-
+		gfx.Dispatch([&] {
+			BindBase();
 			for (auto& technique : techniques)
 			{
 				technique.Draw(gfx, this);
 			}
 			});
+	}
+	void Drawable::Submit(IGraphics& gfx, glm::mat4 transform)
+	{
+		this->transform = transform;
+
+		for (auto& technique : techniques)
+		{
+			technique.Submit(gfx, this);
+		}
+	}
+	void Drawable::BindBase()
+	{
+		pVertexBuffer->Bind();
+		pIndexBuffer->Bind();
+		pTopology->Bind();
+		pTransformCBuf->BindTransformCBuf(this);
 	}
 	void Drawable::InitTransformCBuf(IGraphics& gfx)
 	{

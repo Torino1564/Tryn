@@ -42,6 +42,8 @@
     <ClCompile Include="src\gfx\Model\Node.cpp" />
     <ClCompile Include="src\gfx\Model\StaticMesh.cpp" />
     <ClCompile Include="src\gfx\PointLight.cpp" />
+    <ClCompile Include="src\gfx\RenderGraph.cpp" />
+    <ClCompile Include="src\gfx\RenderQueue.cpp" />
     <ClCompile Include="src\gfx\RenderQueue\Step.cpp" />
     <ClCompile Include="src\gfx\Vertex.cpp" />
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp" />
@@ -134,6 +136,8 @@
     <ClInclude Include="src\gfx\Model\StaticMeshPool.h" />
     <ClInclude Include="src\gfx\PointLight.h" />
     <ClInclude Include="src\gfx\Profiler.h" />
+    <ClInclude Include="src\gfx\RenderGraph.h" />
+    <ClInclude Include="src\gfx\RenderQueue.h" />
     <ClInclude Include="src\gfx\RenderQueue\Step.h" />
     <ClInclude Include="src\gfx\RenderQueue\Technique.h" />
     <ClInclude Include="src\gfx\Vertex.h" />

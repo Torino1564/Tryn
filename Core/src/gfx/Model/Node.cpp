@@ -9,16 +9,16 @@ namespace tryn::gfx
 		this->transform = std::move(transform);
 		this->appliedTransform = glm::identity<glm::mat4>();
 	}
-	void Node::Draw(IGraphics& gfx, glm::mat4 accumulatedTransform)
+	void Node::Submit(IGraphics& gfx, glm::mat4 accumulatedTransform)
 	{
 		const auto finalTransform = appliedTransform * transform * accumulatedTransform;
-		for (auto& mesh : pMeshes)
+		for (auto mesh : pMeshes)
 		{
-			mesh->Draw(gfx,finalTransform);
+			mesh->Submit(gfx, finalTransform);
 		}
 		for (auto& child : children)
 		{
-			child.Draw(gfx, finalTransform);
+			child.Submit(gfx, finalTransform);
 		}
 	}
 	void Node::AddChild(Node child)

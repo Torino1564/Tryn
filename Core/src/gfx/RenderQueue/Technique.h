@@ -31,6 +31,13 @@ namespace tryn::gfx
 				step.Draw(gfx, parent);
 			}
 		}
+		void Submit(IGraphics& gfx, Drawable* parent)
+		{
+			for (auto& step : steps)
+			{
+				step.Submit(gfx, parent);
+			}
+		}
 	private:
 		std::string name;
 		std::vector<Step> steps;

@@ -56,7 +56,9 @@ namespace tryn::gfx
 				bool isTextured = false;
 				bool usesGlossAlphaChannel = false;
 
-				Step step;
+				// Lambertian
+				Step step("Lambertian");
+				gfx.GetRenderGraph().AddRenderQueue("Lambertian");
 
 				// Albedo
 				{
@@ -194,7 +196,7 @@ namespace tryn::gfx
 				vLayout.AppendElement(VertexLayout::Normal);
 				ConstantBufferLayout cbLayout;
 
-				Step step;
+				Step step("Lambertian");
 
 				// Albedo
 				{

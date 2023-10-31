@@ -2,12 +2,12 @@
 
 namespace tryn::ent
 {
-	void IEntity::Draw()
+	void IEntity::Submit()
 	{
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
 		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
 		transform = translation * rotation;
-		model->Draw(transform);
+		model->Submit(transform);
 	}
 	void IEntity::SpawnControlWindow()
 	{

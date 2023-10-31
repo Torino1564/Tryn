@@ -11,6 +11,7 @@ namespace tryn::gfx
 		void Bind(IGraphics& gfx);
 		void Update();
 		void Rotate(float dx, float dy) noexcept;
+		void Submit(IGraphics& gfx);
 		void Translate(glm::vec3 translation) noexcept;
 		glm::vec3& GetPosition();
 		glm::vec3& GetDirection();

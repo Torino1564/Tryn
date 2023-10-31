@@ -1,46 +1,65 @@
 #include "IGraphics.h"
 #include <Core/src/log/Log.h>
 
-glm::mat4& tryn::gfx::IGraphics::GetCameraMatrix()
+namespace tryn::gfx
 {
-	return camera;
-}
-
-void tryn::gfx::IGraphics::SetCamera(glm::mat4 camera)
-{
-	this->camera = std::move(camera);
-}
-
-glm::mat4& tryn::gfx::IGraphics::GetProjectionMatrix()
-{
-	return projection;
-}
-
-void tryn::gfx::IGraphics::Wait() const
-{
-	while (!frameReady_);
-}
-
-void tryn::gfx::IGraphics::SetProjection(glm::mat4 projection)
-{
-	this->projection = std::move(projection);
-}
-
-void tryn::gfx::IGraphics::InitThread()
-{
-	kernelThread_ = std::jthread(&IGraphics::KernelLoop_, this);
-}
-
-void tryn::gfx::IGraphics::KernelLoop_()
-{
-	startSignal_.acquire();
-	std::unique_lock<std::mutex> lock(mtx);
-
-	while (!closing_)
+	void IGraphics::SetRenderGraph(std::unique_ptr<IRenderGraph>&& renderGraph_p)
 	{
-		while (!tasks_.Empty())
+		renderGraph = std::move(renderGraph_p);
+	}
+
+	IRenderGraph& IGraphics::GetRenderGraph()
+	{
+		return *renderGraph;
+	}
+
+	void IGraphics::ExecuteFrame()
+	{
+		trynass_msg(renderGraph != nullptr, L"Tried to execute frame with no render graph set!");
+		renderGraph->ExecuteFrame(*this);
+	}
+
+	glm::mat4& IGraphics::GetCameraMatrix()
+	{
+		return camera;
+	}
+
+	void IGraphics::SetCamera(glm::mat4 camera)
+	{
+		this->camera = std::move(camera);
+	}
+
+	glm::mat4& IGraphics::GetProjectionMatrix()
+	{
+		return projection;
+	}
+
+	void IGraphics::Wait() const
+	{
+		while (!frameReady_);
+	}
+
+	void IGraphics::SetProjection(glm::mat4 projection)
+	{
+		this->projection = std::move(projection);
+	}
+
+	void IGraphics::InitThread()
+	{
+		kernelThread_ = std::jthread(&IGraphics::KernelLoop_, this);
+	}
+
+	void IGraphics::KernelLoop_()
+	{
+		startSignal_.acquire();
+		std::unique_lock<std::mutex> lock(mtx);
+
+		while (!closing_)
 		{
-			tasks_.PopExecute();
+			while (!tasks_.Empty())
+			{
+				tasks_.PopExecute();
+			}
 		}
 	}
 }

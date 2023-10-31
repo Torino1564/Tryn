@@ -82,12 +82,12 @@ namespace tryn::gfx
 		root = std::make_unique<Node>(ParseNode(nextId, *pScene->mRootNode, scale));
 	}
 
-	void Model::Draw(const glm::mat4& entityTransform = glm::identity<glm::mat4>())
+	void Model::Submit(const glm::mat4& entityTransform = glm::identity<glm::mat4>())
 	{
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
 		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
 		const auto transform = translation * rotation;
-		root->Draw(gfx, entityTransform * transform);
+		root->Submit(gfx, entityTransform * transform);
 	}
 	void Model::SpawnControlWindow()
 	{

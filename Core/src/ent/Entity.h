@@ -15,7 +15,7 @@ namespace tryn::ent
 		};
 	public:
 		virtual ~IEntity() = default;
-		void Draw();
+		void Submit();
 		void SpawnControlWindow();
 	public:
 		Settings settings = {};

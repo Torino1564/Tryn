@@ -16,6 +16,7 @@
 #include <atomic>
 #include <semaphore>
 #include <Core/src/ccr/GenericTaskQueue.h>
+#include "RenderGraph.h"
 
 #define GRAPHIC_APIS \
 		X( DX11 ) \
@@ -77,13 +78,14 @@ namespace tryn::gfx
 		virtual void EndFrame() = 0;
 		virtual void ClearBuffer(float r, float g, float b) = 0;
 		virtual void DrawIndexed(int count) = 0;
+		void SetRenderGraph(std::unique_ptr<IRenderGraph>&&);
+		IRenderGraph& GetRenderGraph();
+		void ExecuteFrame();
 		glm::mat4& GetCameraMatrix();
 		void SetCamera(glm::mat4 camera);
 		glm::mat4& GetProjectionMatrix();
 		void Wait() const;
 		void SetProjection(glm::mat4 projection);
-		template<typename T>
-		auto& QueryInterface();
 		virtual GraphicAPI GetType() = 0;
 		static const std::vector<std::string>& GetApiArray()
 		{
@@ -122,6 +124,7 @@ namespace tryn::gfx
 	protected:
 		glm::mat4 camera = {};
 		glm::mat4 projection = {};
+		std::unique_ptr<IRenderGraph> renderGraph;
 
 		// Multithreading stuff
 		std::mutex mtx;
@@ -142,13 +145,4 @@ namespace tryn::gfx
 			return future;
 		}
 	};
-	template<typename T>
-	auto& IGraphics::QueryInterface()
-	{
-		auto ptr = static_cast<T*>(this);
-#ifdef _DEBUG
-		trynass_msg(typeid(T) == typeid(this), L"Attempt to cast query IGraphics interface to an invalid type");
-#endif
-		return *ptr;
-	}
 }

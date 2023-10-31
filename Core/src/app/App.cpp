@@ -2,6 +2,7 @@
 #include <Core/src/ent/Entity.h>
 #include <Core/src/win/imgui_impl_win32.h>
 #include <chrono>
+#include <Core/src/gfx/Profiler.h>
 
 namespace tryn::app
 {
@@ -30,7 +31,6 @@ namespace tryn::app
 		ImGui_ImplWin32_NewFrame();
 		gfx->BeginFrame();
 		ImGui::NewFrame();
-
 	}
 
 	void App::DoFrame()
