@@ -10,15 +10,16 @@ namespace tryn::ent
 		struct Settings
 		{
 		public:
-			glm::vec3 angles;
-			glm::vec3 position;
+			glm::vec3 angles = {};
+			glm::vec3 position = {};
+			glm::vec3 scale = { 1.0f,1.0f,1.0f };
 		};
 	public:
 		virtual ~IEntity() = default;
 		void Submit();
 		void SpawnControlWindow();
 	public:
-		Settings settings = {};
+		Settings settings;
 
 	protected:
 		std::string name;

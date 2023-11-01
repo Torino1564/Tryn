@@ -21,7 +21,8 @@ namespace tryn::app
 			PostFrame();
 			auto end = std::chrono::high_resolution_clock::now();
 			auto duration = end - start;
-			dt = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+			const auto ticks = (end - start).count();
+			dt = static_cast<long double>(ticks / 1e6);
 		}
 		trylog.info(L"Closing window");
 	}

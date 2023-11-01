@@ -8,7 +8,7 @@ namespace tryn::gfx
 	class ImGuiProfilerCallback
 	{
 	public:
-		void operator()(const char* name, float duration)
+		void operator()(const char* name, long double duration)
 		{
 			ImGui::Begin("Profile Timers");
 			ImGui::Text("%f %s", duration, name);

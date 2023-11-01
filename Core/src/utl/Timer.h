@@ -8,7 +8,7 @@ namespace ch = std::chrono;
 namespace tryn::utl
 {
 	template <typename Callable>
-	concept TimerCallbackConcept = requires(Callable c, const char* name, float duration)
+	concept TimerCallbackConcept = requires(Callable c, const char* name, long double duration)
 	{
 		{ c(name, duration) } -> std::same_as<void>;
 	};
@@ -16,9 +16,9 @@ namespace tryn::utl
 	class DefaultTimerCallback
 	{
 	public:
-		void operator()(const char* name, float duration)
+		void operator()(const char* name, long double duration)
 		{
-			printf("%.3f  %s", duration, name);
+			printf("%.5f  %s", duration, name);
 		}
 
 		static DefaultTimerCallback& Get()
@@ -42,7 +42,7 @@ namespace tryn::utl
 		{
 			auto end = ch::high_resolution_clock::now();
 
-			float duration = static_cast<float>(ch::duration_cast<ch::milliseconds>(end - start).count());
+			long double duration = static_cast<long double>((end - start).count() / 1e6 );
 
 			callback(name, duration);
 		}
