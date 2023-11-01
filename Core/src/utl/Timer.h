@@ -2,6 +2,8 @@
 #include <chrono>
 #include <iostream>
 #include <concepts>
+#include <Core/src/log/Log.h>
+#include <Core/src/utl/String.h>
 
 namespace ch = std::chrono;
 
@@ -16,9 +18,9 @@ namespace tryn::utl
 	class DefaultTimerCallback
 	{
 	public:
-		void operator()(const char* name, float duration)
+		void operator()(const char* name, long double duration)
 		{
-			printf("%.3f  %s", duration, name);
+			printf("%.5f ms  %s ", duration, name);
 		}
 
 		static DefaultTimerCallback& Get()
@@ -28,11 +30,26 @@ namespace tryn::utl
 		}
 	};
 
+	class LogTimerCallback
+	{
+	public:
+		void operator()(const char* name, long double duration)
+		{
+			trylog.info(ToWide(std::format("{} {:.10f}ms", name, duration)));
+		}
+
+		static LogTimerCallback& Get()
+		{
+			static LogTimerCallback singleton;
+			return singleton;
+		}
+	};
+
 	template <TimerCallbackConcept TimerCallback = DefaultTimerCallback>
 	class Timer
 	{
 	public:
-		Timer(const char* name, TimerCallback callback = DefaultTimerCallback::Get())
+		Timer(const char* name, TimerCallback callback = TimerCallback::Get())
 			:
 			name(name), callback(callback), isStopped(false)
 		{
@@ -42,7 +59,7 @@ namespace tryn::utl
 		{
 			auto end = ch::high_resolution_clock::now();
 
-			float duration = static_cast<float>(ch::duration_cast<ch::milliseconds>(end - start).count());
+			auto duration = static_cast<long double>(ch::duration_cast<ch::milliseconds>(end - start).count());
 
 			callback(name, duration);
 		}

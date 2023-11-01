@@ -1,6 +1,7 @@
 #include "RenderQueue.h"
 #include "Drawable.h"
 #include "RenderQueue/Step.h"
+#include <Core/src/utl/Timer.h>
 
 namespace tryn::gfx
 {
@@ -19,9 +20,16 @@ namespace tryn::gfx
 	}
 	void Job::Execute(IGraphics& gfx)
 	{
-		pDrawable->BindBase();
-		pStep->Bind(gfx);
-		gfx.DrawIndexed(pDrawable->GetIndexCount());
+		{
+			//utl::Timer<utl::LogTimerCallback> timer("Job BindStage");
+			pDrawable->BindBase();
+			pStep->Bind(gfx);
+		}
+		{
+			//utl::Timer<utl::LogTimerCallback> timer("Job Draw Call");
+			gfx.DrawIndexed(pDrawable->GetIndexCount());
+		}
+		//trylog.info(L"Finished the Job");
 	}
 }
 

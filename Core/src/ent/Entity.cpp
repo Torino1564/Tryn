@@ -4,9 +4,11 @@ namespace tryn::ent
 {
 	void IEntity::Submit()
 	{
+		glm::mat4 modelMatrix(1.0f);
+		modelMatrix = glm::scale(modelMatrix, settings.scale);
+		modelMatrix = glm::translate(modelMatrix, settings.position);
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
-		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
-		transform = translation * rotation;
+		auto transform = modelMatrix * rotation;
 		model->Submit(transform);
 	}
 	void IEntity::SpawnControlWindow()
@@ -21,6 +23,10 @@ namespace tryn::ent
 		ImGui::SliderFloat("X", &settings.position.x, -20.0f, 20.0f);
 		ImGui::SliderFloat("Y", &settings.position.y, -20.0f, 20.0f);
 		ImGui::SliderFloat("Z", &settings.position.z, -20.0f, 20.0f);
+		ImGui::Text("Scale");
+		ImGui::SliderFloat("Xs", &settings.scale.x, -3.0f, 3.0f);
+		ImGui::SliderFloat("Ys", &settings.scale.y, -3.0f, 3.0f);
+		ImGui::SliderFloat("Zs", &settings.scale.z, -3.0f, 3.0f);
 		ImGui::End();
 	}
 	BasicEntity::BasicEntity(gfx::IGraphics& gfx, std::string_view name, std::string_view path, glm::vec3 scale)
