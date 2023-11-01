@@ -84,7 +84,6 @@ namespace tryn::gfx
 		glm::mat4& GetCameraMatrix();
 		void SetCamera(glm::mat4 camera);
 		glm::mat4& GetProjectionMatrix();
-		void Wait() const;
 		void SetProjection(glm::mat4 projection);
 		virtual GraphicAPI GetType() = 0;
 		static const std::vector<std::string>& GetApiArray()
@@ -133,7 +132,6 @@ namespace tryn::gfx
 		mutable ccr::GenericTaskQueue tasks_;
 		std::jthread kernelThread_;
 		std::atomic<bool> closing_;
-		std::atomic<bool> frameReady_;
 
 		void InitThread();
 		virtual void KernelLoop_();

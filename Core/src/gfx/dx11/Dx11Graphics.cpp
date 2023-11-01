@@ -139,7 +139,6 @@ namespace tryn::gfx::dx11
 	{
 		auto future = Dispatch_([this]
 			{
-				frameReady_ = false;
 				ImGui_ImplDX11_NewFrame();
 				ClearBuffer(0.0f,0.0f,0.2f);
 				renderGraph->Reset();
@@ -158,7 +157,6 @@ namespace tryn::gfx::dx11
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 			pSwap->Present(0u, 0u) >> chk;
 			});
-		frameReady_ = true;
 	}
 
 	void Graphics::ClearBuffer(float r, float g, float b)

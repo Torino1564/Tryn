@@ -34,11 +34,6 @@ namespace tryn::gfx
 		return projection;
 	}
 
-	void IGraphics::Wait() const
-	{
-		while (!frameReady_);
-	}
-
 	void IGraphics::SetProjection(glm::mat4 projection)
 	{
 		this->projection = std::move(projection);
