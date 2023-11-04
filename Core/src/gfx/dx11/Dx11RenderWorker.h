@@ -10,16 +10,19 @@ namespace tryn::gfx::dx11
 	{
 		friend class Graphics;
 	public:
-		DX11RenderWorker(ccr::Master* pMaster)
+		DX11RenderWorker(ccr::Master* pMaster, Graphics& gfx)
 		{
+			pContext = std::make_unique<DX11Context>();
 			pMaster_ = pMaster;
+			pGfx = &gfx;
 		}
-		ID3D11DeviceContext& GetContext()
+		IContext& GetContext()
 		{
-			context.GetContext();
+			return *pContext;
 		}
-	private:
-		Microsoft::WRL::ComPtr<ID3D11CommandList> pCommandList;
-		DX11Context context;
+		void SubmitWork() override
+		{
+			pContext->Submit();
+		}
 	};
 }

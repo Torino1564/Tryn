@@ -1,5 +1,6 @@
 #include "RenderGraph.h"
 #include <Core/src/utl/Assert.h>
+#include <Core/src/gfx/IContext.h>
 
 namespace tryn::gfx
 {

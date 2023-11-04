@@ -8,6 +8,11 @@ namespace tryn::gfx
 		BindParent(parent);
 		Bind();
 	}
+	void ITransformCBuf::BindTransformCBuf(const Drawable* parent, IContext& context)
+	{
+		BindParent(parent);
+		Bind(context);
+	}
 	void ITransformCBuf::BindParent(const Drawable* parent) const
 	{
 		this->parent = parent;
@@ -16,6 +21,11 @@ namespace tryn::gfx
 	{
 		Update();
 		pVCB->Bind();
+	}
+	void ITransformCBuf::Bind(IContext& context)
+	{
+		Update();
+		pVCB->Bind(context);
 	}
 	void ITransformCBuf::Update() const
 	{

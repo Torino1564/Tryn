@@ -67,8 +67,8 @@ namespace tryn::gfx::dx11
 				nullptr,
 				&pThunkContext
 			) >> chk;
-
-			pThunkContext->QueryInterface(__uuidof(ID3D11DeviceContext), (void**)&pContext->GetContext());
+			pContext = std::make_unique<DX11Context>();
+			pThunkContext->QueryInterface(__uuidof(ID3D11DeviceContext), (void**)(pContext->GetCOMPtr().GetAddressOf())) >> chk;
 
 			//backbuffer
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
@@ -176,7 +176,7 @@ namespace tryn::gfx::dx11
 	}
 	ID3D11DeviceContext& Graphics::GetContext()
 	{
-		return *pContext->pContext.Get();
+		return pContext->GetContext();
 	}
 	ID3D11Device& Graphics::GetDevice()
 	{
@@ -305,9 +305,10 @@ namespace tryn::gfx::dx11
 
 	std::unique_ptr<RenderWorker> Graphics::CreateRenderWorker(ccr::Master* pMaster)
 	{
-		DX11RenderWorker* renderWorker = new DX11RenderWorker(pMaster);
-		GetDevice().CreateDeferredContext(0u, renderWorker->context.pContext.GetAddressOf());
-
+		DX11RenderWorker* renderWorker = new DX11RenderWorker(pMaster,*this);
+		GetDevice().CreateDeferredContext(0u, static_cast<DX11Context*>(renderWorker->pContext.get())->GetCOMPtr().GetAddressOf());
+		//renderWorker->context.pContext->Begin(renderWorker->context.pAsync.GetAddressOf());
+		renderWorker->pContext->SetDeferred(true);
 		return std::unique_ptr<DX11RenderWorker>(renderWorker);
 	}
 

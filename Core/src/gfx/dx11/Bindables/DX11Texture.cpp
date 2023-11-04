@@ -64,7 +64,7 @@ namespace tryn::gfx
 	void dx11::DX11Texture::Bind(IContext& ctxt)
 	{
 		gfx.AssertContextCoherence(ctxt);
-		auto& dx11ctxt = static_cast<DX11Context&>(ctxt);
-		dx11ctxt.GetContext().PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+		auto& dx11ctxt = static_cast<DX11Context&>(ctxt).GetContext();
+		dx11ctxt.PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
 	}
 }

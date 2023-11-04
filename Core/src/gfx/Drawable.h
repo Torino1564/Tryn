@@ -16,6 +16,7 @@ namespace tryn::gfx
 		void Draw(IGraphics& gfx , glm::mat4 transform);
 		void Submit(IGraphics& gfx, glm::mat4 transform);
 		void BindBase() const;
+		void BindBase(IContext& context) const;
 		void InitTransformCBuf(IGraphics& gfx);
 		[[nodiscard]] IVertexBuffer& GetVertexBuffer() const;
 		[[nodiscard]] uint32_t GetIndexCount() const;

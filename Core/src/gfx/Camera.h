@@ -20,8 +20,8 @@ namespace tryn::gfx
 	private:
 		glm::vec3 position = {0.0f,0.0f,0.0f};
 		glm::vec3 direction = { 1.0f,0.0f,0.0f };
-		float yaw;
-		float pitch;
+		float yaw = 0;
+		float pitch = 0;
 		float travelSpeed = 0.005f;
 		float rotationSpeed = 0.1f;
 	};

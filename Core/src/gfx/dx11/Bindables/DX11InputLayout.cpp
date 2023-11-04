@@ -83,4 +83,11 @@ namespace tryn::gfx::dx11
 	{
 		gfx.GetContext().IASetInputLayout(pLayout.Get());
 	}
+	void DX11InputLayout::Bind(IContext& context)
+	{
+		gfx.AssertContextCoherence(context);
+		auto& dx11context = static_cast<DX11Context*>(&context)->GetContext();
+
+		dx11context.IASetInputLayout(pLayout.Get());
+	}
 }

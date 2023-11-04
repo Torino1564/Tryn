@@ -23,6 +23,7 @@ public:
 		for (int i = 0; i < workerNumber; i++)
 		{
 			workerPtrs.push_back(gfx->CreateRenderWorker(&master));
+			workerPtrs[i]->StartWorking();
 		}
 	}
 	void ExecuteFrame(gfx::IGraphics& gfx) override
@@ -32,12 +33,12 @@ public:
 			for (auto pointLight : pPointLights)
 			{
 				pointLight->Bind();
-				GetRenderQueueByID("Lambertian").RunJobs(gfx);
+				GetRenderQueueByID("Lambertian").RunJobsAsync(gfx,master,workerPtrs);
 			}
 		}
 	}
 private:
-	static constexpr int workerNumber = 5;
+	static constexpr int workerNumber = 1;
 	ccr::Master master;
 	std::vector<std::unique_ptr<gfx::RenderWorker>> workerPtrs;
 };
@@ -61,12 +62,12 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 	// Graphic Matrices
 	Gfx().SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(Gfx().dimensions.width), static_cast<float>(Gfx().dimensions.height), 0.1f, 1000.0f));
-	Gfx().SetRenderGraph(std::make_unique<TestRenderGraph>());
+	Gfx().SetRenderGraph(std::make_unique<TestRenderGraph>(Gfx()));
 
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};
 
 	//gobber = std::make_unique<ent::BasicEntity>(Gfx(), "gobber", "resources/models/gobber/GoblinX.obj");
-	entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{ 0.01f,0.01f,0.01f }));
+	//entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{ 0.01f,0.01f,0.01f }));
 
 	for (int i = 0; i < pow(entityCount1D, 3); i++)
 	{

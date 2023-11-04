@@ -6,15 +6,22 @@ namespace tryn::gfx
 	class Drawable;
 	class Step;
 	class IGraphics;
+	class IContext;
 
-	class RenderWorker : public ccr::Worker<Drawable*,Step*,IGraphics*>
+	class RenderWorker : public ccr::Worker<Drawable*,Step*,IGraphics*,IContext*>
 	{
 	friend class IGraphics;
 	public:
 		RenderWorker() : pGfx(nullptr) {}
 		virtual ~RenderWorker() = default;
+		virtual void SubmitWork() = 0;
+		IContext& GetContext()
+		{
+			return *pContext;
+		}
 
 	protected:
 		IGraphics* pGfx = nullptr;
+		std::unique_ptr<IContext> pContext = nullptr;
 	};
 }

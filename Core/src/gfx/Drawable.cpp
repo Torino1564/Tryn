@@ -53,6 +53,13 @@ namespace tryn::gfx
 		pTopology->Bind();
 		pTransformCBuf->BindTransformCBuf(this);
 	}
+	void Drawable::BindBase(IContext& context) const
+	{
+		pVertexBuffer->Bind(context);
+		pIndexBuffer->Bind(context);
+		pTopology->Bind(context);
+		pTransformCBuf->BindTransformCBuf(this,context);
+	}
 	void Drawable::InitTransformCBuf(IGraphics& gfx)
 	{
 		pTransformCBuf = gfx.CreateTransformCBuf();

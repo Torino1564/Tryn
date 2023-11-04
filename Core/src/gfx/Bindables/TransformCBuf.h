@@ -9,8 +9,11 @@ namespace tryn::gfx
 	{
 	public:
 		void BindTransformCBuf(const Drawable* parent);
+		void BindTransformCBuf(const Drawable* parent, IContext& context);
 		void BindParent(const Drawable* parent) const;
 		void Bind() override;
+		void Bind(IContext& context) override;
+
 		void Update() const;
 	protected:
 		ITransformCBuf(IGraphics& gfx) :gfx(gfx) {}

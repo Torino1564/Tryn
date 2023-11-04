@@ -32,4 +32,10 @@ namespace tryn::gfx::dx11
 	{
 		gfx.GetContext().PSSetSamplers((UINT)slot, 1u, pSamplerState.GetAddressOf());
 	}
+	void DX11Sampler::Bind(IContext& context)
+	{
+		gfx.AssertContextCoherence(context);
+		auto& dx11context = static_cast<DX11Context*>(&context)->GetContext();
+		dx11context.PSSetSamplers((UINT)slot, 1u, pSamplerState.GetAddressOf());
+	}
 }

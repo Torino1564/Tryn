@@ -10,6 +10,7 @@ namespace tryn::gfx::dx11
 	public:
 		DX11VtxConstantBuffer(Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag = "?");
 		void Bind() override;
+		void Bind(IContext&) override;
 		char* Data();
 		void Update();
 
@@ -23,6 +24,7 @@ namespace tryn::gfx::dx11
 	public:
 		DX11PxConstantBuffer(Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag = "?");
 		void Bind() override;
+		void Bind(IContext& context) override;
 		char* Data();
 		void Update();
 

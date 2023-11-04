@@ -60,7 +60,7 @@ namespace tryn::gfx::dx11
 
 	void DX11PolyVBuffer::Bind()
 	{
-		if (!initialized)
+		if (!initialized) [[unlikely]]
 		{
 			for (auto& vBuffer : slots)
 			{
@@ -74,7 +74,34 @@ namespace tryn::gfx::dx11
 				buffArray.push_back(dx11vb->GetPtr());
 			}
 			initialized = true;
+			gfx.GetContext().IASetVertexBuffers((UINT)0, (UINT)buffArray.size(), buffArray.data(), strides.data(), offsets.data());
 		}
-		gfx.GetContext().IASetVertexBuffers((UINT)0, (UINT)buffArray.size(), buffArray.data(), strides.data(), offsets.data());
+		else [[likely]] {
+			gfx.GetContext().IASetVertexBuffers((UINT)0, (UINT)buffArray.size(), buffArray.data(), strides.data(), offsets.data());
+		}
+	}
+	void DX11PolyVBuffer::Bind(IContext& context)
+	{
+		gfx.AssertContextCoherence(context);
+		auto& dx11context = static_cast<DX11Context*>(&context)->GetContext();
+		if (!initialized) [[unlikely]]
+			{
+				for (auto& vBuffer : slots)
+				{
+					if (vBuffer->Get().GetDirty())
+					{
+						vBuffer->Init();
+					}
+					strides.push_back((UINT)vBuffer->Get().Stride());
+					offsets.push_back((UINT)0);
+					auto dx11vb = std::dynamic_pointer_cast<DX11VertexBuffer>(vBuffer);
+					buffArray.push_back(dx11vb->GetPtr());
+				}
+				initialized = true;
+				dx11context.IASetVertexBuffers((UINT)0, (UINT)buffArray.size(), buffArray.data(), strides.data(), offsets.data());
+			}
+		else [[likely]] {
+			dx11context.IASetVertexBuffers((UINT)0, (UINT)buffArray.size(), buffArray.data(), strides.data(), offsets.data());
+			}
 	}
 }

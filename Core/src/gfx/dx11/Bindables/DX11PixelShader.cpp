@@ -26,4 +26,10 @@ namespace tryn::gfx::dx11
 	{
 		gfx.GetContext().PSSetShader(pPS.Get(), nullptr, 0u);
 	}
+	void DX11PixelShader::Bind(IContext& context)
+	{
+		gfx.AssertContextCoherence(context);
+		auto& dx11context = static_cast<DX11Context*>(&context)->GetContext();
+		dx11context.PSSetShader(pPS.Get(), nullptr, 0u);
+	}
 }

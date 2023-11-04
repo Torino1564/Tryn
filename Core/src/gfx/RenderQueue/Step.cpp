@@ -19,6 +19,13 @@ namespace tryn::gfx
 			bind->Bind();
 		}
 	}
+	void Step::Bind(IGraphics& gfx, IContext& context) const
+	{
+		for (auto& bind : bindables)
+		{
+			bind->Bind(context);
+		}
+	}
 	void Step::Draw(IGraphics& gfx, Drawable* parent) const
 	{
 		gfx.DrawIndexed(parent->GetIndexCount());

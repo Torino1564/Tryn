@@ -11,6 +11,8 @@ namespace tryn::gfx::dx11
 	public:
 		DX11PixelShader(Graphics& gfx, std::string);
 		void Bind() override;
+		void Bind(IContext& context) override;
+
 	private:
 		Microsoft::WRL::ComPtr<ID3D11PixelShader> pPS;
 		Microsoft::WRL::ComPtr<ID3DBlob> pBlob;

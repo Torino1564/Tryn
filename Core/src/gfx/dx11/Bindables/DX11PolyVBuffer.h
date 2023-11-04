@@ -12,6 +12,8 @@ namespace tryn::gfx::dx11
 		void Append(std::string, std::shared_ptr<VertexBuffer>) override;
 		void Append(std::shared_ptr<IVertexBuffer>) override;
 		void Bind() override;
+		void Bind(IContext& context) override;
+
 	private:
 		Graphics& gfx;
 		bool initialized = false;

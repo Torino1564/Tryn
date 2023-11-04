@@ -36,6 +36,17 @@ namespace tryn::gfx::dx11
 		}
 		gfx.GetContext().VSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
 	}
+	void DX11VtxConstantBuffer::Bind(IContext& context)
+	{
+		gfx.AssertContextCoherence(context);
+		auto dx11context = static_cast<DX11Context*>(&context);
+		if (dirty)
+		{
+			Update();
+			dirty = false;
+		}
+		dx11context->GetContext().VSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
+	}
 	char* DX11VtxConstantBuffer::Data()
 	{
 		return buffer.data();
@@ -84,6 +95,17 @@ namespace tryn::gfx::dx11
 			dirty = false;
 		}
 		gfx.GetContext().PSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
+	}
+	void DX11PxConstantBuffer::Bind(IContext& context)
+	{
+		gfx.AssertContextCoherence(context);
+		auto& dx11context = static_cast<DX11Context*>(&context)->GetContext();
+		if (dirty)
+		{
+			Update();
+			dirty = false;
+		}
+		dx11context.PSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
 	}
 	char* DX11PxConstantBuffer::Data()
 	{

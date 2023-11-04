@@ -29,6 +29,12 @@ namespace tryn::gfx::dx11
 	{
 		gfx.GetContext().IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
 	}
+	void DX11IndexBuffer::Bind(IContext& context)
+	{
+		gfx.AssertContextCoherence(context);
+		auto dx11context = static_cast<DX11Context*>(&context);
+		dx11context->GetContext().IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
+	}
 	const size_t DX11IndexBuffer::Size() const
 	{
 		return indices->size();

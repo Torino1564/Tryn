@@ -22,6 +22,18 @@ namespace tryn::gfx::dx11
 		const UINT offset = 0u;
 		gfx.GetContext().IASetVertexBuffers((UINT)0, (UINT)1, pBuffer.GetAddressOf(), &stride, &offset);
 	}
+	void DX11VertexBuffer::Bind(IContext& context)
+	{
+		gfx.AssertContextCoherence(context);
+		auto& dx11context = static_cast<DX11Context*>(&context)->GetContext();
+		if (Get().GetDirty())
+		{
+			Init();
+		}
+		const UINT stride = (UINT)Get().Stride();
+		const UINT offset = 0u;
+		dx11context.IASetVertexBuffers((UINT)0, (UINT)1, pBuffer.GetAddressOf(), &stride, &offset);
+	}
 	void DX11VertexBuffer::Init()
 	{
 		D3D11_BUFFER_DESC bd = {};

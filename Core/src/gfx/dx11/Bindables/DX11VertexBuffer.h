@@ -12,6 +12,7 @@ namespace tryn::gfx::dx11
 
 		DX11VertexBuffer(Graphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag = "?");
 		void Bind() override;
+		void Bind(IContext& context) override;
 		void Init() override;
 		std::vector<std::any> GetLayoutFromVB() const override;
 		std::vector<std::any> GetSlottedLayoutFromVB(int slot = 0) const override;

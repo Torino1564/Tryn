@@ -4,7 +4,6 @@
 #include <map>
 #include <Core/src/utl/Exception.h>
 
-
 namespace tryn::gfx
 {
 	class IGraphics;

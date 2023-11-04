@@ -3,6 +3,7 @@
 #include <future>
 #include <span>
 #include <functional>
+#include <tuple>
 
 namespace tryn::ccr
 {
@@ -11,7 +12,7 @@ namespace tryn::ccr
 	public:
 		Master(int workerCount)
 			:
-			lock(mtx), workerCount(workerCount)
+			lock(mtx), workerCount(workerCount), doneCount(0)
 		{}
 		void SignalDone()
 		{
@@ -29,13 +30,17 @@ namespace tryn::ccr
 			cv.wait(lock, [this] {return doneCount == workerCount; });
 			doneCount = 0;
 		}
+		int GetWorkerCount() const
+		{
+			return workerCount;
+		}
 	private:
 		std::condition_variable cv;
 		std::mutex mtx;
 		std::unique_lock<std::mutex> lock;
 		int workerCount;
 		//Shared memory
-		int doneCount;
+		int doneCount = 0;
 	};
 
 	template<class ... Args>
@@ -51,11 +56,14 @@ namespace tryn::ccr
 		{
 			thread_ = std::jthread(&Worker::WorkerKernel_, this);
 		}
-		void SetJob(std::invocable<void(Args)> auto task, Args ... params)
+		template<std::invocable<Args...> Callback>
+		void SetJob(Callback task, Args ... params)
 		{
 			{
 				std::lock_guard lk(mtx_);
 				task_ = task;
+				parameters_ = std::make_tuple(params...);
+				hasJob = true;
 			}
 			cv_.notify_one();
 		}
@@ -80,7 +88,7 @@ namespace tryn::ccr
 				{
 					break;
 				}
-				task_(parameters);
+				std::apply(task_,parameters_);
 				hasJob = false;
 				pMaster_->SignalDone();
 			}
@@ -90,8 +98,9 @@ namespace tryn::ccr
 		std::condition_variable cv_;
 		std::mutex mtx_;
 		// Callback
-		std::function<void(Args)> task_;
-		Args... parameters;
+		std::function<void(Args...)> task_;
+		std::tuple<Args...> parameters_;
+		
 		// State
 		bool dying = false;
 		bool hasJob = false;
