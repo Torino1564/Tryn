@@ -15,7 +15,7 @@ namespace tryn::gfx::dx11
 		this->path = path;
 
 		D3DReadFileToBlob(utl::ToWide(path).c_str(), &pBlob) >> chk;
-		gfx.GetDevice()->CreateVertexShader(
+		gfx.GetDevice().CreateVertexShader(
 			pBlob->GetBufferPointer(),
 			pBlob->GetBufferSize(),
 			nullptr,
@@ -24,7 +24,7 @@ namespace tryn::gfx::dx11
 
 	void DX11VertexShader::Bind()
 	{
-		gfx.GetContext()->VSSetShader(pVS.Get(), nullptr, 0u);
+		gfx.GetContext().VSSetShader(pVS.Get(), nullptr, 0u);
 	}
 	const Microsoft::WRL::ComPtr<ID3DBlob>& DX11VertexShader::GetBlob() const
 	{

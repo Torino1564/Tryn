@@ -15,6 +15,7 @@ namespace tryn::gfx
 	class IRenderGraph
 	{
 	public:
+		IRenderGraph() {}
 		virtual void ExecuteFrame(IGraphics& gfx);
 		virtual ~IRenderGraph() = default;
 		void AddCamera(Camera*);
@@ -27,7 +28,7 @@ namespace tryn::gfx
 		std::vector<RenderQueue> queues;
 		std::vector<PointLight*> pPointLights;
 		std::vector<Camera*> pCameras;
-
+		IGraphics* gfx = nullptr;
 		int selectedCamera = 0;
 	};
 }

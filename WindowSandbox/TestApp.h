@@ -27,7 +27,7 @@ private:
 	std::unique_ptr<ent::IEntity> gobber;
 	gfx::Camera camera;
 
-	static constexpr const int entityCount1D = 3;
+	static constexpr const int entityCount1D = 10;
 
 	int tallyX = 0, tallyY = 0;
 };

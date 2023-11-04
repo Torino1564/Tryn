@@ -13,6 +13,7 @@
 #include <Core/src/gfx/dx11/Bindables/DX11Texture.h>
 #include <Core/src/gfx/dx11/Bindables/DX11Rasterizer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11Sampler.h>
+#include <Core/src/gfx/dx11/Dx11RenderWorker.h>
 #include "imgui_impl_dx11.h"
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -67,7 +68,7 @@ namespace tryn::gfx::dx11
 				&pThunkContext
 			) >> chk;
 
-			pThunkContext->QueryInterface(__uuidof(ID3D11DeviceContext1), (void**)&pContext);
+			pThunkContext->QueryInterface(__uuidof(ID3D11DeviceContext), (void**)&pContext->GetContext());
 
 			//backbuffer
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
@@ -83,8 +84,8 @@ namespace tryn::gfx::dx11
 			dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 			dsd.DepthFunc = D3D11_COMPARISON_LESS;
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSState;
-			pDevice->CreateDepthStencilState(&dsd, &pDSState) >> chk;
-			pContext->OMSetDepthStencilState(pDSState.Get(), 1u);
+			GetDevice().CreateDepthStencilState(&dsd, &pDSState) >> chk;
+			GetContext().OMSetDepthStencilState(pDSState.Get(), 1u);
 
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthStencil;
 			D3D11_TEXTURE2D_DESC td = {};
@@ -103,9 +104,9 @@ namespace tryn::gfx::dx11
 			dsvd.Format = DXGI_FORMAT_UNKNOWN;
 			dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 			dsvd.Texture2D.MipSlice = 0u;
-			pDevice->CreateDepthStencilView(pDepthStencil.Get(), &dsvd, &pDSV) >> chk;
+			GetDevice().CreateDepthStencilView(pDepthStencil.Get(), &dsvd, &pDSV) >> chk;
 
-			pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
+			GetContext().OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
 
 			//viewport
 			D3D11_VIEWPORT vp;
@@ -115,11 +116,11 @@ namespace tryn::gfx::dx11
 			vp.MaxDepth = 1.0f;
 			vp.TopLeftX = 0.0f;
 			vp.TopLeftY = 0.0f;
-			pContext->RSSetViewports(1u, &vp);
+			GetContext().RSSetViewports(1u, &vp);
 
 			pSwap->SetFullscreenState((BOOL)false, nullptr) >> chk;
 
-			ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
+			ImGui_ImplDX11_Init(pDevice.Get(), &GetContext());
 
 			});
 
@@ -162,24 +163,24 @@ namespace tryn::gfx::dx11
 	void Graphics::ClearBuffer(float r, float g, float b)
 	{
 		const float color[]{ r, g, b, 1.0f };
-		pContext->ClearRenderTargetView(pTarget.Get(), color);
-		pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+		GetContext().ClearRenderTargetView(pTarget.Get(), color);
+		GetContext().ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	}
 	void Graphics::DrawIndexed(int count)
 	{
-		pContext->DrawIndexed(count, 0u, 0u);
+		GetContext().DrawIndexed(count, 0u, 0u);
 	}
-	GraphicAPI Graphics::GetType()
+	constexpr GraphicAPI Graphics::GetType() const
 	{
 		return GraphicAPI::DX11;
 	}
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext1>& Graphics::GetContext()
+	ID3D11DeviceContext& Graphics::GetContext()
 	{
-		return pContext;
+		return *pContext->pContext.Get();
 	}
-	Microsoft::WRL::ComPtr<ID3D11Device>& Graphics::GetDevice()
+	ID3D11Device& Graphics::GetDevice()
 	{
-		return pDevice;
+		return *pDevice.Get();
 	}
 
 	std::vector<D3D11_INPUT_ELEMENT_DESC> Graphics::GetSlottedLayout(const VertexLayout& vLayout, int slot)
@@ -300,6 +301,14 @@ namespace tryn::gfx::dx11
 			return std::make_unique<DX11TransformCBuf>(*this);
 			});
 		return future.get();
+	}
+
+	std::unique_ptr<RenderWorker> Graphics::CreateRenderWorker(ccr::Master* pMaster)
+	{
+		DX11RenderWorker* renderWorker = new DX11RenderWorker(pMaster);
+		GetDevice().CreateDeferredContext(0u, renderWorker->context.pContext.GetAddressOf());
+
+		return std::unique_ptr<DX11RenderWorker>(renderWorker);
 	}
 
 	std::shared_ptr<ITexture> Graphics::CreateTexture(const std::filesystem::path path, const int slot)

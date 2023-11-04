@@ -3,6 +3,7 @@
 #include <Core/src/gfx/IGraphics.h>
 #include <d3d11_1.h>
 #include <Core/src/gfx/Vertex.h>
+#include <Core/src/gfx/dx11/Dx11Context.h>
 
 namespace tryn::gfx
 {
@@ -20,9 +21,9 @@ namespace tryn::gfx::dx11
 		void EndFrame() override;
 		void ClearBuffer(float r = 0, float g = 0, float b = 0) override;
 		void DrawIndexed(int count) override;
-		GraphicAPI GetType() override;
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext1>& GetContext();
-		Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice();
+		constexpr GraphicAPI GetType() const override;
+		ID3D11DeviceContext& GetContext();
+		ID3D11Device& GetDevice();
 
 		static constexpr DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
 		{
@@ -63,10 +64,13 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) override;
 		std::unique_ptr<ITransformCBuf>			CreateTransformCBuf() override;
 
+		// Render Worker creation
+		std::unique_ptr<RenderWorker>			CreateRenderWorker(ccr::Master*) override;
+
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext1> pContext;
+		std::unique_ptr<DX11Context> pContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 	};

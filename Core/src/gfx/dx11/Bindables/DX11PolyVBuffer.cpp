@@ -75,6 +75,6 @@ namespace tryn::gfx::dx11
 			}
 			initialized = true;
 		}
-		gfx.GetContext()->IASetVertexBuffers((UINT)0, (UINT)buffArray.size(), buffArray.data(), strides.data(), offsets.data());
+		gfx.GetContext().IASetVertexBuffers((UINT)0, (UINT)buffArray.size(), buffArray.data(), strides.data(), offsets.data());
 	}
 }

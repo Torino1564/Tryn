@@ -46,7 +46,7 @@ namespace tryn::gfx
 			technique.Submit(gfx, this);
 		}
 	}
-	void Drawable::BindBase()
+	void Drawable::BindBase() const
 	{
 		pVertexBuffer->Bind();
 		pIndexBuffer->Bind();

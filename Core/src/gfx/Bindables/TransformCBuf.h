@@ -8,14 +8,14 @@ namespace tryn::gfx
 	class ITransformCBuf : public IBindable
 	{
 	public:
-		void BindTransformCBuf(Drawable* parent);
-		void BindParent(Drawable* parent);
+		void BindTransformCBuf(const Drawable* parent);
+		void BindParent(const Drawable* parent) const;
 		void Bind() override;
-		void Update(Drawable* parent) const;
+		void Update() const;
 	protected:
 		ITransformCBuf(IGraphics& gfx) :gfx(gfx) {}
 		IGraphics& gfx;
 		static std::unique_ptr<IVtxConstantBuffer> pVCB;
-		Drawable* parent = nullptr;
+		mutable const Drawable* parent = nullptr;
 	};
 }

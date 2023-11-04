@@ -2,6 +2,7 @@
 #include <Core/src/gfx/dx11/GraphicsError.h>
 #include <Core/third/stb_image/stb_image.h>
 #include <Core/src/utl/String.h>
+#include <Core/src/gfx/dx11/Dx11Context.h>
 
 namespace tryn::gfx
 {
@@ -35,9 +36,9 @@ namespace tryn::gfx
 		td.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
-		gfx.GetDevice()->CreateTexture2D(&td, nullptr, &pTexture) >> chk;
+		gfx.GetDevice().CreateTexture2D(&td, nullptr, &pTexture) >> chk;
 
-		gfx.GetContext()->UpdateSubresource(
+		gfx.GetContext().UpdateSubresource(
 			pTexture.Get(), 0u, nullptr, texture, width * STBI_rgb_alpha, 0u
 		);
 
@@ -49,15 +50,21 @@ namespace tryn::gfx
 		srvd.Texture2D.MostDetailedMip = 0;
 		srvd.Texture2D.MipLevels = -1;
 
-		gfx.GetDevice()->CreateShaderResourceView(
+		gfx.GetDevice().CreateShaderResourceView(
 			pTexture.Get(), &srvd, &pTextureView
 		) >> chk;
 
-		gfx.GetContext()->GenerateMips(pTextureView.Get());
+		gfx.GetContext().GenerateMips(pTextureView.Get());
 	}
 
 	void dx11::DX11Texture::Bind()
 	{
-		gfx.GetContext()->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+		gfx.GetContext().PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+	}
+	void dx11::DX11Texture::Bind(IContext& ctxt)
+	{
+		gfx.AssertContextCoherence(ctxt);
+		auto& dx11ctxt = static_cast<DX11Context&>(ctxt);
+		dx11ctxt.GetContext().PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
 	}
 }

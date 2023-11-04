@@ -20,7 +20,7 @@ namespace tryn::gfx::dx11
 
 		buffer.push_back(*reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(vb.GetLayoutFromVB().data()));
 
-		gfx.GetDevice()->CreateInputLayout(buffer.data(), (UINT)vb.ConstGet().GetLayout().GetElementCount(), dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
+		gfx.GetDevice().CreateInputLayout(buffer.data(), (UINT)vb.ConstGet().GetLayout().GetElementCount(), dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
 	}
 	DX11InputLayout::DX11InputLayout(Graphics& gfx, IPolyVBuffer& pvb, IVertexShader& vs)
 		:
@@ -44,7 +44,7 @@ namespace tryn::gfx::dx11
 			}
 			totalElCount += buf->Get().GetLayout().GetElementCount();
 		}
-		gfx.GetDevice()->CreateInputLayout(buffer.data(), (UINT)totalElCount, dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
+		gfx.GetDevice().CreateInputLayout(buffer.data(), (UINT)totalElCount, dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
 	}
 	//DX11InputLayout::DX11InputLayout(Graphics& gfx, StaticMesh& mesh, IVertexShader& vs)
 	//	:
@@ -77,10 +77,10 @@ namespace tryn::gfx::dx11
 
 		buffer = Graphics::GetSlottedLayout(layout, 0);
 
-		gfx.GetDevice()->CreateInputLayout(buffer.data(), (UINT)layout.GetElementCount(), dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
+		gfx.GetDevice().CreateInputLayout(buffer.data(), (UINT)layout.GetElementCount(), dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
 	}
 	void DX11InputLayout::Bind()
 	{
-		gfx.GetContext()->IASetInputLayout(pLayout.Get());
+		gfx.GetContext().IASetInputLayout(pLayout.Get());
 	}
 }

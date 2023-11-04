@@ -26,10 +26,10 @@ namespace tryn::gfx::dx11
 		samplerDesc.AddressV = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_WRAP;
 		samplerDesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
 
-		gfx.GetDevice()->CreateSamplerState(&samplerDesc, &pSamplerState) >> chk;
+		gfx.GetDevice().CreateSamplerState(&samplerDesc, &pSamplerState) >> chk;
 	}
 	void DX11Sampler::Bind()
 	{
-		gfx.GetContext()->PSSetSamplers((UINT)slot, 1u, pSamplerState.GetAddressOf());
+		gfx.GetContext().PSSetSamplers((UINT)slot, 1u, pSamplerState.GetAddressOf());
 	}
 }

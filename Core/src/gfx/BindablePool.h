@@ -138,9 +138,9 @@ namespace tryn::gfx
 			}
 			else
 			{
-				if (it == Get().pool.end())
+				if (it == Get().pool.end() || it->second.expired())
 				{
-					// The key doesn't exist in the map, have to add a new element
+					// The key doesn't exist in the map or the element is expired, have to add a new element
 					// Get ptr to newly created element
 					ResolveHelper<T> functor;
 					std::shared_ptr<T> bind = functor(gfx, std::forward<Args>(args)...);

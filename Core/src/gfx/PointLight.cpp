@@ -58,7 +58,15 @@ namespace tryn::gfx
 		parameters.quadraticAtt = 0.0075f;
 	}
 
-	void PointLight::Bind( const glm::mat4 view )
+	void PointLight::Bind() const
+	{
+		pCBuf->Bind();
+	}
+	void PointLight::SubmitLight(IGraphics& gfx)
+	{
+		gfx.GetRenderGraph().AddPointLight(this);
+	}
+	void PointLight::Submit(IGraphics& gfx, const glm::mat4 view)
 	{
 		(*pCBuf)["viewLightPos"].Get<glm::vec3>() = view * glm::vec4(position + GetModel().GetPosition(), 1.0f);
 		(*pCBuf)["ambient"].Get<glm::vec3>() = parameters.ambient;
@@ -68,15 +76,6 @@ namespace tryn::gfx
 		(*pCBuf)["linearAtt"].Get<float>() = parameters.linearAtt;
 		(*pCBuf)["quadraticAtt"].Get<float>() = parameters.quadraticAtt;
 
-		pCBuf->Bind();
-	}
-	void PointLight::SubmitLight(IGraphics& gfx)
-	{
-		gfx.GetRenderGraph().AddPointLight(this);
-
-	}
-	void PointLight::Submit(IGraphics& gfx)
-	{
 		transformation = glm::translate(glm::mat4(1.0f), position);
 		pModel->Submit(transformation);
 	}

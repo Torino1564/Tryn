@@ -25,7 +25,7 @@ namespace tryn::gfx::dx11
 		D3D11_SUBRESOURCE_DATA csrd = {};
 		csrd.pSysMem = Data();
 
-		gfx.GetDevice()->CreateBuffer(&cbd, &csrd, &pCBuff) >> chk;
+		gfx.GetDevice().CreateBuffer(&cbd, &csrd, &pCBuff) >> chk;
 	}
 	void DX11VtxConstantBuffer::Bind()
 	{
@@ -34,7 +34,7 @@ namespace tryn::gfx::dx11
 			Update();
 			dirty = false;
 		}
-		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
+		gfx.GetContext().VSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
 	}
 	char* DX11VtxConstantBuffer::Data()
 	{
@@ -43,13 +43,13 @@ namespace tryn::gfx::dx11
 	void DX11VtxConstantBuffer::Update()
 	{
 		D3D11_MAPPED_SUBRESOURCE msr;
-		gfx.GetContext()->Map(
+		gfx.GetContext().Map(
 			pCBuff.Get(), 0u,
 			D3D11_MAP_WRITE_DISCARD, 0u,
 			&msr
 		);
 		memcpy(msr.pData, Data(), buffer.size());
-		gfx.GetContext()->Unmap(pCBuff.Get(), 0u);
+		gfx.GetContext().Unmap(pCBuff.Get(), 0u);
 	}
 
 	DX11PxConstantBuffer::DX11PxConstantBuffer(Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag)
@@ -74,7 +74,7 @@ namespace tryn::gfx::dx11
 		D3D11_SUBRESOURCE_DATA csrd = {};
 		csrd.pSysMem = Data();
 
-		gfx.GetDevice()->CreateBuffer(&cbd, &csrd, &pCBuff) >> chk;
+		gfx.GetDevice().CreateBuffer(&cbd, &csrd, &pCBuff) >> chk;
 	}
 	void DX11PxConstantBuffer::Bind()
 	{
@@ -83,7 +83,7 @@ namespace tryn::gfx::dx11
 			Update();
 			dirty = false;
 		}
-		gfx.GetContext()->PSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
+		gfx.GetContext().PSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
 	}
 	char* DX11PxConstantBuffer::Data()
 	{
@@ -92,12 +92,12 @@ namespace tryn::gfx::dx11
 	void DX11PxConstantBuffer::Update()
 	{
 		D3D11_MAPPED_SUBRESOURCE msr;
-		gfx.GetContext()->Map(
+		gfx.GetContext().Map(
 			pCBuff.Get(), 0u,
 			D3D11_MAP_WRITE_DISCARD, 0u,
 			&msr
 		);
 		memcpy(msr.pData, Data(), buffer.size());
-		gfx.GetContext()->Unmap(pCBuff.Get(), 0u);
+		gfx.GetContext().Unmap(pCBuff.Get(), 0u);
 	}
 }

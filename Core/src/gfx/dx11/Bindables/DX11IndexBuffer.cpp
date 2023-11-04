@@ -23,11 +23,11 @@ namespace tryn::gfx::dx11
 		D3D11_SUBRESOURCE_DATA isrd = {};
 		isrd.pSysMem = indices->data();
 
-		gfx.GetDevice()->CreateBuffer(&ibd, &isrd, &pBuffer) >> chk;
+		gfx.GetDevice().CreateBuffer(&ibd, &isrd, &pBuffer) >> chk;
 	}
 	void DX11IndexBuffer::Bind()
 	{
-		gfx.GetContext()->IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
+		gfx.GetContext().IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
 	}
 	const size_t DX11IndexBuffer::Size() const
 	{

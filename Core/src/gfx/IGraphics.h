@@ -17,12 +17,8 @@
 #include <semaphore>
 #include <Core/src/ccr/GenericTaskQueue.h>
 #include "RenderGraph.h"
-
-#define GRAPHIC_APIS \
-		X( DX11 ) \
-		X( DX12 ) \
-		X( Vulkan ) \
-		X( Unknown )
+#include <Core/src/gfx/IContext.h>
+#include <Core/src/gfx/GraphicAPI.h>
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
@@ -32,15 +28,13 @@ namespace tryn::app
 	class App;
 }
 
+namespace tryn::ccr
+{
+	class Master;
+}
+
 namespace tryn::gfx
 {
-	enum class GraphicAPI
-	{
-#define X(el) el,
-		GRAPHIC_APIS
-#undef X
-	};
-
 	class VertexBuffer;
 	class IVertexBuffer;
 	class IVertexShader;
@@ -61,6 +55,7 @@ namespace tryn::gfx
 	class IRasterizer;
 	class StaticMesh;
 	class VertexLayout;
+	class RenderWorker;
 
 	class IGraphics
 	{
@@ -85,7 +80,7 @@ namespace tryn::gfx
 		void SetCamera(glm::mat4 camera);
 		glm::mat4& GetProjectionMatrix();
 		void SetProjection(glm::mat4 projection);
-		virtual GraphicAPI GetType() = 0;
+		virtual constexpr GraphicAPI GetType() const = 0;
 		static const std::vector<std::string>& GetApiArray()
 		{
 			static std::vector<std::string> graphicApiString = {
@@ -94,6 +89,10 @@ namespace tryn::gfx
 	#undef X
 			};
 			return graphicApiString;
+		}
+		virtual constexpr void AssertContextCoherence(IContext& context) const
+		{
+			trynass(context.GetApi() == GetType());
 		}
 
 		template<std::invocable F>
@@ -118,6 +117,9 @@ namespace tryn::gfx
 		virtual std::shared_ptr<IRasterizer>		CreateRasterizer(const bool twoSided = true) = 0;
 		virtual std::shared_ptr<ISampler>			CreateSampler(SamplerType type, bool reflect, int slot) = 0;
 		virtual std::unique_ptr<ITransformCBuf>		CreateTransformCBuf() = 0;
+		
+		// Worker Thread Creation
+		virtual std::unique_ptr<RenderWorker>		CreateRenderWorker(ccr::Master*) = 0;
 
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
 	protected:
@@ -142,5 +144,6 @@ namespace tryn::gfx
 			cv.notify_all();
 			return future;
 		}
+		std::unique_ptr<IContext> pContext;
 	};
 }

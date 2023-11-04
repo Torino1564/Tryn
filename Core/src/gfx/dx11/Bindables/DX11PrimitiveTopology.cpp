@@ -11,6 +11,6 @@ namespace tryn::gfx::dx11
 	}
 	void DX11PrimitiveTopology::Bind()
 	{
-		gfx.GetContext()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		gfx.GetContext().IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 }

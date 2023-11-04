@@ -15,7 +15,7 @@ namespace tryn::gfx::dx11
 
 		D3DReadFileToBlob(utl::ToWide(path).c_str(), &pBlob) >> chk;
 
-		gfx.GetDevice()->CreatePixelShader(
+		gfx.GetDevice().CreatePixelShader(
 			pBlob->GetBufferPointer(),
 			pBlob->GetBufferSize(),
 			nullptr,
@@ -24,6 +24,6 @@ namespace tryn::gfx::dx11
 	}
 	void DX11PixelShader::Bind()
 	{
-		gfx.GetContext()->PSSetShader(pPS.Get(), nullptr, 0u);
+		gfx.GetContext().PSSetShader(pPS.Get(), nullptr, 0u);
 	}
 }

@@ -10,12 +10,20 @@
 #include <core/src/gfx/RenderQueue/Technique.h>
 #include <Core/src/gfx/RenderQueue/Step.h>
 #include <Core/src/gfx/Assimp.h>
+#include <Core/src/ccr/Master.h>
 
 class TestRenderGraph : public gfx::IRenderGraph
 {
 public:
-	TestRenderGraph()
+	TestRenderGraph(gfx::IGraphics& gfx_p)
+		:
+		master(workerNumber)
 	{
+		gfx = &gfx_p;
+		for (int i = 0; i < workerNumber; i++)
+		{
+			workerPtrs.push_back(gfx->CreateRenderWorker(&master));
+		}
 	}
 	void ExecuteFrame(gfx::IGraphics& gfx) override
 	{
@@ -23,11 +31,15 @@ public:
 			PROFILE_SCOPE("Execute Frame");
 			for (auto pointLight : pPointLights)
 			{
-				pointLight->Bind(pCameras[selectedCamera]->GetViewMatrix());
+				pointLight->Bind();
 				GetRenderQueueByID("Lambertian").RunJobs(gfx);
 			}
 		}
 	}
+private:
+	static constexpr int workerNumber = 5;
+	ccr::Master master;
+	std::vector<std::unique_ptr<gfx::RenderWorker>> workerPtrs;
 };
 
 tryn::app::App* tryn::app::CreateApp(int argc, char** argv)
@@ -53,8 +65,27 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};
 
-	gobber = std::make_unique<ent::BasicEntity>(Gfx(), "gobber", "resources/models/gobber/GoblinX.obj");
-	//sponza = std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{ 0.01f,0.01f,0.01f });
+	//gobber = std::make_unique<ent::BasicEntity>(Gfx(), "gobber", "resources/models/gobber/GoblinX.obj");
+	entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{ 0.01f,0.01f,0.01f }));
+
+	for (int i = 0; i < pow(entityCount1D, 3); i++)
+	{
+		entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "gobber" + std::to_string(i), "resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
+	}
+
+	for (int i = 0; i < entityCount1D; i++)
+	{
+		for (int j = 0; j < entityCount1D; j++)
+		{
+			for (int k = 0; k < entityCount1D; k++)
+			{
+				auto& pos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)]->settings.position;
+				pos.x = -entityCount1D / 2. + i;
+				pos.y = -entityCount1D / 2. + j;
+				pos.z = -entityCount1D / 2. + k;
+			}
+		}
+	}
 
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
@@ -70,13 +101,14 @@ void TestApp::DoFrame()
 	{
 		PROFILE_SCOPE("Update Rotation");
 		pPointLight->ShowControls();
-		gobber->SpawnControlWindow();
 	}
 	{
 		PROFILE_SCOPE("Draw call");
-		pPointLight->Submit(Gfx());
-		gobber->Submit();
-		//sponza->Submit();
+		pPointLight->Submit(Gfx(),camera.GetViewMatrix());
+		for (auto& entity : entities)
+		{
+			entity->Submit();
+		}
 	}
 	{
 		PROFILE_SCOPE("Update Camera");

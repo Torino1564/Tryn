@@ -20,7 +20,7 @@ namespace tryn::gfx::dx11
 		}
 		const UINT stride = (UINT)Get().Stride();
 		const UINT offset = 0u;
-		gfx.GetContext()->IASetVertexBuffers((UINT)0, (UINT)1, pBuffer.GetAddressOf(), &stride, &offset);
+		gfx.GetContext().IASetVertexBuffers((UINT)0, (UINT)1, pBuffer.GetAddressOf(), &stride, &offset);
 	}
 	void DX11VertexBuffer::Init()
 	{
@@ -35,7 +35,7 @@ namespace tryn::gfx::dx11
 		D3D11_SUBRESOURCE_DATA srd = {};
 		srd.pSysMem = Get().Data();
 
-		gfx.GetDevice()->CreateBuffer(&bd, &srd, &pBuffer) >> chk;
+		gfx.GetDevice().CreateBuffer(&bd, &srd, &pBuffer) >> chk;
 
 		Get().GetDirty() = false;
 	}

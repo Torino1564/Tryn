@@ -89,6 +89,7 @@
     <ClInclude Include="src\app\EntryPoint.h" />
     <ClInclude Include="src\app\Initialization.h" />
     <ClInclude Include="src\ccr\GenericTaskQueue.h" />
+    <ClInclude Include="src\ccr\Master.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
@@ -118,6 +119,10 @@
     <ClInclude Include="src\gfx\Bindables\VertexShader.h" />
     <ClInclude Include="src\gfx\Bindables\Bindable.h" />
     <ClInclude Include="src\ent\Entity.h" />
+    <ClInclude Include="src\gfx\dx11\Dx11Context.h" />
+    <ClInclude Include="src\gfx\dx11\Dx11RenderWorker.h" />
+    <ClInclude Include="src\gfx\GraphicAPI.h" />
+    <ClInclude Include="src\gfx\IContext.h" />
     <ClInclude Include="src\gfx\Material.h" />
     <ClInclude Include="src\gfx\Model\Mesh.h" />
     <ClInclude Include="src\gfx\dx11\Dx11VertexShader.h" />
@@ -140,6 +145,7 @@
     <ClInclude Include="src\gfx\RenderQueue.h" />
     <ClInclude Include="src\gfx\RenderQueue\Step.h" />
     <ClInclude Include="src\gfx\RenderQueue\Technique.h" />
+    <ClInclude Include="src\gfx\RenderWorker.h" />
     <ClInclude Include="src\gfx\Vertex.h" />
     <ClInclude Include="src\gfx\vulkan\Graphics.h" />
     <ClInclude Include="src\gfx\vulkan\imgui_impl_vulkan.h" />
