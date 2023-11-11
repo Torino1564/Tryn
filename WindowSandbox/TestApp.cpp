@@ -48,6 +48,18 @@ tryn::app::App* tryn::app::CreateApp(int argc, char** argv)
 	auto window = ioc::Get().Resolve<win::IWindow>(win::IWindow::IocParams{ .size = spa::DimensionsI{.width = (1280), .height = (720) } });
 	window->SetTitle(L"Test WindowApp");
 
+	ioc::Get().Register<log::ISeverityLevelPolicy>([]
+		{
+			return std::make_shared<log::SeverityLevelPolicy>(
+#ifdef _DEBUG
+
+				log::Level::Debug
+#else
+				log::Level::Info
+#endif
+			);
+		});
+
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{ window->GetClientDimensions().width, window->GetClientDimensions().height, window->GetHandle() });
 
 	app::App* app = new TestApp(window, gfx);
@@ -65,9 +77,6 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	Gfx().SetRenderGraph(std::make_unique<TestRenderGraph>(Gfx()));
 
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};
-
-	//gobber = std::make_unique<ent::BasicEntity>(Gfx(), "gobber", "resources/models/gobber/GoblinX.obj");
-	//entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{ 0.01f,0.01f,0.01f }));
 
 	for (int i = 0; i < pow(entityCount1D, 3); i++)
 	{

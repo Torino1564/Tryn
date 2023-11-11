@@ -1,7 +1,6 @@
 #include "Log.h"
 #include <Core/src/ioc/Singletons.h>
 #include <Core/src/ioc/Container.h>
-#include <Core/src/log/SeverityLevelPolicy.h>
 #include <Core/src/log/MsvcDebugDriver.h>
 #include <Core/src/log/TextFormatter.h>
 #include <Core/src/log/SimpleFileDriver.h>

@@ -4,6 +4,7 @@
 #include <span>
 #include <functional>
 #include <tuple>
+#include <Core/src/log/Log.h>
 
 namespace tryn::ccr
 {
@@ -43,11 +44,17 @@ namespace tryn::ccr
 		int doneCount = 0;
 	};
 
-	template<class ... Args>
+	class Task
+	{
+	public:
+		virtual void Execute() = 0;
+	};
+
 	class Worker
 	{
 	public:
 		Worker() : pMaster_(nullptr) {}
+		virtual ~Worker() = default;
 		Worker(Master* pMaster)
 			:
 			pMaster_(pMaster)
@@ -56,13 +63,19 @@ namespace tryn::ccr
 		{
 			thread_ = std::jthread(&Worker::WorkerKernel_, this);
 		}
-		template<std::invocable<Args...> Callback>
-		void SetJob(Callback task, Args ... params)
+		void StopWorking()
 		{
 			{
 				std::lock_guard lk(mtx_);
-				task_ = task;
-				parameters_ = std::make_tuple(params...);
+				dying = true;
+			}
+			cv_.notify_one();
+		}
+		void SetTask(std::unique_ptr<Task>&& task)
+		{
+			{
+				std::lock_guard lk(mtx_);
+				task_ = std::move(task);
 				hasJob = true;
 			}
 			cv_.notify_one();
@@ -86,11 +99,14 @@ namespace tryn::ccr
 					});
 				if (dying)
 				{
-					break;
+ 					break;
 				}
-				std::apply(task_,parameters_);
-				hasJob = false;
-				pMaster_->SignalDone();
+				else [[likely]]{
+					trylog.debug(L"Executing Task from Thread");
+					task_->Execute();
+					hasJob = false;
+					pMaster_->SignalDone();
+				}
 			}
 		}
 		Master* pMaster_;
@@ -98,8 +114,7 @@ namespace tryn::ccr
 		std::condition_variable cv_;
 		std::mutex mtx_;
 		// Callback
-		std::function<void(Args...)> task_;
-		std::tuple<Args...> parameters_;
+		std::unique_ptr<Task> task_;
 		
 		// State
 		bool dying = false;

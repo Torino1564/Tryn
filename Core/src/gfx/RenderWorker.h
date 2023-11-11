@@ -8,12 +8,15 @@ namespace tryn::gfx
 	class IGraphics;
 	class IContext;
 
-	class RenderWorker : public ccr::Worker<Drawable*,Step*,IGraphics*,IContext*>
+	class RenderWorker : public ccr::Worker
 	{
 	friend class IGraphics;
 	public:
 		RenderWorker() : pGfx(nullptr) {}
-		virtual ~RenderWorker() = default;
+		virtual ~RenderWorker()
+		{
+			StopWorking();
+		}
 		virtual void SubmitWork() = 0;
 		IContext& GetContext()
 		{

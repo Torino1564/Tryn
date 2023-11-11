@@ -15,6 +15,7 @@ namespace tryn::app
 	{
 		while (!wnd->IsClosing())
 		{
+			trylog.debug(L"Started Frame");
 			auto start = std::chrono::high_resolution_clock::now();
 			PreFrame();
 			DoFrame();
@@ -23,6 +24,7 @@ namespace tryn::app
 			auto duration = end - start;
 			const auto ticks = (end - start).count();
 			dt = static_cast<long double>(ticks / 1e6);
+			trylog.debug(L"Finished Frame");
 		}
 		trylog.info(L"Closing window");
 	}

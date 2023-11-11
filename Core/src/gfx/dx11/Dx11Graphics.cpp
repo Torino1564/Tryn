@@ -109,14 +109,13 @@ namespace tryn::gfx::dx11
 			GetContext().OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
 
 			//viewport
-			D3D11_VIEWPORT vp;
-			vp.Width = static_cast<float>(width);
-			vp.Height = static_cast<float>(height);
-			vp.MinDepth = 0.0f;
-			vp.MaxDepth = 1.0f;
-			vp.TopLeftX = 0.0f;
-			vp.TopLeftY = 0.0f;
-			GetContext().RSSetViewports(1u, &vp);
+			viewport.Width = static_cast<float>(width);
+			viewport.Height = static_cast<float>(height);
+			viewport.MinDepth = 0.0f;
+			viewport.MaxDepth = 1.0f;
+			viewport.TopLeftX = 0.0f;
+			viewport.TopLeftY = 0.0f;
+			GetContext().RSSetViewports(1u, &viewport);
 
 			pSwap->SetFullscreenState((BOOL)false, nullptr) >> chk;
 
@@ -149,7 +148,9 @@ namespace tryn::gfx::dx11
 
 	void Graphics::EndFrame()
 	{
+		trylog.debug(L"Dispatching end frame call");
 		auto future = Dispatch_([&] {
+			trylog.debug(L"Executing end frame call");
 			ExecuteFrame();
 			ImGui::EndFrame();
 			ImGui::Render();
@@ -157,7 +158,10 @@ namespace tryn::gfx::dx11
 			ImGui::RenderPlatformWindowsDefault();
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 			pSwap->Present(0u, 0u) >> chk;
+			trylog.debug(L"Finished end frame call");
 			});
+
+		future.get();
 	}
 
 	void Graphics::ClearBuffer(float r, float g, float b)
@@ -306,9 +310,11 @@ namespace tryn::gfx::dx11
 	std::unique_ptr<RenderWorker> Graphics::CreateRenderWorker(ccr::Master* pMaster)
 	{
 		DX11RenderWorker* renderWorker = new DX11RenderWorker(pMaster,*this);
-		GetDevice().CreateDeferredContext(0u, static_cast<DX11Context*>(renderWorker->pContext.get())->GetCOMPtr().GetAddressOf());
-		//renderWorker->context.pContext->Begin(renderWorker->context.pAsync.GetAddressOf());
+		auto& context = static_cast<DX11Context&>(*renderWorker->pContext.get());
+		GetDevice().CreateDeferredContext(0u, context.GetCOMPtr().GetAddressOf());
 		renderWorker->pContext->SetDeferred(true);
+		context.GetContext().OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
+		context.GetContext().RSSetViewports(1u, &viewport);
 		return std::unique_ptr<DX11RenderWorker>(renderWorker);
 	}
 

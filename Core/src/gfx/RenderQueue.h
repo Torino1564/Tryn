@@ -46,14 +46,16 @@ namespace tryn::gfx
 			while (!queue.empty())
 			{
 				auto job = queue.front();
-				job.ExecuteAsync(gfx, workers[workerIndex].get());
+				job.ExecuteAsync(gfx, workers[workerIndex++].get());
 				queue.pop();
 			}
+			pMaster.WaitForWorkers();
 			// Execute calls in the main thread
 			for (auto& worker : workers)
 			{
 				worker->SubmitWork();
 			}
+			pMaster.WaitForWorkers();
 		}
 		auto Push(Job job)
 		{

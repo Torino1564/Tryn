@@ -1,6 +1,7 @@
 #pragma once
 #include "Channel.h"
 #include "EntryBuilder.h"
+#include <Core/src/log/SeverityLevelPolicy.h>
 
 namespace tryn::log
 {

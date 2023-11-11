@@ -73,5 +73,6 @@ namespace tryn::gfx::dx11
 		std::unique_ptr<DX11Context> pContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
+		D3D11_VIEWPORT viewport;
 	};
 }
