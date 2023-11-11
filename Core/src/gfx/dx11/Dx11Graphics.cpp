@@ -67,8 +67,8 @@ namespace tryn::gfx::dx11
 				nullptr,
 				&pThunkContext
 			) >> chk;
-			pContext = std::make_unique<DX11Context>();
-			pThunkContext->QueryInterface(__uuidof(ID3D11DeviceContext), (void**)(pContext->GetCOMPtr().GetAddressOf())) >> chk;
+			auto tempContext = new DX11Context;
+			pThunkContext->QueryInterface(__uuidof(ID3D11DeviceContext), (void**)(tempContext->GetCOMPtr().GetAddressOf())) >> chk;
 
 			//backbuffer
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
@@ -85,7 +85,7 @@ namespace tryn::gfx::dx11
 			dsd.DepthFunc = D3D11_COMPARISON_LESS;
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSState;
 			GetDevice().CreateDepthStencilState(&dsd, &pDSState) >> chk;
-			GetContext().OMSetDepthStencilState(pDSState.Get(), 1u);
+			tempContext->GetContext().OMSetDepthStencilState(pDSState.Get(), 1u);
 
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthStencil;
 			D3D11_TEXTURE2D_DESC td = {};
@@ -106,7 +106,7 @@ namespace tryn::gfx::dx11
 			dsvd.Texture2D.MipSlice = 0u;
 			GetDevice().CreateDepthStencilView(pDepthStencil.Get(), &dsvd, &pDSV) >> chk;
 
-			GetContext().OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
+			tempContext->GetContext().OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
 
 			//viewport
 			viewport.Width = static_cast<float>(width);
@@ -115,8 +115,9 @@ namespace tryn::gfx::dx11
 			viewport.MaxDepth = 1.0f;
 			viewport.TopLeftX = 0.0f;
 			viewport.TopLeftY = 0.0f;
-			GetContext().RSSetViewports(1u, &viewport);
+			tempContext->GetContext().RSSetViewports(1u, &viewport);
 
+			pContext = std::unique_ptr<IContext>(tempContext);
 			pSwap->SetFullscreenState((BOOL)false, nullptr) >> chk;
 
 			ImGui_ImplDX11_Init(pDevice.Get(), &GetContext());
@@ -180,7 +181,8 @@ namespace tryn::gfx::dx11
 	}
 	ID3D11DeviceContext& Graphics::GetContext()
 	{
-		return pContext->GetContext();
+		auto& dx11context = static_cast<DX11Context&>(*pContext);
+		return dx11context.GetContext();
 	}
 	ID3D11Device& Graphics::GetDevice()
 	{

@@ -13,7 +13,7 @@ namespace tryn::ccr
 	public:
 		Master(int workerCount)
 			:
-			lock(mtx), workerCount(workerCount), doneCount(0)
+			workerCount(workerCount), doneCount(0)
 		{}
 		void SignalDone()
 		{
@@ -28,6 +28,7 @@ namespace tryn::ccr
 		}
 		void WaitForWorkers()
 		{
+			std::unique_lock<std::mutex> lock(mtx);
 			cv.wait(lock, [this] {return doneCount == workerCount; });
 			doneCount = 0;
 		}
@@ -38,7 +39,6 @@ namespace tryn::ccr
 	private:
 		std::condition_variable cv;
 		std::mutex mtx;
-		std::unique_lock<std::mutex> lock;
 		int workerCount;
 		//Shared memory
 		int doneCount = 0;

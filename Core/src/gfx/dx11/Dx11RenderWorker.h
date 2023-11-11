@@ -21,25 +21,10 @@ namespace tryn::gfx::dx11
 			return *pContext;
 		}
 
-		void SubmitWork() override
+		void SubmitWork(IGraphics& gfx) override
 		{
-			class SubmitTask : public ccr::Task
-			{
-			public:
-				void Execute() override
-				{
-					params.pContext->Submit();
-					trylog.debug(L"Submitted work");
-				}
-				struct 
-				{
-					IContext* pContext;
-				} params;
-			};
-			auto submitTask = std::make_unique<SubmitTask>();
-			submitTask->params.pContext = pContext.get();
-
-			SetTask(std::move(submitTask));
+			trylog.debug(L"Submitted work");
+			pContext->Submit(gfx);
 		}
 	};
 }

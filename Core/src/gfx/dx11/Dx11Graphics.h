@@ -70,7 +70,6 @@ namespace tryn::gfx::dx11
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
-		std::unique_ptr<DX11Context> pContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 		D3D11_VIEWPORT viewport;

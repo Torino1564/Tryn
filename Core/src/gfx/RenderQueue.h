@@ -53,9 +53,8 @@ namespace tryn::gfx
 			// Execute calls in the main thread
 			for (auto& worker : workers)
 			{
-				worker->SubmitWork();
+				worker->SubmitWork(gfx);
 			}
-			pMaster.WaitForWorkers();
 		}
 		auto Push(Job job)
 		{

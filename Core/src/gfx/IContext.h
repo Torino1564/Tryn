@@ -11,7 +11,7 @@ namespace tryn::gfx
 	public:
 		virtual ~IContext() = default;
 		constexpr virtual GraphicAPI GetApi() const = 0;
-		virtual void Submit() = 0;
+		virtual void Submit(IGraphics&) = 0;
 		virtual void DrawIndexed(int count) = 0;
 		void SetDeferred(bool setting)
 		{

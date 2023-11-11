@@ -17,12 +17,11 @@ namespace tryn::gfx
 		{
 			StopWorking();
 		}
-		virtual void SubmitWork() = 0;
+		virtual void SubmitWork(IGraphics&) = 0;
 		IContext& GetContext()
 		{
 			return *pContext;
 		}
-
 	protected:
 		IGraphics* pGfx = nullptr;
 		std::unique_ptr<IContext> pContext = nullptr;

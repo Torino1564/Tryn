@@ -1,4 +1,5 @@
 #pragma once
+#include <Core/src/gfx/dx11/GraphicsError.h>
 #include <Core/src/gfx/dx11/TrynWLR.h>
 #include <Core/src/gfx/IContext.h>
 #include <d3d11_1.h>
@@ -29,14 +30,15 @@ namespace tryn::gfx::dx11
 		{
 			return *pAsync.Get();
 		}
-		void Submit() override
+		void Submit(IGraphics& gfx) override
 		{
 			trynass_msg(deferred, L"Called the submit member on a non deferred context");
-
+			gfx.AssertContextCoherence(*this);
+			auto& immediateContext = static_cast<DX11Context&>(gfx.GetContext()).GetContext();
 			//pContext->End(pAsync.Get());
 			ID3D11CommandList* pCommandList = nullptr;
-			pContext->FinishCommandList(FALSE, &pCommandList);
-			pContext->ExecuteCommandList(pCommandList, FALSE);
+			pContext->FinishCommandList(TRUE, &pCommandList) >> chk;
+			immediateContext.ExecuteCommandList(pCommandList, TRUE);
 		}
 		void DrawIndexed(int count) override
 		{

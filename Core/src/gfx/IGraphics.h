@@ -94,6 +94,10 @@ namespace tryn::gfx
 		{
 			trynass(context.GetApi() == GetType());
 		}
+		IContext& GetContext()
+		{
+			return *pContext;
+		}
 
 		template<std::invocable F>
 		auto Dispatch(F&& f) const
