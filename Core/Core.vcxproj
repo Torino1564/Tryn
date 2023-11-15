@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="src\app\Initialization.cpp" />
     <ClCompile Include="src\ccr\Master.cpp" />
+    <ClCompile Include="src\ccr\Thread.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
@@ -47,6 +48,7 @@
     <ClCompile Include="src\gfx\RenderGraph.cpp" />
     <ClCompile Include="src\gfx\RenderQueue.cpp" />
     <ClCompile Include="src\gfx\RenderQueue\Step.cpp" />
+    <ClCompile Include="src\gfx\RenderTask.cpp" />
     <ClCompile Include="src\gfx\Vertex.cpp" />
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp" />
     <ClCompile Include="src\ccr\GenericTaskQueue.cpp" />
@@ -90,8 +92,10 @@
     <ClInclude Include="src\app\App.h" />
     <ClInclude Include="src\app\EntryPoint.h" />
     <ClInclude Include="src\app\Initialization.h" />
+    <ClInclude Include="src\ccr\GenericObjectPool.h" />
     <ClInclude Include="src\ccr\GenericTaskQueue.h" />
     <ClInclude Include="src\ccr\Master.h" />
+    <ClInclude Include="src\ccr\Thread.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
@@ -147,6 +151,7 @@
     <ClInclude Include="src\gfx\RenderQueue.h" />
     <ClInclude Include="src\gfx\RenderQueue\Step.h" />
     <ClInclude Include="src\gfx\RenderQueue\Technique.h" />
+    <ClInclude Include="src\gfx\RenderTask.h" />
     <ClInclude Include="src\gfx\RenderWorker.h" />
     <ClInclude Include="src\gfx\Vertex.h" />
     <ClInclude Include="src\gfx\vulkan\Graphics.h" />
@@ -265,6 +270,7 @@
     <ClInclude Include="third\assimp\XMLTools.h" />
     <ClInclude Include="third\assimp\ZipArchiveIOSystem.h" />
     <ClInclude Include="third\backward.hpp" />
+    <ClInclude Include="third\boost\DynamicBitset.h" />
     <ClInclude Include="third\glm\common.hpp" />
     <ClInclude Include="third\glm\detail\compute_common.hpp" />
     <ClInclude Include="third\glm\detail\compute_vector_relational.hpp" />

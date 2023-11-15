@@ -2,6 +2,7 @@
 #include "Drawable.h"
 #include "RenderQueue/Step.h"
 #include <Core/src/log/Log.h>
+#include <Core/src/gfx/RenderTask.h>
 
 namespace tryn::gfx
 {
@@ -65,24 +66,6 @@ namespace tryn::gfx
 		pStep->Bind(gfx);
 		gfx.DrawIndexed(pDrawable->GetIndexCount());
 	}
-
-	class RenderTask : public ccr::Task
-	{
-	public:
-		void Execute() override
-		{
-			params.pDrawable->BindBase(*params.pContext);
-			params.pStep->Bind(*params.pGfx, *params.pContext);
-			params.pContext->DrawIndexed(params.pDrawable->GetIndexCount());
-		}
-
-		struct {
-			Drawable* pDrawable;
-			Step* pStep;
-			IGraphics* pGfx;
-			IContext* pContext;
-		} params;
-	};
 
 	void Job::ExecuteAsync(IGraphics& gfx, RenderWorker* worker)
 	{
