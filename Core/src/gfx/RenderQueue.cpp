@@ -19,6 +19,46 @@ namespace tryn::gfx
 		}
 	}
 
+	void RenderQueue::RunJobsAsync(IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers)
+	{
+		// Defer calls to
+		const auto workerCount = pMaster.GetWorkerCount();
+		const auto queueSize = queue.size();
+		for (int i = 0; i < queueSize - workerCount; i += workerCount)
+		{
+			for (int j = 0; j < workerCount; j++, queue.pop())
+			{
+				auto job = queue.front();
+				job.ExecuteAsync(gfx, workers[j].get());
+			}
+			pMaster.WaitForWorkers();
+		}
+		int workerIndex = 0;
+		while (!queue.empty())
+		{
+			auto job = queue.front();
+			job.ExecuteAsync(gfx, workers[workerIndex++].get());
+			queue.pop();
+		}
+		pMaster.WaitForWorkers(workerIndex);
+
+		// Execute calls in the main thread
+		for (auto& worker : workers)
+		{
+			worker->SubmitWork(gfx);
+		}
+	}
+
+	void RenderQueue::Push(Job job)
+	{
+		queue.push(job);
+	}
+
+	Job::Job(Drawable* parent, Step* step)
+		:
+		pDrawable(parent), pStep(step)
+	{}
+
 	void Job::Execute(IGraphics& gfx)
 	{
 		pDrawable->BindBase();

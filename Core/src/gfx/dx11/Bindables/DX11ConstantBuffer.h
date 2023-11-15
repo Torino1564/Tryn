@@ -3,6 +3,11 @@
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
 #include <Core/src/gfx/dx11/TrynWLR.h>
 
+namespace tryn::gfx
+{
+	class IContext;
+}
+
 namespace tryn::gfx::dx11
 {
 	class DX11VtxConstantBuffer : public IVtxConstantBuffer
@@ -13,6 +18,7 @@ namespace tryn::gfx::dx11
 		void Bind(IContext&) override;
 		char* Data();
 		void Update();
+		void Update(DX11Context&);
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> pCBuff;
@@ -27,6 +33,7 @@ namespace tryn::gfx::dx11
 		void Bind(IContext& context) override;
 		char* Data();
 		void Update();
+		void Update(DX11Context&);
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> pCBuff;

@@ -12,11 +12,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\app\Initialization.cpp" />
+    <ClCompile Include="src\ccr\Master.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Texture.cpp" />
+    <ClCompile Include="src\gfx\dx11\Dx11Context.cpp" />
     <ClCompile Include="src\gfx\IGraphics.cpp" />
     <ClCompile Include="src\gfx\Material.cpp" />
     <ClCompile Include="src\gfx\Bindables\TransformCBuf.cpp" />

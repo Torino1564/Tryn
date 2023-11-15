@@ -311,13 +311,7 @@ namespace tryn::gfx::dx11
 
 	std::unique_ptr<RenderWorker> Graphics::CreateRenderWorker(ccr::Master* pMaster)
 	{
-		DX11RenderWorker* renderWorker = new DX11RenderWorker(pMaster,*this);
-		auto& context = static_cast<DX11Context&>(*renderWorker->pContext.get());
-		GetDevice().CreateDeferredContext(0u, context.GetCOMPtr().GetAddressOf());
-		renderWorker->pContext->SetDeferred(true);
-		context.GetContext().OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
-		context.GetContext().RSSetViewports(1u, &viewport);
-		return std::unique_ptr<DX11RenderWorker>(renderWorker);
+		return std::make_unique<DX11RenderWorker>(pMaster, *this);
 	}
 
 	std::shared_ptr<ITexture> Graphics::CreateTexture(const std::filesystem::path path, const int slot)

@@ -1,9 +1,11 @@
 #pragma once
 #include <Core/src/gfx/GraphicAPI.h>
+#include <memory>
 
 namespace tryn::gfx
 {
 	class IGraphics;
+	class IVtxConstantBuffer;
 	class IContext
 	{
 		friend class IGraphics;
@@ -13,6 +15,10 @@ namespace tryn::gfx
 		constexpr virtual GraphicAPI GetApi() const = 0;
 		virtual void Submit(IGraphics&) = 0;
 		virtual void DrawIndexed(int count) = 0;
+		gfx::IVtxConstantBuffer& GetTransfromBuffer()
+		{
+			return *pTCB;
+		}
 		void SetDeferred(bool setting)
 		{
 			deferred = setting;
@@ -23,5 +29,6 @@ namespace tryn::gfx
 		}
 	protected:
 		bool deferred = false;
+		std::unique_ptr<gfx::IVtxConstantBuffer> pTCB;
 	};
 }

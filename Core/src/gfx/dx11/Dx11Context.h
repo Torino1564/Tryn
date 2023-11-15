@@ -3,50 +3,24 @@
 #include <Core/src/gfx/dx11/TrynWLR.h>
 #include <Core/src/gfx/IContext.h>
 #include <d3d11_1.h>
+#include <Core/src/utl/Assert.h>
 
 namespace tryn::gfx::dx11
 {
+	class Graphics;
 	class DX11Context : public IContext
 	{
 	friend class Graphics;
 	public:
-		DX11Context()
-		{
-
-		}
-		ID3D11DeviceContext& GetContext()
-		{
-			return *pContext.Get();
-		}
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetCOMPtr()
-		{
-			return pContext;
-		}
-		constexpr GraphicAPI GetApi() const override
-		{
-			return GraphicAPI::DX11;
-		}
-		ID3D11Asynchronous& GetAsync()
-		{
-			return *pAsync.Get();
-		}
-		void Submit(IGraphics& gfx) override
-		{
-			trynass_msg(deferred, L"Called the submit member on a non deferred context");
-			gfx.AssertContextCoherence(*this);
-			auto& immediateContext = static_cast<DX11Context&>(gfx.GetContext()).GetContext();
-			//pContext->End(pAsync.Get());
-			ID3D11CommandList* pCommandList = nullptr;
-			pContext->FinishCommandList(TRUE, &pCommandList) >> chk;
-			immediateContext.ExecuteCommandList(pCommandList, TRUE);
-		}
-		void DrawIndexed(int count) override
-		{
-			pContext->DrawIndexed(count, 0u, 0u);
-		}
+		DX11Context() = default;
+		DX11Context(Graphics& gfx);
+		ID3D11DeviceContext& GetContext();
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetCOMPtr();
+		constexpr GraphicAPI GetApi() const override;
+		void Submit(IGraphics& gfx) override;
+		void DrawIndexed(int count) override;
 	private:
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pView;
-		Microsoft::WRL::ComPtr<ID3D11Asynchronous> pAsync;
 	};
 }

@@ -17,17 +17,9 @@ private:
 	std::unique_ptr<gfx::PointLight> pPointLight;
 	std::vector<std::unique_ptr<ent::IEntity>> entities;
 	std::vector<std::future<void>> futures;
-	std::unique_ptr<ent::IEntity> suzanne1;
-	std::unique_ptr<ent::IEntity> suzanne2;
-	std::unique_ptr<ent::IEntity> suzanne3;
-	std::unique_ptr<ent::IEntity> suzanne4;
-	std::unique_ptr<ent::IEntity> sponza;
-	std::unique_ptr<ent::IEntity> wall;
-	std::unique_ptr<ent::IEntity> desk;
-	std::unique_ptr<ent::IEntity> gobber;
 	gfx::Camera camera;
 
-	static constexpr const int entityCount1D = 2;
+	static constexpr const int entityCount1D = 4;
 
 	int tallyX = 0, tallyY = 0;
 };

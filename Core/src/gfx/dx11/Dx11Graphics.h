@@ -14,6 +14,7 @@ namespace tryn::gfx::dx11
 {
 	class Graphics : public IGraphics
 	{
+		friend class DX11Context;
 	public:
 		Graphics(HWND hWnd, int width, int height);
 		~Graphics() override;

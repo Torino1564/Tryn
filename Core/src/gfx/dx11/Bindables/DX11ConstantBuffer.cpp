@@ -39,13 +39,13 @@ namespace tryn::gfx::dx11
 	void DX11VtxConstantBuffer::Bind(IContext& context)
 	{
 		gfx.AssertContextCoherence(context);
-		auto dx11context = static_cast<DX11Context*>(&context);
+		auto& dx11context = static_cast<DX11Context&>(context);
 		if (dirty)
 		{
-			Update();
+			Update(dx11context);
 			dirty = false;
 		}
-		dx11context->GetContext().VSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
+		dx11context.GetContext().VSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
 	}
 	char* DX11VtxConstantBuffer::Data()
 	{
@@ -58,9 +58,23 @@ namespace tryn::gfx::dx11
 			pCBuff.Get(), 0u,
 			D3D11_MAP_WRITE_DISCARD, 0u,
 			&msr
-		);
+		) >> chk;
 		memcpy(msr.pData, Data(), buffer.size());
 		gfx.GetContext().Unmap(pCBuff.Get(), 0u);
+	}
+
+	void DX11VtxConstantBuffer::Update(DX11Context& ctxt)
+	{
+		auto& dx11ctxt = ctxt.GetContext();
+
+		D3D11_MAPPED_SUBRESOURCE msr;
+		dx11ctxt.Map(
+			pCBuff.Get(), 0u,
+			D3D11_MAP_WRITE_DISCARD, 0u,
+			&msr
+		) >> chk;
+		memcpy(msr.pData, Data(), buffer.size());
+		dx11ctxt.Unmap(pCBuff.Get(), 0u);
 	}
 
 	DX11PxConstantBuffer::DX11PxConstantBuffer(Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag)
@@ -99,13 +113,13 @@ namespace tryn::gfx::dx11
 	void DX11PxConstantBuffer::Bind(IContext& context)
 	{
 		gfx.AssertContextCoherence(context);
-		auto& dx11context = static_cast<DX11Context*>(&context)->GetContext();
+		auto& dx11context = static_cast<DX11Context&>(context);
 		if (dirty)
 		{
-			Update();
+			Update(dx11context);
 			dirty = false;
 		}
-		dx11context.PSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
+		dx11context.GetContext().PSSetConstantBuffers(slot, 1u, pCBuff.GetAddressOf());
 	}
 	char* DX11PxConstantBuffer::Data()
 	{
@@ -118,8 +132,21 @@ namespace tryn::gfx::dx11
 			pCBuff.Get(), 0u,
 			D3D11_MAP_WRITE_DISCARD, 0u,
 			&msr
-		);
+		) >> chk;
 		memcpy(msr.pData, Data(), buffer.size());
 		gfx.GetContext().Unmap(pCBuff.Get(), 0u);
+	}
+	void DX11PxConstantBuffer::Update(DX11Context& ctxt)
+	{
+		auto& dx11ctxt = ctxt.GetContext();
+
+		D3D11_MAPPED_SUBRESOURCE msr;
+		dx11ctxt.Map(
+			pCBuff.Get(), 0u,
+			D3D11_MAP_WRITE_DISCARD, 0u,
+			&msr
+		) >> chk;
+		memcpy(msr.pData, Data(), buffer.size());
+		dx11ctxt.Unmap(pCBuff.Get(), 0u);
 	}
 }

@@ -15,6 +15,7 @@ namespace tryn::gfx
 		void Bind(IContext& context) override;
 
 		void Update() const;
+		void Update(IContext& context) const;
 	protected:
 		ITransformCBuf(IGraphics& gfx) :gfx(gfx) {}
 		IGraphics& gfx;

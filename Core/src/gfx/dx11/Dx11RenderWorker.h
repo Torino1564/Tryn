@@ -12,7 +12,7 @@ namespace tryn::gfx::dx11
 	public:
 		DX11RenderWorker(ccr::Master* pMaster, Graphics& gfx)
 		{
-			pContext = std::make_unique<DX11Context>();
+			pContext = std::make_unique<DX11Context>(gfx);
 			pMaster_ = pMaster;
 			pGfx = &gfx;
 		}
