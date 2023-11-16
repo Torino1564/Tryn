@@ -13,7 +13,12 @@
 
 #define DVTX_ELEMENT_AI_EXTRACTOR(member) static SysType Extract( const aiMesh& mesh,size_t i ) noexcept {return *reinterpret_cast<const SysType*>(&mesh.member[i]);}
 
-ZT_EX_DEF(DvtxException);
+class DvtxException : public tryn::utl::BufferedException
+{
+using Base = tryn::utl::BufferedException;
+public:
+	using Base::Base;
+};
 
 #define LAYOUT_ELEMENT_TYPES \
 		X( Position3D ) \
@@ -147,7 +152,7 @@ namespace tryn::gfx
 				LAYOUT_ELEMENT_TYPES
 				#undef X
 			}
-			throw DvtxException("Invalid element type");
+			throw DvtxException(L"Invalid element type");
 			return F<VertexLayout::VertexElement::Unknown>::Exec(std::forward<Args>(args)...);
 		}
 
@@ -257,7 +262,7 @@ namespace tryn::gfx
 					}
 				}
 			}
-			throw DvtxException("Could not resolve an element");
+			throw DvtxException(L"Could not resolve an element");
 		}
 		const Element& ResolveByIndex(size_t i) const;
 		// Returns number of elements
@@ -354,7 +359,7 @@ namespace tryn::gfx
 			}
 			else
 			{
-				throw DvtxException("Parameter attribute type mismatch");
+				throw DvtxException(L"Parameter attribute type mismatch");
 			}
 		}
 	public:

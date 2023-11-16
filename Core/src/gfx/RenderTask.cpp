@@ -3,7 +3,7 @@
 
 namespace tryn::gfx
 {
-	void tryn::gfx::RenderTask::Execute()
+	void tryn::gfx::RenderTask::operator()()
 	{
 		params.pDrawable->BindBase(*params.pContext);
 		params.pStep->Bind(*params.pGfx, *params.pContext);

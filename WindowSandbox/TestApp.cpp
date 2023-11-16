@@ -39,7 +39,7 @@ public:
 		}
 	}
 private:
-	static constexpr int workerNumber = 6;
+	static constexpr int workerNumber = 1;
 	ccr::Master master;
 	std::vector<std::unique_ptr<gfx::RenderWorker>> workerPtrs;
 };
@@ -96,7 +96,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 			}
 		}
 	}
-	entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{ 0.01f,0.01f,0.01f }));
+	//entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{ 0.01f,0.01f,0.01f }));
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
 	this->wnd->keyboard.DisableAutoRepeat();

@@ -5,9 +5,9 @@
 
 namespace tryn::utl
 {
-	BufferedException::BufferedException(std::string msg)
+	BufferedException::BufferedException(const std::string& msg)
 		:
-		message_{ std::move(msg) }
+		message_{ msg }
 	{}
 	BufferedException::BufferedException(const std::wstring& msg)
 		:

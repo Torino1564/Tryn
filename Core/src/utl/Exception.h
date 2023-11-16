@@ -10,7 +10,7 @@ namespace tryn::utl
 	{
 	public:
 		BufferedException() = default;
-		BufferedException(std::string msg);
+		BufferedException(const std::string& msg);
 		BufferedException(const std::wstring& msg);
 		const char* what() const override;
 	private:

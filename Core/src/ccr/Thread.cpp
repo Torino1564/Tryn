@@ -2,48 +2,28 @@
 
 namespace tryn::ccr
 {
-	void Thread::SetTask(ccr::GenericUniqueReference<Task>&& task)
-	{
-		{
-			std::lock_guard lk(mtx_);
-			task_ = std::move(task);
-			hasJob = true;
-		}
-		cv_.notify_one();
-	}
-	inline void Thread::PostWork()
-	{
-	}
-	void Thread::WorkerKernel_()
+	void Thread::ThreadKernel_()
 	{
 		std::unique_lock lock(mtx_);
 		while (true)
 		{
 			cv_.wait(lock, [this] {
-				return hasJob == true || dying;
+				return !halted && hasWork || dying;
 				});
 			if (dying)
 			{
 				break;
 			}
-			else [[likely]] {
-				task_->Execute();
-				//Execute();
-				hasJob = false;
-				PostWork();
+			else [[likely]]
+			{
+				while (!tasks_.Empty())
+				{
+					tasks_.PopExecute();
+					AfterTask();
 				}
+				hasWork = false;
+				AfterAllTasks();
+			}
 		}
-	}
-	void Thread::StartWorking()
-	{
-		thread_ = std::jthread(&Thread::WorkerKernel_, this);
-	}
-	void Thread::Kill()
-	{
-		{
-			std::lock_guard lk(mtx_);
-			dying = true;
-		}
-		cv_.notify_one();
 	}
 }

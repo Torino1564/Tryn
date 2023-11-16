@@ -8,18 +8,16 @@ namespace tryn::gfx
 	class IGraphics;
 	class IContext;
 
-	class RenderTask : public ccr::Task
+	class RenderTask
 	{
 	public:
-		void Execute() override;
+		void operator()();
 
 		struct {
 			Drawable* pDrawable;
 			Step* pStep;
 			IGraphics* pGfx;
 			IContext* pContext;
-		} params;
+		} params = {};
 	};
-
-	class 
 }

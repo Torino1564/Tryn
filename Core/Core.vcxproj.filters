@@ -243,6 +243,9 @@
     <ClCompile Include="src\ccr\Thread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ccr\Worker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1659,6 +1662,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ccr\Thread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\dynamic_bitset.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ccr\CCRException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ccr\Worker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

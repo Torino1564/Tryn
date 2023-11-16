@@ -47,10 +47,14 @@ namespace tryn::gfx
 	void IGraphics::KernelLoop_()
 	{
 		startSignal_.acquire();
-		std::unique_lock<std::mutex> lock(mtx);
+		std::unique_lock<std::mutex> lk(mtx);
 
 		while (!closing_)
 		{
+			cv.wait(lk, [this] {
+				return closing_ || !tasks_.Empty();
+				});
+
 			while (!tasks_.Empty())
 			{
 				tasks_.PopExecute();

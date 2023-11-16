@@ -137,7 +137,7 @@ namespace tryn::gfx
 		std::binary_semaphore startSignal_{ 0 };
 		mutable ccr::GenericTaskQueue tasks_;
 		std::jthread kernelThread_;
-		std::atomic<bool> closing_;
+		bool closing_ = false;
 
 		void InitThread();
 		virtual void KernelLoop_();

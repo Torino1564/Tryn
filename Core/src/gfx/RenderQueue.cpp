@@ -25,23 +25,31 @@ namespace tryn::gfx
 		// Defer calls to
 		const auto workerCount = pMaster.GetWorkerCount();
 		const auto queueSize = queue.size();
-		for (int i = 0; i < queueSize - workerCount; i += workerCount)
+		const auto perWorker = queueSize / workerCount;
+		const auto remaining = queueSize % workerCount;
+
+		bool first = true;
+
+		for (int i = 0; i < workerCount; i++)
 		{
-			for (int j = 0; j < workerCount; j++, queue.pop())
+			workers[i]->SignalStartSubmitting();
+			for (int j = 0; j < perWorker; j++, queue.pop())
 			{
 				auto job = queue.front();
-				job.ExecuteAsync(gfx, workers[j].get());
+				job.ExecuteAsync(gfx, workers[i].get());
+				if (first)
+				{
+					for (int b = 0; b < remaining; b++, queue.pop())
+					{
+						auto job = queue.front();
+						job.ExecuteAsync(gfx, workers[i].get());
+						first = false;
+					}
+				}
 			}
-			pMaster.WaitForWorkers();
+			workers[i]->SignalEndSubmitting();
 		}
-		int workerIndex = 0;
-		while (!queue.empty())
-		{
-			auto job = queue.front();
-			job.ExecuteAsync(gfx, workers[workerIndex++].get());
-			queue.pop();
-		}
-		pMaster.WaitForWorkers(workerIndex);
+		pMaster.WaitForWorkers();
 
 		// Execute calls in the main thread
 		for (auto& worker : workers)
@@ -77,7 +85,7 @@ namespace tryn::gfx
 
 		trylog.debug(L"Submitting Job async");
 
-		worker->SetTask(std::move(renderTask));
+		worker->AddTask(std::move(renderTask));
 	}
 
 }

@@ -14,6 +14,7 @@
     <ClCompile Include="src\app\Initialization.cpp" />
     <ClCompile Include="src\ccr\Master.cpp" />
     <ClCompile Include="src\ccr\Thread.cpp" />
+    <ClCompile Include="src\ccr\Worker.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
@@ -92,10 +93,12 @@
     <ClInclude Include="src\app\App.h" />
     <ClInclude Include="src\app\EntryPoint.h" />
     <ClInclude Include="src\app\Initialization.h" />
+    <ClInclude Include="src\ccr\CCRException.h" />
     <ClInclude Include="src\ccr\GenericObjectPool.h" />
     <ClInclude Include="src\ccr\GenericTaskQueue.h" />
     <ClInclude Include="src\ccr\Master.h" />
     <ClInclude Include="src\ccr\Thread.h" />
+    <ClInclude Include="src\ccr\Worker.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
@@ -271,6 +274,7 @@
     <ClInclude Include="third\assimp\ZipArchiveIOSystem.h" />
     <ClInclude Include="third\backward.hpp" />
     <ClInclude Include="third\boost\DynamicBitset.h" />
+    <ClInclude Include="third\dynamic_bitset.hpp" />
     <ClInclude Include="third\glm\common.hpp" />
     <ClInclude Include="third\glm\detail\compute_common.hpp" />
     <ClInclude Include="third\glm\detail\compute_vector_relational.hpp" />
