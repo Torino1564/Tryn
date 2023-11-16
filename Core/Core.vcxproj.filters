@@ -246,6 +246,9 @@
     <ClCompile Include="src\ccr\Worker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\mem\BasicPoolAllocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1671,6 +1674,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ccr\Worker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mem\BasicPoolAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mem\IAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

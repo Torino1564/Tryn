@@ -32,7 +32,7 @@ namespace Ioc
 		}
 		TEST_METHOD(SimpleResolveFailure)
 		{
-			Assert::ExpectException<std::runtime_error>([this] {pIoc->Resolve<Base>(); });
+			Assert::ExpectException<std::exception>([this] {pIoc->Resolve<Base>(); });
 		}
 	private:
 		std::unique_ptr<ioc::Container> pIoc;

@@ -69,6 +69,7 @@
     <ClCompile Include="src\log\SeverityLevelPolicy.cpp" />
     <ClCompile Include="src\log\SimpleFileDriver.cpp" />
     <ClCompile Include="src\log\TextFormatter.cpp" />
+    <ClCompile Include="src\mem\BasicPoolAllocator.cpp" />
     <ClCompile Include="src\utl\Assert.cpp" />
     <ClCompile Include="src\utl\Exception.cpp" />
     <ClCompile Include="src\utl\StackTrace.cpp" />
@@ -174,6 +175,8 @@
     <ClInclude Include="src\log\SeverityLevelPolicy.h" />
     <ClInclude Include="src\log\SimpleFileDriver.h" />
     <ClInclude Include="src\log\TextFormatter.h" />
+    <ClInclude Include="src\mem\BasicPoolAllocator.h" />
+    <ClInclude Include="src\mem\IAllocator.h" />
     <ClInclude Include="src\spa\Dimensions.h" />
     <ClInclude Include="src\spa\Rect.h" />
     <ClInclude Include="src\spa\Vec2.h" />
