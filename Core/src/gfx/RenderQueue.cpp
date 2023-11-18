@@ -3,6 +3,7 @@
 #include "RenderQueue/Step.h"
 #include <Core/src/log/Log.h>
 #include <Core/src/gfx/RenderTask.h>
+#include <Core/src/gfx/PointLight.h>
 
 namespace tryn::gfx
 {
@@ -49,8 +50,12 @@ namespace tryn::gfx
 			}
 		}
 
-		bool first = true;
+		for (int i = 0, taskIndex = 0; i < workerCount; i++)
+		{
+			
+		}
 
+		bool first = true;
 		for (int i = 0, taskIndex = 0; i < workerCount; i++)
 		{
 			auto itFirst = jobs.begin() + (perWorker * i);
@@ -117,6 +122,5 @@ namespace tryn::gfx
 	{
 		return data;
 	}
-
 }
 

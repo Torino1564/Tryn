@@ -28,6 +28,7 @@ namespace tryn::gfx
 		std::vector<PointLight*> pPointLights;
 		std::vector<Camera*> pCameras;
 		IGraphics* gfx = nullptr;
+		int selectedPointLight = 0;
 		int selectedCamera = 0;
 	};
 }

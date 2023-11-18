@@ -4,6 +4,7 @@
 
 namespace tryn::gfx
 {
+	class IContext;
 	class PointLight
 	{
 	public:
@@ -11,6 +12,7 @@ namespace tryn::gfx
 		void ShowControls();
 		void Reset();
 		void Bind() const;
+		void Bind(IContext&) const;
 		void SubmitLight(IGraphics& gfx);
 		void Submit(IGraphics& gfx, const glm::mat4 view);
 		Model& GetModel();
@@ -32,5 +34,16 @@ namespace tryn::gfx
 		glm::mat4 transformation;
 		std::unique_ptr<Model> pModel;
 		static std::shared_ptr<IPxConstantBuffer> pCBuf;
+	};
+
+	class BindPointLightTask
+	{
+	public:
+		void operator()();
+
+		struct Data {
+			PointLight* pLight;
+			IContext* pContext;
+		} params = {};
 	};
 }

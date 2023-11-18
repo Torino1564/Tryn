@@ -98,6 +98,7 @@
     <ClInclude Include="src\ccr\GenericObjectPool.h" />
     <ClInclude Include="src\ccr\GenericTaskQueue.h" />
     <ClInclude Include="src\ccr\Master.h" />
+    <ClInclude Include="src\ccr\Task.h" />
     <ClInclude Include="src\ccr\Thread.h" />
     <ClInclude Include="src\ccr\Worker.h" />
     <ClInclude Include="src\gfx\Assimp.h" />

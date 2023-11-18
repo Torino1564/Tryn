@@ -1,10 +1,11 @@
 #include "TestApp.h"
+#include <utility>
+#include <ranges>
 #include <Core/src/app/EntryPoint.h>
 #include <Core/src/gfx/Bindables/BindableBase.h>
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
 #include <Core/third/glm/glm.hpp>
 #include <Core/third/glm/gtc/matrix_transform.hpp>
-#include <utility>
 #include <Core/src/gfx/Profiler.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>
 #include <core/src/gfx/RenderQueue/Technique.h>
@@ -30,8 +31,9 @@ public:
 	{
 		{
 			PROFILE_SCOPE("Execute Frame");
-			for (auto pointLight : pPointLights)
+			for (auto [index, pointLight] : std::views::enumerate(pPointLights))
 			{
+				selectedPointLight = index;
 				pointLight->Bind();
 				GetRenderQueueByID("Lambertian").RunJobsAsync(gfx, master, workerPtrs);
 				//GetRenderQueueByID("Lambertian").RunJobs(gfx);
@@ -39,7 +41,7 @@ public:
 		}
 	}
 private:
-	static constexpr int workerNumber = 4;
+	static constexpr int workerNumber = 3;
 	ccr::Master master;
 	std::vector<std::unique_ptr<gfx::RenderWorker>> workerPtrs;
 };

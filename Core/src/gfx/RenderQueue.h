@@ -7,6 +7,7 @@ namespace tryn::gfx
 {
 	class Drawable;
 	class Step;
+	class BindPointLightTask;
 
 	class Job
 	{
@@ -14,9 +15,10 @@ namespace tryn::gfx
 	public:
 		Job(Drawable* parent, Step* step);
 		void Execute(IGraphics& gfx);
-		void ExecuteAsync(IGraphics& gfx, RenderWorker* worker, std::optional<std::shared_ptr<RenderTask>> taskPtr = std::nullopt);
+		void ExecuteAsync(IGraphics& gfx, RenderWorker* worker, std::optional<std::shared_ptr<BindPointLightTask>> taskPtr = std::nullopt);
 
 	private:
+		void BindPointLight(RenderWorker* worker, std::optional<std::shared_ptr<RenderTask>> taskPtr = std::nullopt);
 		struct Data {
 			Drawable* pDrawable;
 			Step* pStep;

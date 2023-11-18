@@ -62,6 +62,10 @@ namespace tryn::gfx
 	{
 		pCBuf->Bind();
 	}
+	void PointLight::Bind(IContext& context) const
+	{
+		pCBuf->Bind(context);
+	}
 	void PointLight::SubmitLight(IGraphics& gfx)
 	{
 		gfx.GetRenderGraph().AddPointLight(this);
@@ -82,6 +86,11 @@ namespace tryn::gfx
 	Model& PointLight::GetModel()
 	{
 		return *pModel;
+	}
+
+	void BindPointLightTask::operator()()
+	{
+		params.pLight->Bind(*params.pContext);
 	}
 
 	std::shared_ptr<IPxConstantBuffer> PointLight::pCBuf;
