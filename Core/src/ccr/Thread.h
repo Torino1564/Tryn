@@ -20,6 +20,16 @@ namespace tryn::ccr
 			cv_.notify_one();
 		}
 		template <std::invocable InputTask>
+		void AddTask(std::shared_ptr<InputTask>&& function)
+		{
+			tasks_.Push(std::forward<std::shared_ptr<InputTask>&&>(function));
+			{
+				std::lock_guard lk(mtx_);
+				hasWork = true;
+			}
+			cv_.notify_one();
+		}
+		template <std::invocable InputTask>
 		void AddTask(InputTask* function)
 		{
 			tasks_.Push(function);
@@ -29,6 +39,7 @@ namespace tryn::ccr
 			}
 			cv_.notify_one();
 		}
+
 		void Halt()
 		{
 			{

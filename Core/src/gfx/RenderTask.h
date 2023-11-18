@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/src/ccr/Master.h>
+#include <vector>
 
 namespace tryn::gfx
 {
@@ -7,6 +8,7 @@ namespace tryn::gfx
 	class Step;
 	class IGraphics;
 	class IContext;
+	class Job;
 
 	class RenderTask
 	{
@@ -18,6 +20,19 @@ namespace tryn::gfx
 			Step* pStep;
 			IGraphics* pGfx;
 			IContext* pContext;
+		} params = {};
+	};
+
+	class BatchRenderTask
+	{
+	public:
+		void operator()();
+
+		struct Params {
+			std::vector<Job>::iterator begin;
+			std::vector<Job>::iterator end;
+			IContext* pContext;
+			IGraphics* pGfx;
 		} params = {};
 	};
 }

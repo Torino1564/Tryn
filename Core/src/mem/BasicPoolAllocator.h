@@ -24,7 +24,7 @@ namespace tryn::mem
 			std::size_t index = 0;
 			std::size_t byteIndex = 0;
 			std::size_t inByteOffset = 0;
-			auto numBuckets;
+			std::size_t numBuckets;
 			const auto divResult = std::div(numBytes, static_cast<int>(bytesPerBucket));
 			if (divResult.rem != 0)
 			{

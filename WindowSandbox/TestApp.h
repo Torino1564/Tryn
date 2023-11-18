@@ -19,7 +19,7 @@ private:
 	std::vector<std::future<void>> futures;
 	gfx::Camera camera;
 
-	static constexpr const int entityCount1D = 1;
+	static constexpr const int entityCount1D = 5;
 
 	int tallyX = 0, tallyY = 0;
 };

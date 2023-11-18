@@ -11,7 +11,6 @@ namespace tryn::ccr
 	{
 	public:
 		using Task = std::move_only_function<void()>;
-		using TaskPtr = std::variant<std::unique_ptr<Task>, Task*>;
 		template <std::invocable InputTask>
 		auto Push(std::unique_ptr<InputTask>&& functionPtr)
 		{
@@ -35,6 +34,15 @@ namespace tryn::ccr
 		{
 			using T = std::invoke_result_t<decltype(functionPtr)>;
 			std::packaged_task<T(InputTask&&)> pkg{ [](InputTask&& taskPtr) { return taskPtr(); } };
+			auto future = pkg.get_future();
+			PushTask_(std::move([pkg = std::move(pkg), ptr = std::move(functionPtr)]() mutable { pkg(std::move(ptr)); }));
+			return future;
+		}
+		template <std::invocable InputTask>
+		auto Push(std::shared_ptr<InputTask>&& functionPtr)
+		{
+			using T = std::invoke_result_t<decltype(*functionPtr)>;
+			std::packaged_task<T(std::shared_ptr<InputTask>&&)> pkg{ [](std::shared_ptr<InputTask>&& taskPtr) { return (*taskPtr)(); } };
 			auto future = pkg.get_future();
 			PushTask_(std::move([pkg = std::move(pkg), ptr = std::move(functionPtr)]() mutable { pkg(std::move(ptr)); }));
 			return future;

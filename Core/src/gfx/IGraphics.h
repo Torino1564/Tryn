@@ -145,7 +145,7 @@ namespace tryn::gfx
 		auto Dispatch_(F&& f) const
 		{
 			auto future = tasks_.Push(std::forward<F>(f));
-			cv.notify_all();
+			cv.notify_one();
 			return future;
 		}
 		std::unique_ptr<IContext> pContext;

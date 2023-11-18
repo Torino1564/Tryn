@@ -14,10 +14,15 @@ namespace tryn::gfx
 	public:
 		Job(Drawable* parent, Step* step);
 		void Execute(IGraphics& gfx);
-		void ExecuteAsync(IGraphics& gfx, RenderWorker* worker);
+		void ExecuteAsync(IGraphics& gfx, RenderWorker* worker, std::optional<std::shared_ptr<RenderTask>> taskPtr = std::nullopt);
+
 	private:
-		Drawable* pDrawable;
-		Step* pStep;
+		struct Data {
+			Drawable* pDrawable;
+			Step* pStep;
+		} data;
+	public:
+		Data& GetData();
 	};
 
 	class RenderQueue
@@ -28,7 +33,11 @@ namespace tryn::gfx
 		void RunJobsAsync(IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers);
 		void Push(Job job);
 	private:
+		void ExecuteBatchAsync(IGraphics& gfx, RenderWorker* worker, std::vector<Job>::iterator, std::vector<Job>::iterator, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr);
+	private:
 		std::string id;
-		std::queue<Job> queue;
+		std::vector<Job> jobs;
+		std::vector<std::shared_ptr<RenderTask>> renderTaskPtrs;
+		std::vector<std::shared_ptr<BatchRenderTask>> batchRenderTaskPtrs;
 	};
 }
