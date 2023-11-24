@@ -1,0 +1,14 @@
+{
+  "FileVersion": 2,
+  "Id": "44a10958-f1d2-4830-9488-d0d5ddc6ee4e",
+  "Items": [
+    {
+      "Id": "7ca19c40-17fa-4f3c-af75-797f27040c70",
+      "Command": "--singleThreadedRenderer"
+    },
+    {
+      "Id": "b401e998-a1c0-452e-b567-90f469ccc3e6",
+      "Command": "--numRenderWorkers 4"
+    }
+  ]
+}

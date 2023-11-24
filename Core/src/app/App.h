@@ -2,6 +2,7 @@
 #include <memory>
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/win/IWindow.h>
+#include <Core/src/app/Globals.h>
 
 namespace tryn::app
 {
@@ -18,11 +19,13 @@ namespace tryn::app
 		virtual void PostFrame();
 
 		gfx::IGraphics& Gfx();
+
 	protected:
 		std::shared_ptr<win::IWindow> wnd;
 		std::shared_ptr<gfx::IGraphics> gfx;
 		long double dt = 0;
 	};
+
 
 	App* CreateApp(int argc, char** argv);
 }

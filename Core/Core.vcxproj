@@ -93,6 +93,7 @@
   <ItemGroup>
     <ClInclude Include="src\app\App.h" />
     <ClInclude Include="src\app\EntryPoint.h" />
+    <ClInclude Include="src\app\Globals.h" />
     <ClInclude Include="src\app\Initialization.h" />
     <ClInclude Include="src\ccr\CCRException.h" />
     <ClInclude Include="src\ccr\GenericObjectPool.h" />

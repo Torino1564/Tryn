@@ -1,5 +1,5 @@
 {
   "name": "tryn-core",
   "version": "0.1.0",
-  "dependencies": ["assimp"]
+  "dependencies": ["assimp", "cli11", "raylib"]
 }

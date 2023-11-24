@@ -2,6 +2,9 @@
 #include <Core/src/app/App.h>
 #include <Core/src/app/Initialization.h>
 #include <Core/src/utl/Assert.h>
+#include <Core/src/utl/String.h>
+#include <CLI/CLI.hpp>
+#include <Core/src/app/Globals.h>
 
 extern tryn::app::App* tryn::app::CreateApp(int argc, char** argv);
 
@@ -11,6 +14,15 @@ namespace tryn::app
 	{
 		BootCore();
 		std::unique_ptr<App> app(tryn::app::CreateApp(argc, argv));
+
+		// Init command line params
+		CLI::App cliApp("A multi API game engine", "Tryn Core");
+
+		cliApp.add_flag("--singleThreadedRenderer, -s", gbl::configs.singleThreadedRendeder, "forces singlethreaded renderer");
+		cliApp.add_option("--numRenderWorkers, -r", gbl::configs.numRenderWorkers, "specify the number of render workers. Default value is 3");
+
+		CLI11_PARSE(cliApp, argc, argv);
+		
 		trynass_msg(app, L"Application is null. Failed to run the client CreateApp function");
 		try
 		{
@@ -40,6 +52,21 @@ int WINAPI wWinMain(
 	PWSTR pCmdLine,
 	int nCmdShow)
 {
-	tryn::app::Main(__argc, __argv);
+	const auto argc = __argc;
+	const auto wargv = __wargv;
+
+	static constexpr auto bufferSize = 10000;
+	static std::array<char, bufferSize> buffer = {};
+	static std::array<char*, 100> charPtrs = {};
+	auto index = 0;
+	for (int i = 0; i < argc; i++)
+	{
+		auto tempString = tryn::utl::ToNarrow(wargv[i]);
+		auto length = tempString.size();
+		memcpy_s(buffer.data() + index, bufferSize - index, tempString.c_str(), length);
+		charPtrs[i] = buffer.data() + index;
+		index += length + 1;
+	}
+	tryn::app::Main(argc, charPtrs.data());
 }
 #endif

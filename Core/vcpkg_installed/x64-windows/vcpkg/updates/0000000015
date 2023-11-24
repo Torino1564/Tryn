@@ -1,9 +1,0 @@
-Package: poly2tri
-Version: 2020-07-21
-Port-Version: 3
-Depends: vcpkg-cmake, vcpkg-cmake-config
-Architecture: x64-windows
-Multi-Arch: same
-Abi: 9761c9ce35228b637b17ad484cfef331471433a4da49e602302b0e3fd3c882d6
-Description: The Clipper library performs clipping and offsetting for both lines and polygons. All four boolean clipping operations are supported - intersection, union, difference and exclusive-or. Polygons can be of any shape including self-intersecting polygons.
-Status: install ok installed

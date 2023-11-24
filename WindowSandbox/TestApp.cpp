@@ -18,10 +18,10 @@ class TestRenderGraph : public gfx::IRenderGraph
 public:
 	TestRenderGraph(gfx::IGraphics& gfx_p)
 		:
-		master(workerNumber)
+		master(gbl::configs.numRenderWorkers)
 	{
 		gfx = &gfx_p;
-		for (int i = 0; i < workerNumber; i++)
+		for (int i = 0; i < gbl::configs.numRenderWorkers; i++)
 		{
 			workerPtrs.push_back(gfx->CreateRenderWorker(&master));
 			workerPtrs[i]->StartWorking();
@@ -34,13 +34,20 @@ public:
 			for (auto [selectedPointLight, pointLight] : std::views::enumerate(pPointLights))
 			{
 				pointLight->Bind();
-				GetRenderQueueByID("Lambertian").RunJobsAsync(gfx, master, workerPtrs, pPointLights[selectedPointLight]);
-				//GetRenderQueueByID("Lambertian").RunJobs(gfx);
+
+				if (gbl::configs.singleThreadedRendeder)
+				{
+					GetRenderQueueByID("Lambertian").RunJobs(gfx);
+				}
+				else
+				{
+					GetRenderQueueByID("Lambertian").RunJobsAsync(gfx, master, workerPtrs, pPointLights[selectedPointLight]);
+				}
+
 			}
 		}
 	}
 private:
-	static constexpr int workerNumber = 3;
 	ccr::Master master;
 	std::vector<std::unique_ptr<gfx::RenderWorker>> workerPtrs;
 };
@@ -97,7 +104,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 			}
 		}
 	}
-	//entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{ 0.01f,0.01f,0.01f }));
+	entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{ 0.01f,0.01f,0.01f }));
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
 	this->wnd->keyboard.DisableAutoRepeat();

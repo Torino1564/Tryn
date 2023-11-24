@@ -1,8 +1,10 @@
-Package: zlib
-Version: 1.2.13
-Depends: vcpkg-cmake
+Package: raylib
+Version: 4.5.0
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 6d91e4099f844799557887d68e15b2a16685159a4a2fe3b8016efff000b266f7
-Description: A compression library
-Status: install ok half-installed
+Abi: d8324fab6c6646a6e26715f50f3ceab23d950770e2bd45cb074681512c55d9ce
+Description: A simple and easy-to-use library to enjoy videogames programming
+Default-Features: use-audio
+Status: install ok installed

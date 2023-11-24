@@ -1,9 +1,0 @@
-Package: minizip
-Version: 1.2.13
-Port-Version: 2
-Depends: vcpkg-cmake, vcpkg-cmake-config, zlib
-Architecture: x64-windows
-Multi-Arch: same
-Abi: 27a806bb830e2ee8364ba99c4635ac396b7e158f69f500ae6b5aba2dccf74fb5
-Description: Minizip zip file manipulation library
-Status: install ok half-installed
