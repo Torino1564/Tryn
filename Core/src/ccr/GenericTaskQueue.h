@@ -21,15 +21,6 @@ namespace tryn::ccr
 			return future;
 		}
 		template <std::invocable InputTask>
-		auto Push(InputTask* functionPtr)
-		{
-			using T = std::invoke_result_t<decltype(*functionPtr)>;
-			std::packaged_task<T(InputTask*)> pkg{ [](InputTask* taskPtr) { return (*taskPtr)(); } };
-			auto future = pkg.get_future();
-			PushTask_(std::move([pkg = std::move(pkg), ptr = functionPtr]() mutable { pkg(ptr); }));
-			return future;
-		}
-		template <std::invocable InputTask>
 		auto Push(InputTask&& functionPtr)
 		{
 			using T = std::invoke_result_t<decltype(functionPtr)>;
@@ -39,10 +30,10 @@ namespace tryn::ccr
 			return future;
 		}
 		template <std::invocable InputTask>
-		auto Push(std::shared_ptr<InputTask>&& functionPtr)
+		auto Push(std::shared_ptr<InputTask> functionPtr)
 		{
 			using T = std::invoke_result_t<decltype(*functionPtr)>;
-			std::packaged_task<T(std::shared_ptr<InputTask>&&)> pkg{ [](std::shared_ptr<InputTask>&& taskPtr) { return (*taskPtr)(); } };
+			std::packaged_task<T(std::shared_ptr<InputTask>)> pkg{ [](std::shared_ptr<InputTask> taskPtr) { return (*taskPtr)(); } };
 			auto future = pkg.get_future();
 			PushTask_(std::move([pkg = std::move(pkg), ptr = std::move(functionPtr)]() mutable { pkg(std::move(ptr)); }));
 			return future;

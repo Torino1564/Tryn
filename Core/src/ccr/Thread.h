@@ -2,6 +2,7 @@
 #include <future>
 #include <thread>
 #include "GenericTaskQueue.h"
+#include <Core/src/utl/LocalGenericTaskQueue.h>
 
 namespace tryn::ccr
 {
@@ -20,19 +21,9 @@ namespace tryn::ccr
 			cv_.notify_one();
 		}
 		template <std::invocable InputTask>
-		void AddTask(std::shared_ptr<InputTask>&& function)
+		void AddTask(std::shared_ptr<InputTask> function)
 		{
 			tasks_.Push(std::forward<std::shared_ptr<InputTask>&&>(function));
-			{
-				std::lock_guard lk(mtx_);
-				hasWork = true;
-			}
-			cv_.notify_one();
-		}
-		template <std::invocable InputTask>
-		void AddTask(InputTask* function)
-		{
-			tasks_.Push(function);
 			{
 				std::lock_guard lk(mtx_);
 				hasWork = true;
@@ -78,7 +69,7 @@ namespace tryn::ccr
 		std::mutex mtx_;
 
 		//Work
-		ccr::GenericTaskQueue tasks_;
+		utl::LocalGenericTaskQueue tasks_;
 
 		//State
 		bool halted = true;

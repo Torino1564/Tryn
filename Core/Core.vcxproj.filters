@@ -1685,6 +1685,9 @@
     <ClInclude Include="src\ccr\Task.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\utl\LocalGenericTaskQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">

@@ -20,23 +20,13 @@ namespace tryn::gfx
 		jobs.clear();
 	}
 
-	void RenderQueue::RunJobsAsync(IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers)
+	void RenderQueue::RunJobsAsync(IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers, gfx::PointLight* pPointLight)
 	{
 		// Defer calls to
 		const auto workerCount = pMaster.GetWorkerCount();
 		const auto queueSize = jobs.size();
 		const auto perWorker = queueSize / workerCount;
 		const auto remaining = queueSize % workerCount;
-
-		const auto originalSize = renderTaskPtrs.capacity();
-		if (originalSize < queueSize)
-		{
-			renderTaskPtrs.reserve(static_cast<std::size_t>(queueSize * 1.5));
-			for (int i = 0; i < (queueSize * 1.5) - originalSize - 1; i++)
-			{
-				renderTaskPtrs.push_back(std::make_shared<RenderTask>());
-			}
-		}
 
 		const auto originalSizeBatch = batchRenderTaskPtrs.capacity();
 		if (originalSizeBatch < workerCount)
@@ -50,10 +40,24 @@ namespace tryn::gfx
 			}
 		}
 
-		for (int i = 0, taskIndex = 0; i < workerCount; i++)
+
+		const auto originalSizePointLightBind = bindPointLightTaskPtrs.capacity();
+		if (originalSizePointLightBind < workerCount)
 		{
-			
+			bindPointLightTaskPtrs.reserve(workerCount);
+			{
+				for (int i = 0; i < workerCount - originalSizeBatch; i++)
+				{
+					bindPointLightTaskPtrs.push_back(std::make_shared<BindPointLightTask>());
+				}
+			}
 		}
+
+		for (int i = 0; i < workerCount; i++)
+		{
+			BindPointLight(workers[i].get(), pPointLight, bindPointLightTaskPtrs[i]);
+		}
+		pMaster.WaitForWorkers();
 
 		bool first = true;
 		for (int i = 0, taskIndex = 0; i < workerCount; i++)
@@ -109,13 +113,22 @@ namespace tryn::gfx
 
 	void RenderQueue::ExecuteBatchAsync(IGraphics& gfx, RenderWorker* worker, std::vector<Job>::iterator beginIt, std::vector<Job>::iterator endIt, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr)
 	{
-		auto batchRenderTask = taskPtr.value_or(std::make_unique<BatchRenderTask>());
+		auto batchRenderTask = taskPtr.value_or(std::make_shared<BatchRenderTask>());
 		batchRenderTask->params.begin = beginIt;
 		batchRenderTask->params.end = endIt;
 		batchRenderTask->params.pContext = &worker->GetContext();
 		batchRenderTask->params.pGfx = &gfx;
 
-		worker->AddTask(std::move(batchRenderTask));
+		worker->AddTask(batchRenderTask);
+	}
+
+	void RenderQueue::BindPointLight(RenderWorker* worker, PointLight* pPointLight, std::optional<std::shared_ptr<BindPointLightTask>> taskPtr)
+	{
+		auto bindPointLightTask = taskPtr.value_or(std::make_unique<BindPointLightTask>());
+		bindPointLightTask->params.pLight = pPointLight;
+		bindPointLightTask->params.pContext = &worker->GetContext();
+
+		worker->AddTask(bindPointLightTask);
 	}
 
 	Job::Data& Job::GetData()

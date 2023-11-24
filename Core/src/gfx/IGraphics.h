@@ -19,6 +19,7 @@
 #include "RenderGraph.h"
 #include <Core/src/gfx/IContext.h>
 #include <Core/src/gfx/GraphicAPI.h>
+#include <Core/src/utl/LocalGenericTaskQueue.h>
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
@@ -132,7 +133,7 @@ namespace tryn::gfx
 		std::unique_ptr<IRenderGraph> renderGraph;
 
 		// Multithreading stuff
-		std::mutex mtx;
+		mutable std::mutex mtx;
 		mutable std::condition_variable cv;
 		std::binary_semaphore startSignal_{ 0 };
 		mutable ccr::GenericTaskQueue tasks_;
@@ -144,6 +145,7 @@ namespace tryn::gfx
 		template<std::invocable F>
 		auto Dispatch_(F&& f) const
 		{
+			std::lock_guard lk{ mtx };
 			auto future = tasks_.Push(std::forward<F>(f));
 			cv.notify_one();
 			return future;

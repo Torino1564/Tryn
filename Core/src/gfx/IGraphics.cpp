@@ -52,13 +52,9 @@ namespace tryn::gfx
 		while (!closing_)
 		{
 			cv.wait(lk, [this] {
-				return closing_ || !tasks_.Empty();
+				return !tasks_.Empty() || closing_;
 				});
-
-			while (!tasks_.Empty())
-			{
-				tasks_.PopExecute();
-			}
+			tasks_.PopExecute();
 		}
 	}
 }
