@@ -2126,6 +2126,7 @@
     <None Include="src\gfx\vulkan\vulkan\glsl_shader.frag" />
     <None Include="src\gfx\dx11\PS\LightVector.hlsli" />
     <None Include="src\gfx\dx11\PS\Operations.hlsli" />
+    <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\gfx\dx11\VS\VertexShader.hlsl" />
