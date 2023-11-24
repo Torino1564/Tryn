@@ -149,9 +149,7 @@ namespace tryn::gfx::dx11
 
 	void Graphics::EndFrame()
 	{
-		trylog.debug(L"Dispatching end frame call");
-		auto future = Dispatch_([&] {
-			trylog.debug(L"Executing end frame call");
+		auto future = Dispatch_([=] {
 			ExecuteFrame();
 			ImGui::EndFrame();
 			ImGui::Render();
@@ -159,7 +157,6 @@ namespace tryn::gfx::dx11
 			ImGui::RenderPlatformWindowsDefault();
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 			pSwap->Present(0u, 0u) >> chk;
-			trylog.debug(L"Finished end frame call");
 			});
 
 		future.get();

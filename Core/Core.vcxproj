@@ -184,6 +184,7 @@
     <ClInclude Include="src\spa\Vec3.h" />
     <ClInclude Include="src\utl\Assert.h" />
     <ClInclude Include="src\utl\Exception.h" />
+    <ClInclude Include="src\utl\LocalGenericTaskQueue.h" />
     <ClInclude Include="src\utl\Macro.h" />
     <ClInclude Include="src\utl\NoReturn.h" />
     <ClInclude Include="src\utl\StackTrace.h" />
