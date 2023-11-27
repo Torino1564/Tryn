@@ -119,7 +119,7 @@ namespace tryn::gfx
 		batchRenderTask->params.pContext = &worker->GetContext();
 		batchRenderTask->params.pGfx = &gfx;
 
-		worker->AddTask(batchRenderTask);
+		worker->AddTask(std::move(batchRenderTask));
 	}
 
 	void RenderQueue::BindPointLight(RenderWorker* worker, PointLight* pPointLight, std::optional<std::shared_ptr<BindPointLightTask>> taskPtr)
@@ -128,7 +128,7 @@ namespace tryn::gfx
 		bindPointLightTask->params.pLight = pPointLight;
 		bindPointLightTask->params.pContext = &worker->GetContext();
 
-		worker->AddTask(bindPointLightTask);
+		worker->AddTask(std::move(bindPointLightTask));
 	}
 
 	Job::Data& Job::GetData()

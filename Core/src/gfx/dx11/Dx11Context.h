@@ -22,5 +22,6 @@ namespace tryn::gfx::dx11
 	private:
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pView;
+		Microsoft::WRL::ComPtr<ID3D11CommandList> pCommandList;
 	};
 }

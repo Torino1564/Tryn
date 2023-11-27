@@ -35,7 +35,7 @@ namespace tryn::gfx
 		void RunJobsAsync(IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers, gfx::PointLight* pPointLight);
 		void Push(Job job);
 	private:
-		void ExecuteBatchAsync(IGraphics& gfx, RenderWorker* worker, std::vector<Job>::iterator, std::vector<Job>::iterator, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr);
+		void ExecuteBatchAsync(IGraphics& gfx, RenderWorker* worker, std::vector<Job>::iterator, std::vector<Job>::iterator, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr = std::nullopt);
 		void BindPointLight(RenderWorker* worker, PointLight* pPointLight, std::optional<std::shared_ptr<BindPointLightTask>> taskPtr = std::nullopt);
 
 	private:

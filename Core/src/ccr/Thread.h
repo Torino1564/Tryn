@@ -23,7 +23,7 @@ namespace tryn::ccr
 		template <std::invocable InputTask>
 		void AddTask(std::shared_ptr<InputTask> function)
 		{
-			tasks_.Push(std::forward<std::shared_ptr<InputTask>&&>(function));
+			tasks_.Push(function);
 			{
 				std::lock_guard lk(mtx_);
 				hasWork = true;

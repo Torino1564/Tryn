@@ -15,6 +15,6 @@ namespace tryn::gfx
 			);
 			});
 
-		static ImguiManager imgui; // ImGui initialization
+		static ImguiManager imguiManager;
 	}
 }

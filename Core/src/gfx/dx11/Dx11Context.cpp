@@ -41,9 +41,8 @@ namespace tryn::gfx::dx11
 		trynass_msg(deferred, L"Called the submit member on a non deferred context");
 		gfx.AssertContextCoherence(*this);
 		auto& immediateContext = static_cast<DX11Context&>(gfx.GetContext()).GetContext();
-		ID3D11CommandList* pCommandList = nullptr;
 		pContext->FinishCommandList(TRUE, &pCommandList) >> chk;
-		immediateContext.ExecuteCommandList(pCommandList, TRUE);
+		immediateContext.ExecuteCommandList(pCommandList.Get(), TRUE);
 	}
 	void DX11Context::DrawIndexed(int count)
 	{
