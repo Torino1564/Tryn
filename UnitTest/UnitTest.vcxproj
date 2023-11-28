@@ -92,6 +92,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ent\Ent.cpp" />
     <ClCompile Include="src\ioc\Ioc.cpp" />
     <ClCompile Include="src\log\Log.cpp" />
     <ClCompile Include="src\log\LogTextFormatter.cpp" />

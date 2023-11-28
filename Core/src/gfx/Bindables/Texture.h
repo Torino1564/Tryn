@@ -2,6 +2,7 @@
 #include "Bindable.h"
 #include <Core/src/gfx/BindablePool.h>
 #include <filesystem>
+#include <Core/src/gfx/Texture.h>
 
 namespace tryn::gfx
 {

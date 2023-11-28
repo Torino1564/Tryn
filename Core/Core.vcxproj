@@ -15,6 +15,7 @@
     <ClCompile Include="src\ccr\Master.cpp" />
     <ClCompile Include="src\ccr\Thread.cpp" />
     <ClCompile Include="src\ccr\Worker.cpp" />
+    <ClCompile Include="src\ent\Landscape.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
@@ -50,6 +51,7 @@
     <ClCompile Include="src\gfx\RenderQueue.cpp" />
     <ClCompile Include="src\gfx\RenderQueue\Step.cpp" />
     <ClCompile Include="src\gfx\RenderTask.cpp" />
+    <ClCompile Include="src\gfx\Texture.cpp" />
     <ClCompile Include="src\gfx\Vertex.cpp" />
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp" />
     <ClCompile Include="src\ccr\GenericTaskQueue.cpp" />
@@ -102,6 +104,7 @@
     <ClInclude Include="src\ccr\Task.h" />
     <ClInclude Include="src\ccr\Thread.h" />
     <ClInclude Include="src\ccr\Worker.h" />
+    <ClInclude Include="src\ent\Landscape.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
@@ -134,6 +137,7 @@
     <ClInclude Include="src\gfx\dx11\Dx11Context.h" />
     <ClInclude Include="src\gfx\dx11\Dx11RenderWorker.h" />
     <ClInclude Include="src\gfx\GraphicAPI.h" />
+    <ClInclude Include="src\gfx\TexturePool.h" />
     <ClInclude Include="src\gfx\IContext.h" />
     <ClInclude Include="src\gfx\Material.h" />
     <ClInclude Include="src\gfx\Model\Mesh.h" />
@@ -159,6 +163,7 @@
     <ClInclude Include="src\gfx\RenderQueue\Technique.h" />
     <ClInclude Include="src\gfx\RenderTask.h" />
     <ClInclude Include="src\gfx\RenderWorker.h" />
+    <ClInclude Include="src\gfx\Texture.h" />
     <ClInclude Include="src\gfx\Vertex.h" />
     <ClInclude Include="src\gfx\vulkan\Graphics.h" />
     <ClInclude Include="src\gfx\vulkan\imgui_impl_vulkan.h" />
@@ -179,6 +184,8 @@
     <ClInclude Include="src\log\TextFormatter.h" />
     <ClInclude Include="src\mem\BasicPoolAllocator.h" />
     <ClInclude Include="src\mem\IAllocator.h" />
+    <ClInclude Include="src\mem\SharedRef.h" />
+    <ClInclude Include="src\mem\WeakRef.h" />
     <ClInclude Include="src\spa\Dimensions.h" />
     <ClInclude Include="src\spa\Rect.h" />
     <ClInclude Include="src\spa\Vec2.h" />
