@@ -26,6 +26,12 @@ namespace tryn::gfx::dx11
 		ID3D11DeviceContext& GetContext();
 		ID3D11Device& GetDevice();
 
+		std::string_view GetAPIString() const override
+		{
+			static std::string APIString = "DX11";
+			return APIString;
+		}
+
 		static constexpr DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
 		{
 			switch (format)

@@ -81,7 +81,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	this->gfx = std::move(gfx);
 
 	// Graphic Matrices
-	Gfx().SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(Gfx().dimensions.width), static_cast<float>(Gfx().dimensions.height), 0.1f, 1000.0f));
+	Gfx().SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(Gfx().dimensions.width), static_cast<float>(Gfx().dimensions.height), 0.1f, 10000000000.0f));
 	Gfx().SetRenderGraph(std::make_unique<TestRenderGraph>(Gfx()));
 
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};
@@ -104,7 +104,8 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 			}
 		}
 	}
-	entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{ 0.01f,0.01f,0.01f }));
+	//entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{ 0.01f,0.01f,0.01f }));
+	entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "terrain", "resources/models/TestTerrain.fbx"));
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
 	this->wnd->keyboard.DisableAutoRepeat();
@@ -119,6 +120,10 @@ void TestApp::DoFrame()
 	{
 		PROFILE_SCOPE("Update Rotation");
 		pPointLight->ShowControls();
+		for (auto& entity : entities)
+		{
+			entity->SpawnControlWindow();
+		}
 	}
 	{
 		PROFILE_SCOPE("Draw call");
@@ -186,6 +191,8 @@ void TestApp::DoFrame()
 				camera.Rotate(delta->x, delta->y);
 			}
 		}
+
+		camera.ShowControls();
 
 		// Toggle 1st Person Camera
 		if (const auto event = wnd->keyboard.ReadKey(); event.IsTypePress() && event.GetCode() == VK_ESCAPE)

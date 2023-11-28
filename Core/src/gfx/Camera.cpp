@@ -67,5 +67,25 @@ namespace tryn::gfx
         }
 
     }
+    void Camera::ShowControls()
+    {
+        if (ImGui::Begin("Camera parameters"))
+        {
+            ImGui::SliderFloat("Travel Speed", &travelSpeed, 0.005f, 0.1f);
+            if (ImGui::Button("Reset position"))
+            {
+                Reset();
+            }
+        }
+    }
+    void Camera::Reset()
+    {
+        position = { 0.0f,0.0f,0.0f };
+        direction = { 1.0f,0.0f,0.0f };
+        yaw = 0;
+        pitch = 0;
+        travelSpeed = 0.005f;
+        rotationSpeed = 0.1f;
+    }
 }
 

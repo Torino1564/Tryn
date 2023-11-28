@@ -3,6 +3,7 @@
 #include <core/src/gfx/RenderQueue/Technique.h>
 #include <Core/src/gfx/Vertex.h>
 #include <filesystem>
+#include <format>
 
 struct aiMaterial;
 struct aiMesh;
@@ -24,6 +25,5 @@ namespace tryn::gfx
 		VertexLayout vLayout;
 		std::vector<Technique> techniques;
 		std::string name;
-		std::string modelPath;
 	};
 }

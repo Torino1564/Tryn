@@ -1,5 +1,4 @@
 #include "Texture.h"
-#include <Core/third/stb_image/stb_image.h>
 #include <Core/src/utl/Assert.h>
 #include <Core/src/utl/String.h>
 
@@ -16,15 +15,17 @@ namespace tryn::gfx
 			hasAlpha = true;
 		}
 
-		buffer = reinterpret_cast<std::byte*>(texture);
-	}
-	Texture::~Texture()
-	{
-		stbi_image_free(buffer);
+		this->path = path.string();
+		if (scale)
+		{
+			this->scale = scale;
+		}
+
+		buffer = std::move(std::unique_ptr<std::byte,STBI_Close>(reinterpret_cast<std::byte*>(texture), STBI_Close::Get()));
 	}
 	const std::byte* Texture::Data() const noexcept
 	{
-		return buffer;
+		return buffer.get();
 	}
 	int Texture::GetHeight() const noexcept
 	{

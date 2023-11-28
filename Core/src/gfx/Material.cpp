@@ -14,8 +14,6 @@
 namespace tryn::gfx
 {
 	Material::Material(IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, Techniques defaultTechnique)
-		:
-		modelPath(path.string())
 	{
 		const auto rootPath = path.parent_path().string() + "\\";
 		static bool isInitialized = false;

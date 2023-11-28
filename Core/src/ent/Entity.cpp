@@ -24,9 +24,9 @@ namespace tryn::ent
 		ImGui::SliderFloat("Y", &settings.position.y, -20.0f, 20.0f);
 		ImGui::SliderFloat("Z", &settings.position.z, -20.0f, 20.0f);
 		ImGui::Text("Scale");
-		ImGui::SliderFloat("Xs", &settings.scale.x, -3.0f, 3.0f);
-		ImGui::SliderFloat("Ys", &settings.scale.y, -3.0f, 3.0f);
-		ImGui::SliderFloat("Zs", &settings.scale.z, -3.0f, 3.0f);
+		ImGui::SliderFloat("Xs", &settings.scale.x, .0f, 3.0f);
+		ImGui::SliderFloat("Ys", &settings.scale.y, .0f, 3.0f);
+		ImGui::SliderFloat("Zs", &settings.scale.z, .0f, 3.0f);
 		ImGui::End();
 	}
 	BasicEntity::BasicEntity(gfx::IGraphics& gfx, std::string_view name, std::string_view path, glm::vec3 scale)

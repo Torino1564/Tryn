@@ -99,6 +99,7 @@ namespace tryn::gfx
 		{
 			return *pContext;
 		}
+		virtual std::string_view GetAPIString() const = 0;
 
 		template<std::invocable F>
 		auto Dispatch(F&& f) const

@@ -17,7 +17,9 @@ namespace tryn::gfx
 		glm::vec3& GetDirection();
 		glm::mat4 GetViewMatrix() const;
 		void ShowDebugInfo() const;
+		void ShowControls();
 	private:
+		void Reset();
 		glm::vec3 position = {0.0f,0.0f,0.0f};
 		glm::vec3 direction = { 1.0f,0.0f,0.0f };
 		float yaw = 0;

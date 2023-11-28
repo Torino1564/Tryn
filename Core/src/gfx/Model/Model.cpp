@@ -79,6 +79,7 @@ namespace tryn::gfx
 		}
 
 		int nextId = 0;
+
 		root = std::make_unique<Node>(ParseNode(nextId, *pScene->mRootNode, scale));
 	}
 

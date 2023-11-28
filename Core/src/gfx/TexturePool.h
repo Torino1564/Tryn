@@ -11,6 +11,19 @@ namespace tryn::gfx
 {
 	struct TexturePool
 	{
+		struct Remover
+		{
+			void operator()(Texture* pTexture)
+			{
+				TexturePool::Get().pool.erase(pTexture->GetID());
+			}
+			static Remover& Get()
+			{
+				static Remover remover;
+				return remover;
+			}
+		};
+
 	public:
 		static std::shared_ptr<Texture> Resolve(const std::filesystem::path path, std::optional<glm::vec3> scale = std::nullopt)
 		{
@@ -18,20 +31,18 @@ namespace tryn::gfx
 
 			const auto it = Get().pool.find(id);
 
-			auto callback = [](std::shared_ptr<Texture> pTexture) -> void
-				{
-					TexturePool::Get().pool.erase(pTexture->GetID());
-				};
-
 			if (it == Get().pool.end() || it != Get().pool.end() && it->second.expired())
 			{
-				auto ptr = std::make_shared<Texture>(path, scale);
+				auto ptr = std::shared_ptr<Texture>(new Texture(path, scale), Remover{});
+
 				Get().pool[id] = std::weak_ptr<Texture>(ptr);
 				return ptr;
 			}
 			else
 			{
 				return std::shared_ptr{ it->second.lock() };
+				return std::shared_ptr<Texture>(it->second.lock().get(),
+					Remover{});
 			}
 		}
 	private:

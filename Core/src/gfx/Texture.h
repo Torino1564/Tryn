@@ -3,14 +3,27 @@
 #include <optional>
 #include <Core/third/glm/vec3.hpp>
 #include <format>
+#include <Core/third/stb_image/stb_image.h>
+
 
 namespace tryn::gfx
 {
 	class Texture
 	{
+		struct STBI_Close
+		{
+			void operator()(std::byte* image)
+			{
+				stbi_image_free(image);
+			}
+			static STBI_Close& Get()
+			{
+				static STBI_Close stbi_close;
+				return stbi_close;
+			}
+		};
 	public:
 		Texture(const std::filesystem::path& path, std::optional<glm::vec3> scale = std::nullopt);
-		~Texture();
 		static constexpr std::string GenerateID(const std::filesystem::path& path, std::optional<glm::vec3> scale = std::nullopt)
 		{
 			std::string id = "#Texture#";
@@ -35,12 +48,12 @@ namespace tryn::gfx
 	private:
 		// Data
 		std::string path;
-		glm::vec3 scale = { 1.0f,1.0f,1.0f };
+		std::optional<glm::vec3> scale;
 		int height = 0;
 		int width = 0;
 		int numChannels = 0;
 		bool hasAlpha = false;
 		// Bytes
-		std::byte* buffer;
+		std::unique_ptr<std::byte,STBI_Close> buffer;
 	};
 }

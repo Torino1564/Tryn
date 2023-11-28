@@ -1,0 +1,12 @@
+# Blender 3.5.1 MTL File: 'TestTerrain.blend'
+# www.blender.org
+
+newmtl Material.001
+Ns 135.557861
+Ka 0.159091 0.159091 0.159091
+Kd 1.000000 0.912742 0.447923
+Ks 0.145455 0.145455 0.145455
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
