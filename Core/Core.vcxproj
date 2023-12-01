@@ -43,6 +43,7 @@
     <ClCompile Include="src\gfx\dx11\imgui_impl_dx11.cpp" />
     <ClCompile Include="src\gfx\dx12\imgui_impl_dx12.cpp" />
     <ClCompile Include="src\gfx\ImguiManager.cpp" />
+    <ClCompile Include="src\gfx\Model\InstancedModel.cpp" />
     <ClCompile Include="src\gfx\Model\Model.cpp" />
     <ClCompile Include="src\gfx\Model\Node.cpp" />
     <ClCompile Include="src\gfx\Model\StaticMesh.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="src\gfx\dx11\Dx11Context.h" />
     <ClInclude Include="src\gfx\dx11\Dx11RenderWorker.h" />
     <ClInclude Include="src\gfx\GraphicAPI.h" />
+    <ClInclude Include="src\gfx\Model\InstancedModel.h" />
     <ClInclude Include="src\gfx\TexturePool.h" />
     <ClInclude Include="src\gfx\IContext.h" />
     <ClInclude Include="src\gfx\Material.h" />

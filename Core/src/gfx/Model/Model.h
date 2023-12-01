@@ -7,6 +7,12 @@
 
 namespace tryn::gfx
 {
+	struct Settings
+	{
+		glm::vec3 angles; // (yaw, pitch, roll)
+		glm::vec3 position; // (x, y, z)
+	};
+
 	class Model
 	{
 	public:
@@ -16,13 +22,8 @@ namespace tryn::gfx
 		glm::vec3 GetPosition() const;
 	private:
 		Node ParseNode(int& nextId, const aiNode& node, glm::vec3 scale);
-		struct Settings
-		{
-			glm::vec3 angles; // (yaw, pitch, roll)
-			glm::vec3 position; // (x, y, z)
-		};
-	private:
 		Settings settings = {};
+	private:
 		gfx::IGraphics& gfx;
 		std::string name;
 		std::unique_ptr<Node> root;

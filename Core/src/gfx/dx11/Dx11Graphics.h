@@ -4,6 +4,7 @@
 #include <d3d11_1.h>
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/gfx/dx11/Dx11Context.h>
+#include <Core/third/stb_image/stb_image.h>
 
 namespace tryn::gfx
 {
@@ -25,6 +26,8 @@ namespace tryn::gfx::dx11
 		constexpr GraphicAPI GetType() const override;
 		ID3D11DeviceContext& GetContext();
 		ID3D11Device& GetDevice();
+
+		void DrawInstancedIndexed(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) override;
 
 		std::string_view GetAPIString() const override
 		{

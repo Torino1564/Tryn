@@ -255,6 +255,9 @@
     <ClCompile Include="src\ent\Landscape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gfx\Model\InstancedModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1710,6 +1713,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\mem\WeakRef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Model\InstancedModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

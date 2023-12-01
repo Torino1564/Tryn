@@ -74,6 +74,7 @@ namespace tryn::gfx
 		virtual void EndFrame() = 0;
 		virtual void ClearBuffer(float r, float g, float b) = 0;
 		virtual void DrawIndexed(int count) = 0;
+		virtual void DrawInstancedIndexed(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) = 0;
 		void SetRenderGraph(std::unique_ptr<IRenderGraph>&&);
 		IRenderGraph& GetRenderGraph();
 		void ExecuteFrame();
