@@ -4,7 +4,7 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11VertexBuffer::DX11VertexBuffer(Graphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag)
+	/*DX11VertexBuffer::DX11VertexBuffer(Graphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag)
 		:
 		gfx(gfx)
 	{
@@ -80,5 +80,5 @@ namespace tryn::gfx::dx11
 	ID3D11Buffer* DX11VertexBuffer::GetPtr()
 	{
 		return *pBuffer.GetAddressOf();
-	}
+	}*/
 }

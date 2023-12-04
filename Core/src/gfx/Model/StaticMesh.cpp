@@ -1,8 +1,8 @@
 #include "StaticMesh.h"
 #include <Core/src/gfx/BindablePool.h>
 #include <Core/src/gfx/Bindables/IndexBuffer.h>
-#include <Core/src/gfx/Bindables/PolyVBuffer.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
+#include <Core/src/gfx/Bindables/IBuffer.h>
 #include <format>
 #include <utility>
 
@@ -19,7 +19,8 @@ namespace tryn::gfx
 			this->tag = tag;
 		}
 
-		const auto vertexBuffer = material.ExtractVertices(mesh);
+		auto vertexBuffer = material.ExtractVertices(mesh);
+		vertexBuffer.SetClean();
 		const auto indices = material.ExtractIndices(mesh);
 
 		indexCount = static_cast<uint32_t>(indices.size());

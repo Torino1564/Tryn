@@ -1,5 +1,6 @@
 #include "TransformCBuf.h"
 #include <Core/src/gfx/Drawable.h>
+#include <Core/src/gfx/Bindables/IBuffer.h>
 
 namespace tryn::gfx
 {

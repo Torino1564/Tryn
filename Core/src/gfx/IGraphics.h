@@ -20,6 +20,7 @@
 #include <Core/src/gfx/IContext.h>
 #include <Core/src/gfx/GraphicAPI.h>
 #include <Core/src/utl/LocalGenericTaskQueue.h>
+#include <Core/src/gfx/IBufferFwd.h>
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
@@ -54,12 +55,6 @@ namespace tryn::gfx
 	class StaticMesh;
 	class VertexLayout;
 	class RenderWorker;
-
-	class IVtxConstBufCach;
-	class IVtxConstBufNCach;
-	class IPxConstBufCach;
-	class IPxConstBufNCach;
-	class IVertexBuffer;
 
 	class IGraphics
 	{
@@ -103,7 +98,7 @@ namespace tryn::gfx
 		{
 			return *pContext;
 		}
-		virtual std::string_view GetAPIString() const = 0;
+		constexpr virtual const char* GetAPIString() const = 0;
 
 		template<std::invocable F>
 		auto Dispatch(F&& f) const
@@ -112,23 +107,23 @@ namespace tryn::gfx
 		}
 
 		// Resource Creation
-		virtual std::shared_ptr<IVertexBuffer>		CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IIndexBuffer>		CreateIndexBuffer(std::shared_ptr<const std::vector<int>> indices, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IPolyVBuffer>		CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>&, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IVertexShader>		CreateVertexShader(std::string path) = 0;
-		virtual std::shared_ptr<IPixelShader>		CreatePixelShader(std::string path) = 0;
-		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) = 0;
-		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) = 0;
-		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) = 0;
-		virtual std::shared_ptr<IPrimitiveTopology> CreatePrimitiveTopology() = 0;
-		virtual std::shared_ptr<IVtxConstBufCach>	CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IVtxConstBufNCach>	CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IPxConstBufCach>	CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IPxConstBufNCach>	CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
-		virtual std::shared_ptr<ITexture>			CreateTexture(std::filesystem::path path, int slot = 0) = 0;
-		virtual std::shared_ptr<IRasterizer>		CreateRasterizer(const bool twoSided = true) = 0;
-		virtual std::shared_ptr<ISampler>			CreateSampler(SamplerType type, bool reflect, int slot) = 0;
-		virtual std::unique_ptr<ITransformCBuf>		CreateTransformCBuf() = 0;
+		virtual std::shared_ptr<IVertexBuffer>			CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IIndexBuffer>			CreateIndexBuffer(std::shared_ptr<const std::vector<int>> indices, std::string tag = "?") = 0;
+		//virtual std::shared_ptr<IPolyVBuffer>			CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>&, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IVertexShader>			CreateVertexShader(std::string path) = 0;
+		virtual std::shared_ptr<IPixelShader>			CreatePixelShader(std::string path) = 0;
+		virtual std::shared_ptr<IInputLayout>			CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) = 0;
+		//virtual std::shared_ptr<IInputLayout>			CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) = 0;
+		virtual std::shared_ptr<IInputLayout>			CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) = 0;
+		virtual std::shared_ptr<IPrimitiveTopology>		CreatePrimitiveTopology() = 0;
+		virtual std::shared_ptr<IVtxConstantBuffer>		CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IVtxConstantBufferNCach>CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IPxConstantBuffer>		CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IPxConstantBufferNCach>	CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<ITexture>				CreateTexture(std::filesystem::path path, int slot = 0) = 0;
+		virtual std::shared_ptr<IRasterizer>			CreateRasterizer(const bool twoSided = true) = 0;
+		virtual std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) = 0;
+		virtual std::unique_ptr<ITransformCBuf>			CreateTransformCBuf() = 0;
 		
 		// Worker Thread Creation
 		virtual std::unique_ptr<RenderWorker>		CreateRenderWorker(ccr::Master*) = 0;

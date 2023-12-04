@@ -138,9 +138,11 @@
     <ClInclude Include="src\gfx\Bindables\VertexShader.h" />
     <ClInclude Include="src\gfx\Bindables\Bindable.h" />
     <ClInclude Include="src\ent\Entity.h" />
+    <ClInclude Include="src\gfx\dx11\DX11BufferFwd.h" />
     <ClInclude Include="src\gfx\dx11\Dx11Context.h" />
     <ClInclude Include="src\gfx\dx11\Dx11RenderWorker.h" />
     <ClInclude Include="src\gfx\GraphicAPI.h" />
+    <ClInclude Include="src\gfx\IBufferFwd.h" />
     <ClInclude Include="src\gfx\Model\InstancedModel.h" />
     <ClInclude Include="src\gfx\TexturePool.h" />
     <ClInclude Include="src\gfx\IContext.h" />

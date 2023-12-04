@@ -1,11 +1,11 @@
 #pragma once
 #include <Core/src/gfx/GraphicAPI.h>
 #include <memory>
+#include <Core/src/gfx/IBufferFwd.h>
 
 namespace tryn::gfx
 {
 	class IGraphics;
-	class IVtxConstantBuffer;
 	class IContext
 	{
 		friend class IGraphics;

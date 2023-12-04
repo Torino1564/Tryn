@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
+#include <Core/src/gfx/IBufferFwd.h>
 
 #define BINDABLE_LIST \
 		X(VertexBuffer)\
@@ -34,14 +35,14 @@ namespace tryn::gfx
 				return gfx.CreateVertexBuffer(std::forward<Args>(args)...);
 			}
 		};
-		template <> struct ResolveHelper<IPolyVBuffer>
-		{
-			template <class ... Args>
-			std::shared_ptr<IPolyVBuffer> operator()(IGraphics& gfx, Args&&...args)
-			{
-				return gfx.CreatePolyVertexBuffer(std::forward<Args>(args)...);
-			}
-		};
+		//template <> struct ResolveHelper<IPolyVBuffer>
+		//{
+		//	template <class ... Args>
+		//	std::shared_ptr<IPolyVBuffer> operator()(IGraphics& gfx, Args&&...args)
+		//	{
+		//		return gfx.CreatePolyVertexBuffer(std::forward<Args>(args)...);
+		//	}
+		//};
 		template <> struct ResolveHelper<IVertexShader>
 		{
 			template <class ... Args>
@@ -90,12 +91,28 @@ namespace tryn::gfx
 				return gfx.CreateVtxConstantBuffer(std::forward<Args>(args)...);
 			}
 		};
+		template <> struct ResolveHelper<IVtxConstantBufferNCach>
+		{
+			template <class ... Args>
+			std::shared_ptr<IVtxConstantBufferNCach> operator()(IGraphics& gfx, Args&&...args)
+			{
+				return gfx.CreateNonCachVtxConstantBuffer(std::forward<Args>(args)...);
+			}
+		};
 		template <> struct ResolveHelper<IPxConstantBuffer>
 		{
 			template <class ... Args>
 			std::shared_ptr<IPxConstantBuffer> operator()(IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreatePxConstantBuffer(std::forward<Args>(args)...);
+			}
+		};
+		template <> struct ResolveHelper<IPxConstantBufferNCach>
+		{
+			template <class ... Args>
+			std::shared_ptr<IPxConstantBufferNCach> operator()(IGraphics& gfx, Args&&...args)
+			{
+				return gfx.CreateNonCachPxConstantBuffer(std::forward<Args>(args)...);
 			}
 		};
 		template <> struct ResolveHelper<ITexture>

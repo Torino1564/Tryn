@@ -155,6 +155,11 @@ namespace tryn::gfx
 		return (*root)[id];
 	}
 
+	ConstantBufferLayout::Node& ConstantBufferLayout::GetRoot()
+	{
+		return *root;
+	}
+
 	ElementView::ElementView(ConstantBufferLayout::Node& node, char* pBytes)
 		:
 		node(node),

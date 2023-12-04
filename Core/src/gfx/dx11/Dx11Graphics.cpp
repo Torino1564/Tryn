@@ -223,13 +223,13 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IPolyVBuffer> Graphics::CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>& pCpuVBs, std::string tag)
-	{
-		auto future = Dispatch_([&]{
-			return std::make_shared<DX11PolyVBuffer>(*this, pCpuVBs, tag);
-		});
-		return future.get();
-	}
+	//std::shared_ptr<IPolyVBuffer> Graphics::CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>& pCpuVBs, std::string tag)
+	//{
+	//	auto future = Dispatch_([&]{
+	//		return std::make_shared<DX11PolyVBuffer>(*this, pCpuVBs, tag);
+	//	});
+	//	return future.get();
+	//}
 
 	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::shared_ptr<const std::vector<int>> indices, std::string tag)
 	{
@@ -263,13 +263,13 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(IPolyVBuffer& pvb, IVertexShader& vs)
+	/*std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(IPolyVBuffer& pvb, IVertexShader& vs)
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11InputLayout>(*this, pvb, vs);
 			});
 		return future.get();
-	}
+	}*/
 
 	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs)
 	{
@@ -287,34 +287,34 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IVtxConstBufCach> Graphics::CreateVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	std::shared_ptr<IVtxConstantBuffer> Graphics::CreateVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
 	{
 		auto future = Dispatch_([&] {
-			return std::make_shared<DX11VtxConstBufCach>(*this, std::move(layout), slot, tag);
+			return std::make_shared<DX11VtxConstantBuffer>(*this, std::move(layout), slot, tag);
 			});
 		return future.get();
 	}
 
-	std::shared_ptr<IVtxConstBufNCach> Graphics::CreateNonCachVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	std::shared_ptr<IVtxConstantBufferNCach> Graphics::CreateNonCachVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
 	{
 		auto future = Dispatch_([&] {
-			return std::make_shared<DX11VtxConstBufNCach>(*this, std::move(layout), slot, tag);
+			return std::make_shared<DX11VtxConstantBufferNCach>(*this, std::move(layout), slot, tag);
 			});
 		return future.get();
 	}
 
-	std::shared_ptr<IPxConstBufCach> Graphics::CreatePxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	std::shared_ptr<IPxConstantBuffer> Graphics::CreatePxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
 	{
 		auto future = Dispatch_([&] {
-			return std::make_shared<DX11PxConstBufCach>(*this, std::move(layout), slot, tag);
+			return std::make_shared<DX11PxConstantBuffer>(*this, std::move(layout), slot, tag);
 			});
 		return future.get();
 	}
 
-	std::shared_ptr<IPxConstBufNCach> Graphics::CreateNonCachPxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	std::shared_ptr<IPxConstantBufferNCach> Graphics::CreateNonCachPxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
 	{
 		auto future = Dispatch_([&] {
-			return std::make_shared<DX11PxConstBufNCach>(*this, std::move(layout), slot, tag);
+			return std::make_shared<DX11PxConstantBufferNCach>(*this, std::move(layout), slot, tag);
 			});
 		return future.get();
 	}

@@ -4,6 +4,7 @@
 #include <Core/src/gfx/Vertex.h>
 #include <filesystem>
 #include <format>
+#include <Core/src/gfx/IBufferFwd.h>
 
 struct aiMaterial;
 struct aiMesh;
@@ -11,7 +12,6 @@ struct aiMesh;
 namespace tryn::gfx
 {
 	class IIndexBuffer;
-	class IVertexBuffer;
 
 	class Material
 	{

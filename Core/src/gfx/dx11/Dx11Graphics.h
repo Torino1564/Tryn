@@ -34,9 +34,10 @@ namespace tryn::gfx::dx11
 
 		void DrawInstancedIndexed(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) override;
 
-		std::string_view GetAPIString() const override
+		static constexpr const char* APIString = "DX11";
+
+		constexpr const char* GetAPIString() const override
 		{
-			static std::string APIString = "DX11";
 			return APIString;
 		}
 
@@ -64,18 +65,18 @@ namespace tryn::gfx::dx11
 
 		// Resource Creation
 		std::shared_ptr<IVertexBuffer>			CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string) override;
-		std::shared_ptr<IPolyVBuffer>			CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>& CpuVBs, std::string) override;
+		//std::shared_ptr<IPolyVBuffer>			CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>& CpuVBs, std::string) override;
 		std::shared_ptr<IIndexBuffer>			CreateIndexBuffer(std::shared_ptr<const std::vector<int>> indices, std::string) override;
 		std::shared_ptr<IVertexShader>			CreateVertexShader(std::string path) override;
 		std::shared_ptr<IPixelShader>			CreatePixelShader(std::string path) override;
 		std::shared_ptr<IInputLayout>			CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) override;
-		std::shared_ptr<IInputLayout>			CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) override;
+		//std::shared_ptr<IInputLayout>			CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) override;
 		std::shared_ptr<IInputLayout>			CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) override;
 		std::shared_ptr<IPrimitiveTopology>		CreatePrimitiveTopology() override;
-		std::shared_ptr<IVtxConstBufCach>		CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
-		std::shared_ptr<IVtxConstBufNCach>		CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
-		std::shared_ptr<IPxConstBufCach>		CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
-		std::shared_ptr<IPxConstBufNCach>		CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IVtxConstantBuffer>		CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IVtxConstantBufferNCach>CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IPxConstantBuffer>		CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IPxConstantBufferNCach>	CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
 		std::shared_ptr<ITexture>				CreateTexture(std::filesystem::path path, int slot = 0) override;
 		std::shared_ptr<IRasterizer>			CreateRasterizer(const bool twoSided = true) override;
 		std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) override;

@@ -17,6 +17,10 @@ namespace tryn::gfx
 		{
 			dirty = false;
 		}
+		constexpr void SetDirty() noexcept
+		{
+			dirty = true;
+		}
 		constexpr virtual void* Data() const noexcept = 0;
 		constexpr virtual std::size_t Size() const noexcept = 0;
 		virtual std::size_t Stride() const noexcept = 0;

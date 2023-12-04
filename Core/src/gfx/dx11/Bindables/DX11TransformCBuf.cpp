@@ -1,5 +1,5 @@
 #include "DX11TransformCBuf.h"
-#include <Core/src/gfx/dx11/Bindables/DX11ConstantBuffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
 
 namespace tryn::gfx::dx11
 {

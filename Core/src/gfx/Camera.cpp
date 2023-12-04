@@ -76,6 +76,7 @@ namespace tryn::gfx
             {
                 Reset();
             }
+            ImGui::End();
         }
     }
     void Camera::Reset()

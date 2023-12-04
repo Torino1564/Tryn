@@ -9,6 +9,7 @@
 #include <Core/src/utl/Exception.h>
 #include <unordered_map>
 #include <Core/src/gfx/BindablePool.h>
+#include <Core/src/gfx/IBufferFwd.h>
 
 ZT_EX_DEF(DcbException);
 
@@ -25,7 +26,6 @@ namespace tryn::gfx
 {
 	class ConstantBufferLayout
 	{
-		friend class IConstantBuffer;
 	public:
 		enum Type
 		{
@@ -153,6 +153,7 @@ namespace tryn::gfx
 		bool IsSolid() const;
 		size_t Size() const;
 		Node& operator[](const std::string& id);
+		Node& GetRoot();
 	private:
 		std::unique_ptr<Node> root;
 		bool solid = false;
@@ -205,41 +206,41 @@ namespace tryn::gfx
 		char* pBytes;
 	};
 
-	class IConstantBuffer : public IBindable
-	{
-	public:
-		virtual ~IConstantBuffer() {}
-		ElementView operator[](std::string id)
-		{
-			dirty = true;
-			auto& indexTo = layout.root.get()->IndexByName(id);
-			if (indexTo.GetType() == gfx::ConstantBufferLayout::Type::Empty)
-			{
-				return ElementView{ indexTo, nullptr };
-			}
-			else
-			{
-				return ElementView{ indexTo, buffer.data() + indexTo.GetOffset() };
-			}
-		}
-		std::string GetTag() const
-		{
-			return tag;
-		}
-		int GetSlot() const
-		{
-			return slot;
-		}
+	//class IConstantBuffer : public IBindable
+	//{
+	//public:
+	//	virtual ~IConstantBuffer() {}
+	//	ElementView operator[](std::string id)
+	//	{
+	//		dirty = true;
+	//		auto& indexTo = layout.root.get()->IndexByName(id);
+	//		if (indexTo.GetType() == gfx::ConstantBufferLayout::Type::Empty)
+	//		{
+	//			return ElementView{ indexTo, nullptr };
+	//		}
+	//		else
+	//		{
+	//			return ElementView{ indexTo, buffer.data() + indexTo.GetOffset() };
+	//		}
+	//	}
+	//	std::string GetTag() const
+	//	{
+	//		return tag;
+	//	}
+	//	int GetSlot() const
+	//	{
+	//		return slot;
+	//	}
 
-	protected:
-		bool dirty = false;
-		ConstantBufferLayout layout;
-		std::vector<char> buffer;
-		int slot = 0;
-		std::string tag;
-	};
+	//protected:
+	//	bool dirty = false;
+	//	ConstantBufferLayout layout;
+	//	std::vector<char> buffer;
+	//	int slot = 0;
+	//	std::string tag;
+	//};
 
-	class IVtxConstantBuffer : public IConstantBuffer
+	/*class IVtxConstantBuffer : public IConstantBuffer
 	{
 	public:
 		static std::shared_ptr<IVtxConstantBuffer> Resolve(IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
@@ -270,5 +271,5 @@ namespace tryn::gfx
 			ss << typeStr << "#PxConstantBuffer#" << slot << '#' << tag;
 			return ss.str();
 		}
-	};
+	};*/
 }

@@ -3,8 +3,7 @@
 #include <assimp/types.h>
 #include <Core/src/gfx/Bindables/Texture.h>
 #include <Core/src/gfx/Bindables/Rasterizer.h>
-#include <Core/src/gfx/Bindables/ConstantBuffer.h>
-#include <Core/src/gfx/Bindables/VertexBuffer.h>
+#include <Core/src/gfx/Bindables/IBuffer.h>
 #include <Core/src/gfx/Bindables/VertexShader.h>
 #include <Core/src/gfx/Bindables/PixelShader.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>

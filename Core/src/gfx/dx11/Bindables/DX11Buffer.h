@@ -4,6 +4,8 @@
 #include <concepts>
 #include <Core/src/utl/Assert.h>
 #include <Core/src/gfx/Bindables/ConstantBuffer.h>
+#include <Core/src/gfx/dx11/DX11BufferFwd.h>
+#include <Core/src/utl/Exception.h>
 
 namespace tryn::gfx::dx11
 {
@@ -45,8 +47,10 @@ namespace tryn::gfx::dx11
 			gfx.GetDevice().CreateBuffer(&bd, &srd, &pBuffer) >> chk;
 		}
 
+		
+		// TODO: Add NonCaching variant
 		DX11Buffer(Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag = "?")
-		requires ((Type == BufferType::PxConstant || Type == BufferType::VtxConstant) && (Policy == CachingPolicy::Caching))
+		requires ((Type == BufferType::PxConstant || Type == BufferType::VtxConstant))
 		: gfx(gfx)
 		{
 			this->slot = slot;
@@ -132,17 +136,51 @@ namespace tryn::gfx::dx11
 			}
 		}
 
+		std::vector<std::any> GetLayoutFromVB() const override
+		{
+			trynass_msg(Type == BufferType::Vertex, L"Can only get the layout from a Vertex Buffer Type!");
+			return GetSlottedLayoutFromVB(0);
+		}
+
+		std::vector<std::any> GetSlottedLayoutFromVB(int slot) const override
+		{
+			trynass_msg(Type == BufferType::Vertex,L"Can only get the layout from a Vertex Buffer Type!");
+			return GetSlottedLayoutFromVB_(slot);
+		}
+		template <BufferType T = Type>
+		requires (T == BufferType::Vertex)
+		std::vector<std::any> GetSlottedLayoutFromVB_(int slot) const
+		{
+			trynass_msg(Type == BufferType::Vertex, L"Can only get layouts from Vertex Buffer Types!");
+			const auto& vLayout = this->layout;
+			const auto descSize = vLayout.GetElementCount();
+
+			std::vector<std::any> layout;
+			for (int i = 0; i < descSize; i++)
+			{
+				D3D11_INPUT_ELEMENT_DESC descriptor = {};
+				descriptor.SemanticName = vLayout.Elements[i].first.GetName();
+				descriptor.SemanticIndex = vLayout.Elements[i].second;
+				descriptor.Format = Graphics::MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
+				descriptor.InputSlot = (UINT)slot;
+				descriptor.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+				descriptor.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+				descriptor.InstanceDataStepRate = 0u;
+				layout.push_back(descriptor);
+			}
+
+			return layout;
+		}
+
+		std::vector<std::any> GetSlottedLayoutFromVB_(int slot) const
+		{
+			throw BufferMissmatchException(L"Incompatible buffer type call!");
+		}
+
 		Graphics& gfx;
 		//Memory
 		UINT stride = 0;
 		UINT offset = 0;
 		Microsoft::WRL::ComPtr<ID3D11Buffer> pBuffer;
 	};
-
-	using DX11VtxConstBufCach = DX11Buffer<BufferType::VtxConstant, CachingPolicy::Caching>;
-	using DX11VtxConstBufNCach = DX11Buffer<BufferType::VtxConstant, CachingPolicy::NonCaching>;
-	using DX11PxConstBufCach = DX11Buffer<BufferType::PxConstant, CachingPolicy::Caching>;
-	using DX11PxConstBufNCach = DX11Buffer<BufferType::PxConstant, CachingPolicy::NonCaching>;
-	using DX11VertexBuffer = DX11Buffer<BufferType::Vertex, CachingPolicy::Caching>;
-
 }

@@ -10,6 +10,7 @@
 
 namespace tryn::gfx
 {
+	/*
 	class IVertexBuffer : public IBindable
 	{
 	public:
@@ -56,4 +57,5 @@ namespace tryn::gfx
 		std::shared_ptr<VertexBuffer> CPUBuffer;
 		std::string tag;
 	};
+	*/
 }
