@@ -1,6 +1,5 @@
 #include "StaticMesh.h"
 #include <Core/src/gfx/BindablePool.h>
-#include <Core/src/gfx/Bindables/IndexBuffer.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 #include <Core/src/gfx/Bindables/IBuffer.h>
 #include <format>
@@ -23,10 +22,10 @@ namespace tryn::gfx
 		vertexBuffer.SetClean();
 		const auto indices = material.ExtractIndices(mesh);
 
-		indexCount = static_cast<uint32_t>(indices.size());
+		indexCount = static_cast<uint32_t>(indices.Size());
 
 		pVertexBuffer = IVertexBuffer::Resolve(gfx, std::make_shared<VertexBuffer>(vertexBuffer), this->tag);
-		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<std::vector<int>>(indices));
+		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<IndexBuffer>(indices));
 		pTopology = IPrimitiveTopology::Resolve(gfx);
 		InitTransformCBuf(gfx);
 

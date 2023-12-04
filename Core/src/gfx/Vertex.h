@@ -374,6 +374,7 @@ namespace tryn::gfx
 		VertexBuffer(VertexLayout layout_, size_t size = 0);
 		VertexBuffer(VertexLayout layout, const aiMesh& mesh);
 		void Resize(size_t newSize) override;
+		constexpr std::size_t ByteSize() const noexcept override;
 		constexpr std::size_t Size() const noexcept override;
 		Vertex operator[](int i);
 		Vertex Back();

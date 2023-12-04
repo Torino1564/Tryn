@@ -5,7 +5,6 @@
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/gfx/Bindables/PolyVBuffer.h>
-#include <Core/src/gfx/Bindables/IndexBuffer.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 #include <Core/src/gfx/Drawable.h>
 

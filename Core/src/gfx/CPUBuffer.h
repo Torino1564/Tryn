@@ -22,6 +22,7 @@ namespace tryn::gfx
 			dirty = true;
 		}
 		constexpr virtual void* Data() const noexcept = 0;
+		constexpr virtual std::size_t ByteSize() const noexcept = 0;
 		constexpr virtual std::size_t Size() const noexcept = 0;
 		virtual std::size_t Stride() const noexcept = 0;
 		virtual void Resize(const std::size_t newSize)
@@ -47,6 +48,10 @@ namespace tryn::gfx
 		{
 			return 0;
 		}
+		constexpr std::size_t ByteSize() const noexcept override
+		{
+			return buffer.size();
+		}
 		constexpr std::size_t Size() const noexcept override
 		{
 			return buffer.size();
@@ -58,5 +63,42 @@ namespace tryn::gfx
 
 	private:
 		std::vector<std::byte> buffer;
+	};
+
+	class IndexBuffer : public CPUBuffer
+	{
+	public:
+		IndexBuffer(int indexCount = 0)
+		{
+			buffer.resize(indexCount);
+			dirty = false;
+		}
+		IndexBuffer(std::vector<int> data)
+		{
+			buffer = std::move(data);
+		}
+		constexpr void* Data() const noexcept override
+		{
+			return (void*)(buffer.data());
+		}
+		std::size_t Stride() const noexcept override
+		{
+			return stride;
+		}
+		constexpr std::size_t ByteSize() const noexcept override
+		{
+			return buffer.size() * stride;
+		}
+		constexpr std::size_t Size() const noexcept override
+		{
+			return buffer.size();
+		}
+		void Resize(const std::size_t newSize) override
+		{
+			buffer.resize(newSize);
+		}
+	private:
+		static constexpr int stride = sizeof(int);
+		std::vector<int> buffer;
 	};
 }

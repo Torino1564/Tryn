@@ -29,15 +29,11 @@
     <ClCompile Include="src\app\App.cpp" />
     <ClCompile Include="src\gfx\Bindables\ConstantBuffer.cpp" />
     <ClCompile Include="src\gfx\Bindables\PrimitiveTopology.h" />
-    <ClCompile Include="src\gfx\dx11\Bindables\DX11ConstantBuffer.cpp" />
-    <ClCompile Include="src\gfx\dx11\Bindables\DX11IndexBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11InputLayout.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PixelShader.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11TransformCBuf.cpp" />
-    <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexBuffer.cpp" />
-    <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexBuffer.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexShader.cpp" />
     <ClCompile Include="src\ent\Entity.cpp" />
     <ClCompile Include="src\gfx\dx11\imgui_impl_dx11.cpp" />
@@ -111,7 +107,6 @@
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
     <ClInclude Include="src\gfx\Bindables\ConstantBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\IBuffer.h" />
-    <ClInclude Include="src\gfx\Bindables\IndexBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\InputLayout.h" />
     <ClInclude Include="src\gfx\Bindables\PixelShader.h" />
     <ClInclude Include="src\gfx\Bindables\PolyVBuffer.h" />
@@ -120,13 +115,10 @@
     <ClInclude Include="src\gfx\Bindables\Sampler.h" />
     <ClInclude Include="src\gfx\Bindables\Texture.h" />
     <ClInclude Include="src\gfx\Bindables\TransformCBuf.h" />
-    <ClInclude Include="src\gfx\Bindables\VertexBuffer.h" />
     <ClInclude Include="src\gfx\Camera.h" />
     <ClInclude Include="src\gfx\CPUBuffer.h" />
     <ClInclude Include="src\gfx\Drawable.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11Buffer.h" />
-    <ClInclude Include="src\gfx\dx11\Bindables\DX11ConstantBuffer.h" />
-    <ClInclude Include="src\gfx\dx11\Bindables\DX11IndexBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11InputLayout.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PixelShader.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.h" />

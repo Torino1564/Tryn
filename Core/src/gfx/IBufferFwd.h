@@ -13,6 +13,7 @@ namespace tryn::gfx
 		Vertex,
 		VtxConstant,
 		PxConstant,
+		Index,
 		Instance
 	};
 	template<BufferType Type, CachingPolicy Policy = CachingPolicy::Caching>
@@ -23,4 +24,5 @@ namespace tryn::gfx
 	using IPxConstantBuffer			= IBuffer<BufferType::PxConstant, CachingPolicy::Caching>;
 	using IPxConstantBufferNCach	= IBuffer<BufferType::PxConstant, CachingPolicy::NonCaching>;
 	using IVertexBuffer				= IBuffer<BufferType::Vertex, CachingPolicy::Caching>;
+	using IIndexBuffer				= IBuffer<BufferType::Index, CachingPolicy::Caching>;
 }

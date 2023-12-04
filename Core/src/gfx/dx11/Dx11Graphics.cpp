@@ -3,7 +3,6 @@
 #include <d3dcompiler.h>
 #include <Core/src/gfx/dx11/Bindables/DX11InputLayout.h>
 #include <Core/src/gfx/dx11/Bindables/DX11VertexShader.h>
-#include <core/src/gfx/dx11/Bindables/DX11IndexBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PixelShader.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PrimitiveTopology.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PolyVBuffer.h>
@@ -231,7 +230,7 @@ namespace tryn::gfx::dx11
 	//	return future.get();
 	//}
 
-	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::shared_ptr<const std::vector<int>> indices, std::string tag)
+	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string tag)
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11IndexBuffer>(*this, indices, tag);

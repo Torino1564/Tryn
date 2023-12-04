@@ -1,8 +1,6 @@
 #pragma once
 #include "Bindable.h"
-#include "ConstantBuffer.h"
-#include "IndexBuffer.h"
-#include "VertexBuffer.h"
+#include "IBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "PrimitiveTopology.h"

@@ -38,13 +38,13 @@ namespace tryn::ccr
 namespace tryn::gfx
 {
 	class VertexBuffer;
+	class IndexBuffer;
 	class IVertexShader;
 	class IPixelShader;
 	class IPolyVBuffer;
 	class IPolyInputLayout;
 	class IInputLayout;
 	class IBindable;
-	class IIndexBuffer;
 	class IPrimitiveTopology;
 	class ConstantBufferLayout;
 	class ITransformCBuf;
@@ -108,7 +108,7 @@ namespace tryn::gfx
 
 		// Resource Creation
 		virtual std::shared_ptr<IVertexBuffer>			CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IIndexBuffer>			CreateIndexBuffer(std::shared_ptr<const std::vector<int>> indices, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IIndexBuffer>			CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string tag = "?") = 0;
 		//virtual std::shared_ptr<IPolyVBuffer>			CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>&, std::string tag = "?") = 0;
 		virtual std::shared_ptr<IVertexShader>			CreateVertexShader(std::string path) = 0;
 		virtual std::shared_ptr<IPixelShader>			CreatePixelShader(std::string path) = 0;

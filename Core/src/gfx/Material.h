@@ -11,14 +11,12 @@ struct aiMesh;
 
 namespace tryn::gfx
 {
-	class IIndexBuffer;
-
 	class Material
 	{
 	public:
 		Material(IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, Techniques defaultTechnique = Techniques::Phong);
 		VertexBuffer ExtractVertices(const aiMesh& mesh) const noexcept;
-		std::vector<int> ExtractIndices(const aiMesh& mesh) const noexcept;
+		IndexBuffer ExtractIndices(const aiMesh& mesh) const noexcept;
 		std::vector<Technique> GetTechniques() const noexcept;
 
 	private:

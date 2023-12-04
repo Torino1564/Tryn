@@ -95,13 +95,17 @@ namespace tryn::gfx
 	{
 		buffer.resize(newSize * layout.Size());
 	}
+	constexpr std::size_t VertexBuffer::ByteSize() const noexcept
+	{
+		return buffer.size();
+	}
 	constexpr std::size_t VertexBuffer::Size() const noexcept
 	{
 		return buffer.size();
 	}
 	Vertex VertexBuffer::operator[](int i)
 	{
-		trynass_msg(i < Size(), L"VertexBuffer indexed out of bounds");
+		trynass_msg(i < ByteSize(), L"VertexBuffer indexed out of bounds");
 		return Vertex{ buffer.data() + layout.Size() * i, layout };
 	}
 	Vertex VertexBuffer::Back()

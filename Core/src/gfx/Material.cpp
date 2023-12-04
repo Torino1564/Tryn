@@ -257,7 +257,7 @@ namespace tryn::gfx
 	{
 		return { vLayout,mesh };
 	}
-	std::vector<int> Material::ExtractIndices(const aiMesh& mesh) const noexcept
+	IndexBuffer Material::ExtractIndices(const aiMesh& mesh) const noexcept
 	{
 		std::vector<int> indices;
 		indices.resize(mesh.mNumFaces * 3);
@@ -269,7 +269,7 @@ namespace tryn::gfx
 			indices[(3 * i) + 1] = triangle.mIndices[1];
 			indices[(3 * i) + 2] = triangle.mIndices[2];
 		}
-		return indices;
+		return { indices };
 	}
 	std::vector<Technique> Material::GetTechniques() const noexcept
 	{

@@ -1,5 +1,4 @@
 #include "Drawable.h"
-#include <Core/src/gfx/Bindables/IndexBuffer.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 #include <Core/third/glm/gtx/wrap.hpp>
 #include <Core/third/glm/gtx/transform.hpp>

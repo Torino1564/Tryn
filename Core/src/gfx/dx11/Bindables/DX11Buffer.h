@@ -15,22 +15,25 @@ namespace tryn::gfx::dx11
 	template <>
 	constexpr int GetBindFlag<BufferType::Vertex>() { return D3D11_BIND_VERTEX_BUFFER; }
 
+	template <>
+	constexpr int GetBindFlag<BufferType::Index>() { return D3D11_BIND_INDEX_BUFFER; }
+
 	template <BufferType Type, CachingPolicy Policy = CachingPolicy::Caching>
 	class DX11Buffer : public IBuffer<Type, Policy>
 	{
 	public:
-		DX11Buffer(Graphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag = "?")
-			requires (Type == BufferType::Vertex) && (Policy == CachingPolicy::Caching)
+		DX11Buffer(Graphics& gfx, std::shared_ptr<CPUBuffer> pCpuBuffer, std::string tag = "?")
+			requires (Type == BufferType::Vertex || Type == BufferType::Index) && (Policy == CachingPolicy::Caching)
 			:
 			gfx(gfx)
 		{
 			this->tag = tag;
 
-			trynass_msg(!cpuBuffer->Dirty(), L"Cant initialize a dirty Vertex Buffer!");
+			trynass_msg(!pCpuBuffer->Dirty(), L"Cant initialize a dirty Vertex Buffer!");
 
-			this->pCPUBuffer = cpuBuffer;
+			this->pCPUBuffer = pCpuBuffer;
 
-			stride = cpuBuffer->Stride();
+			stride = pCpuBuffer->Stride();
 			offset = 0u;
 
 			D3D11_BUFFER_DESC bd = {};
@@ -39,10 +42,10 @@ namespace tryn::gfx::dx11
 			bd.CPUAccessFlags = 0u;
 			bd.MiscFlags = 0u;
 			bd.StructureByteStride = (UINT)stride;
-			bd.ByteWidth = (UINT)cpuBuffer->Size();
+			bd.ByteWidth = (UINT)pCpuBuffer->ByteSize();
 
 			D3D11_SUBRESOURCE_DATA srd = {};
-			srd.pSysMem = cpuBuffer->Data();
+			srd.pSysMem = pCpuBuffer->Data();
 
 			gfx.GetDevice().CreateBuffer(&bd, &srd, &pBuffer) >> chk;
 		}
@@ -105,7 +108,7 @@ namespace tryn::gfx::dx11
 				&msr
 			) >> chk;
 
-			memcpy(msr.pData, this->pCPUBuffer->Data(), this->pCPUBuffer->Size());
+			memcpy(msr.pData, this->pCPUBuffer->Data(), this->pCPUBuffer->ByteSize());
 
 			stride = this->pCPUBuffer->Stride();
 
@@ -116,6 +119,12 @@ namespace tryn::gfx::dx11
 			requires (Type == BufferType::Vertex)
 		{
 			context.IASetVertexBuffers((UINT)0, (UINT)1, pBuffer.GetAddressOf(), &stride, &offset);
+		}
+
+		void Bind_(ID3D11DeviceContext& context)
+			requires (Type == BufferType::Index)
+		{
+			context.IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
 		}
 
 		void Bind_(ID3D11DeviceContext& context)

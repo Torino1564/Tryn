@@ -26,6 +26,9 @@ namespace tryn::gfx
 	template <>
 	constexpr const char* GetTypeString<BufferType::Instance>() { return "Instance"; }
 
+	template <>
+	constexpr const char* GetTypeString<BufferType::Index>() { return "Index"; }
+
 	template<int>
 	struct empty_t {};
 
@@ -68,6 +71,13 @@ namespace tryn::gfx
 			return gfx::BindablePool::Resolve<IVertexBuffer>(gfx, cpuBuffer, tag);
 		}
 
+		template<BufferType T = Type, CachingPolicy P = Policy>
+			requires (T == BufferType::Index && P == CachingPolicy::Caching)
+		static std::shared_ptr<IIndexBuffer> Resolve(IGraphics& gfx, std::shared_ptr<IndexBuffer> indices, std::string tag = "?")
+		{
+			return gfx::BindablePool::Resolve<IIndexBuffer>(gfx, indices, tag);
+		}
+
 		template <BufferType T = Type>
 		requires (T == BufferType::Vertex)
 		static std::string GenerateID(IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag = "?")
@@ -75,7 +85,7 @@ namespace tryn::gfx
 			if (tag == "?") return tag;
 			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 			std::stringstream ss;
-			ss << typeStr << "#VertexBuffer#" << std::to_string(cpuBuffer->Size()) << "#";
+			ss << typeStr << "#VertexBuffer#" << std::to_string(cpuBuffer->ByteSize()) << "#";
 
 			for (auto& element : cpuBuffer->GetLayout().Elements)
 			{
@@ -84,6 +94,20 @@ namespace tryn::gfx
 			ss << "#" << tag;
 
 			return ss.str();
+		}
+
+		template <BufferType T = Type>
+		requires (T == BufferType::Index)
+		static std::string GenerateID(IGraphics& gfx, std::shared_ptr<IndexBuffer> indices, std::string tag = "?")
+		{
+			if (tag == "?") return tag;
+			decltype(auto) typeStr = gfx.GetAPIString();
+			std::string UID(typeStr);
+			UID += "#IndexBuffer#";
+			UID += std::to_string(indices->Size());
+			UID += '#';
+			UID += tag;
+			return UID;
 		}
 
 		template <BufferType T = Type>
