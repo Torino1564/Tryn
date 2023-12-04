@@ -10,6 +10,7 @@
 #include <Core/src/gfx/Bindables/Bindable.h>
 #include <Core/src/log/Log.h>
 #include <assimp/scene.h>
+#include <Core/src/gfx/CPUBuffer.h>
 
 #define DVTX_ELEMENT_AI_EXTRACTOR(member) static SysType Extract( const aiMesh& mesh,size_t i ) noexcept {return *reinterpret_cast<const SysType*>(&mesh.member[i]);}
 
@@ -367,20 +368,19 @@ namespace tryn::gfx
 		const VertexLayout& layout;
 	};
 
-	class VertexBuffer
+	class VertexBuffer : public CPUBuffer
 	{
 	public:
 		VertexBuffer(VertexLayout layout_, size_t size = 0);
 		VertexBuffer(VertexLayout layout, const aiMesh& mesh);
 		void Resize(size_t newSize);
-		size_t Size() const;
+		constexpr std::size_t Size() const noexcept override;
 		Vertex operator[](int i);
 		Vertex Back();
-		char* Data();
-		size_t BufferSize() const;
-		size_t Stride() const;
+		constexpr void* Data() const noexcept override;
+		std::size_t NumElements() const noexcept;
+		std::size_t Stride() const noexcept override;
 		const VertexLayout& GetLayout() const;
-		bool& GetDirty();
 
 		template<typename ... Args>
 		void EmplaceBack(Args&& ... args)
@@ -392,7 +392,6 @@ namespace tryn::gfx
 		}
 
 	protected:       
-		bool dirty = true;
 		VertexLayout layout;
 		std::vector<char> buffer;
 	};

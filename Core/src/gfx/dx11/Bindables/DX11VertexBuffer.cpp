@@ -14,7 +14,7 @@ namespace tryn::gfx::dx11
 	}
 	void DX11VertexBuffer::Bind()
 	{
-		if (Get().GetDirty())
+		if (Get().Dirty())
 		{
 			Init();
 		}
@@ -26,7 +26,7 @@ namespace tryn::gfx::dx11
 	{
 		gfx.AssertContextCoherence(context);
 		auto& dx11context = static_cast<DX11Context*>(&context)->GetContext();
-		if (Get().GetDirty())
+		if (Get().Dirty())
 		{
 			Init();
 		}
@@ -42,14 +42,14 @@ namespace tryn::gfx::dx11
 		bd.CPUAccessFlags = 0u;
 		bd.MiscFlags = 0u;
 		bd.StructureByteStride = (UINT)Get().Stride();
-		bd.ByteWidth = (UINT)Get().BufferSize();
+		bd.ByteWidth = (UINT)Get().Size();
 
 		D3D11_SUBRESOURCE_DATA srd = {};
 		srd.pSysMem = Get().Data();
 
 		gfx.GetDevice().CreateBuffer(&bd, &srd, &pBuffer) >> chk;
 
-		Get().GetDirty() = false;
+		Get().SetClean();
 	}
 	std::vector<std::any> DX11VertexBuffer::GetLayoutFromVB() const
 	{

@@ -16,7 +16,7 @@ namespace tryn::win
 	{
 	public:
 		Window(std::shared_ptr<IWindowClass> pWindowClass, std::wstring title,
-			spa::DimensionsI clientAreaSize, std::optional<spa::Vec2I> position = {});
+			spa::DimensionsI clientAreaSize, std::optional<spa::Vec2I> position = std::nullopt);
 		HWND GetHandle() const override;
 		bool IsClosing() const override;
 		spa::DimensionsI GetClientDimensions() const override;

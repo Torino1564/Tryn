@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/src/gfx/Bindables/VertexBuffer.h>
+#include <Core/src/gfx/Bindables/IBuffer.h>
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
 #include <Core/src/gfx/dx11/TrynWLR.h>
 #include <memory>

@@ -37,7 +37,6 @@ namespace tryn::ccr
 namespace tryn::gfx
 {
 	class VertexBuffer;
-	class IVertexBuffer;
 	class IVertexShader;
 	class IPixelShader;
 	class IPolyVBuffer;
@@ -47,8 +46,6 @@ namespace tryn::gfx
 	class IIndexBuffer;
 	class IPrimitiveTopology;
 	class ConstantBufferLayout;
-	class IVtxConstantBuffer;
-	class IPxConstantBuffer;
 	class ITransformCBuf;
 	class ITexture;
 	class ISampler;
@@ -57,6 +54,12 @@ namespace tryn::gfx
 	class StaticMesh;
 	class VertexLayout;
 	class RenderWorker;
+
+	class IVtxConstBufCach;
+	class IVtxConstBufNCach;
+	class IPxConstBufCach;
+	class IPxConstBufNCach;
+	class IVertexBuffer;
 
 	class IGraphics
 	{
@@ -96,7 +99,7 @@ namespace tryn::gfx
 		{
 			trynass(context.GetApi() == GetType());
 		}
-		IContext& GetContext()
+		IContext& GetContextInterface()
 		{
 			return *pContext;
 		}
@@ -118,8 +121,10 @@ namespace tryn::gfx
 		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) = 0;
 		virtual std::shared_ptr<IInputLayout>		CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) = 0;
 		virtual std::shared_ptr<IPrimitiveTopology> CreatePrimitiveTopology() = 0;
-		virtual std::shared_ptr<IVtxConstantBuffer>	CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IPxConstantBuffer>	CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IVtxConstBufCach>	CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IVtxConstBufNCach>	CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IPxConstBufCach>	CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IPxConstBufNCach>	CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
 		virtual std::shared_ptr<ITexture>			CreateTexture(std::filesystem::path path, int slot = 0) = 0;
 		virtual std::shared_ptr<IRasterizer>		CreateRasterizer(const bool twoSided = true) = 0;
 		virtual std::shared_ptr<ISampler>			CreateSampler(SamplerType type, bool reflect, int slot) = 0;

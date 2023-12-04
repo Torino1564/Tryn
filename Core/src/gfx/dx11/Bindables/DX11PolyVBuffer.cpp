@@ -64,7 +64,7 @@ namespace tryn::gfx::dx11
 		{
 			for (auto& vBuffer : slots)
 			{
-				if (vBuffer->Get().GetDirty())
+				if (vBuffer->Get().Dirty())
 				{
 					vBuffer->Init();
 				}
@@ -88,7 +88,7 @@ namespace tryn::gfx::dx11
 			{
 				for (auto& vBuffer : slots)
 				{
-					if (vBuffer->Get().GetDirty())
+					if (vBuffer->Get().Dirty())
 					{
 						vBuffer->Init();
 					}

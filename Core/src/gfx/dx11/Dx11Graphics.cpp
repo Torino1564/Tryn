@@ -1,12 +1,10 @@
 #include "Dx11Graphics.h"
 #include "GraphicsError.h"
 #include <d3dcompiler.h>
-#include <Core/src/gfx/dx11/Bindables/DX11VertexBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11InputLayout.h>
 #include <Core/src/gfx/dx11/Bindables/DX11VertexShader.h>
 #include <core/src/gfx/dx11/Bindables/DX11IndexBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PixelShader.h>
-#include <Core/src/gfx/dx11/Bindables/DX11ConstantBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PrimitiveTopology.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PolyVBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11TransformCBuf.h>
@@ -14,7 +12,9 @@
 #include <Core/src/gfx/dx11/Bindables/DX11Rasterizer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11Sampler.h>
 #include <Core/src/gfx/dx11/Dx11RenderWorker.h>
+#include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
 #include "imgui_impl_dx11.h"
+#include <Core/src/win/Window.h>
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
@@ -287,18 +287,34 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IVtxConstantBuffer> Graphics::CreateVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	std::shared_ptr<IVtxConstBufCach> Graphics::CreateVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
 	{
 		auto future = Dispatch_([&] {
-			return std::make_shared<DX11VtxConstantBuffer>(*this, std::move(layout), slot, tag);
+			return std::make_shared<DX11VtxConstBufCach>(*this, std::move(layout), slot, tag);
 			});
 		return future.get();
 	}
 
-	std::shared_ptr<IPxConstantBuffer> Graphics::CreatePxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	std::shared_ptr<IVtxConstBufNCach> Graphics::CreateNonCachVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
 	{
 		auto future = Dispatch_([&] {
-			return std::make_shared<DX11PxConstantBuffer>(*this, std::move(layout), slot, tag);
+			return std::make_shared<DX11VtxConstBufNCach>(*this, std::move(layout), slot, tag);
+			});
+		return future.get();
+	}
+
+	std::shared_ptr<IPxConstBufCach> Graphics::CreatePxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	{
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11PxConstBufCach>(*this, std::move(layout), slot, tag);
+			});
+		return future.get();
+	}
+
+	std::shared_ptr<IPxConstBufNCach> Graphics::CreateNonCachPxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	{
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11PxConstBufNCach>(*this, std::move(layout), slot, tag);
 			});
 		return future.get();
 	}

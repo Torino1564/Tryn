@@ -95,9 +95,9 @@ namespace tryn::gfx
 	{
 		buffer.resize(newSize * layout.Size());
 	}
-	size_t VertexBuffer::Size() const
+	constexpr std::size_t VertexBuffer::Size() const noexcept
 	{
-		return buffer.size() / layout.Size();
+		return buffer.size();
 	}
 	Vertex VertexBuffer::operator[](int i)
 	{
@@ -110,17 +110,17 @@ namespace tryn::gfx
 		return Vertex{ buffer.data() + buffer.size() - layout.Size(),layout };
 	}
 
-	char* VertexBuffer::Data()
+	constexpr void* VertexBuffer::Data() const noexcept
 	{
-		return buffer.data();
+		return (void*)buffer.data();
 	}
 
-	size_t VertexBuffer::BufferSize() const
+	std::size_t VertexBuffer::NumElements() const noexcept
 	{
-		return buffer.size();
+		return buffer.size() / layout.Size();
 	}
 
-	size_t VertexBuffer::Stride() const
+	std::size_t VertexBuffer::Stride() const noexcept
 	{
 		return layout.Size();
 	}
@@ -128,11 +128,6 @@ namespace tryn::gfx
 	const VertexLayout& VertexBuffer::GetLayout() const
 	{
 		return layout;
-	}
-
-	bool& VertexBuffer::GetDirty()
-	{
-		return dirty;
 	}
 
 	Vertex::Vertex(char* pData, const VertexLayout& layout)

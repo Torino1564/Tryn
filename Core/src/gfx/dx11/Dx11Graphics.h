@@ -11,6 +11,11 @@ namespace tryn::gfx
 	class VertexBuffer;
 }
 
+namespace tryn::win
+{
+	class Window;
+}
+
 namespace tryn::gfx::dx11
 {
 	class Graphics : public IGraphics
@@ -67,8 +72,10 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<IInputLayout>			CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) override;
 		std::shared_ptr<IInputLayout>			CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) override;
 		std::shared_ptr<IPrimitiveTopology>		CreatePrimitiveTopology() override;
-		std::shared_ptr<IVtxConstantBuffer>		CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
-		std::shared_ptr<IPxConstantBuffer>		CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IVtxConstBufCach>		CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IVtxConstBufNCach>		CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IPxConstBufCach>		CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IPxConstBufNCach>		CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
 		std::shared_ptr<ITexture>				CreateTexture(std::filesystem::path path, int slot = 0) override;
 		std::shared_ptr<IRasterizer>			CreateRasterizer(const bool twoSided = true) override;
 		std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) override;
