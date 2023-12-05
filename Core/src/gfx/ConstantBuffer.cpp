@@ -165,4 +165,15 @@ namespace tryn::gfx
 		node(node),
 		pBytes(pBytes)
 	{}
+	bool ElementView::Exists() const
+	{
+		if (node.GetType() == ConstantBufferLayout::Type::Empty)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
 }

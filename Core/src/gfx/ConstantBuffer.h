@@ -9,6 +9,7 @@
 #include <Core/src/utl/Exception.h>
 #include <unordered_map>
 #include <Core/src/gfx/BindablePool.h>
+#include <Core/src/gfx/CPUBuffer.h>
 #include <Core/src/gfx/IBufferFwd.h>
 
 ZT_EX_DEF(DcbException);
@@ -182,17 +183,7 @@ namespace tryn::gfx
 			return *reinterpret_cast<T*>(pBytes);
 		}
 
-		bool Exists() const
-		{
-			if (node.GetType() == ConstantBufferLayout::Type::Empty)
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
-		}
+		bool Exists() const;
 
 		template<typename T>
 		T& operator=(const T& rhs) const
@@ -204,5 +195,51 @@ namespace tryn::gfx
 	private:
 		ConstantBufferLayout::Node& node;
 		char* pBytes;
+	};
+
+	class ConstantBuffer : public CPUBuffer
+	{
+	public:
+		ConstantBuffer(ConstantBufferLayout cbl)
+		{
+			layout = std::move(cbl);
+			buffer.Resize(layout.Size());
+		}
+		ElementView operator[](std::string id)
+		{
+			buffer.SetDirty();
+			auto& indexTo = layout.GetRoot().IndexByName(id);
+			if (indexTo.GetType() == gfx::ConstantBufferLayout::Type::Empty)
+			{
+				return ElementView{ indexTo, nullptr };
+			}
+			else
+			{
+				return ElementView{ indexTo, (char*)(buffer.Data()) + indexTo.GetOffset() };
+			}
+		}
+		constexpr void* Data() const noexcept override
+		{
+			return buffer.Data();
+		}
+		std::size_t Stride() const noexcept override
+		{
+			return buffer.Stride();
+		}
+		constexpr std::size_t ByteSize() const noexcept override
+		{
+			return buffer.ByteSize();
+		}
+		std::size_t Size() const noexcept override
+		{
+			return layout.Size();
+		}
+		void Resize(const std::size_t newSize) override
+		{
+			throw CPUBufferException("Cannot Resize a Constant Buffer!");
+		}
+	private:
+		ConstantBufferLayout layout;
+		FlatBuffer buffer;
 	};
 }

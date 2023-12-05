@@ -4,7 +4,7 @@
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
 #include <Core/src/app/EntryPoint.h>
-#include <Core/src/gfx/Bindables/ConstantBuffer.h>
+#include <Core/src/gfx/ConstantBuffer.h>
 
 using namespace tryn;
 

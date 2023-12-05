@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/src/gfx/IGraphics.h>
 #include <string>
+#include "TechniqueProbe.h"
 #include "Step.h"
 
 namespace tryn::gfx
@@ -38,6 +39,15 @@ namespace tryn::gfx
 				step.Submit(gfx, parent);
 			}
 		}
+		void Accept(TechniqueProbe& probe)
+		{
+			probe.SetTechnique(this);
+			for (auto& step : steps)
+			{
+				step.Accept(probe);
+			}
+		}
+
 	private:
 		std::string name;
 		std::vector<Step> steps;

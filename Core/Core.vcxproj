@@ -15,7 +15,9 @@
     <ClCompile Include="src\ccr\Master.cpp" />
     <ClCompile Include="src\ccr\Thread.cpp" />
     <ClCompile Include="src\ccr\Worker.cpp" />
-    <ClCompile Include="src\ent\Landscape.cpp" />
+    <ClCompile Include="src\ent\Components\Component.cpp" />
+    <ClCompile Include="src\ent\Components\ComponentManager.cpp" />
+    <ClCompile Include="src\ent\Components\ModelComponent.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
@@ -27,7 +29,7 @@
     <ClCompile Include="src\gfx\Bindables\TransformCBuf.cpp" />
     <ClCompile Include="src\gfx\Drawable.cpp" />
     <ClCompile Include="src\app\App.cpp" />
-    <ClCompile Include="src\gfx\Bindables\ConstantBuffer.cpp" />
+    <ClCompile Include="src\gfx\ConstantBuffer.cpp" />
     <ClCompile Include="src\gfx\Bindables\PrimitiveTopology.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11InputLayout.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PixelShader.cpp" />
@@ -101,11 +103,14 @@
     <ClInclude Include="src\ccr\Task.h" />
     <ClInclude Include="src\ccr\Thread.h" />
     <ClInclude Include="src\ccr\Worker.h" />
-    <ClInclude Include="src\ent\Landscape.h" />
+    <ClInclude Include="src\ent\Components\ComponentCodex.h" />
+    <ClInclude Include="src\ent\Components\Component.h" />
+    <ClInclude Include="src\ent\Components\ComponentManager.h" />
+    <ClInclude Include="src\ent\Components\ModelComponent.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
-    <ClInclude Include="src\gfx\Bindables\ConstantBuffer.h" />
+    <ClInclude Include="src\gfx\ConstantBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\IBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\InputLayout.h" />
     <ClInclude Include="src\gfx\Bindables\PixelShader.h" />
@@ -136,6 +141,7 @@
     <ClInclude Include="src\gfx\GraphicAPI.h" />
     <ClInclude Include="src\gfx\IBufferFwd.h" />
     <ClInclude Include="src\gfx\Model\InstancedModel.h" />
+    <ClInclude Include="src\gfx\RenderQueue\TechniqueProbe.h" />
     <ClInclude Include="src\gfx\TexturePool.h" />
     <ClInclude Include="src\gfx\IContext.h" />
     <ClInclude Include="src\gfx\Material.h" />
@@ -194,6 +200,7 @@
     <ClInclude Include="src\utl\LocalGenericTaskQueue.h" />
     <ClInclude Include="src\utl\Macro.h" />
     <ClInclude Include="src\utl\NoReturn.h" />
+    <ClInclude Include="src\utl\Probe.h" />
     <ClInclude Include="src\utl\StackTrace.h" />
     <ClInclude Include="src\utl\String.h" />
     <ClInclude Include="src\utl\Timer.h" />

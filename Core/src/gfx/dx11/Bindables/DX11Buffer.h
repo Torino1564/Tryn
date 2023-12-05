@@ -3,7 +3,7 @@
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
 #include <concepts>
 #include <Core/src/utl/Assert.h>
-#include <Core/src/gfx/Bindables/ConstantBuffer.h>
+#include <Core/src/gfx/ConstantBuffer.h>
 #include <Core/src/gfx/dx11/DX11BufferFwd.h>
 #include <Core/src/utl/Exception.h>
 
@@ -33,15 +33,12 @@ namespace tryn::gfx::dx11
 
 			this->pCPUBuffer = pCpuBuffer;
 
-			stride = pCpuBuffer->Stride();
-			offset = 0u;
-
 			D3D11_BUFFER_DESC bd = {};
 			bd.Usage = D3D11_USAGE_DEFAULT;
 			bd.BindFlags = GetBindFlag<Type>();
 			bd.CPUAccessFlags = 0u;
 			bd.MiscFlags = 0u;
-			bd.StructureByteStride = (UINT)stride;
+			bd.StructureByteStride = (UINT)pCpuBuffer->Stride();
 			bd.ByteWidth = (UINT)pCpuBuffer->ByteSize();
 
 			D3D11_SUBRESOURCE_DATA srd = {};
@@ -61,8 +58,7 @@ namespace tryn::gfx::dx11
 
 			trynass_msg(cbl.IsSolid(), L"ConstantBuffer cannot be created with a non solidified layout!");
 			this->type = GraphicAPI::DX11;
-			this->layout = std::move(cbl);
-			this->pCPUBuffer = std::make_shared<FlatBuffer>(this->layout.Size());
+			this->pCPUBuffer = std::make_shared<ConstantBuffer>(std::move(cbl));
 
 			D3D11_BUFFER_DESC cbd = {};
 			cbd.Usage = D3D11_USAGE_DYNAMIC;
@@ -70,7 +66,7 @@ namespace tryn::gfx::dx11
 			cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 			cbd.MiscFlags = 0u;
 			cbd.StructureByteStride = 0u;
-			cbd.ByteWidth = (UINT)this->layout.Size();
+			cbd.ByteWidth = (UINT)this->pCPUBuffer->Size();
 			D3D11_SUBRESOURCE_DATA csrd = {};
 			csrd.pSysMem = this->pCPUBuffer->Data();
 

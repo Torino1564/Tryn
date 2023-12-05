@@ -1,6 +1,6 @@
 #pragma once
 #include <Core/src/gfx/IGraphics.h>
-#include <Core/src/gfx/Bindables/ConstantBuffer.h>
+#include <Core/src/gfx/ConstantBuffer.h>
 
 namespace tryn::gfx
 {
@@ -15,6 +15,7 @@ namespace tryn::gfx
 		void Bind(IGraphics& gfx, IContext& context) const;
 		void Draw(IGraphics& gfx, Drawable* parent) const;
 		void Submit(IGraphics& gfx, Drawable* parent);
+		void Accept(class TechniqueProbe& probe);
 		std::vector<std::shared_ptr<gfx::IBindable>> bindables;
 	private:
 		std::string renderQueueID;

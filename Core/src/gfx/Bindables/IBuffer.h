@@ -3,9 +3,10 @@
 #include <Core/src/gfx/CPUBuffer.h>
 #include <Core/src/gfx/BindablePool.h>
 #include <Core/src/gfx/IBufferFwd.h>
-#include <Core/src/gfx/Bindables/ConstantBuffer.h>
+#include <Core/src/gfx/ConstantBuffer.h>
 #include <Core/src/gfx/Vertex.h>
 #include <any>
+#include <Core/src/gfx/RenderQueue/TechniqueProbe.h>
 
 ZT_EX_DEF(BufferMissmatchException);
 
@@ -171,15 +172,16 @@ namespace tryn::gfx
 		requires (T == BufferType::VtxConstant || T == BufferType::PxConstant)
 		ElementView operator[](std::string id)
 		{
-			pCPUBuffer->SetDirty();
-			auto& indexTo = layout.GetRoot().IndexByName(id);
-			if (indexTo.GetType() == gfx::ConstantBufferLayout::Type::Empty)
+			return (*std::dynamic_pointer_cast<ConstantBuffer>(pCPUBuffer))[id];
+		}
+
+		template <BufferType T = Type>
+		requires (T == BufferType::VtxConstant || T == BufferType::PxConstant)
+		void Accept_(TechniqueProbe& probe)
+		{
+			if (probe.VisitBuffer(*reinterpret_cast<ConstantBuffer*>(pCPUBuffer.get())))
 			{
-				return ElementView{ indexTo, nullptr };
-			}
-			else
-			{
-				return ElementView{ indexTo, (char*)(pCPUBuffer->Data()) + indexTo.GetOffset() };
+				pCPUBuffer->SetDirty();
 			}
 		}
 	protected:
@@ -187,10 +189,7 @@ namespace tryn::gfx
 		std::string tag;
 		std::shared_ptr<CPUBuffer> pCPUBuffer;
 		[[no_unique_address]] std::conditional<Type == BufferType::PxConstant || Type == BufferType::VtxConstant, int, empty_t<0>>::type slot;
-		using Layout_Ty = std::conditional_t<
-			Type == BufferType::PxConstant || Type == BufferType::VtxConstant || Type == BufferType::Vertex,
-			std::conditional_t<Type == BufferType::Vertex, VertexLayout, ConstantBufferLayout>,
-			empty_t<1>>;
+		using Layout_Ty = std::conditional_t<Type == BufferType::Vertex, VertexLayout, empty_t<1>>;
 		[[no_unique_address]] Layout_Ty layout;
 	};
 }

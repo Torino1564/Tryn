@@ -1,30 +1,20 @@
 #pragma once
 #include <memory>
 #include <Core/src/gfx/Model/Model.h>
+#include "Components/ComponentManager.h"
 
 namespace tryn::ent
 {
 	class IEntity
 	{
 	public:
-		struct Settings
-		{
-		public:
-			glm::vec3 angles = {};
-			glm::vec3 position = {};
-			glm::vec3 scale = { 1.0f,1.0f,1.0f };
-		};
-	public:
 		virtual ~IEntity() = default;
-		void Submit();
 		void SpawnControlWindow();
-	public:
-		Settings settings;
-
+		void Update(double dt = 0);
+		ComponentManager componentManager;
 	protected:
 		std::string name;
-		std::unique_ptr<gfx::Model> model;
-		glm::mat4 transform = {};
+		int UID;
 	};
 
 	class BasicEntity : public IEntity

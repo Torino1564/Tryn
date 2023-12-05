@@ -23,7 +23,7 @@ namespace tryn::gfx
 		}
 		constexpr virtual void* Data() const noexcept = 0;
 		constexpr virtual std::size_t ByteSize() const noexcept = 0;
-		constexpr virtual std::size_t Size() const noexcept = 0;
+		virtual std::size_t Size() const noexcept = 0;
 		virtual std::size_t Stride() const noexcept = 0;
 		virtual void Resize(const std::size_t newSize)
 		{
@@ -52,7 +52,7 @@ namespace tryn::gfx
 		{
 			return buffer.size();
 		}
-		constexpr std::size_t Size() const noexcept override
+		std::size_t Size() const noexcept override
 		{
 			return buffer.size();
 		}
@@ -89,7 +89,7 @@ namespace tryn::gfx
 		{
 			return buffer.size() * stride;
 		}
-		constexpr std::size_t Size() const noexcept override
+		std::size_t Size() const noexcept override
 		{
 			return buffer.size();
 		}

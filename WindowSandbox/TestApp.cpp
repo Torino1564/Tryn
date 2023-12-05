@@ -97,16 +97,14 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		{
 			for (int k = 0; k < entityCount1D; k++)
 			{
-				auto& pos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)]->settings.position;
+				/*auto& pos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)]->settings.position;
 				pos.x = -entityCount1D / 2. + i;
 				pos.y = -entityCount1D / 2. + j;
-				pos.z = -entityCount1D / 2. + k;
+				pos.z = -entityCount1D / 2. + k;*/
 			}
 		}
 	}
-	//entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "sponza", "resources/models/Sponza/sponza.obj", glm::vec3{ 0.01f,0.01f,0.01f }));
-	//entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "terrain", "resources/models/TestTerrain.fbx"));
-	entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "terrain2", "resources/models/TestTerrain.obj"));
+	entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "testPlane", "resources/models/TestPlane.fbx"));
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
 	this->wnd->keyboard.DisableAutoRepeat();
@@ -114,7 +112,6 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 void TestApp::DoFrame()
 {
-	
 	camera.Submit(Gfx());
 	pPointLight->SubmitLight(Gfx());
 
@@ -131,7 +128,7 @@ void TestApp::DoFrame()
 		pPointLight->Submit(Gfx(),camera.GetViewMatrix());
 		for (auto& entity : entities)
 		{
-			entity->Submit();
+			entity->Update();
 		}
 	}
 	{

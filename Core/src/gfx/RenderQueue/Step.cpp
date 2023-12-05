@@ -1,5 +1,6 @@
 #include "Step.h"
 #include <Core/src/gfx/Drawable.h>
+#include <Core/src/gfx/RenderQueue/TechniqueProbe.h>
 
 namespace tryn::gfx
 {
@@ -34,5 +35,13 @@ namespace tryn::gfx
 	{
 		auto& renderGraph = gfx.GetRenderGraph();
 		renderGraph.GetRenderQueueByID(renderQueueID).Push(Job(parent,this));
+	}
+	void Step::Accept(TechniqueProbe& probe)
+	{
+		probe.SetStep(this);
+		for (auto& pBindable : bindables)
+		{
+			pBindable->Accept(probe);
+		}
 	}
 }
