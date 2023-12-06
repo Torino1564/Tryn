@@ -4,7 +4,7 @@ Port-Version: 1
 Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: d8324fab6c6646a6e26715f50f3ceab23d950770e2bd45cb074681512c55d9ce
+Abi: 11d2dc43e5cc119385e18bff2a32509216f5fb0dd8e0c5fa536ef76a5c849455
 Description: A simple and easy-to-use library to enjoy videogames programming
 Default-Features: use-audio
-Status: install ok installed
+Status: purge ok not-installed
