@@ -11,6 +11,7 @@ namespace tryn::ent
 	{
 	public:
 		virtual ~IEntity();
+		IEntity();
 		void SpawnControlWindow();
 		void Update(double dt = 0);
 		int GenerateID();

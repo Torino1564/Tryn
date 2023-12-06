@@ -28,9 +28,9 @@ namespace tryn::ent
 		void AddComponent(int entityID, T component)
 		{
 			auto& componentVector = std::get<std::vector<T>>(memory);
-			if (componentVector.size() < entityID)
+			if (componentVector.size() <= entityID)
 			{
-				ResizeArrays((int)(float(entityID) * float(1.3)));
+				ResizeArrays((int)(float((entityID) + 1) * float(1.3)));
 			}
 			auto& componentVector2 = std::get<std::vector<T>>(memory);
 			componentVector2[entityID] = std::move(component);
@@ -48,16 +48,16 @@ namespace tryn::ent
 
 		static ComponentManager& Get()
 		{
-			ComponentManager singleton;
+			static ComponentManager singleton;
 			return singleton;
 		}
 	private:
+		ComponentManager();
 		template <ComponentWithUID T>
 		void ResizeArray_(std::vector<T>& componentVector, int newSize)
 		{
 			componentVector.resize(newSize);
 		}
-		ComponentManager() = default;
 		// Data
 		Components_Ty memory;
 	};

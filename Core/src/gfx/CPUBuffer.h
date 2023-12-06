@@ -76,6 +76,7 @@ namespace tryn::gfx
 		IndexBuffer(std::vector<int> data)
 		{
 			buffer = std::move(data);
+			dirty = false;
 		}
 		constexpr void* Data() const noexcept override
 		{

@@ -13,6 +13,11 @@ namespace tryn::ent
 				
 			}
 		}
+		IEntity::IDbooker[UID].flip();
+	}
+	IEntity::IEntity()
+	{
+		UID = GenerateID();
 	}
 	void IEntity::SpawnControlWindow()
 	{
@@ -28,7 +33,7 @@ namespace tryn::ent
 		if (firstFree == sul::dynamic_bitset<>::npos)
 		{
 			const auto oldSize = IEntity::IDbooker.size();
-			IEntity::IDbooker.resize(static_cast<int>((float)(oldSize) * 1.3f),true);
+			IEntity::IDbooker.resize(static_cast<int>((float)((oldSize) + 1) * 1.3f),true);
 			IEntity::IDbooker[oldSize].flip();
 			return oldSize;
 		}
