@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "ComponentCodex.h"
+#include <optional>
 #include <Core/third/imgui/imgui.h>
 
 namespace tryn::ent
@@ -18,10 +19,11 @@ namespace tryn::ent
 		virtual void OnDestroy() {}
 		virtual void Controls()
 		{
-			ImGui::TreeNode(name.c_str());
+			ImGui::TreeNode(name->c_str());
 		}
 		std::string_view GetName();
 	private:
-		std::string name;
+		std::optional<std::string> name;
+		int entityUID;
 	};
 }

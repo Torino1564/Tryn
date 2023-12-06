@@ -2,5 +2,5 @@
 
 std::string_view tryn::ent::Component::GetName()
 {
-	return name;
+	return name.value_or("?");
 }
