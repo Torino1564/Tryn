@@ -88,7 +88,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 	for (int i = 0; i < pow(entityCount1D, 3); i++)
 	{
-		entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "gobber" + std::to_string(i), "resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
+		//entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "gobber" + std::to_string(i), "resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
 	}
 
 	for (int i = 0; i < entityCount1D; i++)
@@ -104,7 +104,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 			}
 		}
 	}
-	entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "testPlane", "resources/models/TestPlane.fbx"));
+	//entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "testPlane", "resources/models/TestPlane.fbx"));
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
 	this->wnd->keyboard.DisableAutoRepeat();

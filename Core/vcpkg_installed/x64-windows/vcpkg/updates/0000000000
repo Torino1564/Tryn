@@ -1,10 +1,8 @@
-Package: raylib
-Version: 4.5.0
-Port-Version: 1
-Depends: vcpkg-cmake, vcpkg-cmake-config
+Package: assimp
+Version: 5.2.5
+Depends: draco, kubazip, minizip, poly2tri, pugixml, rapidjson, stb, utfcpp, vcpkg-cmake, vcpkg-cmake-config, zlib
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 11d2dc43e5cc119385e18bff2a32509216f5fb0dd8e0c5fa536ef76a5c849455
-Description: A simple and easy-to-use library to enjoy videogames programming
-Default-Features: use-audio
+Abi: 0b82711251d48f6c1b74663fea581df461daecef7428877834b6a2ca4abbd1be
+Description: The Open Asset import library
 Status: purge ok half-installed

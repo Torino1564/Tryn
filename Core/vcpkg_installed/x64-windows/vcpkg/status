@@ -122,14 +122,14 @@ Multi-Arch: same
 Abi: 11d2dc43e5cc119385e18bff2a32509216f5fb0dd8e0c5fa536ef76a5c849455
 Description: A simple and easy-to-use library to enjoy videogames programming
 Default-Features: use-audio
-Status: install ok installed
+Status: purge ok not-installed
 
 Package: raylib
 Feature: use-audio
 Architecture: x64-windows
 Multi-Arch: same
 Description: Build raylib with audio module
-Status: install ok installed
+Status: purge ok not-installed
 
 Package: vcpkg-cmake-get-vars
 Version: 2023-03-02

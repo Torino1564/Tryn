@@ -106,6 +106,7 @@
     <ClInclude Include="src\ent\Components\ComponentCodex.h" />
     <ClInclude Include="src\ent\Components\Component.h" />
     <ClInclude Include="src\ent\Components\ComponentManager.h" />
+    <ClInclude Include="src\ent\Components\ComponentsBase.h" />
     <ClInclude Include="src\ent\Components\ModelComponent.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />

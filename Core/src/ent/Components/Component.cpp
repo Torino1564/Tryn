@@ -2,5 +2,6 @@
 
 std::string_view tryn::ent::Component::GetName()
 {
-	return name.value_or("?");
+	static constexpr const char* invalid = "?";
+	return name.value_or(invalid);
 }

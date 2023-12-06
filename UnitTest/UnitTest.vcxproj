@@ -98,6 +98,7 @@
     <ClCompile Include="src\log\Log.cpp" />
     <ClCompile Include="src\log\LogTextFormatter.cpp" />
     <ClCompile Include="src\mem\Mem.cpp" />
+    <ClCompile Include="TrynCppUnitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TrynCppUnitTest.h" />

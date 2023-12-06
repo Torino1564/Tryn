@@ -1730,6 +1730,9 @@
     <ClInclude Include="src\ent\Components\ComponentCodex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ent\Components\ComponentsBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">

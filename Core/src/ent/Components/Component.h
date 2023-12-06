@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "ComponentCodex.h"
+#include "ComponentsBase.h"
 #include <optional>
 #include <Core/third/imgui/imgui.h>
 

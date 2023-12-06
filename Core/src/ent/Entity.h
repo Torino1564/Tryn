@@ -2,19 +2,30 @@
 #include <memory>
 #include <Core/src/gfx/Model/Model.h>
 #include "Components/ComponentManager.h"
+#include <Core/third/dynamic_bitset.hpp>
+#include <bitset>
 
 namespace tryn::ent
 {
 	class IEntity
 	{
 	public:
-		virtual ~IEntity() = default;
+		virtual ~IEntity();
 		void SpawnControlWindow();
 		void Update(double dt = 0);
-		ComponentManager componentManager;
+		int GenerateID();
+		template <ComponentWithUID ComponentType>
+		void AddComponent(ComponentType component)
+		{
+			ComponentManager::Get().AddComponent<ComponentType>(UID, std::move(component));
+		}
 	protected:
 		std::string name;
-		int UID;
+		int UID = -1;
+		// Components
+		std::bitset<static_cast<std::size_t>(ComponentType::Count)> components;
+		// Entity ID
+		static sul::dynamic_bitset<> IDbooker;
 	};
 
 	class BasicEntity : public IEntity

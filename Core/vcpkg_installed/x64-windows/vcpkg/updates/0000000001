@@ -1,6 +1,8 @@
-Package: raylib
-Feature: use-audio
+Package: assimp
+Version: 5.2.5
+Depends: draco, kubazip, minizip, poly2tri, pugixml, rapidjson, stb, utfcpp, vcpkg-cmake, vcpkg-cmake-config, zlib
 Architecture: x64-windows
 Multi-Arch: same
-Description: Build raylib with audio module
-Status: purge ok half-installed
+Abi: 0b82711251d48f6c1b74663fea581df461daecef7428877834b6a2ca4abbd1be
+Description: The Open Asset import library
+Status: purge ok not-installed

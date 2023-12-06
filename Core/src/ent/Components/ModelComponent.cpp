@@ -9,6 +9,10 @@ namespace tryn::ent
 	{
 		model = std::make_unique<gfx::Model>(gfx, path, scale);
 	}
+	ModelComponent::ModelComponent()
+	{
+		model = nullptr;
+	}
 	void ModelComponent::OnUpdate(double dt)
 	{
 		glm::mat4 modelTransform(1.0f);
