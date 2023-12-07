@@ -252,6 +252,9 @@
     <ClCompile Include="src\ent\Components\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ent\Components\PhysicsComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1731,6 +1734,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ent\Components\ComponentsBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ent\Components\PhysicsComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

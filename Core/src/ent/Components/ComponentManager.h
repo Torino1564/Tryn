@@ -13,14 +13,24 @@ ZT_EX_DEF(ComponentManagerException);
 
 namespace tryn::ent
 {
+	template <int>
+	struct empty_t {};
 	class ComponentManager
 	{
 	public:
-		using Components_Ty = std::tuple<std::vector<ModelComponent>>;
+		using Components_Ty =
+			std::tuple<
+#define X(el) \
+		std::vector<typename ComponentEnumMap<ComponentType::el>::ComponentType>, \
+
+		COMPONENT_TYPES
+#undef X
+		empty_t<0>>;
+
 		template <ComponentWithUID T>
-		auto& GetComponentByID(int entityID, std::optional<std::string_view> name = std::nullopt)
+		static auto& GetComponentByID(int entityID, std::optional<std::string_view> name = std::nullopt)
 		{
-			auto& componentVector = std::get<std::vector<T>>(memory);
+			auto& componentVector = std::get<std::vector<T>>(Get().memory);
 			trynass_msg(entityID <= componentVector.size(),L"Out of bounds access of the component vector");
 			return componentVector[entityID];
 		}
@@ -33,12 +43,13 @@ namespace tryn::ent
 				ResizeArrays((int)(float((entityID) + 1) * float(1.3)));
 			}
 			auto& componentVector2 = std::get<std::vector<T>>(memory);
+			component.SetEntityID(entityID);
 			componentVector2[entityID] = std::move(component);
 		}
 		template <std::size_t Index = 0>
 		void ResizeArrays(int newSize)
 		{
-			if constexpr (Index < std::tuple_size_v<Components_Ty>)
+			if constexpr (Index < std::tuple_size_v<Components_Ty> - 1)
 			{
 				ResizeArray_(std::get<Index>(memory), newSize);
 				ResizeArrays<Index + 1>(newSize);
@@ -58,6 +69,7 @@ namespace tryn::ent
 		{
 			componentVector.resize(newSize);
 		}
+
 		// Data
 		Components_Ty memory;
 	};

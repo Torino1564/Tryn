@@ -19,6 +19,8 @@ namespace tryn::ent
 		void AddComponent(ComponentType component)
 		{
 			ComponentManager::Get().AddComponent<ComponentType>(UID, std::move(component));
+			const auto type = ReverseComponentMap<ComponentType>::type;
+			components[static_cast<int>(type)].flip();
 		}
 	protected:
 		std::string name;

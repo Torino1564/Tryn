@@ -11,7 +11,7 @@ namespace tryn::ent
 	public:
 		static constexpr ComponentType GetCUID()
 		{
-			return ComponentType::Invalid;
+			return ComponentType::Unknown;
 		}
 		virtual ~Component() = default;
 		virtual void OnCreate() {}
@@ -21,6 +21,7 @@ namespace tryn::ent
 		{
 			ImGui::TreeNode(name->c_str());
 		}
+		void SetEntityID(int);
 		std::string_view GetName();
 	private:
 		std::optional<std::string> name;

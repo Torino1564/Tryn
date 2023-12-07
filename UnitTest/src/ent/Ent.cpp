@@ -30,17 +30,22 @@ namespace tryn::ent
 		TEST_METHOD(ECSTest)
 		{
 			auto& manager = tryn::ent::ComponentManager::Get();
-			BasicEntity testEnt1(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt1", "D:/dev/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f });
-			{
-				BasicEntity testEnt2(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt2", "D:/dev/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f });
-			}
-			BasicEntity testEnt3(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt3", "D:/dev/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f });
-			BasicEntity testEnt4(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt4", "D:/dev/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f });
-			auto& manager2 = tryn::ent::ComponentManager::Get();
+			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt1", "C:/Users/54112/source/repos/Torino1564/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
+			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt2", "C:/Users/54112/source/repos/Torino1564/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
+			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt3", "C:/Users/54112/source/repos/Torino1564/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
+			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt4", "C:/Users/54112/source/repos/Torino1564/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
 
+			while (true)
+			{
+				for (auto& pEntity : entityPtrs)
+				{
+					pEntity->Update(1.0f);
+				}
+			}
 		}
 	private:
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;
 		std::unique_ptr<win::Window> pWnd;
+		std::vector<std::unique_ptr<IEntity>> entityPtrs;
 	};
 }

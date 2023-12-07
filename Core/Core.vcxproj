@@ -18,6 +18,7 @@
     <ClCompile Include="src\ent\Components\Component.cpp" />
     <ClCompile Include="src\ent\Components\ComponentManager.cpp" />
     <ClCompile Include="src\ent\Components\ModelComponent.cpp" />
+    <ClCompile Include="src\ent\Components\PhysicsComponent.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="src\ent\Components\ComponentManager.h" />
     <ClInclude Include="src\ent\Components\ComponentsBase.h" />
     <ClInclude Include="src\ent\Components\ModelComponent.h" />
+    <ClInclude Include="src\ent\Components\PhysicsComponent.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />

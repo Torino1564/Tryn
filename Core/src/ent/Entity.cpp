@@ -25,7 +25,13 @@ namespace tryn::ent
 	}
 	void IEntity::Update(double dt)
 	{
-
+#define X(el) if (components[static_cast<int>(ComponentType::el)]) \
+		{ \
+			using SysType = typename ComponentEnumMap<ComponentType::el>::ComponentType; \
+			ComponentManager::GetComponentByID<SysType>(this->UID).OnUpdate(dt); \
+		}
+	COMPONENT_TYPES
+#undef X
 	}
 	int IEntity::GenerateID()
 	{
