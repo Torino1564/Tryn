@@ -1,17 +1,20 @@
 #include "ModelComponent.h"
 #include <Core/src/gfx/Model/Model.h>
 #include <Core/src/gfx/RenderQueue/TechniqueProbe.h>
+#include "ComponentManager.h"
 
 namespace tryn::ent
 {
 
-	ModelComponent::ModelComponent(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale)
+	ModelComponent::ModelComponent(gfx::IGraphics& gfx, int entityID, std::string_view path, glm::vec3 scale)
 	{
-		model = std::make_unique<gfx::Model>(gfx, path, scale);
+		auto& srd = ComponentManager::Get().AddComponent<ModelComponent>(entityID, *this);
+		pSRD = &srd;
+		srd.model = std::make_unique<gfx::Model>(gfx, path, scale);
 	}
 	ModelComponent::ModelComponent()
 	{
-		model = nullptr;
+
 	}
 	void ModelComponent::OnUpdate(double dt)
 	{
@@ -20,7 +23,10 @@ namespace tryn::ent
 		modelTransform = glm::translate(modelTransform, settings.position);
 		auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
 		auto transform = modelTransform * rotation;
-		model->Submit(transform);
+
+		auto& srd = *reinterpret_cast<SubresourceData*>(pSRD);
+		srd.transform = transform;
+		srd.active = true;
 	}
 
 	constexpr ComponentType ModelComponent::GetCUID()
@@ -30,6 +36,17 @@ namespace tryn::ent
 	void ModelComponent::Controls()
 	{
 
+	}
+	void ModelComponent::Execute(std::span<SubresourceData> data)
+	{
+		for (auto& element : data)
+		{
+			if (element.active)
+			{
+				element.model->Submit(element.transform);
+				element.active = false;
+			}
+		}
 	}
 }
 

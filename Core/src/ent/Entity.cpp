@@ -25,13 +25,11 @@ namespace tryn::ent
 	}
 	void IEntity::Update(double dt)
 	{
-#define X(el) if (components[static_cast<int>(ComponentType::el)]) \
-		{ \
-			using SysType = typename ComponentEnumMap<ComponentType::el>::ComponentType; \
-			ComponentManager::GetComponentByID<SysType>(this->UID).OnUpdate(dt); \
+		for (int i = 0 ; i < static_cast<int>(ComponentType::Count) ; i++)
+		{
+			if (components[i])
+				componentPtrs[i]->OnUpdate();
 		}
-	COMPONENT_TYPES
-#undef X
 	}
 	int IEntity::GenerateID()
 	{
@@ -52,7 +50,7 @@ namespace tryn::ent
 	BasicEntity::BasicEntity(gfx::IGraphics& gfx, std::string_view name, std::string_view path, glm::vec3 scale)
 	{
 		this->name = name;
-		AddComponent(std::move(ModelComponent(gfx, path, scale)));
+		AddComponent(std::move(ModelComponent(gfx, UID, path, scale)));
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "Components/ComponentManager.h"
 #include <Core/third/dynamic_bitset.hpp>
 #include <bitset>
+#include <array>
 
 namespace tryn::ent
 {
@@ -18,15 +19,17 @@ namespace tryn::ent
 		template <ComponentWithUID ComponentType>
 		void AddComponent(ComponentType component)
 		{
-			ComponentManager::Get().AddComponent<ComponentType>(UID, std::move(component));
+			ComponentManager::Get().AddComponent<ComponentType>(UID, component);
 			const auto type = ReverseComponentMap<ComponentType>::type;
 			components[static_cast<int>(type)].flip();
+			componentPtrs[static_cast<int>(type)] = std::make_unique<ComponentType>(std::move(component));
 		}
 	protected:
 		std::string name;
 		int UID = -1;
 		// Components
 		std::bitset<static_cast<std::size_t>(ComponentType::Count)> components;
+		std::array<std::unique_ptr<Component>, static_cast<std::size_t>(ComponentType::Count)> componentPtrs;
 		// Entity ID
 		static sul::dynamic_bitset<> IDbooker;
 	};

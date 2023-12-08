@@ -8,15 +8,22 @@
 namespace tryn::ent
 {
 	template <typename T>
-	concept ImplementsGetUID = requires (T t)
+	concept ImplementsInterface = requires (T t)
 	{
 		{t.GetCUID() } -> std::convertible_to<ComponentType>;
+
+		{
+			T::Execute(std::declval<std::span<typename T::SubresourceData>>())
+		} -> std::same_as<void>;
 	};
 	template <typename T>
 	concept IsComponentType = std::is_base_of<Component, T>::value;
 
 	template <typename T>
-	concept ComponentWithUID = ImplementsGetUID<T> && IsComponentType<T>;
+	concept CompleteSubresourceData = std::convertible_to<decltype(T::SubresourceData::active), bool>;
+
+	template <typename T>
+	concept ComponentWithUID = ImplementsInterface<T> && IsComponentType<T> ;
 
 	template <ComponentType>
 	struct ComponentEnumMap

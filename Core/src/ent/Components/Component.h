@@ -3,6 +3,7 @@
 #include "ComponentsBase.h"
 #include <optional>
 #include <Core/third/imgui/imgui.h>
+#include <span>
 
 namespace tryn::ent
 {
@@ -13,6 +14,10 @@ namespace tryn::ent
 		{
 			return ComponentType::Unknown;
 		}
+		struct SubresourceData {
+			bool active = false;
+		};
+		static void Execute(std::span<SubresourceData> data) {}
 		virtual ~Component() = default;
 		virtual void OnCreate() {}
 		virtual void OnUpdate(double dt = 0) {}
@@ -23,8 +28,10 @@ namespace tryn::ent
 		}
 		void SetEntityID(int);
 		std::string_view GetName();
-	private:
+	protected:
 		std::optional<std::string> name;
+		// Memory
+		void* pSRD;
 		int entityUID;
 	};
 }

@@ -16,11 +16,18 @@ namespace tryn::ent
 	{
 		friend class IEntity;
 	public:
-		ModelComponent(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f });
+		ModelComponent(gfx::IGraphics& gfx, int entityID, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f });
 		ModelComponent();
 		void OnUpdate(double dt = 0) override;
 		static constexpr ComponentType GetCUID();
 		void Controls() override;
+		struct SubresourceData
+		{
+			glm::mat4 transform = {};
+			std::unique_ptr<gfx::Model> model;
+			bool active = false;
+		};
+		static void Execute(std::span<SubresourceData> data);
 	private:
 		struct Settings
 		{
@@ -29,7 +36,5 @@ namespace tryn::ent
 			glm::vec3 scale = { 1.0f,1.0f,1.0f };
 		};
 		Settings settings;
-		std::unique_ptr<gfx::Model> model;
-		glm::mat4 transform = {};
 	};
 }

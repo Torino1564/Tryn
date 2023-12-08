@@ -30,10 +30,10 @@ namespace tryn::ent
 		TEST_METHOD(ECSTest)
 		{
 			auto& manager = tryn::ent::ComponentManager::Get();
-			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt1", "C:/Users/54112/source/repos/Torino1564/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
-			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt2", "C:/Users/54112/source/repos/Torino1564/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
-			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt3", "C:/Users/54112/source/repos/Torino1564/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
-			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt4", "C:/Users/54112/source/repos/Torino1564/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
+			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt2", "D:/dev/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
+			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt3", "D:/dev/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
+			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt4", "D:/dev/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
+			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt1", "D:/dev/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
 
 			while (true)
 			{
@@ -41,6 +41,8 @@ namespace tryn::ent
 				{
 					pEntity->Update(1.0f);
 				}
+
+				manager.ExecuteComponents();
 			}
 		}
 	private:
