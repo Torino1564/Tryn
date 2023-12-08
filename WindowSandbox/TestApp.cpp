@@ -117,10 +117,10 @@ void TestApp::DoFrame()
 
 	{
 		PROFILE_SCOPE("Update Rotation");
-		pPointLight->ShowControls();
+		//pPointLight->ShowControls();
 		for (auto& entity : entities)
 		{
-			entity->SpawnControlWindow();
+			//entity->SpawnControlWindow();
 		}
 	}
 	{
@@ -190,7 +190,7 @@ void TestApp::DoFrame()
 			}
 		}
 
-		camera.ShowControls();
+		//camera.ShowControls();
 
 		// Toggle 1st Person Camera
 		if (const auto event = wnd->keyboard.ReadKey(); event.IsTypePress() && event.GetCode() == VK_ESCAPE)
@@ -205,6 +205,8 @@ void TestApp::DoFrame()
 			}
 		}
 		camera.Update();
+
+		ent::ComponentManager::Get().ExecuteComponents();
 	}
 	
 }
