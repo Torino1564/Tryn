@@ -75,7 +75,7 @@ Architecture: x64-windows
 Multi-Arch: same
 Abi: 041e8dae670ae2052f1ea5b48b11f2bbbb8fec432ae4408b7f062ea23d81b4bc
 Description: Minizip zip file manipulation library
-Status: install ok installed
+Status: purge ok not-installed
 
 Package: kubazip
 Version: 0.2.4
@@ -102,7 +102,7 @@ Architecture: x64-windows
 Multi-Arch: same
 Abi: 0b82711251d48f6c1b74663fea581df461daecef7428877834b6a2ca4abbd1be
 Description: The Open Asset import library
-Status: install ok installed
+Status: purge ok not-installed
 
 Package: cli11
 Version: 2.3.2

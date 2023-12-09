@@ -32,17 +32,18 @@ namespace tryn::gfx::dx11
 			trynass_msg(!pCpuBuffer->Dirty(), L"Cant initialize a dirty Vertex Buffer!");
 
 			this->pCPUBuffer = pCpuBuffer;
+			stride = this->pCPUBuffer->Stride();
 
 			D3D11_BUFFER_DESC bd = {};
 			bd.Usage = D3D11_USAGE_DEFAULT;
 			bd.BindFlags = GetBindFlag<Type>();
 			bd.CPUAccessFlags = 0u;
 			bd.MiscFlags = 0u;
-			bd.StructureByteStride = (UINT)pCpuBuffer->Stride();
-			bd.ByteWidth = (UINT)pCpuBuffer->ByteSize();
+			bd.StructureByteStride = stride;
+			bd.ByteWidth = (UINT)this->pCPUBuffer->ByteSize();
 
 			D3D11_SUBRESOURCE_DATA srd = {};
-			srd.pSysMem = pCpuBuffer->Data();
+			srd.pSysMem = this->pCPUBuffer->Data();
 
 			gfx.GetDevice().CreateBuffer(&bd, &srd, &pBuffer) >> chk;
 		}
