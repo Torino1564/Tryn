@@ -47,6 +47,14 @@ namespace tryn::ent
 			component.SetEntityID(entityID);
 			return componentVector2[entityID];
 		}
+		template <ComponentType T>
+		std::span<typename ComponentEnumMap<T>::ComponentType::SubresourceData> GetComponentData()
+		{
+			using Type = typename ComponentEnumMap<T>::ComponentType::SubresourceData;
+			auto& vector = std::get<T>(memory);
+			return std::span<Type>(vector.begin(), vector.size());
+		}
+
 		template<std::size_t Index = 0>
 		void ExecuteComponents()
 		{

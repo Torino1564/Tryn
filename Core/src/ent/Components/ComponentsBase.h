@@ -5,6 +5,7 @@ namespace tryn::ent
 #define COMPONENT_TYPES \
 		X( Model )\
 		X( Camera )\
+		X( Behaviour )\
 		X( Physics )
 
 	enum class ComponentType

@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "ModelComponent.h"
 #include "PhysicsComponent.h"
+#include "BehaviourComponent.h"
 #include <concepts>
 
 namespace tryn::ent
@@ -41,6 +42,12 @@ namespace tryn::ent
 	struct ComponentEnumMap<ComponentType::Physics>
 	{
 		using ComponentType = ent::PhysicsComponent;
+	};
+
+	template <>
+	struct ComponentEnumMap<ComponentType::Behaviour>
+	{
+		using ComponentType = ent::BehaviourComponent;
 	};
 
 	// Reverse
