@@ -203,11 +203,11 @@ namespace tryn::gfx
 		ConstantBuffer(ConstantBufferLayout cbl)
 		{
 			layout = std::move(cbl);
-			buffer.Resize(layout.Size());
+			buffer.resize(layout.Size());
 		}
 		ElementView operator[](std::string id)
 		{
-			buffer.SetDirty();
+			SetDirty();
 			auto& indexTo = layout.GetRoot().IndexByName(id);
 			if (indexTo.GetType() == gfx::ConstantBufferLayout::Type::Empty)
 			{
@@ -215,20 +215,20 @@ namespace tryn::gfx
 			}
 			else
 			{
-				return ElementView{ indexTo, (char*)(buffer.Data()) + indexTo.GetOffset() };
+				return ElementView{ indexTo, (char*)(buffer.data() + indexTo.GetOffset())};
 			}
 		}
 		constexpr void* Data() const noexcept override
 		{
-			return buffer.Data();
+			return (void*)(buffer.data());
 		}
 		std::size_t Stride() const noexcept override
 		{
-			return buffer.Stride();
+			return 0u;
 		}
 		constexpr std::size_t ByteSize() const noexcept override
 		{
-			return buffer.ByteSize();
+			return buffer.size();
 		}
 		std::size_t Size() const noexcept override
 		{
@@ -240,6 +240,6 @@ namespace tryn::gfx
 		}
 	private:
 		ConstantBufferLayout layout;
-		FlatBuffer buffer;
+		std::vector<std::byte> buffer;
 	};
 }

@@ -104,7 +104,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 			}
 		}
 	}
-	//entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "testPlane", "resources/models/TestPlane.fbx"));
+	entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "testPlane", "resources/models/TestPlane.fbx"));
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
 	this->wnd->keyboard.DisableAutoRepeat();
