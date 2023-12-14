@@ -47,41 +47,37 @@ namespace tryn::ent
 			map.insert({ componentCounter, sizeof(C::SubresourceData)});
 			bufferPtrs.push_back(std::move(std::make_unique<std::vector<std::byte>>()));
 			bitsetPtrs.push_back(std::move(std::make_unique<sul::dynamic_bitset<>>()));
-			Resize(componentCounter, 100);
+			Resize(componentCounter, 1000);
 			return componentCounter++;
 		}
 		template <ValidComponent C>
-		C::SubresourceData& AddComponent(std::uint16_t entityID)
+		[[nodiscard("The returned integer is a handle to a component")]] int AddComponent()
 		{
-			auto componentDataIt = map.find(C::UUID);
-			trynass_msg(componentDataIt != map.end(), L"Unknown Component Type!");
-			auto& componentData = *componentDataIt;
-			std::uint16_t totalOffset = componentData.second * entityID;
-			auto& buffer = *(bufferPtrs[C::UUID]);
-
-			std::uint16_t bufferSize = buffer.size();
-			
-			if (bufferSize < totalOffset + componentData.second)
+			// Finds empty slot
+			auto ID = bitsetPtrs[C::UUID]->find_first();
+			if (ID == sul::dynamic_bitset<>::npos)
 			{
-				while (bufferSize < totalOffset + componentData.second)
-				{
-					bufferSize = (bufferSize + 5) * 1.3f;
-				}
-				buffer.resize(bufferSize);
+				Grow(C::UUID);
+				ID = bitsetPtrs[C::UUID]->find_first();
 			}
-
-			return reinterpret_cast<C::SubresourceData&>(buffer[totalOffset]);
+			bitsetPtrs[C::UUID]->flip(ID);
+			return ID;
 		}
 		void Resize(std::uint16_t index, std::uint16_t newSize)
 		{
 			bufferPtrs[index]->resize(newSize * map[index]);
-			bitsetPtrs[index]->resize(newSize);
+			bitsetPtrs[index]->resize(newSize, true);
+		}
+		void Grow(std::uint16_t index, float scale = 1.3f)
+		{
+			bufferPtrs[index]->resize(bufferPtrs[index]->size() * scale);
+			bitsetPtrs[index]->resize(bitsetPtrs[index]->size() * scale, true);
 		}
 		template <ValidComponent C>
-		auto& GetComponent(std::uint16_t entityID)
+		auto& GetComponent(std::uint16_t componentID)
 		{
 			const auto& componentData = map[C::UUID];
-			std::uint16_t totalOffset = componentData * entityID;
+			std::uint16_t totalOffset = componentData * componentID;
 			auto& buffer = *(bufferPtrs[C::UUID]);
 			trynass_msg(buffer.size() > totalOffset, L"Out of bounds access in the ECS");
 			return reinterpret_cast<C::SubresourceData&>(buffer[totalOffset]);

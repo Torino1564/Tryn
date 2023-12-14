@@ -54,9 +54,13 @@ namespace tryn::ent
 
 			auto& cm = ent::ComponentManager::Get();
 
-			auto& srd1 = cm.AddComponent<TestComponent1>(50);
-			auto& srd2 = cm.AddComponent<TestComponent1>(2);
-			auto& srd3 = cm.AddComponent<TestComponent2>(1);
+			const auto h1 = cm.AddComponent<TestComponent1>();
+			const auto h2 = cm.AddComponent<TestComponent1>();
+			const auto h3 = cm.AddComponent<TestComponent2>();
+
+			const auto& srd1 = cm.GetComponent<TestComponent1>(h1);
+			const auto& srd2 = cm.GetComponent<TestComponent1>(h2);
+			const auto& srd3 = cm.GetComponent<TestComponent2>(h3);
 		}
 	private:
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;

@@ -63,7 +63,7 @@ int WINAPI wWinMain(
 	{
 		auto tempString = tryn::utl::ToNarrow(wargv[i]);
 		auto length = tempString.size();
-		memcpy_s(buffer.data() + index, bufferSize - index, tempString.c_str(), length);
+		memcpy_s(buffer.data() + index, bufferSize - static_cast<rsize_t>(index), tempString.c_str(), length);
 		charPtrs[i] = buffer.data() + index;
 		index += length + 1;
 	}
