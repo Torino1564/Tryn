@@ -98,9 +98,11 @@
     <ClCompile Include="src\log\Log.cpp" />
     <ClCompile Include="src\log\LogTextFormatter.cpp" />
     <ClCompile Include="src\mem\Mem.cpp" />
+    <ClCompile Include="src\Prototypes\ecs\Component.cpp" />
     <ClCompile Include="TrynCppUnitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Prototypes\ecs\Component.h" />
     <ClInclude Include="TrynCppUnitTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -36,9 +36,15 @@
     <ClCompile Include="TrynCppUnitTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Prototypes\ecs\Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TrynCppUnitTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prototypes\ecs\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

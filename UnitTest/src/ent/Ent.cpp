@@ -41,8 +41,6 @@ namespace tryn::ent
 				{
 					pEntity->Update(1.0f);
 				}
-
-				manager.ExecuteComponents();
 			}
 		}
 	private:

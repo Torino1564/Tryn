@@ -23,12 +23,15 @@ namespace tryn::ent
 	{
 
 	}
-	void IEntity::Update(double dt)
+	void IEntity::Mark()
 	{
 		for (int i = 0 ; i < static_cast<int>(ComponentType::Count) ; i++)
 		{
 			if (components[i])
-				componentPtrs[i]->OnUpdate();
+			{
+				const auto type = static_cast<ComponentType>(i);
+				ComponentManager::GetComponentByID<ComponentEnumMap<type>>(UID);
+			}
 		}
 	}
 	int IEntity::GenerateID()

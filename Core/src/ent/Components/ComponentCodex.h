@@ -1,5 +1,4 @@
 #pragma once
-#include "ComponentsBase.h"
 #include "Component.h"
 #include "ModelComponent.h"
 #include "PhysicsComponent.h"
@@ -8,62 +7,42 @@
 
 namespace tryn::ent
 {
-	template <typename T>
-	concept ImplementsInterface = requires (T t)
-	{
-		{t.GetCUID() } -> std::convertible_to<ComponentType>;
-
-		{
-			T::Execute(std::declval<std::span<typename T::SubresourceData>>())
-		} -> std::same_as<void>;
-	};
-	template <typename T>
-	concept IsComponentType = std::is_base_of<Component, T>::value;
-
-	template <typename T>
-	concept CompleteSubresourceData = std::convertible_to<decltype(T::SubresourceData::active), bool>;
-
-	template <typename T>
-	concept ComponentWithUID = ImplementsInterface<T> && IsComponentType<T> ;
-
 	template <ComponentType>
 	struct ComponentEnumMap
 	{
-		using ComponentType = ent::Component;
+		using Type = ent::EmptyComponent;
 	};
 
-	template <>
-	struct ComponentEnumMap<ComponentType::Model>
-	{
-		using ComponentType = ent::ModelComponent;
+#define X(el)\
+	template <> struct ComponentEnumMap<ComponentType::el> \
+	{\
+		using Type = ent::el##Component;\
 	};
-
-	template <>
-	struct ComponentEnumMap<ComponentType::Physics>
-	{
-		using ComponentType = ent::PhysicsComponent;
-	};
-
-	template <>
-	struct ComponentEnumMap<ComponentType::Behaviour>
-	{
-		using ComponentType = ent::BehaviourComponent;
-	};
+	COMPONENT_TYPES
+#undef X
 
 	// Reverse
-	template <ComponentWithUID C>
+	template <Component C>
 	struct ReverseComponentMap
 	{
 		static constexpr ComponentType type = ComponentType::Unknown;
 	};
 
 #define X(el) \
-	using SysType##el = typename ComponentEnumMap<ComponentType::el>::ComponentType; \
+	using SysType##el = typename ComponentEnumMap<ComponentType::el>::Type; \
 	template <> struct ReverseComponentMap<SysType##el> \
 	{ \
 		static constexpr ComponentType type = ComponentType::el; \
-	}; \
-
-	COMPONENT_TYPES
+	};
+	using SysTypeModel = typename ComponentEnumMap<ComponentType::Model>::Type;
+	template <> struct ReverseComponentMap<SysTypeModel>
+	{
+		static constexpr ComponentType type = ComponentType::Model;
+	};
+	using SysTypeBehaviour = typename ComponentEnumMap<ComponentType::Behaviour>::Type; template <> struct ReverseComponentMap<SysTypeBehaviour> {
+		static constexpr ComponentType type = ComponentType::Behaviour;
+	}; using SysTypePhysics = typename ComponentEnumMap<ComponentType::Physics>::Type; template <> struct ReverseComponentMap<SysTypePhysics> {
+		static constexpr ComponentType type = ComponentType::Physics;
+	};
 #undef X
 }

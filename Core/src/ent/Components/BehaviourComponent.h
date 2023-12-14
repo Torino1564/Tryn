@@ -3,13 +3,16 @@
 
 namespace tryn::ent
 {
-	class BehaviourComponent : public Component
+	class BehaviourComponent
 	{
 	public:
-		static constexpr ComponentType GetCUID()
+		static constexpr ComponentType GetUID()
 		{
 			return ComponentType::Behaviour;
 		}
-
+		struct SubresourceData
+		{
+			bool active = false;
+		};
 	};
 }

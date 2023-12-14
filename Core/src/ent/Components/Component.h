@@ -1,37 +1,37 @@
 #pragma once
-#include <string>
 #include "ComponentsBase.h"
-#include <optional>
-#include <Core/third/imgui/imgui.h>
-#include <span>
+#include <concepts>
 
 namespace tryn::ent
 {
-	class Component
+	template <typename T>
+	concept ImplementsUID = requires (T t)
+	{
+		{t.GetUID() } -> std::convertible_to<ComponentType>;
+	};
+
+	template <typename T>
+	concept CompleteSubresourceData = std::convertible_to<decltype(T::SubresourceData::active), bool>;
+
+	template <typename T>
+	concept ActiveIsFirstElement = requires
+	{
+		offsetof(T::SubresourceData, T::SubresourceData::active) == 0;
+	};
+
+	template <typename T>
+	concept Component = ImplementsUID<T> && CompleteSubresourceData<T>;
+
+	class EmptyComponent
 	{
 	public:
-		static constexpr ComponentType GetCUID()
+		static constexpr ComponentType GetUID()
 		{
-			return ComponentType::Unknown;
+			return ComponentType::Unknown;	
 		}
-		struct SubresourceData {
+		struct SubresourceData
+		{
 			bool active = false;
 		};
-		static void Execute(std::span<SubresourceData> data) {}
-		virtual ~Component() = default;
-		virtual void OnCreate() {}
-		virtual void OnUpdate(double dt = 0) {}
-		virtual void OnDestroy() {}
-		virtual void Controls()
-		{
-			ImGui::TreeNode(name->c_str());
-		}
-		void SetEntityID(int);
-		std::string_view GetName();
-	protected:
-		std::optional<std::string> name;
-		// Memory
-		void* pSRD;
-		int entityUID;
 	};
 }

@@ -3,11 +3,15 @@
 
 namespace tryn::ent
 {
-	class PhysicsComponent : public Component
+	class PhysicsComponent
 	{
 		friend class IEntity;
 	public:
 		static constexpr ComponentType GetUID();
 		PhysicsComponent() = default;
+		struct SubresourceData
+		{
+			bool active = false;
+		};
 	};
 }
