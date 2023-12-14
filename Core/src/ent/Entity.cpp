@@ -1,18 +1,11 @@
 #include "Entity.h"
-#include <Core/src/ent/Components/Component.h>
 #include <format>
 
 namespace tryn::ent
 {
 	IEntity::~IEntity()
 	{
-		for (int i = 0 ; i < components.size() ; i++)
-		{
-			if (components[i] == true)
-			{
-				
-			}
-		}
+
 		IEntity::IDbooker[UID].flip();
 	}
 	IEntity::IEntity()
@@ -25,13 +18,8 @@ namespace tryn::ent
 	}
 	void IEntity::Mark()
 	{
-		for (int i = 0 ; i < static_cast<int>(ComponentType::Count) ; i++)
-		{
-			if (components[i])
-			{
 
-			}
-		}
+		
 	}
 	int IEntity::GenerateID()
 	{
@@ -52,7 +40,6 @@ namespace tryn::ent
 	BasicEntity::BasicEntity(gfx::IGraphics& gfx, std::string_view name, std::string_view path, glm::vec3 scale)
 	{
 		this->name = name;
-		AddComponent(std::move(ModelComponent(gfx, UID, path, scale)));
 	}
 }
 

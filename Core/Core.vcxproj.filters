@@ -243,18 +243,6 @@
     <ClCompile Include="src\gfx\Model\InstancedModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ent\Components\ModelComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ent\Components\ComponentManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ent\Components\Component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ent\Components\PhysicsComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1715,31 +1703,19 @@
     <ClInclude Include="src\gfx\dx11\DX11BufferFwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Components\Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ent\Components\ModelComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\utl\Probe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\RenderQueue\TechniqueProbe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Components\ComponentManager.h">
+    <ClInclude Include="src\utl\UUID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Components\ComponentCodex.h">
+    <ClInclude Include="src\ent\Component\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Components\ComponentsBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ent\Components\PhysicsComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ent\Components\BehaviourComponent.h">
+    <ClInclude Include="src\ent\Component\ComponentManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

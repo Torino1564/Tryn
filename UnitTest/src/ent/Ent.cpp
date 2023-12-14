@@ -5,6 +5,8 @@
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
 #include <Core/src/ent/Entity.h>
 #include <Core/src/gfx/RenderGraph.h>
+#include <Core/src/ent/Component/Component.h>
+#include <Core/src/ent/Component/ComponentManager.h>
 
 class ThunkRenderGraph : public tryn::gfx::IRenderGraph
 {
@@ -17,6 +19,33 @@ public:
 
 namespace tryn::ent
 {
+	class TestComponent1
+	{
+		DECLARE_UUID;
+		DECLARE_SRD()
+	};
+	class TestComponent2
+	{
+		DECLARE_UUID;
+		DECLARE_SRD(
+			std::string text;
+			bool onFire;
+			float fireIntensity;
+		)
+	};
+	class TestComponent3
+	{
+		DECLARE_UUID;
+		DECLARE_SRD(
+			std::string text;
+			bool onFire;
+			float fireIntensity;
+			long double test1;
+			long double test2;
+			long long int test3;
+		)
+	};
+
 	TEST_CLASS(EntitySystem)
 	{
 	public:
@@ -29,19 +58,23 @@ namespace tryn::ent
 		}
 		TEST_METHOD(ECSTest)
 		{
-			auto& manager = tryn::ent::ComponentManager::Get();
-			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt2", "D:/dev/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
-			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt3", "D:/dev/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
-			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt4", "D:/dev/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
-			entityPtrs.push_back(std::make_unique<BasicEntity>(*reinterpret_cast<gfx::IGraphics*>(pGfx.get()), "testEnt1", "D:/dev/Tryn/UnitTest/resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
+			TestComponent1 tc1;
+			const auto& uuid1 = tc1.UUID;
+			TestComponent2 tc2;
+			const auto& uuid2 = tc2.UUID;
+			TestComponent3 tc3;
+			const auto& uuid3 = tc3.UUID;
 
-			while (true)
-			{
-				for (auto& pEntity : entityPtrs)
-				{
+			auto& cm = ent::ComponentManager::Get();
 
-				}
-			}
+			cm.RegisterComponent<TestComponent1>();
+			cm.RegisterComponent<TestComponent2>();
+			cm.RegisterComponent<TestComponent3>();
+
+			auto& srd1 = cm.AddComponent<TestComponent1>(50);
+			auto& srd2 = cm.AddComponent<TestComponent1>(2);
+			auto& srd3 = cm.AddComponent<TestComponent2>(1);
+			auto& srd4 = cm.AddComponent<TestComponent3>(4);
 		}
 	private:
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;

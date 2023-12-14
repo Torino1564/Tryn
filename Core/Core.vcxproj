@@ -15,10 +15,6 @@
     <ClCompile Include="src\ccr\Master.cpp" />
     <ClCompile Include="src\ccr\Thread.cpp" />
     <ClCompile Include="src\ccr\Worker.cpp" />
-    <ClCompile Include="src\ent\Components\Component.cpp" />
-    <ClCompile Include="src\ent\Components\ComponentManager.cpp" />
-    <ClCompile Include="src\ent\Components\ModelComponent.cpp" />
-    <ClCompile Include="src\ent\Components\PhysicsComponent.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
@@ -104,13 +100,8 @@
     <ClInclude Include="src\ccr\Task.h" />
     <ClInclude Include="src\ccr\Thread.h" />
     <ClInclude Include="src\ccr\Worker.h" />
-    <ClInclude Include="src\ent\Components\BehaviourComponent.h" />
-    <ClInclude Include="src\ent\Components\ComponentCodex.h" />
-    <ClInclude Include="src\ent\Components\Component.h" />
-    <ClInclude Include="src\ent\Components\ComponentManager.h" />
-    <ClInclude Include="src\ent\Components\ComponentsBase.h" />
-    <ClInclude Include="src\ent\Components\ModelComponent.h" />
-    <ClInclude Include="src\ent\Components\PhysicsComponent.h" />
+    <ClInclude Include="src\ent\Component\Component.h" />
+    <ClInclude Include="src\ent\Component\ComponentManager.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
@@ -208,6 +199,7 @@
     <ClInclude Include="src\utl\StackTrace.h" />
     <ClInclude Include="src\utl\String.h" />
     <ClInclude Include="src\utl\Timer.h" />
+    <ClInclude Include="src\utl\UUID.h" />
     <ClInclude Include="src\win\Win.h" />
     <ClInclude Include="src\win\Exception.h" />
     <ClInclude Include="src\win\imgui_impl_win32.h" />

@@ -99,6 +99,7 @@
     <ClCompile Include="src\log\LogTextFormatter.cpp" />
     <ClCompile Include="src\mem\Mem.cpp" />
     <ClCompile Include="src\Prototypes\ecs\Component.cpp" />
+    <ClCompile Include="src\utl\Utl.cpp" />
     <ClCompile Include="TrynCppUnitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
