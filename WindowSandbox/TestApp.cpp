@@ -128,7 +128,7 @@ void TestApp::DoFrame()
 		pPointLight->Submit(Gfx(),camera.GetViewMatrix());
 		for (auto& entity : entities)
 		{
-			entity->Update();
+			//entity->Update();
 		}
 	}
 	{

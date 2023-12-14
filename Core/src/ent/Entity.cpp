@@ -29,8 +29,7 @@ namespace tryn::ent
 		{
 			if (components[i])
 			{
-				const auto type = static_cast<ComponentType>(i);
-				ComponentManager::GetComponentByID<ComponentEnumMap<type>>(UID);
+
 			}
 		}
 	}

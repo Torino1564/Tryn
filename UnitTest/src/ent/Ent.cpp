@@ -39,7 +39,7 @@ namespace tryn::ent
 			{
 				for (auto& pEntity : entityPtrs)
 				{
-					pEntity->Update(1.0f);
+
 				}
 			}
 		}

@@ -14,13 +14,17 @@ namespace tryn::ent
 	concept CompleteSubresourceData = std::convertible_to<decltype(T::SubresourceData::active), bool>;
 
 	template <typename T>
-	concept ActiveIsFirstElement = requires
-	{
-		offsetof(T::SubresourceData, T::SubresourceData::active) == 0;
+	struct FirstMemberOffset {
+		static constexpr std::size_t value = offsetof(T, T::active);
 	};
 
 	template <typename T>
-	concept Component = ImplementsUID<T> && CompleteSubresourceData<T>;
+	concept BoolFirstMember = requires{
+		{FirstMemberOffset<typename T::SubresourceData>::value == 0};
+	};
+
+	template <typename T>
+	concept Component = ImplementsUID<T> && CompleteSubresourceData<T> && BoolFirstMember<T>;
 
 	class EmptyComponent
 	{
