@@ -2,6 +2,7 @@
 #include <memory>
 #include <Core/src/gfx/Model/Model.h>
 #include <Core/third/dynamic_bitset.hpp>
+#include <Core/src/ent/Component/ComponentManager.h>
 #include <bitset>
 #include <array>
 
@@ -15,11 +16,17 @@ namespace tryn::ent
 		void SpawnControlWindow();
 		void Mark();
 		int GenerateID();
+		template <ValidComponent C>
+		C::SubresourceData AddComponent()
+		{
+			
+		}
 
 	protected:
 		std::string name;
 		int UID = -1;
 		// Components
+		std::vector<std::pair<int, int>> componentIds;
 		// Entity ID
 		static sul::dynamic_bitset<> IDbooker;
 	};
