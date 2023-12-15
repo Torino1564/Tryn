@@ -40,7 +40,7 @@ namespace tryn::ent
 					return ComponentManager::Get().GetComponent<C>(componentIndex);
 				}
 			}
-			const auto index = ComponentManager::Get().AddComponent<C>();
+			const auto index = ComponentManager::Get().AddComponent<C>(UID);
 			componentIds.push_back({C::UUID, index});
 
 			return ComponentManager::Get().GetComponent<C>(index);

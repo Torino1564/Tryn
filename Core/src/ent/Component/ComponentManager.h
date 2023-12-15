@@ -8,7 +8,7 @@
 #include <Core/third/dynamic_bitset.hpp>
 
 #define ZT_COMPONENT_FIELDS(x) \
-	public: struct SubresourceData{ bool active = false; x }
+	public: struct SubresourceData{ bool active = false; std::uint16_t entityID = 0;  x }
 
 #define ZT_DEFINE_COMPONENT(x) class x : public tryn::ent::Component<x>
 #define ZT_COMPONENT_CONSTRUCTOR public: static SubresourceData&& Construct
@@ -54,7 +54,7 @@ namespace tryn::ent
 			return componentCounter++;
 		}
 		template <ValidComponent C>
-		[[nodiscard("The returned integer is a handle to a component")]] int AddComponent()
+		[[nodiscard("The returned integer is a handle to a component")]] int AddComponent(std::uint16_t entityID)
 		{
 			// Finds empty slot
 			auto ID = bitsetPtrs[C::UUID]->find_first();
@@ -64,6 +64,8 @@ namespace tryn::ent
 				ID = bitsetPtrs[C::UUID]->find_first();
 			}
 			bitsetPtrs[C::UUID]->flip(ID);
+			auto& ref = reinterpret_cast<C::SubresourceData&>((*(bufferPtrs[C::UUID]))[ID]);
+			ref.entityID = entityID;
 			return ID;
 		}
 		template <ValidComponent C>
@@ -79,8 +81,8 @@ namespace tryn::ent
 		template <ValidComponent C>
 		std::span<typename C::SubresourceData> GetData()
 		{
-			auto pStart = reinterpret_cast<C::SubresourceType*>(bufferPtrs[C::UUID]->data());
-			return std::span<typename C::SubresourceData>(pStart, bufferPtrs[C::UUID]->data() / map[C::UUID]);
+			auto pStart = reinterpret_cast<typename C::SubresourceData*>(bufferPtrs[C::UUID]->data());
+			return std::span<typename C::SubresourceData>(pStart, bufferPtrs[C::UUID]->size() / map[C::UUID]);
 		}
 
 		void ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex);
@@ -106,10 +108,7 @@ namespace tryn::ent
 	class Component
 	{
 	public:
-		struct SubresourceData
-		{
-			bool active = false;
-		};
+		ZT_COMPONENT_FIELDS();
 	public:
 		const static inline int UUID = ComponentManager::Get().RegisterComponent<T>();
 	};
