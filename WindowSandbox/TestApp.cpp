@@ -12,6 +12,8 @@
 #include <Core/src/gfx/RenderQueue/Step.h>
 #include <Core/src/gfx/Assimp.h>
 #include <Core/src/ccr/Master.h>
+#include <Core/src/ent/Component/ModelComponent.h>
+#include <Core/src/ent/Component/PositionComponent.h>
 
 class TestRenderGraph : public gfx::IRenderGraph
 {
@@ -88,7 +90,9 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 	for (int i = 0; i < pow(entityCount1D, 3); i++)
 	{
-		entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "gobber" + std::to_string(i), "resources/models/gobber/GoblinX.obj", glm::vec3{ 0.1f,0.1f,0.1f }));
+		entities.emplace_back("gobber" + std::to_string(i));
+		auto& srd = entities.back().AddComponent<ent::cmp::ModelComponent>();
+		srd = ent::cmp::ModelComponent::Construct(Gfx(), "resources/models/gobber/GoblinX.obj");
 	}
 
 	for (int i = 0; i < entityCount1D; i++)
@@ -97,14 +101,14 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		{
 			for (int k = 0; k < entityCount1D; k++)
 			{
-				/*auto& pos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)]->settings.position;
-				pos.x = -entityCount1D / 2. + i;
-				pos.y = -entityCount1D / 2. + j;
-				pos.z = -entityCount1D / 2. + k;*/
+				auto& pos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)].GetComponent<ent::cmp::PositionComponent>();
+				pos.position.x = -entityCount1D / 2. + i;
+				pos.position.y = -entityCount1D / 2. + j;
+				pos.position.z = -entityCount1D / 2. + k;
 			}
 		}
 	}
-	entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "testPlane", "resources/models/TestPlane.fbx"));
+	//entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "testPlane", "resources/models/TestPlane.fbx"));
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
 	this->wnd->keyboard.DisableAutoRepeat();
@@ -120,7 +124,7 @@ void TestApp::DoFrame()
 		pPointLight->ShowControls();
 		for (auto& entity : entities)
 		{
-			entity->SpawnControlWindow();
+			entity.SpawnControlWindow();
 		}
 	}
 	{
@@ -128,7 +132,7 @@ void TestApp::DoFrame()
 		pPointLight->Submit(Gfx(),camera.GetViewMatrix());
 		for (auto& entity : entities)
 		{
-			//entity->Update();
+			entity.MarkForUpdate();
 		}
 	}
 	{

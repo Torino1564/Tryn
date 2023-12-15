@@ -4,11 +4,14 @@
 #include <memory>
 #include <Core/src/utl/Assert.h>
 #include <concepts>
+#include <span>
+#include <Core/third/dynamic_bitset.hpp>
 
 #define ZT_COMPONENT_FIELDS(x) \
-	public: struct SubresourceData{ bool active = false; x; }
+	public: struct SubresourceData{ bool active = false; x }
 
 #define ZT_DEFINE_COMPONENT(x) class x : public tryn::ent::Component<x>
+#define ZT_COMPONENT_CONSTRUCTOR public: static SubresourceData&& Construct
 
 namespace tryn::ent
 {
@@ -63,6 +66,25 @@ namespace tryn::ent
 			bitsetPtrs[C::UUID]->flip(ID);
 			return ID;
 		}
+		template <ValidComponent C>
+		auto& GetComponent(std::uint16_t componentID)
+		{
+			const auto& componentData = map[C::UUID];
+			std::uint16_t totalOffset = componentData * componentID;
+			auto& buffer = *(bufferPtrs[C::UUID]);
+			trynass_msg(buffer.size() > totalOffset, L"Out of bounds access in the ECS");
+			return reinterpret_cast<C::SubresourceData&>(buffer[totalOffset]);
+		}
+
+		template <ValidComponent C>
+		std::span<typename C::SubresourceData> GetData()
+		{
+			auto pStart = reinterpret_cast<C::SubresourceType*>(bufferPtrs[C::UUID]->data());
+			return std::span<typename C::SubresourceData>(pStart, bufferPtrs[C::UUID]->data() / map[C::UUID]);
+		}
+
+		void ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex);
+	private:
 		void Resize(std::uint16_t index, std::uint16_t newSize)
 		{
 			bufferPtrs[index]->resize(newSize * map[index]);
@@ -73,16 +95,6 @@ namespace tryn::ent
 			bufferPtrs[index]->resize(bufferPtrs[index]->size() * scale);
 			bitsetPtrs[index]->resize(bitsetPtrs[index]->size() * scale, true);
 		}
-		template <ValidComponent C>
-		auto& GetComponent(std::uint16_t componentID)
-		{
-			const auto& componentData = map[C::UUID];
-			std::uint16_t totalOffset = componentData * componentID;
-			auto& buffer = *(bufferPtrs[C::UUID]);
-			trynass_msg(buffer.size() > totalOffset, L"Out of bounds access in the ECS");
-			return reinterpret_cast<C::SubresourceData&>(buffer[totalOffset]);
-		}
-	private:
 		ComponentManager() = default;
 		std::uint16_t componentCounter = 0;
 		std::unordered_map<int, std::size_t> map;
@@ -93,11 +105,17 @@ namespace tryn::ent
 	template <typename T>
 	class Component
 	{
+	public:
 		struct SubresourceData
 		{
 			bool active = false;
 		};
 	public:
 		const static inline int UUID = ComponentManager::Get().RegisterComponent<T>();
+	};
+
+	ZT_DEFINE_COMPONENT(ActivationComponent)
+	{
+		ZT_COMPONENT_FIELDS();
 	};
 }

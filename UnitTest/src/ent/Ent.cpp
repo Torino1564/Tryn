@@ -34,6 +34,16 @@ namespace tryn::ent
 		);
 	};
 
+	ZT_DEFINE_COMPONENT(TestComponent3)
+	{
+		ZT_COMPONENT_FIELDS(
+			float velocity_x = .0f;
+			float velocity_y = .0f;
+			float velocity_z = .0f;
+			float whatever = .0f;
+		);
+	};
+
 	TEST_CLASS(EntitySystem)
 	{
 	public:
@@ -46,21 +56,28 @@ namespace tryn::ent
 		}
 		TEST_METHOD(ECSTest)
 		{
-			TestComponent1 tc1;
-			const auto& uuid1 = tc1.UUID;
-			TestComponent2 tc2;
-			const auto& uuid2 = tc2.UUID;
+			BasicEntity ent1("Test entity 1");
+			BasicEntity ent2("Test entity 2");
+			BasicEntity ent3("Test entity 3");
 
+			auto& tc1 = ent1.AddComponent<TestComponent1>();
+			tc1.onFire = true;
+			tc1.active = true;
+			auto& tc2 = ent1.AddComponent<TestComponent2>();
+			tc2.fireIntensity = 100.0f;
+			tc2.text = "Hello there";
+			auto& tc3 = ent1.AddComponent<TestComponent3>();
+			tc3.velocity_x = 10.0f;
+			tc3.velocity_y = -69.0f;
+			tc3.velocity_z = 420.0f;
+			auto& tc4 = ent2.AddComponent<TestComponent1>();
+			tc4.onFire = true;
+			auto& tc5 = ent3.AddComponent<TestComponent1>();
+			tc5.active = true;
 
-			auto& cm = ent::ComponentManager::Get();
-
-			const auto h1 = cm.AddComponent<TestComponent1>();
-			const auto h2 = cm.AddComponent<TestComponent1>();
-			const auto h3 = cm.AddComponent<TestComponent2>();
-
-			const auto& srd1 = cm.GetComponent<TestComponent1>(h1);
-			const auto& srd2 = cm.GetComponent<TestComponent1>(h2);
-			const auto& srd3 = cm.GetComponent<TestComponent2>(h3);
+			auto& tc1a = ent1.GetComponent<TestComponent1>();
+			auto& tc2a = ent1.GetComponent<TestComponent2>();
+			auto& tc3a = ent1.GetComponent<TestComponent3>();
 		}
 	private:
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;

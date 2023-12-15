@@ -5,7 +5,6 @@ namespace tryn::ent
 {
 	IEntity::~IEntity()
 	{
-
 		IEntity::IDbooker[UID].flip();
 	}
 	IEntity::IEntity()
@@ -16,10 +15,12 @@ namespace tryn::ent
 	{
 
 	}
-	void IEntity::Mark()
+	void IEntity::MarkForUpdate()
 	{
-
-		
+		for (auto& [componentUUID, componentIndex] : componentIds)
+		{
+			ComponentManager::Get().ActivateComponent(componentUUID, componentIndex);
+		}
 	}
 	int IEntity::GenerateID()
 	{
@@ -38,6 +39,10 @@ namespace tryn::ent
 		}
 	}
 	BasicEntity::BasicEntity(gfx::IGraphics& gfx, std::string_view name, std::string_view path, glm::vec3 scale)
+	{
+		this->name = name;
+	}
+	BasicEntity::BasicEntity(std::string name)
 	{
 		this->name = name;
 	}
