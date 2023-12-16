@@ -28,7 +28,7 @@ namespace tryn::ent
 	ZT_DEFINE_COMPONENT(TestComponent2)
 	{
 		ZT_COMPONENT_FIELDS(
-			std::string text;
+			std::string_view text;
 			bool onFire;
 			float fireIntensity;
 		);
@@ -75,9 +75,9 @@ namespace tryn::ent
 			auto& tc5 = ent3.AddComponent<TestComponent1>();
 			tc5.active = true;
 
-			auto& tc1a = ent1.GetComponent<TestComponent1>();
-			auto& tc2a = ent1.GetComponent<TestComponent2>();
-			auto& tc3a = ent1.GetComponent<TestComponent3>();
+			auto pTc1a = ent1.GetComponent<TestComponent1>();
+			auto pTc2a = ent1.GetComponent<TestComponent2>();
+			auto pTc3a = ent1.GetComponent<TestComponent3>();
 		}
 	private:
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;

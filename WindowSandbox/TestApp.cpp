@@ -101,10 +101,13 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		{
 			for (int k = 0; k < entityCount1D; k++)
 			{
-				auto& pos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)].GetComponent<ent::cmp::PositionComponent>();
-				pos.position.x = -entityCount1D / 2. + i;
-				pos.position.y = -entityCount1D / 2. + j;
-				pos.position.z = -entityCount1D / 2. + k;
+				auto pPos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)].GetComponent<ent::cmp::PositionComponent>();
+				if (pPos != nullptr)
+				{
+					pPos->position.x = -entityCount1D / 2. + i;
+					pPos->position.y = -entityCount1D / 2. + j;
+					pPos->position.z = -entityCount1D / 2. + k;
+				}
 			}
 		}
 	}

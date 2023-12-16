@@ -54,7 +54,7 @@ namespace tryn::ent
 			return componentCounter++;
 		}
 		template <ValidComponent C>
-		[[nodiscard("The returned integer is a handle to a component")]] int AddComponent(std::uint16_t entityID)
+		[[nodiscard("The returned integer is a handle to a component")]] C::SubresourceData* AddComponent(std::uint16_t entityID)
 		{
 			// Finds empty slot
 			auto ID = bitsetPtrs[C::UUID]->find_first();
@@ -64,18 +64,18 @@ namespace tryn::ent
 				ID = bitsetPtrs[C::UUID]->find_first();
 			}
 			bitsetPtrs[C::UUID]->flip(ID);
-			auto& ref = reinterpret_cast<C::SubresourceData&>((*(bufferPtrs[C::UUID]))[ID]);
+			auto& ref = reinterpret_cast<C::SubresourceData&>((*(bufferPtrs[C::UUID]))[ID * map[C::UUID]]);
 			ref.entityID = entityID;
-			return ID;
+			return &ref;
 		}
 		template <ValidComponent C>
-		auto& GetComponent(std::uint16_t componentID)
+		auto GetComponent(std::uint16_t componentID)
 		{
 			const auto& componentData = map[C::UUID];
 			std::uint16_t totalOffset = componentData * componentID;
 			auto& buffer = *(bufferPtrs[C::UUID]);
 			trynass_msg(buffer.size() > totalOffset, L"Out of bounds access in the ECS");
-			return reinterpret_cast<C::SubresourceData&>(buffer[totalOffset]);
+			return reinterpret_cast<C::SubresourceData*>(&(buffer[totalOffset]));
 		}
 
 		template <ValidComponent C>

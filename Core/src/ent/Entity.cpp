@@ -17,9 +17,13 @@ namespace tryn::ent
 	}
 	void IEntity::MarkForUpdate()
 	{
-		for (auto& [componentUUID, componentIndex] : componentIds)
+		for (auto& pComponent : pComponents)
 		{
-			ComponentManager::Get().ActivateComponent(componentUUID, componentIndex);
+			if (pComponent != nullptr)
+			{
+				auto activationProxy = reinterpret_cast<ActivationComponent::SubresourceData*>(pComponent);
+				activationProxy->active = true;
+			}
 		}
 	}
 	int IEntity::GenerateID()

@@ -18,39 +18,42 @@ namespace tryn::ent
 		int GenerateID();
 
 		template <ValidComponent C>
-		C::SubresourceData& GetComponent()
+		C::SubresourceData* GetComponent()
 		{
-			for (auto& [componentUUID, componentIndex] : componentIds)
+			if (pComponents.size() < C::UUID || pComponents[C::UUID] == nullptr)
 			{
-				if (componentUUID == C::UUID)
-				{
-					return ComponentManager::Get().GetComponent<C>(componentIndex);
-				}
+				return nullptr;
+			}
+			else
+			{
+				return reinterpret_cast<C::SubresourceData*>(pComponents[C::UUID]);
 			}
 		}
 
 		template <ValidComponent C>
 		C::SubresourceData& AddComponent()
 		{
-			for (auto& [componentUUID, componentIndex] : componentIds)
+			const auto componentUUID = C::UUID;
+			if (pComponents.size() <= componentUUID)
 			{
-				if (componentUUID == C::UUID)
-				{
-					trylog.warn(L"Did not add component. Returning the existing component instead!");
-					return ComponentManager::Get().GetComponent<C>(componentIndex);
-				}
+				pComponents.resize(componentUUID + 1);
 			}
-			const auto index = ComponentManager::Get().AddComponent<C>(UID);
-			componentIds.push_back({C::UUID, index});
 
-			return ComponentManager::Get().GetComponent<C>(index);
+			if (pComponents[componentUUID] != nullptr)
+			{
+				return *reinterpret_cast<typename C::SubresourceData*>(pComponents[0]);
+			}
+
+			pComponents[componentUUID] = reinterpret_cast<void*>(ComponentManager::Get().AddComponent<C>(UID));
+
+			return *(reinterpret_cast<C::SubresourceData*>(pComponents[C::UUID]));
 		}
 
 	protected:
 		std::string name;
 		int UID = -1;
 		// Components
-		std::vector<std::pair<int, int>> componentIds;
+		std::vector<void*> pComponents;
 		// Entity ID
 		static sul::dynamic_bitset<> IDbooker;
 	};
