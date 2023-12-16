@@ -17,6 +17,7 @@
     <ClCompile Include="src\ccr\Worker.cpp" />
     <ClCompile Include="src\ent\Component\ComponentManager.cpp" />
     <ClCompile Include="src\ent\sys\RenderSystem.cpp" />
+    <ClCompile Include="src\ent\sys\SystemManager.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
@@ -102,8 +103,8 @@
     <ClInclude Include="src\ccr\Task.h" />
     <ClInclude Include="src\ccr\Thread.h" />
     <ClInclude Include="src\ccr\Worker.h" />
-    <ClInclude Include="src\ent\Component\Component.h" />
     <ClInclude Include="src\ent\Component\ComponentManager.h" />
+    <ClInclude Include="src\ent\Component\ComponentPack.h" />
     <ClInclude Include="src\ent\Component\ModelComponent.h" />
     <ClInclude Include="src\ent\Component\PositionComponent.h" />
     <ClInclude Include="src\ent\sys\RenderSystem.h" />

@@ -6,6 +6,8 @@
 #include <Core/src/ent/Entity.h>
 #include <Core/src/gfx/RenderGraph.h>
 #include <Core/src/ent/Component/ComponentManager.h>
+#include <Core/src/ent/sys/SystemManager.h>
+#include <Core/src/ent/Component/ComponentPack.h>
 
 class ThunkRenderGraph : public tryn::gfx::IRenderGraph
 {
@@ -44,6 +46,46 @@ namespace tryn::ent
 		);
 	};
 
+	ZT_DEFINE_SYSTEM(System1)
+	{
+	public:
+		System1()
+		{
+			
+		}
+		static void Execute()
+		{
+			trylog.info(L"System1 says Execute!");
+		}
+		ZT_SYSTEM_UUID;
+	};
+
+	ZT_DEFINE_SYSTEM(System2)
+	{
+	public:
+		System2()
+		{
+		}
+		static void Execute()
+		{
+			trylog.info(L"System2 says Execute!");
+		}
+		ZT_SYSTEM_UUID;
+	};
+
+	ZT_DEFINE_SYSTEM(System3)
+	{
+	public:
+		System3()
+		{
+		}
+		static void Execute()
+		{
+			trylog.info(L"System3 says Execute!");
+		}
+		ZT_SYSTEM_UUID;
+	};
+
 	TEST_CLASS(EntitySystem)
 	{
 	public:
@@ -78,6 +120,29 @@ namespace tryn::ent
 			auto pTc1a = ent1.GetComponent<TestComponent1>();
 			auto pTc2a = ent1.GetComponent<TestComponent2>();
 			auto pTc3a = ent1.GetComponent<TestComponent3>();
+		}
+		TEST_METHOD(ComponentPackTests)
+		{
+			ent::ComponentManager::Get().RegisterComponentPack<TestComponent1,TestComponent2,TestComponent3>();
+		}
+		TEST_METHOD(SystemTests)
+		{
+			ent::sys::SystemGraph sysGraph;
+
+			System1 sys1;
+
+			System2 sys2;
+			
+			System3 sys3;
+			sys3.AddDependency<System1>();
+			sys3.AddDependency<System2>();
+
+			sysGraph.RegisterSystem(sys1);
+			sysGraph.RegisterSystem(sys2);
+			sysGraph.RegisterSystem(sys3);
+
+			sysGraph.Finalize();
+			sysGraph.Execute();
 		}
 	private:
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;

@@ -5,7 +5,10 @@
 #include <Core/src/utl/Assert.h>
 #include <concepts>
 #include <span>
+#include <array>
 #include <Core/third/dynamic_bitset.hpp>
+#include <type_traits>
+#include <optional>
 
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ bool active = false; std::uint16_t entityID = 0;  x }
@@ -35,6 +38,9 @@ namespace tryn::ent
 	template <typename T>
 	concept ValidComponent = ImplementsSRD<T> && ImplementsUUID<T>;
 
+	template <ValidComponent... T>
+	class ComponentPack;
+
 	class ComponentManager
 	{
 	public:
@@ -53,6 +59,28 @@ namespace tryn::ent
 			Resize(componentCounter, 1000);
 			return componentCounter++;
 		}
+
+		template <ValidComponent... Cs>
+		std::array<int,sizeof...(Cs)> RegisterComponentPack()
+		{
+			// Create a new pack
+			packComponents.push_back(std::vector<int>());
+			packCounter++;
+			ComponentPackBreakdown<Cs...>();
+
+			// Mark the component IDs as part of the pack
+			for (auto& componentID : packComponents.back())
+			{
+				if (packBelonger.size() <= componentID)
+				{
+					packBelonger.resize(componentID);
+				}
+				packBelonger[componentID] = packCounter;
+			}
+
+			return std::array<int, sizeof...(Cs)>();
+		}
+
 		template <ValidComponent C>
 		[[nodiscard("The returned integer is a handle to a component")]] C::SubresourceData* AddComponent(std::uint16_t entityID)
 		{
@@ -87,6 +115,18 @@ namespace tryn::ent
 
 		void ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex);
 	private:
+		template <ValidComponent First, ValidComponent Second, ValidComponent... Other>
+		void ComponentPackBreakdown()
+		{
+			ComponentPackBreakdown<First>();
+			ComponentPackBreakdown<Second, Other...>();
+		}
+
+		template <ValidComponent C>
+		void ComponentPackBreakdown()
+		{
+			packComponents.back().push_back(C::UUID);
+		}
 		void Resize(std::uint16_t index, std::uint16_t newSize)
 		{
 			bufferPtrs[index]->resize(newSize * map[index]);
@@ -99,7 +139,11 @@ namespace tryn::ent
 		}
 		ComponentManager() = default;
 		std::uint16_t componentCounter = 0;
+		std::uint16_t packCounter = 0;
 		std::unordered_map<int, std::size_t> map;
+		using packID = typename std::optional<int>;
+		std::vector<packID> packBelonger;
+		std::vector<std::vector<int>> packComponents;
 		std::vector<std::unique_ptr<std::vector<std::byte>>> bufferPtrs;
 		std::vector<std::unique_ptr<sul::dynamic_bitset<>>> bitsetPtrs;
 	};
@@ -116,5 +160,31 @@ namespace tryn::ent
 	ZT_DEFINE_COMPONENT(ActivationComponent)
 	{
 		ZT_COMPONENT_FIELDS();
+	};
+
+	template <ValidComponent... Cs>
+	class ComponentPack
+	{
+	public:
+		ComponentPack()
+		{
+			AddComponents();
+		}
+
+	private:
+		template <int N = 0>
+		void AddComponents()
+		{
+			mapper.push_back(std::pair<int, int>(N, std::get<N>(srdTuple).UUID));
+			if constexpr (N < std::tuple_size_v<decltype(srdTuple)> -1)
+			{
+				AddComponents<N + 1>();
+			}
+		}
+	public:
+		std::tuple<Cs...> srdTuple;
+		using tupleIndex = typename int;
+		using componentID = typename int;
+		std::vector<std::pair<tupleIndex, componentID>> mapper;
 	};
 }

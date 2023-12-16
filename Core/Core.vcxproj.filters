@@ -249,6 +249,9 @@
     <ClCompile Include="src\ent\sys\RenderSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ent\sys\SystemManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1718,9 +1721,6 @@
     <ClInclude Include="src\utl\UUID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Component\Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\ent\Component\ComponentManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1734,6 +1734,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ent\sys\SystemManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ent\Component\ComponentPack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
