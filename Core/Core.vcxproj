@@ -107,6 +107,7 @@
     <ClInclude Include="src\ent\Component\ModelComponent.h" />
     <ClInclude Include="src\ent\Component\PositionComponent.h" />
     <ClInclude Include="src\ent\sys\RenderSystem.h" />
+    <ClInclude Include="src\ent\sys\SystemManager.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
