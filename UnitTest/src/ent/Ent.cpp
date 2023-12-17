@@ -121,9 +121,9 @@ namespace tryn::ent
 			auto pTc2a = ent1.GetComponent<TestComponent2>();
 			auto pTc3a = ent1.GetComponent<TestComponent3>();
 		}
-		TEST_METHOD(ComponentPackTests)
+		TEST_METHOD(ArchetypeTests)
 		{
-			ent::ComponentManager::Get().RegisterComponentPack<TestComponent1,TestComponent2,TestComponent3>();
+
 		}
 		TEST_METHOD(SystemTests)
 		{

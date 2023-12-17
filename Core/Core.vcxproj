@@ -103,6 +103,7 @@
     <ClInclude Include="src\ccr\Task.h" />
     <ClInclude Include="src\ccr\Thread.h" />
     <ClInclude Include="src\ccr\Worker.h" />
+    <ClInclude Include="src\ent\Component\Archetype.h" />
     <ClInclude Include="src\ent\Component\ComponentManager.h" />
     <ClInclude Include="src\ent\Component\ComponentPack.h" />
     <ClInclude Include="src\ent\Component\ModelComponent.h" />
