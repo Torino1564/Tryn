@@ -98,28 +98,10 @@ namespace tryn::ent
 		}
 		TEST_METHOD(ECSTest)
 		{
-			BasicEntity ent1("Test entity 1");
-			BasicEntity ent2("Test entity 2");
-			BasicEntity ent3("Test entity 3");
+			Entity ent1("Test entity 1");
+			Entity ent2("Test entity 2");
+			Entity ent3("Test entity 3");
 
-			auto& tc1 = ent1.AddComponent<TestComponent1>();
-			tc1.onFire = true;
-			tc1.active = true;
-			auto& tc2 = ent1.AddComponent<TestComponent2>();
-			tc2.fireIntensity = 100.0f;
-			tc2.text = "Hello there";
-			auto& tc3 = ent1.AddComponent<TestComponent3>();
-			tc3.velocity_x = 10.0f;
-			tc3.velocity_y = -69.0f;
-			tc3.velocity_z = 420.0f;
-			auto& tc4 = ent2.AddComponent<TestComponent1>();
-			tc4.onFire = true;
-			auto& tc5 = ent3.AddComponent<TestComponent1>();
-			tc5.active = true;
-
-			auto pTc1a = ent1.GetComponent<TestComponent1>();
-			auto pTc2a = ent1.GetComponent<TestComponent2>();
-			auto pTc3a = ent1.GetComponent<TestComponent3>();
 		}
 		TEST_METHOD(ArchetypeTests)
 		{
@@ -147,6 +129,6 @@ namespace tryn::ent
 	private:
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;
 		std::unique_ptr<win::Window> pWnd;
-		std::vector<std::unique_ptr<IEntity>> entityPtrs;
+		std::vector<std::unique_ptr<Entity>> entityPtrs;
 	};
 }

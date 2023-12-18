@@ -8,85 +8,56 @@
 
 namespace tryn::ent
 {
-	class IEntity
+	class Entity
 	{
 	public:
-		virtual ~IEntity();
-		IEntity();
+		virtual ~Entity();
+		Entity(std::string_view name);
+
+		template <ValidComponent... Cs>
+		Entity CreateNew()
+		{
+			pArchetype = ArchetypeManager::GetArchetype<Cs...>();
+		}
+		std::span<int> GetComponents()
+		{
+			return std::span<int>(pArchetype->components.begin(), pArchetype->components.size());
+		}
 		void SpawnControlWindow();
 		void MarkForUpdate();
-		int GenerateID();
-
-		template <ValidComponent C>
-		C::SubresourceData* GetComponent()
-		{
-			if (pComponents.size() < C::UUID || pComponents[C::UUID] == nullptr)
-			{
-				return nullptr;
-			}
-			else
-			{
-				return reinterpret_cast<C::SubresourceData*>(pComponents[C::UUID]);
-			}
-		}
-
-		template <ValidComponent C>
-		C::SubresourceData& AddComponent()
-		{
-			const auto componentUUID = C::UUID;
-			if (pComponents.size() <= componentUUID)
-			{
-				pComponents.resize(componentUUID + 1);
-			}
-
-			if (pComponents[componentUUID] != nullptr)
-			{
-				return *reinterpret_cast<typename C::SubresourceData*>(pComponents[0]);
-			}
-
-			pComponents[componentUUID] = reinterpret_cast<void*>(ComponentManager::Get().AddComponent<C>(UID));
-
-			return *(reinterpret_cast<C::SubresourceData*>(pComponents[C::UUID]));
-		}
 
 	protected:
+
+		template <ValidComponent... Cs>
+		void AddComponent()
+		{
+			std::array<ComponentIndex, 100> newComponentIDs;
+			int index = 0;
+			AddComponent<Cs...>(newComponentIDs, index);
+
+			for (auto componentID : pArchetype->components)
+			{
+				newComponentIDs[++index] = componentID;
+			}
+
+
+		}
+
+		template <ValidComponent First, ValidComponent Second, ValidComponent... Rest>
+		void AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int& index = 0)
+		{
+			AddComponent_<First>(newComponentIDs, index++);
+			AddComponent_<Second, Rest...>(newComponentIDs, index);
+		}
+
+		template <ValidComponent C>
+		void AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int index = 0)
+		{
+			newComponentIDs[index] = C::UUID;
+		}
+
 		std::string name;
 		int UID = -1;
-		// Components
-		std::vector<void*> pComponents;
-		// Entity ID
-		static sul::dynamic_bitset<> IDbooker;
-	};
-
-	class BasicEntity : public IEntity
-	{
-	public:
-		template <ValidComponent ... Args>
-		BasicEntity(std::string name)
-		{
-			this->name = name;
-			AddMultipleComponents<Args...>();
-		}
-
-		BasicEntity(gfx::IGraphics& gfx, std::string_view name, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f });
-		BasicEntity(std::string name);
-		BasicEntity(const BasicEntity&) = delete;
-		BasicEntity& operator=(const BasicEntity&) = delete;
-
-		BasicEntity(BasicEntity&&) = default;
-		BasicEntity& operator=(BasicEntity&&) = default;
-
-	private:
-		template <ValidComponent First, ValidComponent ... Args>
-		void AddMultipleComponents()
-		{
-			AddComponent<First>();
-			AddMultipleComponents<Args...>();
-		}
-		template <ValidComponent Last>
-		void AddMultipleComponents()
-		{
-			return;
-		}
+		Archetype* pArchetype = nullptr;
 	};
 }

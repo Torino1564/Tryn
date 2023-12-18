@@ -3,29 +3,25 @@
 
 namespace tryn::ent
 {
-	IEntity::~IEntity()
-	{
-		IEntity::IDbooker[UID].flip();
-	}
-	IEntity::IEntity()
-	{
-		UID = GenerateID();
-	}
-	void IEntity::SpawnControlWindow()
+	Entity::~Entity()
 	{
 
 	}
-	void IEntity::MarkForUpdate()
+	Entity::Entity(std::string_view name)
+		:
+		name(name)
 	{
-		for (auto& pComponent : pComponents)
-		{
-			if (pComponent != nullptr)
-			{
-				auto activationProxy = reinterpret_cast<ActivationComponent::SubresourceData*>(pComponent);
-				activationProxy->active = true;
-			}
-		}
+
 	}
+	void Entity::SpawnControlWindow()
+	{
+
+	}
+	void Entity::MarkForUpdate()
+	{
+
+	}
+	/*
 	int IEntity::GenerateID()
 	{
 		auto firstFree = IEntity::IDbooker.find_first();
@@ -41,15 +37,6 @@ namespace tryn::ent
 			IEntity::IDbooker[firstFree].flip();
 			return firstFree;
 		}
-	}
-	BasicEntity::BasicEntity(gfx::IGraphics& gfx, std::string_view name, std::string_view path, glm::vec3 scale)
-	{
-		this->name = name;
-	}
-	BasicEntity::BasicEntity(std::string name)
-	{
-		this->name = name;
-	}
-}
+	}*/
 
-sul::dynamic_bitset<> tryn::ent::IEntity::IDbooker;
+}

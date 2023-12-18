@@ -90,9 +90,9 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 	for (int i = 0; i < pow(entityCount1D, 3); i++)
 	{
-		entities.emplace_back("gobber" + std::to_string(i));
-		auto& srd = entities.back().AddComponent<ent::cmp::ModelComponent>();
-		srd = ent::cmp::ModelComponent::Construct(Gfx(), "resources/models/gobber/GoblinX.obj");
+		//entities.emplace_back("gobber" + std::to_string(i));
+		//auto& srd = entities.back().AddComponent<ent::cmp::ModelComponent>();
+		//srd = ent::cmp::ModelComponent::Construct(Gfx(), "resources/models/gobber/GoblinX.obj");
 	}
 
 	for (int i = 0; i < entityCount1D; i++)
@@ -101,13 +101,13 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		{
 			for (int k = 0; k < entityCount1D; k++)
 			{
-				auto pPos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)].GetComponent<ent::cmp::PositionComponent>();
+				/*auto pPos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)].GetComponent<ent::cmp::PositionComponent>();
 				if (pPos != nullptr)
 				{
 					pPos->position.x = -entityCount1D / 2. + i;
 					pPos->position.y = -entityCount1D / 2. + j;
 					pPos->position.z = -entityCount1D / 2. + k;
-				}
+				}*/
 			}
 		}
 	}

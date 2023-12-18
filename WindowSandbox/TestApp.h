@@ -15,7 +15,7 @@ public:
 	void DoFrame() override;
 private:
 	std::unique_ptr<gfx::PointLight> pPointLight;
-	std::vector<ent::BasicEntity> entities;
+	std::vector<ent::Entity> entities;
 	gfx::Camera camera;
 
 	static constexpr const int entityCount1D = 1;

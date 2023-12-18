@@ -1,7 +1,19 @@
 #include "ComponentManager.h"
 
-void tryn::ent::ComponentManager::ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex)
+namespace tryn::ent
 {
-	auto activationProxy = reinterpret_cast<ActivationComponent::SubresourceData&>((*(bufferPtrs[componentUUID]))[componentIndex]);
-	activationProxy.active = true;
+	void tryn::ent::ComponentManager::ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex)
+	{
+
+	}
+
+	ECS::ECS()
+		:
+		componentManager(ComponentManager::Get()), archetypeManager(ArchetypeManager::Get())
+	{}
+	void Archetype::InitializeUUID()
+	{
+		UUID = ECS::Get().archetypeManager.ResolveUUID();
+	}
 }
+

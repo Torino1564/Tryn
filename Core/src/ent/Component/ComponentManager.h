@@ -14,7 +14,6 @@
 	public: struct SubresourceData{ bool active = false; std::uint16_t entityID = 0;  x }
 
 #define ZT_DEFINE_COMPONENT(x) class x : public tryn::ent::Component<x>
-#define ZT_COMPONENT_CONSTRUCTOR public: static SubresourceData&& Construct
 
 namespace tryn::ent
 {
@@ -38,6 +37,26 @@ namespace tryn::ent
 	template <typename T>
 	concept ValidComponent = ImplementsSRD<T> && ImplementsUUID<T>;
 
+	class ComponentManager;
+	class ArchetypeManager;
+
+	using ComponentIndex = typename int;
+	using ComponentSize = typename std::size_t;
+
+	class ECS
+	{
+	public:
+		static ECS& Get()
+		{
+			static ECS ecs;
+			return ecs;
+		}
+		ComponentManager& componentManager;
+		ArchetypeManager& archetypeManager;
+	private:
+		ECS();
+	};
+
 	class ComponentManager
 	{
 	public:
@@ -51,61 +70,14 @@ namespace tryn::ent
 		int RegisterComponent()
 		{
 			map.insert({ componentCounter, sizeof(C::SubresourceData)});
-			bufferPtrs.push_back(std::move(std::make_unique<std::vector<std::byte>>()));
-			bitsetPtrs.push_back(std::move(std::make_unique<sul::dynamic_bitset<>>()));
-			Resize(componentCounter, 1000);
 			return componentCounter++;
-		}
-
-		template <ValidComponent C>
-		[[nodiscard("The returned integer is a handle to a component")]] C::SubresourceData* AddComponent(std::uint16_t entityID)
-		{
-			// Finds empty slot
-			auto ID = bitsetPtrs[C::UUID]->find_first();
-			if (ID == sul::dynamic_bitset<>::npos)
-			{
-				Grow(C::UUID);
-				ID = bitsetPtrs[C::UUID]->find_first();
-			}
-			bitsetPtrs[C::UUID]->flip(ID);
-			auto& ref = reinterpret_cast<C::SubresourceData&>((*(bufferPtrs[C::UUID]))[ID * map[C::UUID]]);
-			ref.entityID = entityID;
-			return &ref;
-		}
-		template <ValidComponent C>
-		auto GetComponent(std::uint16_t componentID)
-		{
-			const auto& componentData = map[C::UUID];
-			std::uint16_t totalOffset = componentData * componentID;
-			auto& buffer = *(bufferPtrs[C::UUID]);
-			trynass_msg(buffer.size() > totalOffset, L"Out of bounds access in the ECS");
-			return reinterpret_cast<C::SubresourceData*>(&(buffer[totalOffset]));
-		}
-
-		template <ValidComponent C>
-		std::span<typename C::SubresourceData> GetData()
-		{
-			auto pStart = reinterpret_cast<typename C::SubresourceData*>(bufferPtrs[C::UUID]->data());
-			return std::span<typename C::SubresourceData>(pStart, bufferPtrs[C::UUID]->size() / map[C::UUID]);
 		}
 
 		void ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex);
 	private:
-		void Resize(std::uint16_t index, std::uint16_t newSize)
-		{
-			bufferPtrs[index]->resize(newSize * map[index]);
-			bitsetPtrs[index]->resize(newSize, true);
-		}
-		void Grow(std::uint16_t index, float scale = 1.3f)
-		{
-			bufferPtrs[index]->resize(bufferPtrs[index]->size() * scale);
-			bitsetPtrs[index]->resize(bitsetPtrs[index]->size() * scale, true);
-		}
 		ComponentManager() = default;
 		std::uint16_t componentCounter = 0;
-		std::unordered_map<int, std::size_t> map;
-		std::vector<std::unique_ptr<std::vector<std::byte>>> bufferPtrs;
-		std::vector<std::unique_ptr<sul::dynamic_bitset<>>> bitsetPtrs;
+		std::unordered_map<ComponentIndex, ComponentSize> map;
 	};
 
 	template <typename T>
@@ -121,24 +93,129 @@ namespace tryn::ent
 	{
 		ZT_COMPONENT_FIELDS();
 	};
-
-	class Archetype;
+	
+	class Archetype
+	{
+		friend class Entity;
+		friend class ArchetypeManager;
+		template <ValidComponent... Cs>
+		Archetype Make()
+		{
+			Archetype archetype;
+			archetype.InitializeUUID();
+			archetype.AppendComponents<Cs...>();
+			return archetype;
+		}
+		template <ValidComponent First, ValidComponent Second, ValidComponent... Rest>
+		void AppendComponents()
+		{
+			AppendComponents<First>();
+			AppendComponents<Second, Rest...>();
+		}
+		template <ValidComponent C>
+		void AppendComponents()
+		{
+			components.push_back(C::UUID);
+		}
+		const int GetUUID() const
+		{
+			return this->UUID;
+		}
+		const int ComponentCount() const
+		{
+			return (int)(components.size());
+		}
+	private:
+		void InitializeUUID();
+		int UUID = -1;
+		std::vector<int> components;
+		sul::dynamic_bitset<> booker;
+		std::vector<std::unique_ptr<std::vector<std::byte>>> bufferPtrs;
+	};
 
 	class ArchetypeManager
 	{
+	public:
+		friend class Archetype;
+
+		std::array<Archetype*, 100> QueryArchetype(std::span<ComponentIndex> componentIDs)
+		{
+			std::array<std::pair<Archetype*, int>, 1000 > archetypeMap = {};
+
+			std::array<Archetype*, 100> result = {};
+
+			for (auto componentID : componentIDs)
+			{
+				for (auto& archetype : archetypeTable[componentID])
+				{
+					auto& ref = archetypeMap[archetype->GetUUID()];
+					ref.first = archetype;
+					ref.second++;
+				}
+			}
+			int resultCounter = 0;
+			for (auto& [pType, counter] : archetypeMap)
+			{
+				if (counter == componentIDs.size())
+				{
+					result[resultCounter++] = pType;
+				}
+			}
+
+			return result;
+		}
+
 		template <ValidComponent... Cs>
 		std::array<Archetype*, 100> QueryArchetype()
 		{
 			std::array<int, sizeof...(Cs)> componentIDs;
 			ExtractComponentIDs<sizeof...(Cs), Cs...>(componentIDs);
 
-			static std::array<Archetype*, 1000> = {};
-
-			for (auto componentID : componentIDs)
-			{
-
-			}
+			return QueryArchetype(std::span<int>(componentIDs.begin(), componentIDs.size()));
 		}
+
+		Archetype* GetArchetype(std::span<ComponentIndex> components)
+		{
+			auto queriedArchetypes = QueryArchetype(components);
+
+		}
+
+		template <ValidComponent... Cs>
+		Archetype* GetArchetype()
+		{
+			//std::array<int, sizeof...(Cs)> componentIDs;
+			//ExtractComponentIDs<sizeof...(Cs), Cs...>(componentIDs);
+
+			//for (auto pArchetype : queriedArchetypes)
+			//{
+			//	if (pArchetype->ComponentCount() == sizeof...(Cs))
+			//	{
+			//		return pArchetype;
+			//	}
+			//}
+
+			//// No existing archetype was found, adding a new one
+			//return AddArchetype<Cs...>();
+		}
+
+		static ArchetypeManager& Get()
+		{
+			static ArchetypeManager singleton;
+			return singleton;
+		}
+		template <ValidComponent... Cs>
+		Archetype* AddArchetype()
+		{
+			archetypeBuffer[archetypeCounter++] = Archetype::Make<Cs...>();
+			auto& newlyAddedArchetype = archetypeBuffer[archetypeCounter - 1];
+
+			for (auto componentIndex : newlyAddedArchetype.components)
+			{
+				archetypeTable[componentIndex].push_back(&newlyAddedArchetype);
+			}
+			return &newlyAddedArchetype;
+		}
+	private:
 		template <int arraySize, ValidComponent First, ValidComponent Second, ValidComponent... Rest>
 		void ExtractComponentIDs(std::array<int, sizeof(arraySize)>& componentIDs, int index = 0)
 		{
@@ -150,19 +227,14 @@ namespace tryn::ent
 		{
 			componentIDs[index] = C::UUID;
 		}
-	private:
+		ArchetypeManager() = default;
+		int ResolveUUID()
+		{
+			return archetypeCounter++;
+		}
 		int archetypeCounter = 0;
 		// Indexed by componentUUID
-		std::vector<std::vector<Archetype>> archetypeTable;
-	};
-
-	class Archetype
-	{
-
-	private:
-		std::vector<int> components;
-		int UID;
-		sul::dynamic_bitset<> booker;
-		std::vector<std::unique_ptr<std::vector<std::byte>>> bufferPtrs;
+		std::vector<std::vector<Archetype*>> archetypeTable;
+		std::array<Archetype, 1000> archetypeBuffer = {};
 	};
 }

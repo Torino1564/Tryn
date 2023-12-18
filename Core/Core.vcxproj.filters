@@ -1742,6 +1742,9 @@
     <ClInclude Include="src\ent\Component\Archetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\mem\ArenaAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">
