@@ -107,16 +107,27 @@ namespace tryn::ent
 		TEST_METHOD(ArchetypeTests)
 		{
 			auto ent1 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent1");
-			auto ent2 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent2");
+			std::vector<Entity> entityVec1;
+			entityVec1.resize(100);
+			ent1.Instanciate({ entityVec1.begin(), entityVec1.size() });
+			auto ent2 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>();
 			{
-				auto ent5 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent5");
-				auto ent6 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent6");
+				auto ent5 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>();
+				auto ent6 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>();
 			}
-			auto ent7 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent7");
-			auto ent8 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent8");
+			auto ent7 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>();
+			auto ent8 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>();
 
-			auto ent3 = Entity::CreateNew< TestComponent2, TestComponent3>("ent3");
-			auto ent4 = Entity::CreateNew<TestComponent1, TestComponent2>("ent4");
+			auto ent3 = Entity::CreateNew<TestComponent2, TestComponent3>();
+			auto ent4 = Entity::CreateNew<TestComponent1, TestComponent2>();
+
+			ECS::Get().allocator.Wipe();
+
+			std::vector<Entity> entityVec2;
+			entityVec2.resize(100000000);
+			ent3.Instanciate({ entityVec2.begin(), entityVec2.size() });
+			
+
 		}
 		TEST_METHOD(SystemTests)
 		{

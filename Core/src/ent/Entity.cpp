@@ -7,9 +7,9 @@ namespace tryn::ent
 	{
 		pArchetype->Free(UUID);
 	}
-	Entity::Entity(std::string_view name)
+	Entity::Entity(std::optional<std::string_view> newName)
 		:
-		name(name)
+		name(newName.value_or(""))
 	{
 		
 	}
