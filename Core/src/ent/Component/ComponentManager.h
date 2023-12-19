@@ -9,6 +9,7 @@
 #include <Core/third/dynamic_bitset.hpp>
 #include <type_traits>
 #include <optional>
+#include <Core/src/mem/ArenaAllocator.h>
 
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ bool active = false; std::uint16_t entityID = 0;  x }
@@ -53,6 +54,7 @@ namespace tryn::ent
 		}
 		ComponentManager& componentManager;
 		ArchetypeManager& archetypeManager;
+		mem::ArenaAllocator<> allocator;
 	private:
 		ECS();
 	};
@@ -99,11 +101,22 @@ namespace tryn::ent
 		friend class Entity;
 		friend class ArchetypeManager;
 		template <ValidComponent... Cs>
-		Archetype Make()
+		static Archetype Make()
 		{
 			Archetype archetype;
 			archetype.InitializeUUID();
 			archetype.AppendComponents<Cs...>();
+			return archetype;
+		}
+		static Archetype Make(std::span<int> componentIDs)
+		{
+			Archetype archetype;
+			archetype.InitializeUUID();
+			archetype.components.reserve(componentIDs.size());
+			for (auto componentID : componentIDs)
+			{
+				archetype.components.push_back(componentID);
+			}
 			return archetype;
 		}
 		template <ValidComponent First, ValidComponent Second, ValidComponent... Rest>
@@ -138,19 +151,30 @@ namespace tryn::ent
 	public:
 		friend class Archetype;
 
-		std::array<Archetype*, 100> QueryArchetype(std::span<ComponentIndex> componentIDs)
+		std::span<Archetype*> QueryArchetype(std::span<ComponentIndex> componentIDs)
 		{
-			std::array<std::pair<Archetype*, int>, 1000 > archetypeMap = {};
+			static std::vector<std::pair<Archetype*, int> > archetypeMap;
+			static bool initialized = false;
+			if (!initialized)
+			{
+				initialized = true;
+				archetypeMap.resize(1000);
+			}
 
-			std::array<Archetype*, 100> result = {};
+			std::fill(archetypeMap.begin(), archetypeMap.end(), std::pair<Archetype*, int>{nullptr, 0});
+
+			auto result = *ECS::Get().allocator.MakeNew<std::array<Archetype*, 100>>();
 
 			for (auto componentID : componentIDs)
 			{
-				for (auto& archetype : archetypeTable[componentID])
+				if (componentID < archetypeTable.size())
 				{
-					auto& ref = archetypeMap[archetype->GetUUID()];
-					ref.first = archetype;
-					ref.second++;
+					for (auto& archetype : archetypeTable[componentID])
+					{
+						auto& ref = archetypeMap[archetype->GetUUID()];
+						ref.first = archetype;
+						ref.second++;
+					}
 				}
 			}
 			int resultCounter = 0;
@@ -162,13 +186,14 @@ namespace tryn::ent
 				}
 			}
 
-			return result;
+			return std::span<Archetype*>(result.begin(),resultCounter);
 		}
 
 		template <ValidComponent... Cs>
-		std::array<Archetype*, 100> QueryArchetype()
+		std::span<Archetype*> QueryArchetype()
 		{
-			std::array<int, sizeof...(Cs)> componentIDs;
+			auto pComponentIDs = ECS::Get().allocator.MakeNew<std::array<int, sizeof...(Cs)>>();
+			auto& componentIDs = *pComponentIDs;
 			ExtractComponentIDs<sizeof...(Cs), Cs...>(componentIDs);
 
 			return QueryArchetype(std::span<int>(componentIDs.begin(), componentIDs.size()));
@@ -178,24 +203,26 @@ namespace tryn::ent
 		{
 			auto queriedArchetypes = QueryArchetype(components);
 
+			for (auto pArchetype : queriedArchetypes)
+			{
+				if (pArchetype != nullptr && pArchetype->ComponentCount() == components.size())
+				{
+					return pArchetype;
+				}
+			}
+
+			// No existing archetype was found, adding a new one
+			return AddArchetype(components);
 		}
 
 		template <ValidComponent... Cs>
 		Archetype* GetArchetype()
 		{
-			//std::array<int, sizeof...(Cs)> componentIDs;
-			//ExtractComponentIDs<sizeof...(Cs), Cs...>(componentIDs);
+			auto pComponentIDs = ECS::Get().allocator.MakeNew<std::array<int, sizeof...(Cs)>>();
+			auto& componentIDs = *pComponentIDs;
+			ExtractComponentIDs<sizeof...(Cs), Cs...>(componentIDs);
 
-			//for (auto pArchetype : queriedArchetypes)
-			//{
-			//	if (pArchetype->ComponentCount() == sizeof...(Cs))
-			//	{
-			//		return pArchetype;
-			//	}
-			//}
-
-			//// No existing archetype was found, adding a new one
-			//return AddArchetype<Cs...>();
+			return GetArchetype(std::span<int>(componentIDs.begin(), componentIDs.size()));
 		}
 
 		static ArchetypeManager& Get()
@@ -206,7 +233,7 @@ namespace tryn::ent
 		template <ValidComponent... Cs>
 		Archetype* AddArchetype()
 		{
-			archetypeBuffer[archetypeCounter++] = Archetype::Make<Cs...>();
+			archetypeBuffer[archetypeCounter] = Archetype::Make<Cs...>();
 			auto& newlyAddedArchetype = archetypeBuffer[archetypeCounter - 1];
 
 			for (auto componentIndex : newlyAddedArchetype.components)
@@ -215,19 +242,37 @@ namespace tryn::ent
 			}
 			return &newlyAddedArchetype;
 		}
+		Archetype* AddArchetype(std::span<int> componentIDs)
+		{
+			archetypeBuffer[archetypeCounter] = Archetype::Make(componentIDs);
+			auto& newlyAddedArchetype = archetypeBuffer[archetypeCounter];
+
+			for (auto componentIndex : newlyAddedArchetype.components)
+			{
+				if (archetypeTable.size() < componentIndex + 1)
+				{
+					archetypeTable.resize(componentIndex + 1);
+				}
+				archetypeTable[componentIndex].push_back(&newlyAddedArchetype);
+			}
+			return &newlyAddedArchetype;
+		}
 	private:
 		template <int arraySize, ValidComponent First, ValidComponent Second, ValidComponent... Rest>
-		void ExtractComponentIDs(std::array<int, sizeof(arraySize)>& componentIDs, int index = 0)
+		void ExtractComponentIDs(std::array<int, arraySize>& componentIDs, int index = 0)
 		{
-			ExtractComponentIDs<arraySize, First>(index++);
-			ExtractComponentIDs<arraySize, Second, Rest...>(index);
+			ExtractComponentIDs<arraySize, First>(componentIDs, index++);
+			ExtractComponentIDs<arraySize, Second, Rest...>(componentIDs, index);
 		}
 		template <int arraySize, ValidComponent C>
-		void ExtractComponentIDs(std::array<int, sizeof(arraySize)>& componentIDs, int index)
+		void ExtractComponentIDs(std::array<int, arraySize>& componentIDs, int index)
 		{
 			componentIDs[index] = C::UUID;
 		}
-		ArchetypeManager() = default;
+		ArchetypeManager()
+		{
+			archetypeBuffer.resize(1000);
+		}
 		int ResolveUUID()
 		{
 			return archetypeCounter++;
@@ -235,6 +280,6 @@ namespace tryn::ent
 		int archetypeCounter = 0;
 		// Indexed by componentUUID
 		std::vector<std::vector<Archetype*>> archetypeTable;
-		std::array<Archetype, 1000> archetypeBuffer = {};
+		std::vector<Archetype> archetypeBuffer = {};
 	};
 }

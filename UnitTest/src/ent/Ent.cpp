@@ -8,6 +8,7 @@
 #include <Core/src/ent/Component/ComponentManager.h>
 #include <Core/src/ent/sys/SystemManager.h>
 #include <Core/src/ent/Component/ComponentPack.h>
+#include <Core/src/utl/Timer.h>
 
 class ThunkRenderGraph : public tryn::gfx::IRenderGraph
 {
@@ -105,7 +106,10 @@ namespace tryn::ent
 		}
 		TEST_METHOD(ArchetypeTests)
 		{
-
+			auto ent1 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent1");
+			auto ent2 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent2");
+			auto ent3 = Entity::CreateNew< TestComponent2, TestComponent3>("ent3");
+			auto ent4 = Entity::CreateNew<TestComponent1, TestComponent2>("ent4");
 		}
 		TEST_METHOD(SystemTests)
 		{

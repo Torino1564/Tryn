@@ -15,9 +15,11 @@ namespace tryn::ent
 		Entity(std::string_view name);
 
 		template <ValidComponent... Cs>
-		Entity CreateNew()
+		static Entity CreateNew(std::string_view newName)
 		{
-			pArchetype = ArchetypeManager::GetArchetype<Cs...>();
+			Entity ent(newName);
+			ent.pArchetype = ArchetypeManager::Get().GetArchetype<Cs...>();
+			return ent;
 		}
 		std::span<int> GetComponents()
 		{
@@ -31,7 +33,7 @@ namespace tryn::ent
 		template <ValidComponent... Cs>
 		void AddComponent()
 		{
-			std::array<ComponentIndex, 100> newComponentIDs;
+			auto& newComponentIDs = *ECS::Get().allocator.MakeNew<std::array<ComponentIndex,100>>();
 			int index = 0;
 			AddComponent<Cs...>(newComponentIDs, index);
 
@@ -40,7 +42,8 @@ namespace tryn::ent
 				newComponentIDs[++index] = componentID;
 			}
 
-
+			// Request the new Archetype
+			auto newArchetype = ArchetypeManager::Get().GetArchetype(std::span<int>(newComponentIDs.begin(), newComponentIDs.size()));
 		}
 
 		template <ValidComponent First, ValidComponent Second, ValidComponent... Rest>
