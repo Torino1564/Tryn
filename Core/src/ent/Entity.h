@@ -8,6 +8,12 @@
 
 namespace tryn::ent
 {
+	struct EntityID
+	{
+		std::uint16_t ID = 0;
+		std::uint16_t archetype = 0;
+	};
+
 	class Entity
 	{
 	public:
@@ -19,6 +25,7 @@ namespace tryn::ent
 		{
 			Entity ent(newName);
 			ent.pArchetype = ArchetypeManager::Get().GetArchetype<Cs...>();
+			ent.UUID = ent.pArchetype->ResolveEntityUUID();
 			return ent;
 		}
 		std::span<int> GetComponents()
@@ -60,7 +67,7 @@ namespace tryn::ent
 		}
 
 		std::string name;
-		int UID = -1;
+		EntityID UUID = {};
 		Archetype* pArchetype = nullptr;
 	};
 }

@@ -5,13 +5,13 @@ namespace tryn::ent
 {
 	Entity::~Entity()
 	{
-
+		pArchetype->Free(UUID);
 	}
 	Entity::Entity(std::string_view name)
 		:
 		name(name)
 	{
-
+		
 	}
 	void Entity::SpawnControlWindow()
 	{

@@ -10,6 +10,7 @@
 #include <type_traits>
 #include <optional>
 #include <Core/src/mem/ArenaAllocator.h>
+#include <ranges>
 
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ bool active = false; std::uint16_t entityID = 0;  x }
@@ -75,6 +76,11 @@ namespace tryn::ent
 			return componentCounter++;
 		}
 
+		auto& GetComponentMap()
+		{
+			return map;
+		}
+
 		void ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex);
 	private:
 		ComponentManager() = default;
@@ -105,6 +111,7 @@ namespace tryn::ent
 		{
 			Archetype archetype;
 			archetype.InitializeUUID();
+			archetype.Resize(100);
 			archetype.AppendComponents<Cs...>();
 			return archetype;
 		}
@@ -112,6 +119,7 @@ namespace tryn::ent
 		{
 			Archetype archetype;
 			archetype.InitializeUUID();
+			archetype.Resize(100);
 			archetype.components.reserve(componentIDs.size());
 			for (auto componentID : componentIDs)
 			{
@@ -129,6 +137,7 @@ namespace tryn::ent
 		void AppendComponents()
 		{
 			components.push_back(C::UUID);
+			bufferPtrs.push_back(std::make_unique<std::vector<std::byte>>());
 		}
 		const int GetUUID() const
 		{
@@ -138,10 +147,25 @@ namespace tryn::ent
 		{
 			return (int)(components.size());
 		}
+		class EntityID ResolveEntityUUID();
+		void Free(class EntityID);
+		void Grow()
+		{
+			Resize(booker.size() * 1.3f);
+		}
+		void Resize(std::uint16_t newSize)
+		{
+			booker.resize(newSize, true);
+			for (auto [index, pBuffer]: std::ranges::views::enumerate(bufferPtrs) )
+			{
+				pBuffer->resize(newSize * ComponentManager::Get().GetComponentMap().at(components[index]));
+			}
+		}
 	private:
 		void InitializeUUID();
-		int UUID = -1;
+		std::uint16_t UUID = 0;
 		std::vector<int> components;
+		std::uint16_t bookerPointer = -1;
 		sul::dynamic_bitset<> booker;
 		std::vector<std::unique_ptr<std::vector<std::byte>>> bufferPtrs;
 	};

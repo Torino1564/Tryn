@@ -108,6 +108,13 @@ namespace tryn::ent
 		{
 			auto ent1 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent1");
 			auto ent2 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent2");
+			{
+				auto ent5 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent5");
+				auto ent6 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent6");
+			}
+			auto ent7 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent7");
+			auto ent8 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent8");
+
 			auto ent3 = Entity::CreateNew< TestComponent2, TestComponent3>("ent3");
 			auto ent4 = Entity::CreateNew<TestComponent1, TestComponent2>("ent4");
 		}
