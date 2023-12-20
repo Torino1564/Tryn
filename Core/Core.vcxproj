@@ -190,9 +190,11 @@
     <ClInclude Include="src\log\SeverityLevelPolicy.h" />
     <ClInclude Include="src\log\SimpleFileDriver.h" />
     <ClInclude Include="src\log\TextFormatter.h" />
+    <ClInclude Include="src\mem\Allocator.h" />
     <ClInclude Include="src\mem\ArenaAllocator.h" />
     <ClInclude Include="src\mem\BasicPoolAllocator.h" />
     <ClInclude Include="src\mem\IAllocator.h" />
+    <ClInclude Include="src\mem\NativeArray.h" />
     <ClInclude Include="src\mem\SharedRef.h" />
     <ClInclude Include="src\mem\WeakRef.h" />
     <ClInclude Include="src\spa\Dimensions.h" />

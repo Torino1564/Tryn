@@ -13,7 +13,7 @@ namespace tryn::mem
 		{
 			buffer.resize(numChunks);
 		}
-		void* Allocate(std::size_t numBytes)
+		void* Allocate(std::uint32_t numBytes)
 		{
 			const auto numChunks = (numBytes / chunkSize) + 1;
 			
@@ -50,7 +50,7 @@ namespace tryn::mem
 	private:
 		bool overflow = false;
 		std::vector<ChunkSize> buffer;
-		std::size_t usedChunks = 0;
+		std::uint32_t usedChunks = 0;
 		static constexpr std::size_t chunkSize = sizeof(ChunkSize);
 	};
 }

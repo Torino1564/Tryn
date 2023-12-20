@@ -11,6 +11,7 @@
 #include <optional>
 #include <Core/src/mem/ArenaAllocator.h>
 #include <ranges>
+#include <Core/src/mem/NativeArray.h>
 
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ bool active = false; std::uint16_t entityID = 0;  x }
@@ -102,10 +103,49 @@ namespace tryn::ent
 		ZT_COMPONENT_FIELDS();
 	};
 	
+	template <ValidComponent... Cs>
+	using HeterogeneusComponentDataPointerContainer = typename std::tuple<std::span<typename Cs::SubresourceData>...>;
+
 	class Archetype
 	{
 		friend class Entity;
 		friend class ArchetypeManager;
+
+	public:
+		template <ValidComponent... Cs>
+		void FillComponentPointerTuple(HeterogeneusComponentDataPointerContainer<Cs...>& container)
+		{
+			//FillComponentPointerTupleImpl<Cs...>(container);
+		}
+
+		template <int N, typename... Cs> using NthTypeOf = 
+			typename std::tuple_element<N, std::tuple<Cs...>>::type;
+
+		template <ValidComponent... Cs, int N = 0>
+		void FillComponentPointerTupleImpl(HeterogeneusComponentDataPointerContainer<Cs...>& container)
+		{
+			std::get<N>(container) = GetComponentData<NthTypeOf<N, Cs...>>();
+			if constexpr (N < sizeof...(Cs) - 1)
+			{
+				FillComponentPointerTupleImpl<Cs..., N + 1>(container);
+			}
+		}
+
+		template <ValidComponent C>
+		std::span<typename C::SubresourceData> GetComponentData()
+		{
+			for (auto [index, componentUUID] : std::ranges::views::enumerate(components))
+			{
+				if (componentUUID == C::UUID)
+				{
+					return std::span<typename C::SubresourceData>(
+						static_cast<typename std::vector<typename C::SubresouceData>::iterator>(bufferPtrs[index]->begin()),
+						bufferPtrs[index]->size() / sizeof(C::SubresourceData));
+				}
+			}
+			return {};
+		}
+
 		template <ValidComponent... Cs>
 		static Archetype Make()
 		{
@@ -174,6 +214,21 @@ namespace tryn::ent
 	{
 	public:
 		friend class Archetype;
+
+	public:
+		template <ValidComponent... Cs>
+		std::span<HeterogeneusComponentDataPointerContainer<Cs...>> GetComponentGroup()
+		{
+			auto archetypeQuery = QueryArchetype<Cs...>();
+			mem::NativeArray<HeterogeneusComponentDataPointerContainer<Cs...>> heterogeneusComponentPointerArray(archetypeQuery.size(), ECS::Get().allocator);
+
+			for (auto [i, pArchetype] : std::ranges::views::enumerate(archetypeQuery))
+			{
+				pArchetype->FillComponentPointerTuple(heterogeneusComponentPointerArray[i]);
+			}
+			
+			return std::span<HeterogeneusComponentDataPointerContainer<Cs...>>(heterogeneusComponentPointerArray);
+		}
 
 		std::span<Archetype*> QueryArchetype(std::span<ComponentIndex> componentIDs)
 		{
@@ -289,7 +344,7 @@ namespace tryn::ent
 			ExtractComponentIDs<arraySize, Second, Rest...>(componentIDs, index);
 		}
 		template <int arraySize, ValidComponent C>
-		void ExtractComponentIDs(std::array<int, arraySize>& componentIDs, int index)
+		void ExtractComponentIDs(std::array<int, arraySize>& componentIDs, int index = 0)
 		{
 			componentIDs[index] = C::UUID;
 		}

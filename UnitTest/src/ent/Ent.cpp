@@ -117,6 +117,8 @@ namespace tryn::ent
 
 			auto ent3 = Entity::CreateNew< TestComponent2, TestComponent3>("ent3");
 			auto ent4 = Entity::CreateNew<TestComponent1, TestComponent2>("ent4");
+
+			auto data = ArchetypeManager::Get().GetComponentGroup<TestComponent1, TestComponent2>();
 		}
 		TEST_METHOD(SystemTests)
 		{
