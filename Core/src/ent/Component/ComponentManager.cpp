@@ -21,7 +21,7 @@ namespace tryn::ent
 	EntityID Archetype::ResolveEntityUUID()
 	{
 		auto nextFree = booker.find_next(bookerPointer);
-		if (nextFree == booker.npos)
+		while (nextFree == booker.npos)
 		{
 			Grow();
 			nextFree = booker.find_next(bookerPointer);

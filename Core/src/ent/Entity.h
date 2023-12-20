@@ -10,7 +10,7 @@ namespace tryn::ent
 {
 	struct EntityID
 	{
-		std::uint16_t ID = 0;
+		std::uint32_t ID = 0;
 		std::uint16_t archetype = 0;
 	};
 
@@ -18,10 +18,10 @@ namespace tryn::ent
 	{
 	public:
 		virtual ~Entity();
-		Entity(std::string_view name);
+		Entity(std::optional<std::string_view> newName = std::nullopt);
 
 		template <ValidComponent... Cs>
-		static Entity CreateNew(std::string_view newName)
+		static Entity CreateNew(std::optional<std::string_view> newName = std::nullopt)
 		{
 			Entity ent(newName);
 			ent.pArchetype = ArchetypeManager::Get().GetArchetype<Cs...>();
@@ -31,6 +31,15 @@ namespace tryn::ent
 		std::span<int> GetComponents()
 		{
 			return std::span<int>(pArchetype->components.begin(), pArchetype->components.size());
+		}
+		void Instanciate(std::span<Entity> destination)
+		{
+			for (auto [instanceNum, ent] : std::ranges::views::enumerate(destination))
+			{
+				ent.name = name + "_" + std::to_string(instanceNum);
+				ent.pArchetype = pArchetype;
+				ent.UUID = pArchetype->ResolveEntityUUID();
+			}
 		}
 		void SpawnControlWindow();
 		void MarkForUpdate();

@@ -164,6 +164,7 @@ namespace tryn::ent
 			for (auto componentID : componentIDs)
 			{
 				archetype.components.push_back(componentID);
+				archetype.bufferPtrs.push_back(std::make_unique<std::vector<std::byte>>());
 			}
 			return archetype;
 		}
@@ -191,9 +192,9 @@ namespace tryn::ent
 		void Free(class EntityID);
 		void Grow()
 		{
-			Resize(booker.size() * 1.3f);
+			Resize(booker.size() * 3);
 		}
-		void Resize(std::uint16_t newSize)
+		void Resize(std::uint32_t newSize)
 		{
 			booker.resize(newSize, true);
 			for (auto [index, pBuffer]: std::ranges::views::enumerate(bufferPtrs) )
@@ -205,7 +206,7 @@ namespace tryn::ent
 		void InitializeUUID();
 		std::uint16_t UUID = 0;
 		std::vector<int> components;
-		std::uint16_t bookerPointer = -1;
+		std::uint32_t bookerPointer = 0;
 		sul::dynamic_bitset<> booker;
 		std::vector<std::unique_ptr<std::vector<std::byte>>> bufferPtrs;
 	};
