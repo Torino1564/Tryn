@@ -124,12 +124,8 @@ namespace tryn::ent
 			ECS::Get().allocator.Wipe();
 
 			std::vector<Entity> entityVec2;
-			entityVec2.resize(100000000);
+			entityVec2.resize(100000);
 			ent3.Instanciate({ entityVec2.begin(), entityVec2.size() });
-			
-
-			auto ent3 = Entity::CreateNew< TestComponent2, TestComponent3>("ent3");
-			auto ent4 = Entity::CreateNew<TestComponent1, TestComponent2>("ent4");
 
 			auto data = ArchetypeManager::Get().GetComponentGroup<TestComponent1, TestComponent2>();
 		}

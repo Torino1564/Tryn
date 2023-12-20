@@ -11,7 +11,7 @@ namespace tryn::mem
 	public:
 		ArenaAllocator(int numChunks = 16'000)
 		{
-			buffer.resize(numChunks);
+			buffer.resize(numChunks, (ChunkSize)0);
 		}
 		void* Allocate(std::uint32_t numBytes)
 		{

@@ -113,21 +113,21 @@ namespace tryn::ent
 
 	public:
 		template <ValidComponent... Cs>
-		void FillComponentPointerTuple(HeterogeneusComponentDataPointerContainer<Cs...>& container)
+		void FillComponentPointerTuple(std::tuple<std::span<typename Cs::SubresourceData>...>& container)
 		{
-			//FillComponentPointerTupleImpl<Cs...>(container);
+			FillComponentPointerTupleImpl<0,Cs...>(container);
 		}
 
 		template <int N, typename... Cs> using NthTypeOf = 
 			typename std::tuple_element<N, std::tuple<Cs...>>::type;
 
-		template <ValidComponent... Cs, int N = 0>
-		void FillComponentPointerTupleImpl(HeterogeneusComponentDataPointerContainer<Cs...>& container)
+		template <int N = 0, ValidComponent... Cs>
+		void FillComponentPointerTupleImpl(std::tuple<std::span<typename Cs::SubresourceData>...>& container)
 		{
 			std::get<N>(container) = GetComponentData<NthTypeOf<N, Cs...>>();
 			if constexpr (N < sizeof...(Cs) - 1)
 			{
-				FillComponentPointerTupleImpl<Cs..., N + 1>(container);
+				FillComponentPointerTupleImpl<N + 1, Cs...>(container);
 			}
 		}
 
@@ -139,8 +139,8 @@ namespace tryn::ent
 				if (componentUUID == C::UUID)
 				{
 					return std::span<typename C::SubresourceData>(
-						static_cast<typename std::vector<typename C::SubresouceData>::iterator>(bufferPtrs[index]->begin()),
-						bufferPtrs[index]->size() / sizeof(C::SubresourceData));
+						reinterpret_cast<typename C::SubresourceData*>(bufferPtrs[index]->data()),
+						bufferPtrs[index]->size() / sizeof(typename C::SubresourceData));
 				}
 			}
 			return {};
@@ -218,17 +218,19 @@ namespace tryn::ent
 
 	public:
 		template <ValidComponent... Cs>
-		std::span<HeterogeneusComponentDataPointerContainer<Cs...>> GetComponentGroup()
+		std::span<std::tuple<std::span<typename Cs::SubresourceData>...>> GetComponentGroup()
 		{
 			auto archetypeQuery = QueryArchetype<Cs...>();
-			mem::NativeArray<HeterogeneusComponentDataPointerContainer<Cs...>> heterogeneusComponentPointerArray(archetypeQuery.size(), ECS::Get().allocator);
+			mem::NativeArray<std::tuple<std::span<typename Cs::SubresourceData>...>> heterogeneusComponentPointerArray(archetypeQuery.size(), ECS::Get().allocator);
+
+			std::tuple<std::span<typename Cs::SubresourceData>...> test;
 
 			for (auto [i, pArchetype] : std::ranges::views::enumerate(archetypeQuery))
 			{
-				pArchetype->FillComponentPointerTuple(heterogeneusComponentPointerArray[i]);
+				pArchetype->FillComponentPointerTuple<Cs...>(heterogeneusComponentPointerArray[i]);
 			}
 			
-			return std::span<HeterogeneusComponentDataPointerContainer<Cs...>>(heterogeneusComponentPointerArray);
+			return std::span<std::tuple<std::span<typename Cs::SubresourceData>...>>(heterogeneusComponentPointerArray);
 		}
 
 		std::span<Archetype*> QueryArchetype(std::span<ComponentIndex> componentIDs)
