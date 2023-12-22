@@ -207,6 +207,7 @@
     <ClInclude Include="src\utl\Macro.h" />
     <ClInclude Include="src\utl\NoReturn.h" />
     <ClInclude Include="src\utl\Probe.h" />
+    <ClInclude Include="src\utl\Span.h" />
     <ClInclude Include="src\utl\StackTrace.h" />
     <ClInclude Include="src\utl\String.h" />
     <ClInclude Include="src\utl\Timer.h" />

@@ -41,7 +41,8 @@ namespace tryn::mem
 				buffer.resize(buffer.size() * 1.3f);
 				overflow = false;
 			}
-			buffer.clear();
+			std::memset(buffer.data(), 0, buffer.size());
+			usedChunks = 0;
 		}
 		void Resize(std::size_t newSize)
 		{

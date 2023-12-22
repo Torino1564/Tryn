@@ -8,7 +8,12 @@ namespace tryn::mem
 	{
 	public:
 		template<typename Al>
-		NativeArray(std::uint32_t numElements, Al& alloc) : length(numElements), buffer((T*)alloc.Allocate(numElements * sizeof(T))) {}
+		NativeArray(std::uint32_t numElements, Al& alloc)
+			:
+			length(numElements), buffer((T*)alloc.Allocate(numElements * sizeof(T)))
+		{
+
+		}
 		
 		T& operator[](std::uint32_t index)
 		{
