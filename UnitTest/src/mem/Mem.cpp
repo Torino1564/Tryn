@@ -17,11 +17,16 @@ namespace Mem
 		}
 		TEST_METHOD(Arena)
 		{
-			auto ptr1 = allocator.Allocate(40);
-			auto ptr2 = allocator.Allocate(240);
-			auto ptr3 = allocator.Allocate(430);
-			auto ptr4 = allocator.Allocate(440);
-			auto ptr5 = allocator.Allocate(140);
+			auto ptr1 = allocator.MakeNew<int>();
+			*ptr1 = 1;
+			auto ptr2 = allocator.MakeNew<int>();
+			*ptr2 = 2;
+			auto ptr3 = allocator.MakeNew<int>();
+			*ptr3 = 3;
+			auto ptr4 = allocator.MakeNew<int>();
+			*ptr4 = 4;
+			auto ptr5 = allocator.MakeNew<int>();
+			*ptr5 = 5;
 
 			auto pArray = allocator.MakeNew<std::array<int, 100>>();
 		}

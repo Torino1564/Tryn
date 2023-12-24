@@ -105,7 +105,7 @@ namespace tryn::ent
 	};
 	
 	template <ValidComponent... Cs>
-	using HeterogeneusComponentDataPointerContainer = typename std::tuple<utl::Span<typename Cs::SubresourceData>...>;
+	using HeterogeneusComponentDataPointerContainer = typename std::tuple<std::span<typename Cs::SubresourceData>...>;
 
 	class Archetype
 	{
@@ -114,7 +114,7 @@ namespace tryn::ent
 
 	public:
 		template <ValidComponent... Cs>
-		void FillComponentPointerTuple(std::tuple<utl::Span<typename Cs::SubresourceData>...>& container)
+		void FillComponentPointerTuple(std::tuple<std::span<typename Cs::SubresourceData>...>& container)
 		{
 			FillComponentPointerTupleImpl<0,Cs...>(container);
 		}
@@ -123,7 +123,7 @@ namespace tryn::ent
 			typename std::tuple_element<N, std::tuple<Cs...>>::type;
 
 		template <int N = 0, ValidComponent... Cs>
-		void FillComponentPointerTupleImpl(std::tuple<utl::Span<typename Cs::SubresourceData>...>& container)
+		void FillComponentPointerTupleImpl(std::tuple<std::span<typename Cs::SubresourceData>...>& container)
 		{
 			std::get<N>(container) = GetComponentData<NthTypeOf<N, Cs...>>();
 			if constexpr (N < sizeof...(Cs) - 1)
@@ -133,13 +133,13 @@ namespace tryn::ent
 		}
 
 		template <ValidComponent C>
-		utl::Span<typename C::SubresourceData> GetComponentData()
+		std::span<typename C::SubresourceData> GetComponentData()
 		{
 			for (auto [index, componentUUID] : std::ranges::views::enumerate(components))
 			{
 				if (componentUUID == C::UUID)
 				{
-					return utl::Span<typename C::SubresourceData>(
+					return std::span<typename C::SubresourceData>(
 						reinterpret_cast<typename C::SubresourceData*>(bufferPtrs[index]->data()),
 						bufferPtrs[index]->size() / sizeof(typename C::SubresourceData));
 				}
@@ -152,21 +152,21 @@ namespace tryn::ent
 		{
 			Archetype archetype;
 			archetype.InitializeUUID();
-			archetype.Resize(100);
 			archetype.AppendComponents<Cs...>();
+			archetype.Resize(100);
 			return archetype;
 		}
-		static Archetype Make(utl::Span<int> componentIDs)
+		static Archetype Make(std::span<int> componentIDs)
 		{
 			Archetype archetype;
 			archetype.InitializeUUID();
-			archetype.Resize(100);
-			archetype.components.reserve(componentIDs.Size());
-			for (auto i = 0 ; i < componentIDs.Size() ; i++)
+			archetype.components.reserve(componentIDs.size());
+			for (auto i = 0 ; i < componentIDs.size() ; i++)
 			{
 				archetype.components.push_back(componentIDs[i]);
 				archetype.bufferPtrs.push_back(std::make_unique<std::vector<std::byte>>());
 			}
+			archetype.Resize(100);
 			return archetype;
 		}
 		template <ValidComponent First, ValidComponent Second, ValidComponent... Rest>
@@ -193,7 +193,7 @@ namespace tryn::ent
 		void Free(class EntityID);
 		void Grow()
 		{
-			Resize(booker.size() * 3);
+			Resize(booker.size() * 1.5);
 		}
 		void Resize(std::uint32_t newSize)
 		{
@@ -219,22 +219,22 @@ namespace tryn::ent
 
 	public:
 		template <ValidComponent... Cs>
-		utl::Span<std::tuple<utl::Span<typename Cs::SubresourceData>...>> GetComponentGroup()
+		std::span<std::tuple<std::span<typename Cs::SubresourceData>...>> GetComponentGroup()
 		{
 			auto archetypeQuery = QueryArchetype<Cs...>();
-			mem::NativeArray<std::tuple<utl::Span<typename Cs::SubresourceData>...>> heterogeneusComponentPointerArray(archetypeQuery.Size(), ECS::Get().allocator);
+			mem::NativeArray<std::tuple<std::span<typename Cs::SubresourceData>...>> heterogeneusComponentPointerArray(archetypeQuery.size(), ECS::Get().allocator);
 			
-			std::array<std::tuple<utl::Span<typename Cs::SubresourceData>...>, 100> testArr = {};
+			std::array<std::tuple<std::span<typename Cs::SubresourceData>...>, 100> testArr = {};
 
-			for (auto i = 0 ; i < archetypeQuery.Size() ; i++)
+			for (auto i = 0 ; i < archetypeQuery.size() ; i++)
 			{
 				archetypeQuery[i]->FillComponentPointerTuple<Cs...>(testArr[i]);
 			}
 			
-			return utl::Span<std::tuple<utl::Span<typename Cs::SubresourceData>...>>(testArr.data(), archetypeQuery.Size());
+			return std::span<std::tuple<std::span<typename Cs::SubresourceData>...>>(testArr.begin(), archetypeQuery.size());
 		}
 
-		utl::Span<Archetype*> QueryArchetype(utl::Span<ComponentIndex> componentIDs)
+		std::span<Archetype*> QueryArchetype(std::span<ComponentIndex> componentIDs)
 		{
 			static std::vector<std::pair<Archetype*, int> > archetypeMap;
 			static bool initialized = false;
@@ -246,9 +246,10 @@ namespace tryn::ent
 
 			std::fill(archetypeMap.begin(), archetypeMap.end(), std::pair<Archetype*, int>{nullptr, 0});
 
-			auto result = *ECS::Get().allocator.MakeNew<std::array<Archetype*, 100>>();
+			auto pResult = ECS::Get().allocator.MakeNew<std::array<Archetype*, 100>>();
+			auto& result = *pResult;
 
-			for (int i = 0 ; i < componentIDs.Size() ; i++)
+			for (int i = 0 ; i < componentIDs.size() ; i++)
 			{
 				if (componentIDs[i] < archetypeTable.size())
 				{
@@ -264,33 +265,33 @@ namespace tryn::ent
 			int resultCounter = 0;
 			for (auto& [pType, counter] : archetypeMap)
 			{
-				if (counter == componentIDs.Size())
+				if (counter == componentIDs.size())
 				{
 					result[resultCounter++] = pType;
 				}
 			}
 
-			return utl::Span<Archetype*>(result.data(), resultCounter);
+			return std::span<Archetype*>(result.begin(), resultCounter);
 		}
 
 		template <ValidComponent... Cs>
-		utl::Span<Archetype*> QueryArchetype()
+		std::span<Archetype*> QueryArchetype()
 		{
 			auto pComponentIDs = ECS::Get().allocator.MakeNew<std::array<int, sizeof...(Cs)>>();
 			auto& componentIDs = *pComponentIDs;
 			ExtractComponentIDs<sizeof...(Cs), Cs...>(componentIDs);
 
-			return QueryArchetype(utl::Span<int>(componentIDs.data(), componentIDs.size()));
+			return QueryArchetype(std::span<int>(componentIDs.begin(), componentIDs.size()));
 		}
 
-		Archetype* GetArchetype(utl::Span<ComponentIndex> components)
+		Archetype* GetArchetype(std::span<ComponentIndex> components)
 		{
 			auto queriedArchetypes = QueryArchetype(components);
 
-			for (auto i = 0 ; i < queriedArchetypes.Size() ; i++)
+			for (auto i = 0 ; i < queriedArchetypes.size() ; i++)
 			{
 				auto pArchetype = queriedArchetypes[i];
-				if (pArchetype != nullptr && pArchetype->ComponentCount() == components.Size())
+				if (pArchetype != nullptr && pArchetype->ComponentCount() == components.size())
 				{
 					return pArchetype;
 				}
@@ -307,7 +308,7 @@ namespace tryn::ent
 			auto& componentIDs = *pComponentIDs;
 			ExtractComponentIDs<sizeof...(Cs), Cs...>(componentIDs);
 
-			return GetArchetype(utl::Span<int>(componentIDs.data(), componentIDs.size()));
+			return GetArchetype(std::span<int>(componentIDs.begin(), componentIDs.size()));
 		}
 
 		static ArchetypeManager& Get()
@@ -327,7 +328,7 @@ namespace tryn::ent
 			}
 			return &newlyAddedArchetype;
 		}
-		Archetype* AddArchetype(utl::Span<int> componentIDs)
+		Archetype* AddArchetype(std::span<int> componentIDs)
 		{
 			archetypeBuffer[archetypeCounter] = Archetype::Make(componentIDs);
 			auto& newlyAddedArchetype = archetypeBuffer[archetypeCounter];
