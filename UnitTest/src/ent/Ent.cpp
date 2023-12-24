@@ -120,6 +120,9 @@ namespace tryn::ent
 
 			auto ent3 = Entity::CreateNew<TestComponent2, TestComponent3>();
 			auto ent4 = Entity::CreateNew<TestComponent1, TestComponent2>();
+			auto ent9 = Entity::CreateNew<TestComponent1, TestComponent2>();
+			auto ent10 = Entity::CreateNew<TestComponent1, TestComponent2>();
+			auto ent11 = Entity::CreateNew<TestComponent1, TestComponent2>();
 
 			ECS::Get().allocator.Wipe();
 
@@ -127,7 +130,7 @@ namespace tryn::ent
 			entityVec2.resize(100000);
 			ent3.Instanciate({ entityVec2.begin(), entityVec2.size() });
 
-			auto data = ArchetypeManager::Get().GetComponentGroup<TestComponent1, TestComponent2>();
+			auto data = ArchetypeManager::Get().GetComponentGroups<ReadOnly<TestComponent2>, WriteOnly<TestComponent1>, ReadOnly<TestComponent3>>();
 		}
 		TEST_METHOD(SystemTests)
 		{

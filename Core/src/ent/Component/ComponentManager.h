@@ -41,6 +41,49 @@ namespace tryn::ent
 	template <typename T>
 	concept ValidComponent = ImplementsSRD<T> && ImplementsUUID<T>;
 
+	enum class AccessMode
+	{
+		ReadWrite,
+		ReadOnly,
+		WriteOnly,
+		Discard
+	};
+
+	template <typename T>
+	concept ValidComponentWithAccessMode =  ValidComponent<typename T::ComponentType> and requires
+	{
+		{T::accessMode} -> std::convertible_to<AccessMode>;
+	};
+
+
+	template <ValidComponent C>
+	struct ReadOnly
+	{
+		using ComponentType = C;
+		static constexpr auto accessMode = AccessMode::ReadOnly;
+	};
+
+	template <ValidComponent C>
+	struct ReadWrite
+	{
+		using ComponentType = C;
+		static constexpr auto accessMode = AccessMode::ReadWrite;
+	};
+
+	template <ValidComponent C>
+	struct WriteOnly
+	{
+		using ComponentType = C;
+		static constexpr auto accessMode = AccessMode::WriteOnly;
+	};
+
+	template <ValidComponent C>
+	struct Discard
+	{
+		using ComponentType = C;
+		static constexpr auto accessMode = AccessMode::Discard;
+	};
+
 	class ComponentManager;
 	class ArchetypeManager;
 
@@ -96,6 +139,8 @@ namespace tryn::ent
 	public:
 		ZT_COMPONENT_FIELDS();
 	public:
+		using ComponentType = T;
+		static constexpr auto accessMode = AccessMode::ReadWrite;
 		const static inline int UUID = ComponentManager::Get().RegisterComponent<T>();
 	};
 
@@ -140,8 +185,7 @@ namespace tryn::ent
 				if (componentUUID == C::UUID)
 				{
 					return std::span<typename C::SubresourceData>(
-						reinterpret_cast<typename C::SubresourceData*>(bufferPtrs[index]->data()),
-						bufferPtrs[index]->size() / sizeof(typename C::SubresourceData));
+						reinterpret_cast<typename C::SubresourceData*>(bufferPtrs[index]->data()), upperLimit);
 				}
 			}
 			return {};
@@ -185,9 +229,13 @@ namespace tryn::ent
 		{
 			return this->UUID;
 		}
-		const int ComponentCount() const
+		const auto ComponentCount() const
 		{
-			return (int)(components.size());
+			return components.size();
+		}
+		const auto ComponentArraySize() const
+		{
+			return upperLimit;
 		}
 		class EntityID ResolveEntityUUID();
 		void Free(class EntityID);
@@ -208,6 +256,7 @@ namespace tryn::ent
 		std::uint16_t UUID = 0;
 		std::vector<int> components;
 		std::uint32_t bookerPointer = 0;
+		std::uint32_t upperLimit = 0;
 		sul::dynamic_bitset<> booker;
 		std::vector<std::unique_ptr<std::vector<std::byte>>> bufferPtrs;
 	};
@@ -218,20 +267,18 @@ namespace tryn::ent
 		friend class Archetype;
 
 	public:
-		template <ValidComponent... Cs>
-		std::span<std::tuple<std::span<typename Cs::SubresourceData>...>> GetComponentGroup()
+		template <ValidComponentWithAccessMode... Cs>
+		std::span<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> GetComponentGroups()
 		{
-			auto archetypeQuery = QueryArchetype<Cs...>();
-			mem::NativeArray<std::tuple<std::span<typename Cs::SubresourceData>...>> heterogeneusComponentPointerArray(archetypeQuery.size(), ECS::Get().allocator);
-			
-			std::array<std::tuple<std::span<typename Cs::SubresourceData>...>, 100> testArr = {};
+			auto archetypeQuery = QueryArchetype<typename Cs::ComponentType...>();
+			mem::NativeArray<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> heterogeneusComponentSpanArray(archetypeQuery.size(), ECS::Get().allocator);
 
 			for (auto i = 0 ; i < archetypeQuery.size() ; i++)
 			{
-				archetypeQuery[i]->FillComponentPointerTuple<Cs...>(testArr[i]);
+				archetypeQuery[i]->FillComponentPointerTuple<typename Cs::ComponentType...>(heterogeneusComponentSpanArray[i]);
 			}
 			
-			return std::span<std::tuple<std::span<typename Cs::SubresourceData>...>>(testArr.begin(), archetypeQuery.size());
+			return std::span<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>>(heterogeneusComponentSpanArray.begin(), heterogeneusComponentSpanArray.size());
 		}
 
 		std::span<Archetype*> QueryArchetype(std::span<ComponentIndex> componentIDs)

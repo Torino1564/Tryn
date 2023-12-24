@@ -28,6 +28,7 @@ namespace tryn::ent
 		}
 		booker.flip(nextFree);
 		bookerPointer = nextFree;
+		upperLimit = nextFree;
 
 		return {bookerPointer, UUID};
 	}
