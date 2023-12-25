@@ -1,5 +1,7 @@
 #pragma once
 #include <stdint.h>
+#include <vector>
+#include <Core/src/utl/Assert.h>
 
 namespace tryn::utl
 {
@@ -40,5 +42,45 @@ namespace tryn::utl
 	private:
 		T* buffer = nullptr;
 		size_t size = 0;
+	};
+
+	template <typename T>
+	class MultiSpan
+	{
+	public:
+		auto Size() const noexcept
+		{
+			return numElements;
+		}
+		void PushBack(std::span<T> newElement)
+		{
+			buffer.push_back(newElement);
+			numElements += newElement.size();
+		}
+		void Clear()
+		{
+			buffer.clear();
+			numElements = 0;
+		}
+		T& operator[](std::uint32_t index)
+		{
+			std::size_t accumulatedSize = 0;
+			for (auto& element : buffer)
+			{
+				auto newIndex = index - accumulatedSize;
+				if ( newIndex < element.size())
+				{
+					return element[newIndex];
+				}
+				else
+				{
+					accumulatedSize += element.size();
+				}
+			}
+			trynchk_fail();
+		}
+	private:
+		std::vector<std::span<T>> buffer;
+		std::size_t numElements = 0;
 	};
 }

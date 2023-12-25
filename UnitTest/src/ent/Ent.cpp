@@ -58,7 +58,7 @@ namespace tryn::ent
 		{
 			trylog.info(L"System1 says Execute!");
 		}
-		ZT_SYSTEM_UUID;
+		ZT_SYSTEM_UID;
 	};
 
 	ZT_DEFINE_SYSTEM(System2)
@@ -71,7 +71,7 @@ namespace tryn::ent
 		{
 			trylog.info(L"System2 says Execute!");
 		}
-		ZT_SYSTEM_UUID;
+		ZT_SYSTEM_UID;
 	};
 
 	ZT_DEFINE_SYSTEM(System3)
@@ -84,7 +84,7 @@ namespace tryn::ent
 		{
 			trylog.info(L"System3 says Execute!");
 		}
-		ZT_SYSTEM_UUID;
+		ZT_SYSTEM_UID;
 	};
 
 	TEST_CLASS(EntitySystem)
