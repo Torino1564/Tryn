@@ -69,7 +69,8 @@
 //   1.23 (2020-02-02) query SVG data for glyphs; query whole kerning table (but only kern not GPOS)
 //   1.22 (2019-08-11) minimize missing-glyph duplication; fix kerning if both 'GPOS' and 'kern' are defined
 //   1.21 (2019-02-25) fix warning
-//   1.20 (2019-02-07) PackFontRange skips missing codepoints; GetScaleFontVMetrics()
+//   1.20 (2019-02-07) PackFontRange skips missing codepoints; Get
+// FontVMetrics()
 //   1.19 (2018-02-11) GPOS kerning, STBTT_fmod
 //   1.18 (2018-01-29) add missing function
 //   1.17 (2017-07-23) make more arguments const; doc fix

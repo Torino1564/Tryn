@@ -867,7 +867,10 @@ void ImGui_ImplWin32_EnableDpiAwareness()
 #pragma comment(lib, "gdi32")   // Link with gdi32.lib for GetDeviceCaps(). MinGW will require linking with '-lgdi32'
 #endif
 
-float ImGui_ImplWin32_GetDpiScaleForMonitor(void* monitor)
+float ImGui_ImplWin32_GetDpi
+
+
+ForMonitor(void* monitor)
 {
 	UINT xdpi = 96, ydpi = 96;
 	if (_IsWindows8Point1OrGreater())

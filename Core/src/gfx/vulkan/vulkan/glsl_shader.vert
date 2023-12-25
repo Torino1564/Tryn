@@ -4,7 +4,11 @@ layout(location = 1) in vec2 aUV;
 layout(location = 2) in vec4 aColor;
 
 layout(push_constant) uniform uPushConstant {
-    vec2 uScale;
+    vec2 u
+    
+    
+    
+    ;
     vec2 uTranslate;
 } pc;
 

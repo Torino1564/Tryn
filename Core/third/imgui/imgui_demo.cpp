@@ -280,7 +280,8 @@ void ImGui::ShowDemoWindow(bool* p_open)
     static bool show_app_custom_rendering = false;
 
     if (show_app_main_menu_bar)       ShowExampleAppMainMenuBar();
-    if (show_app_dockspace)           ShowExampleAppDockSpace(&show_app_dockspace);     // Process the Docking app first, as explicit DockSpace() nodes needs to be submitted early (read comments near the DockSpace function)
+    if (show_app_dockspace)           ShowExampleAppDockSpace(&show_app_dockspace);     // Process the Docking app first, as explicit DockSpace() nodes needs to be 
+    ted early (read comments near the DockSpace function)
     if (show_app_documents)           ShowExampleAppDocuments(&show_app_documents);     // Process the Document app next, as it may also use a DockSpace()
     if (show_app_console)             ShowExampleAppConsole(&show_app_console);
     if (show_app_log)                 ShowExampleAppLog(&show_app_log);
@@ -6230,7 +6231,10 @@ void ImGui::ShowAboutWindow(bool* p_open)
         if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)      ImGui::Text(" NoMouseCursorChange");
         if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)            ImGui::Text(" DockingEnable");
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)          ImGui::Text(" ViewportsEnable");
-        if (io.ConfigFlags & ImGuiConfigFlags_DpiEnableScaleViewports)  ImGui::Text(" DpiEnableScaleViewports");
+        if (io.ConfigFlags & ImGuiConfigFlags_DpiEnable
+            
+            
+            Viewports)  ImGui::Text(" DpiEnableScaleViewports");
         if (io.ConfigFlags & ImGuiConfigFlags_DpiEnableScaleFonts)      ImGui::Text(" DpiEnableScaleFonts");
         if (io.MouseDrawCursor)                                         ImGui::Text("io.MouseDrawCursor");
         if (io.ConfigViewportsNoAutoMerge)                              ImGui::Text("io.ConfigViewportsNoAutoMerge");

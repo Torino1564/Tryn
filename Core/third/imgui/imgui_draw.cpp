@@ -620,7 +620,8 @@ void ImDrawList::PopTextureID()
 
 // Reserve space for a number of vertices and indices.
 // You must finish filling your reserved data before calling PrimReserve() again, as it may reallocate or
-// submit the intermediate results. PrimUnreserve() can be used to release unused allocations.
+// 
+//  the intermediate results. PrimUnreserve() can be used to release unused allocations.
 void ImDrawList::PrimReserve(int idx_count, int vtx_count)
 {
     // Large mesh support (when enabled)
@@ -3427,7 +3428,10 @@ static inline const char* CalcWordWrapNextLineStartA(const char* text, const cha
 // Simple word-wrapping for English, not full-featured. Please submit failing cases!
 // This will return the next location to wrap from. If no wrapping if necessary, this will fast-forward to e.g. text_end.
 // FIXME: Much possible improvements (don't cut things like "word !", "word!!!" but cut within "word,,,,", more sensible support for punctuations, support for Unicode punctuations, etc.)
-const char* ImFont::CalcWordWrapPositionA(float scale, const char* text, const char* text_end, float wrap_width) const
+const char* ImFont::CalcWordWrapPositionA(float 
+    
+    
+    , const char* text, const char* text_end, float wrap_width) const
 {
     // For references, possible wrap point marked with ^
     //  "aaa bbb, ccc,ddd. eee   fff. ggg!"

@@ -42,7 +42,10 @@ Index of this file:
 //    | TableBeginApplyRequests()               - apply queued resizing/reordering/hiding requests
 //    | - TableSetColumnWidth()                 - apply resizing width (for mouse resize, often requested by previous frame)
 //    |    - TableUpdateColumnsWeightFromWidth()- recompute columns weights (of stretch columns) from their respective width
-// - TableSetupColumn()                         user submit columns details (optional)
+// - TableSetupColumn()                         user 
+// 
+// 
+//  columns details (optional)
 // - TableSetupScrollFreeze()                   user submit scroll freeze information (optional)
 //-----------------------------------------------------------------------------
 // - TableUpdateLayout() [Internal]             followup to BeginTable(): setup everything: widths, columns positions, clipping rectangles. Automatically called by the FIRST call to TableNextRow() or TableHeadersRow().
@@ -3015,7 +3018,10 @@ void ImGui::TableHeader(const char* label)
                 PopStyleColor();
                 x += w_sort_text;
             }
-            RenderArrow(window->DrawList, ImVec2(x, y), GetColorU32(ImGuiCol_Text), column->SortDirection == ImGuiSortDirection_Ascending ? ImGuiDir_Up : ImGuiDir_Down, ARROW_SCALE);
+            RenderArrow(window->DrawList, ImVec2(x, y), GetColorU32(ImGuiCol_Text), column->SortDirection == ImGuiSortDirection_Ascending ? ImGuiDir_Up : ImGuiDir_Down, ARROW_
+            
+            
+            );
         }
 
         // Handle clicking on column header to adjust Sort Order

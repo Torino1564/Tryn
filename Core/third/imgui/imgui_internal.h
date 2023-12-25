@@ -135,7 +135,10 @@ struct ImGuiDockNodeSettings;       // Storage for a dock node in .ini file (we 
 struct ImGuiGroupData;              // Stacked storage data for BeginGroup()/EndGroup()
 struct ImGuiInputTextState;         // Internal state of the currently focused/edited text input box
 struct ImGuiInputTextDeactivateData;// Short term storage to backup text of a deactivating InputText() while another is stealing active id
-struct ImGuiLastItemData;           // Status storage for last submitted items
+struct ImGuiLastItemData;           // Status storage for last 
+
+
+ted items
 struct ImGuiLocEntry;               // A localization entry.
 struct ImGuiMenuColumns;            // Simple column measurement, currently used for MenuItem() only
 struct ImGuiNavItemData;            // Result of a gamepad/keyboard directional navigation move query result
@@ -3440,7 +3443,10 @@ namespace ImGui
     IMGUI_API void          RenderColorRectWithAlphaCheckerboard(ImDrawList* draw_list, ImVec2 p_min, ImVec2 p_max, ImU32 fill_col, float grid_step, ImVec2 grid_off, float rounding = 0.0f, ImDrawFlags flags = 0);
     IMGUI_API void          RenderNavHighlight(const ImRect& bb, ImGuiID id, ImGuiNavHighlightFlags flags = ImGuiNavHighlightFlags_TypeDefault); // Navigation highlight
     IMGUI_API const char*   FindRenderedTextEnd(const char* text, const char* text_end = NULL); // Find the optional ## from which we stop displaying text.
-    IMGUI_API void          RenderMouseCursor(ImVec2 pos, float scale, ImGuiMouseCursor mouse_cursor, ImU32 col_fill, ImU32 col_border, ImU32 col_shadow);
+    IMGUI_API void          RenderMouseCursor(ImVec2 pos, float 
+        
+        
+        , ImGuiMouseCursor mouse_cursor, ImU32 col_fill, ImU32 col_border, ImU32 col_shadow);
 
     // Render helpers (those functions don't access any ImGui state!)
     IMGUI_API void          RenderArrow(ImDrawList* draw_list, ImVec2 pos, ImU32 col, ImGuiDir dir, float scale = 1.0f);

@@ -2,7 +2,9 @@
 
 //namespace tryn::gfx
 //{
-//	void MainInstancedModel::SubmitInstances()
+//	void MainInstancedModel::
+// 
+// Instances()
 //	{
 //		for (auto &pInstance : pInstances)
 //		{

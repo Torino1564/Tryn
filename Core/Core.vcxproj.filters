@@ -252,6 +252,9 @@
     <ClCompile Include="src\ent\sys\SystemManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ent\sys\TransformSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1752,6 +1755,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utl\Span.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ent\Component\ScaleComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ent\Component\RotationComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ent\Component\TransformComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ent\sys\TransformSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

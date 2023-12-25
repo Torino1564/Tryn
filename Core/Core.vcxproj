@@ -18,6 +18,7 @@
     <ClCompile Include="src\ent\Component\ComponentManager.cpp" />
     <ClCompile Include="src\ent\sys\RenderSystem.cpp" />
     <ClCompile Include="src\ent\sys\SystemManager.cpp" />
+    <ClCompile Include="src\ent\sys\TransformSystem.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
@@ -108,8 +109,12 @@
     <ClInclude Include="src\ent\Component\ComponentPack.h" />
     <ClInclude Include="src\ent\Component\ModelComponent.h" />
     <ClInclude Include="src\ent\Component\PositionComponent.h" />
+    <ClInclude Include="src\ent\Component\RotationComponent.h" />
+    <ClInclude Include="src\ent\Component\ScaleComponent.h" />
+    <ClInclude Include="src\ent\Component\TransformComponent.h" />
     <ClInclude Include="src\ent\sys\RenderSystem.h" />
     <ClInclude Include="src\ent\sys\SystemManager.h" />
+    <ClInclude Include="src\ent\sys\TransformSystem.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />

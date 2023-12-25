@@ -9,6 +9,8 @@ namespace tryn::ent::sys
 
 		auto data = ECS::Get().archetypeManager.GetComponentGroups<
 			ReadOnly<cmp::PositionComponent>,
+			ReadOnly<cmp::ScaleComponent>,
+			ReadOnly<cmp::RotationComponent>,
 			WriteOnly<cmp::ModelComponent>>();
 
 		position.Clear();
@@ -18,7 +20,15 @@ namespace tryn::ent::sys
 		{
 			position.PushBack(std::get<std::span<cmp::PositionComponent::SubresourceData>>(queriedData));
 			model.PushBack(std::get<std::span<cmp::ModelComponent::SubresourceData>>(queriedData));
+			
+			
+			
+			.PushBack((std::get<std::span<cmp::ScaleComponent::SubresourceData>>(queriedData));
+			rotation.PushBack((std::get<std::span<cmp::RotationComponent::SubresourceData>>(queriedData));
 		}
+
+		// Kernel
+
 
 
 	}
