@@ -32,6 +32,7 @@ namespace tryn::win
 		bool IsCursorEnabled() const;
 		void EnableCursor();
 		void DisableCursor();
+		virtual void NewFrame() = 0;
 	public:
 		Keyboard keyboard;
 		Mouse mouse;

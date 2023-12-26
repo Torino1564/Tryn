@@ -114,7 +114,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	{
 		entity.GetComponent<ent::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/gobber/GoblinX.obj");
 		entity.GetComponent<ent::cmp::ActiveComponent>().active = true;
-		entity.GetComponent<ent::cmp::ScaleComponent>().scale = { .2f,.2f,.2f };
+		entity.GetComponent<ent::cmp::ScaleComponent>().scale = { .02f,.02f,.02f };
 	}
 
 	for (int i = 0; i < entityCount1D; i++)
@@ -143,7 +143,7 @@ void TestApp::DoFrame()
 
 	{
 		PROFILE_SCOPE("Update Rotation");
-		//pPointLight->ShowControls();
+		pPointLight->ShowControls();
 		for (auto& entity : entities)
 		{
 			//entity.SpawnControlWindow();
@@ -212,7 +212,7 @@ void TestApp::DoFrame()
 			}
 		}
 
-		//camera.ShowControls();
+		camera.ShowControls();
 
 		// Toggle 1st Person Camera
 		if (const auto event = wnd->keyboard.ReadKey(); event.IsTypePress() && event.GetCode() == VK_ESCAPE)

@@ -43,12 +43,10 @@ namespace tryn::ent::sys
 				const auto& rotation = rotationArray[i];
 				const auto& scale = scaleArray[i];
 
-				glm::mat4x4 transformMatrix = glm::identity<glm::mat4>();
-
-				transformMatrix = glm::scale(transformMatrix, scale.scale);
-				transformMatrix = glm::translate(transformMatrix, position.position);
+				const auto scalingMatrix = glm::scale(glm::identity<glm::mat4>(), scale.scale);
+				const auto translationMatrix = glm::translate(glm::identity<glm::mat4>(), position.position);
 				const auto rotationMatrix = glm::yawPitchRoll(rotation.yaw, rotation.pitch, rotation.roll);
-				transformArray[i].transform = transformMatrix * rotationMatrix;
+				transformArray[i].transform = translationMatrix * scalingMatrix * rotationMatrix;
 			}
 		}
 	}

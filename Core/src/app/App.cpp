@@ -1,6 +1,5 @@
 #include "App.h"
 #include <Core/src/ent/Entity.h>
-#include <imgui_impl_win32.h>
 #include <chrono>
 #include <Core/src/gfx/Profiler.h>
 
@@ -31,7 +30,7 @@ namespace tryn::app
 
 	void App::PreFrame()
 	{
-		ImGui_ImplWin32_NewFrame();
+		wnd->NewFrame();
 		gfx->BeginFrame();
 		ImGui::NewFrame();
 	}

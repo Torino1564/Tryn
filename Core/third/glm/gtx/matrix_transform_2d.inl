@@ -7,7 +7,8 @@ namespace glm
 {
 
 	template<typename T, qualifier Q>
-	GLM_FUNC_QUALIFIER mat<3, 3, T, Q> translate(
+	GLM_FUNC_QUALIFIER mat<3, 3, T, Q> 
+		(
 		mat<3, 3, T, Q> const& m,
 		vec<2, T, Q> const& v)
 	{

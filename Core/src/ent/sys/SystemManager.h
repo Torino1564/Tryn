@@ -121,10 +121,7 @@ namespace tryn::ent::sys
 			static SystemManager singleton;
 			return singleton;
 		}
-		void ExecuteSystems()
-		{
-			graph.Execute();
-		}
+		void ExecuteSystems();
 		template <ValidSystem S>
 		void RegisterSystem()
 		{

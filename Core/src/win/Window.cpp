@@ -308,6 +308,10 @@ namespace tryn::win
 			throw WindowException{ "Failed to post task notification message" };
 		}
 	}
+	void Window::NewFrame()
+	{
+		ImGui_ImplWin32_NewFrame();
+	}
 	void Window::HideCursor()
 	{
 		Dispatch_([=,this]

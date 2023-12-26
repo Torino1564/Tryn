@@ -3,6 +3,7 @@
 #include <Core/src/log/Log.h>
 #include <ranges>
 #include <Core/src/utl/String.h>
+#include <Core/src/ent/Component/ComponentManager.h>
 
 namespace tryn::ent::sys
 {
@@ -81,5 +82,11 @@ namespace tryn::ent::sys
 				pSystems[systemIndex]->Execute();
 			}
 		}
+	}
+
+	void SystemManager::ExecuteSystems()
+	{
+		ECS::Get().allocator.Wipe();
+		graph.Execute();
 	}
 }

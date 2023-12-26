@@ -1,6 +1,6 @@
-Package: vcpkg-cmake
-Version: 2023-05-04
+Package: imgui
+Feature: win32-binding
 Architecture: x64-windows
 Multi-Arch: same
-Abi: c9fc318314450d1d8a6bdcfee5883d97602cf700eaf435ab80f67111ed8e432b
-Status: install ok installed
+Description: Make available Win32 binding
+Status: purge ok half-installed

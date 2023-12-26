@@ -36,6 +36,7 @@ namespace tryn::win
 			return future;
 		}
 		void NotifyTaskDispatch_() const;
+		void NewFrame() override;
 		void HideCursor() override;
 		void ShowCursor() override;
 		void ConfineCursor() override;
