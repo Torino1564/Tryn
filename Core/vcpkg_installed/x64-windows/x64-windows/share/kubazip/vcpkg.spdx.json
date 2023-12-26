@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/kubazip-x64-windows-0.2.4-fab0c393-b909-42f0-85a8-3b744c31c66b",
-  "name": "kubazip:x64-windows@0.2.4 5bc1f4080f56fc2a1ad401befbdd492c989800892dd75bac7b3b30e3dcc2ecf5",
+  "documentNamespace": "https://spdx.org/spdxdocs/kubazip-x64-windows-0.2.4-a897f345-ecac-459b-8400-8f86bdd3ad22",
+  "name": "kubazip:x64-windows@0.2.4 40b9bbae4142242738dc8c195fefd3075c3b87d9b59c9f62dc91e6e4e54f5b69",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-814b7ec837b59f1c8778f72351c1dd7605983cd2"
+      "Tool: vcpkg-12e657924d99511514c0287ca5ce46882d3657c7"
     ],
-    "created": "2023-11-23T03:43:41Z"
+    "created": "2023-11-26T22:17:28Z"
   },
   "relationships": [
     {
@@ -74,7 +74,7 @@
     {
       "name": "kubazip:x64-windows",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "5bc1f4080f56fc2a1ad401befbdd492c989800892dd75bac7b3b30e3dcc2ecf5",
+      "versionInfo": "40b9bbae4142242738dc8c195fefd3075c3b87d9b59c9f62dc91e6e4e54f5b69",
       "downloadLocation": "NONE",
       "licenseConcluded": "Unlicense",
       "licenseDeclared": "NOASSERTION",

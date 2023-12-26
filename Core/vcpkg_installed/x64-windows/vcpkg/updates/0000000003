@@ -1,6 +1,8 @@
-Package: imgui
-Feature: docking-experimental
+Package: zlib
+Version: 1.3
+Depends: vcpkg-cmake
 Architecture: x64-windows
 Multi-Arch: same
-Description: Build with docking support
-Status: purge ok not-installed
+Abi: d714342788ba89b61084fde9ea5b1d1c3fcd38bbe002de9981e870a9552038f1
+Description: A compression library
+Status: install ok installed

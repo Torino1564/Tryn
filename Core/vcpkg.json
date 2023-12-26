@@ -12,7 +12,7 @@
         "dx11-binding",
         "dx12-binding"
       ],
-      "platform": "windows"
+      "platform": "(windows & x64)"
     }
   ]
 }
