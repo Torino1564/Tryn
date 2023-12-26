@@ -18,5 +18,5 @@ private:
 	std::vector<ent::Entity> entities;
 	gfx::Camera camera;
 
-	static constexpr const int entityCount1D = 1;
+	static constexpr const int entityCount1D = 3;
 };

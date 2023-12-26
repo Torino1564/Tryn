@@ -17,10 +17,6 @@ namespace tryn::ent
 	{
 
 	}
-	void Entity::MarkForUpdate()
-	{
-
-	}
 	/*
 	int IEntity::GenerateID()
 	{

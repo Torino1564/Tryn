@@ -1,5 +1,5 @@
 #include "IWindow.h"
-#include <Core/third/imgui/imgui.h>
+#include <imgui.h>
 #include <Core/src/log/Log.h>
 
 namespace tryn::win

@@ -24,7 +24,7 @@ namespace tryn::ent::sys
 	{
 	public:
 		template <ValidSystem S>
-		void RegisterSystem(S& system)
+		void RegisterSystem()
 		{
 			// assert not finalized
 			trynass_msg(!finalized, L"Cannot register new systems into a finalized system graph!");
@@ -40,7 +40,7 @@ namespace tryn::ent::sys
 				return;
 			}
 			// registers the system
-			pSystems[S::UID.id] = std::make_unique<S>(system);
+			pSystems[S::UID.id] = std::make_unique<S>();
 		}
 		void Finalize();
 		void Execute();
@@ -111,5 +111,31 @@ namespace tryn::ent::sys
 		{
 			T::Execute();
 		}
+	};
+
+	class SystemManager
+	{
+	public:
+		static SystemManager& Get()
+		{
+			static SystemManager singleton;
+			return singleton;
+		}
+		void ExecuteSystems()
+		{
+			graph.Execute();
+		}
+		template <ValidSystem S>
+		void RegisterSystem()
+		{
+			graph.RegisterSystem<S>();
+		}
+		void Finalize()
+		{
+			graph.Finalize();
+		}
+	private:
+		SystemManager() = default;
+		SystemGraph graph;
 	};
 }

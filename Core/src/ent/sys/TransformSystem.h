@@ -4,6 +4,7 @@
 #include <Core/src/ent/Component/ScaleComponent.h>
 #include <Core/src/ent/Component/RotationComponent.h>
 #include <Core/src/ent/Component/TransformComponent.h>
+#include <Core/src/ent/Component/ActiveComponent.h>
 
 namespace tryn::ent::sys
 {
@@ -14,9 +15,10 @@ namespace tryn::ent::sys
 		TransformSystem() = default;
 		static void Execute();
 	private:
-		static utl::MultiSpan<cmp::PositionComponent::SubresourceData> positionArray;
-		static utl::MultiSpan<cmp::ScaleComponent::SubresourceData> scaleArray;
-		static utl::MultiSpan<cmp::RotationComponent::SubresourceData> rotationArray;
-		static utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformArray;
+		static inline utl::MultiSpan<cmp::PositionComponent::SubresourceData> positionArray;
+		static inline utl::MultiSpan<cmp::ScaleComponent::SubresourceData> scaleArray;
+		static inline utl::MultiSpan<cmp::RotationComponent::SubresourceData> rotationArray;
+		static inline utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformArray;
+		static inline utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeArray;
 	};
 }

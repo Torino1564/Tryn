@@ -1,8 +1,8 @@
-Package: assimp
-Version: 5.2.5
-Depends: draco, kubazip, minizip, poly2tri, pugixml, rapidjson, stb, utfcpp, vcpkg-cmake, vcpkg-cmake-config, zlib
+Package: imgui
+Version: 1.89.7
+Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 0b82711251d48f6c1b74663fea581df461daecef7428877834b6a2ca4abbd1be
-Description: The Open Asset import library
-Status: install ok half-installed
+Abi: 1fba29c37ca4e01625b92e49ddc8b996aab1ad6ac98599439a0a292165ed1bf2
+Description: Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies.
+Status: purge ok not-installed

@@ -79,6 +79,8 @@ namespace tryn::ent
 	public:
 		System3()
 		{
+			AddDependency<System1>();
+			AddDependency<System2>();
 		}
 		static void Execute()
 		{
@@ -136,17 +138,9 @@ namespace tryn::ent
 		{
 			ent::sys::SystemGraph sysGraph;
 
-			System1 sys1;
-
-			System2 sys2;
-			
-			System3 sys3;
-			sys3.AddDependency<System1>();
-			sys3.AddDependency<System2>();
-
-			sysGraph.RegisterSystem(sys1);
-			sysGraph.RegisterSystem(sys2);
-			sysGraph.RegisterSystem(sys3);
+			sysGraph.RegisterSystem<System1>();
+			sysGraph.RegisterSystem<System2>();
+			sysGraph.RegisterSystem<System3>();
 
 			sysGraph.Finalize();
 			sysGraph.Execute();

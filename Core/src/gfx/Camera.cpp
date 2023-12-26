@@ -1,6 +1,6 @@
 #include "Camera.h"
 #include <Core/third/glm/gtx/matrix_decompose.hpp>
-#include <Core/third/imgui/imgui.h>
+#include <imgui.h>
 
 namespace tryn::gfx
 {
@@ -29,12 +29,7 @@ namespace tryn::gfx
     }
     void Camera::Translate(glm::vec3 translation) noexcept
     {
-        glm::vec3 finalTranslation = glm::
-            
-            
-            
-            
-            (glm::yawPitchRoll(glm::radians(yaw), glm::radians(pitch), 0.0f), glm::vec3(travelSpeed, travelSpeed, travelSpeed)) * glm::vec4(translation, 1.0f);
+        glm::vec3 finalTranslation = glm::scale(glm::yawPitchRoll(glm::radians(yaw), glm::radians(pitch), 0.0f), glm::vec3(travelSpeed, travelSpeed, travelSpeed)) * glm::vec4(translation, 1.0f);
 
         position.x += finalTranslation.x;
         position.y += finalTranslation.y;

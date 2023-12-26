@@ -1,5 +1,18 @@
 {
   "name": "tryn-core",
   "version": "0.1.0",
-  "dependencies": ["assimp", "cli11"]
+  "dependencies": [
+    "assimp",
+    "cli11",
+    {
+      "name": "imgui",
+      "features": [
+        "docking-experimental",
+        "win32-binding",
+        "dx11-binding",
+        "dx12-binding"
+      ],
+      "platform": "windows"
+    }
+  ]
 }

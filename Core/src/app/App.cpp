@@ -1,6 +1,6 @@
 #include "App.h"
 #include <Core/src/ent/Entity.h>
-#include <Core/src/win/imgui_impl_win32.h>
+#include <imgui_impl_win32.h>
 #include <chrono>
 #include <Core/src/gfx/Profiler.h>
 

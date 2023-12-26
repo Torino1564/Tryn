@@ -77,7 +77,7 @@ namespace tryn::utl
 					accumulatedSize += element.size();
 				}
 			}
-			trynchk_fail();
+			trynchk_fail.msg(L"Out of bounds access in a MultiSpan").ex();
 		}
 	private:
 		std::vector<std::span<T>> buffer;

@@ -12,8 +12,14 @@
 #include <Core/src/gfx/RenderQueue/Step.h>
 #include <Core/src/gfx/Assimp.h>
 #include <Core/src/ccr/Master.h>
+#include <Core/src/ent/Component/ActiveComponent.h>
 #include <Core/src/ent/Component/ModelComponent.h>
 #include <Core/src/ent/Component/PositionComponent.h>
+#include <Core/src/ent/Component/ScaleComponent.h>
+#include <Core/src/ent/Component/RotationComponent.h>
+#include <Core/src/ent/sys/SystemManager.h>
+#include <Core/src/ent/sys/TransformSystem.h>
+#include <Core/src/ent/sys/RenderSystem.h>
 
 class TestRenderGraph : public gfx::IRenderGraph
 {
@@ -88,11 +94,27 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};
 
-	for (int i = 0; i < pow(entityCount1D, 3); i++)
+	auto& sysManager = ent::sys::SystemManager::Get();
+	sysManager.RegisterSystem<ent::sys::TransformSystem>();
+	sysManager.RegisterSystem<ent::sys::RenderSystem>();
+	sysManager.Finalize();
+
+	auto ent = ent::Entity::CreateNew<
+		ent::cmp::ActiveComponent,
+		ent::cmp::ModelComponent,
+		ent::cmp::TransformComponent,
+		ent::cmp::PositionComponent,
+		ent::cmp::ScaleComponent,
+		ent::cmp::RotationComponent>("Gobber");
+
+	entities.resize(pow(entityCount1D, 3));
+	ent.Instanciate({ entities });
+
+	for (auto& entity : entities)
 	{
-		//entities.emplace_back("gobber" + std::to_string(i));
-		//auto& srd = entities.back().AddComponent<ent::cmp::ModelComponent>();
-		//srd = ent::cmp::ModelComponent::Construct(Gfx(), "resources/models/gobber/GoblinX.obj");
+		entity.GetComponent<ent::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/gobber/GoblinX.obj");
+		entity.GetComponent<ent::cmp::ActiveComponent>().active = true;
+		entity.GetComponent<ent::cmp::ScaleComponent>().scale = { .2f,.2f,.2f };
 	}
 
 	for (int i = 0; i < entityCount1D; i++)
@@ -101,13 +123,10 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		{
 			for (int k = 0; k < entityCount1D; k++)
 			{
-				/*auto pPos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)].GetComponent<ent::cmp::PositionComponent>();
-				if (pPos != nullptr)
-				{
-					pPos->position.x = -entityCount1D / 2. + i;
-					pPos->position.y = -entityCount1D / 2. + j;
-					pPos->position.z = -entityCount1D / 2. + k;
-				}*/
+				auto& pPos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)].GetComponent<ent::cmp::PositionComponent>();
+				pPos.position.x = -entityCount1D / 2. + i;
+				pPos.position.y = -entityCount1D / 2. + j;
+				pPos.position.z = -entityCount1D / 2. + k;
 			}
 		}
 	}
@@ -124,19 +143,15 @@ void TestApp::DoFrame()
 
 	{
 		PROFILE_SCOPE("Update Rotation");
-		pPointLight->ShowControls();
+		//pPointLight->ShowControls();
 		for (auto& entity : entities)
 		{
-			entity.SpawnControlWindow();
+			//entity.SpawnControlWindow();
 		}
 	}
 	{
 		PROFILE_SCOPE("Draw call");
 		pPointLight->Submit(Gfx(),camera.GetViewMatrix());
-		for (auto& entity : entities)
-		{
-			entity.MarkForUpdate();
-		}
 	}
 	{
 		PROFILE_SCOPE("Update Camera");
@@ -197,7 +212,7 @@ void TestApp::DoFrame()
 			}
 		}
 
-		camera.ShowControls();
+		//camera.ShowControls();
 
 		// Toggle 1st Person Camera
 		if (const auto event = wnd->keyboard.ReadKey(); event.IsTypePress() && event.GetCode() == VK_ESCAPE)
@@ -213,5 +228,5 @@ void TestApp::DoFrame()
 		}
 		camera.Update();
 	}
-	
+	ent::sys::SystemManager::Get().ExecuteSystems();
 }

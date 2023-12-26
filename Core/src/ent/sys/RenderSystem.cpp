@@ -5,31 +5,36 @@ namespace tryn::ent::sys
 {
 	void RenderSystem::Execute()
 	{
-		// Prepare arrays
+		// Request data
 
 		auto data = ECS::Get().archetypeManager.GetComponentGroups<
-			ReadOnly<cmp::PositionComponent>,
-			ReadOnly<cmp::ScaleComponent>,
-			ReadOnly<cmp::RotationComponent>,
+			ReadOnly<cmp::TransformComponent>,
+			ReadOnly<cmp::ActiveComponent>,
 			WriteOnly<cmp::ModelComponent>>();
 
-		position.Clear();
-		model.Clear();
+		// Reset data arrays
+
+		transformArray.Clear();
+		modelArray.Clear();
+
+		// Fill data arrays
 
 		for (auto& queriedData : data)
 		{
-			position.PushBack(std::get<std::span<cmp::PositionComponent::SubresourceData>>(queriedData));
-			model.PushBack(std::get<std::span<cmp::ModelComponent::SubresourceData>>(queriedData));
-			
-			
-			
-			.PushBack((std::get<std::span<cmp::ScaleComponent::SubresourceData>>(queriedData));
-			rotation.PushBack((std::get<std::span<cmp::RotationComponent::SubresourceData>>(queriedData));
+			transformArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
+			modelArray.PushBack(std::get<std::span<cmp::ModelComponent::SubresourceData>>(queriedData));
+			activeArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
 		}
 
 		// Kernel
 
-
+		for (auto i = 0; i < modelArray.Size(); i++)
+		{
+			if (activeArray[i].active)
+			{
+				modelArray[i].pModel->Submit(transformArray[i].transform);
+			}
+		}
 
 	}
 }

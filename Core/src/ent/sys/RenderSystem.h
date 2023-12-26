@@ -2,7 +2,9 @@
 #include "SystemManager.h"
 #include <Core/src/ent/Component/ModelComponent.h>
 #include <Core/src/ent/Component/TransformComponent.h>
+#include <Core/src/ent/Component/ActiveComponent.h>
 #include <Core/src/utl/Span.h>
+#include <Core/src/ent/sys/TransformSystem.h>
 
 namespace tryn::ent::sys
 {
@@ -12,11 +14,12 @@ namespace tryn::ent::sys
 		ZT_SYSTEM_UID;
 		RenderSystem()
 		{
-			//AddDependency<cmp::PhysicsSystem>();
+			AddDependency<sys::TransformSystem>();
 		}
 		static void Execute();
 	private:
-		static utl::MultiSpan<cmp::ModelComponent::SubresourceData> model;
-		static utl::MultiSpan<cmp::TransformComponent::SubresourceData> transform;
+		static inline utl::MultiSpan<cmp::ModelComponent::SubresourceData> modelArray;
+		static inline utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformArray;
+		static inline utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeArray;
 	};
 }

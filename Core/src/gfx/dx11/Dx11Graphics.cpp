@@ -12,7 +12,7 @@
 #include <Core/src/gfx/dx11/Bindables/DX11Sampler.h>
 #include <Core/src/gfx/dx11/Dx11RenderWorker.h>
 #include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
-#include "imgui_impl_dx11.h"
+#include <imgui_impl_dx11.h>
 #include <Core/src/win/Window.h>
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -154,7 +154,8 @@ namespace tryn::gfx::dx11
 			ImGui::Render();
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
-			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			auto dd = ImGui::GetDrawData();
+			//ImGui_ImplDX11_RenderDrawData(dd);
 			pSwap->Present(0u, 0u) >> chk;
 			});
 

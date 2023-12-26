@@ -39,8 +39,6 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11TransformCBuf.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexShader.cpp" />
     <ClCompile Include="src\ent\Entity.cpp" />
-    <ClCompile Include="src\gfx\dx11\imgui_impl_dx11.cpp" />
-    <ClCompile Include="src\gfx\dx12\imgui_impl_dx12.cpp" />
     <ClCompile Include="src\gfx\ImguiManager.cpp" />
     <ClCompile Include="src\gfx\Model\InstancedModel.cpp" />
     <ClCompile Include="src\gfx\Model\Model.cpp" />
@@ -59,7 +57,6 @@
     <ClCompile Include="src\gfx\dx11\Dx11Graphics.cpp" />
     <ClCompile Include="src\gfx\dx11\GraphicsError.cpp" />
     <ClCompile Include="src\gfx\dx11\TrynWLR.h" />
-    <ClCompile Include="src\gfx\vulkan\imgui_impl_vulkan.cpp" />
     <ClCompile Include="src\ioc\Container.cpp" />
     <ClCompile Include="src\ioc\Ioc.cpp" />
     <ClCompile Include="src\ioc\Singletons.cpp" />
@@ -77,18 +74,12 @@
     <ClCompile Include="src\utl\StackTrace.cpp" />
     <ClCompile Include="src\utl\String.cpp" />
     <ClCompile Include="src\win\Win.cpp" />
-    <ClCompile Include="src\win\imgui_impl_win32.cpp" />
     <ClCompile Include="src\win\IWindow.cpp" />
     <ClCompile Include="src\win\Keyboard.cpp" />
     <ClCompile Include="src\win\Mouse.cpp" />
     <ClCompile Include="src\win\Utilities.cpp" />
     <ClCompile Include="src\win\Window.cpp" />
     <ClCompile Include="src\win\WindowClass.cpp" />
-    <ClCompile Include="third\imgui\imgui.cpp" />
-    <ClCompile Include="third\imgui\imgui_demo.cpp" />
-    <ClCompile Include="third\imgui\imgui_draw.cpp" />
-    <ClCompile Include="third\imgui\imgui_tables.cpp" />
-    <ClCompile Include="third\imgui\imgui_widgets.cpp" />
     <ClCompile Include="third\lodepng\lodepng.cpp" />
     <ClCompile Include="third\stb_image\stb_image.cpp" />
   </ItemGroup>
@@ -104,6 +95,7 @@
     <ClInclude Include="src\ccr\Task.h" />
     <ClInclude Include="src\ccr\Thread.h" />
     <ClInclude Include="src\ccr\Worker.h" />
+    <ClInclude Include="src\ent\Component\ActiveComponent.h" />
     <ClInclude Include="src\ent\Component\Archetype.h" />
     <ClInclude Include="src\ent\Component\ComponentManager.h" />
     <ClInclude Include="src\ent\Component\ComponentPack.h" />
@@ -155,8 +147,6 @@
     <ClInclude Include="src\gfx\Material.h" />
     <ClInclude Include="src\gfx\Model\Mesh.h" />
     <ClInclude Include="src\gfx\dx11\Dx11VertexShader.h" />
-    <ClInclude Include="src\gfx\dx11\imgui_impl_dx11.h" />
-    <ClInclude Include="src\gfx\dx12\imgui_impl_dx12.h" />
     <ClInclude Include="src\gfx\Gfx.h" />
     <ClInclude Include="src\gfx\dx11\Dx11Graphics.h" />
     <ClInclude Include="src\gfx\dx11\GraphicsError.h" />
@@ -179,7 +169,6 @@
     <ClInclude Include="src\gfx\Texture.h" />
     <ClInclude Include="src\gfx\Vertex.h" />
     <ClInclude Include="src\gfx\vulkan\Graphics.h" />
-    <ClInclude Include="src\gfx\vulkan\imgui_impl_vulkan.h" />
     <ClInclude Include="src\ioc\Container.h" />
     <ClInclude Include="src\ioc\Exception.h" />
     <ClInclude Include="src\ioc\Ioc.h" />
@@ -219,7 +208,6 @@
     <ClInclude Include="src\utl\UUID.h" />
     <ClInclude Include="src\win\Win.h" />
     <ClInclude Include="src\win\Exception.h" />
-    <ClInclude Include="src\win\imgui_impl_win32.h" />
     <ClInclude Include="src\win\IWindow.h" />
     <ClInclude Include="src\win\Keyboard.h" />
     <ClInclude Include="src\win\Mouse.h" />
@@ -589,12 +577,6 @@
     <ClInclude Include="third\glm\vec3.hpp" />
     <ClInclude Include="third\glm\vec4.hpp" />
     <ClInclude Include="third\glm\vector_relational.hpp" />
-    <ClInclude Include="third\imgui\imconfig.h" />
-    <ClInclude Include="third\imgui\imgui.h" />
-    <ClInclude Include="third\imgui\imgui_internal.h" />
-    <ClInclude Include="third\imgui\imstb_rectpack.h" />
-    <ClInclude Include="third\imgui\imstb_textedit.h" />
-    <ClInclude Include="third\imgui\imstb_truetype.h" />
     <ClInclude Include="third\lodepng\lodepng.h" />
     <ClInclude Include="third\stb_image\stb_image.h" />
   </ItemGroup>
@@ -848,9 +830,6 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="third\imgui\LICENSE.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

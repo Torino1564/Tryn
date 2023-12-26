@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/src/utl/Timer.h>
-#include <Core/third/imgui/imgui.h>
+#include <imgui.h>
+
 #define PROFILE_SCOPE(name) tryn::utl::Timer ScopedTimer##__LINE__(name, tryn::gfx::ImGuiProfilerCallback::Get())
 
 namespace tryn::gfx

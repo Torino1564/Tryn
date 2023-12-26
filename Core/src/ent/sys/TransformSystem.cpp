@@ -11,7 +11,17 @@ namespace tryn::ent::sys
 			ReadOnly<cmp::PositionComponent>,
 			ReadOnly<cmp::ScaleComponent>,
 			ReadOnly<cmp::RotationComponent>,
+			ReadOnly<cmp::ActiveComponent>,
 			WriteOnly<cmp::TransformComponent>>();
+		
+		// Reset arrays
+		
+		positionArray.Clear();
+		scaleArray.Clear();
+		rotationArray.Clear();
+		transformArray.Clear();
+		activeArray.Clear();
+		
 		// Fill data arrays
 
 		for (auto& queriedData : data)
@@ -20,19 +30,26 @@ namespace tryn::ent::sys
 			scaleArray.PushBack(std::get<std::span<cmp::ScaleComponent::SubresourceData>>(queriedData));
 			rotationArray.PushBack(std::get<std::span<cmp::RotationComponent::SubresourceData>>(queriedData));
 			transformArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
+			activeArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
 		}
 
 		// Kernel
 
 		for (auto i = 0; i < transformArray.Size(); i++)
 		{
-			transformArray[i];
-			const auto& position = positionArray[i];
-			const auto& rotation = rotationArray[i];
-			const auto& scale = scaleArray[i];
-			const auto rotationMatrix = glm::yawPitchRoll(rotation.yaw, rotation.pitch, rotation.roll);
-			const auto translationMatrix = glm::translate(glm::mat4(1.0f), position.position);
-			transformArray[i].transform = translationMatrix * rotationMatrix;
+			if (activeArray[i].active)
+			{
+				const auto& position = positionArray[i];
+				const auto& rotation = rotationArray[i];
+				const auto& scale = scaleArray[i];
+
+				glm::mat4x4 transformMatrix = glm::identity<glm::mat4>();
+
+				transformMatrix = glm::scale(transformMatrix, scale.scale);
+				transformMatrix = glm::translate(transformMatrix, position.position);
+				const auto rotationMatrix = glm::yawPitchRoll(rotation.yaw, rotation.pitch, rotation.roll);
+				transformArray[i].transform = transformMatrix * rotationMatrix;
+			}
 		}
 	}
 }

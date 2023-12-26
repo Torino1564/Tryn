@@ -32,6 +32,14 @@ namespace tryn::ent
 		{
 			return std::span<int>(pArchetype->components.begin(), pArchetype->components.size());
 		}
+
+		template <ValidComponent C>
+		C::SubresourceData& GetComponent()
+		{
+			auto data = pArchetype->GetComponentData<C>();
+			return data[UUID.ID - 1];
+		}
+
 		void Instanciate(std::span<Entity> destination)
 		{
 			for (auto [instanceNum, ent] : std::ranges::views::enumerate(destination))
@@ -42,7 +50,6 @@ namespace tryn::ent
 			}
 		}
 		void SpawnControlWindow();
-		void MarkForUpdate();
 
 	protected:
 

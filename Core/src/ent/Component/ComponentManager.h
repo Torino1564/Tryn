@@ -15,7 +15,7 @@
 #include <Core/src/utl/Span.h>
 
 #define ZT_COMPONENT_FIELDS(x) \
-	public: struct SubresourceData{ bool active = false; std::uint16_t entityID = 0;  x }
+	public: struct SubresourceData{ x }
 
 #define ZT_DEFINE_COMPONENT(x) class x : public tryn::ent::Component<x>
 

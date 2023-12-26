@@ -1,8 +1,8 @@
-Package: minizip
-Version: 1.3
-Depends: vcpkg-cmake, vcpkg-cmake-config, vcpkg-cmake-get-vars, zlib
+Package: imgui
+Version: 1.89.7
+Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 041e8dae670ae2052f1ea5b48b11f2bbbb8fec432ae4408b7f062ea23d81b4bc
-Description: Minizip zip file manipulation library
-Status: install ok half-installed
+Abi: 1fba29c37ca4e01625b92e49ddc8b996aab1ad6ac98599439a0a292165ed1bf2
+Description: Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies.
+Status: purge ok half-installed
