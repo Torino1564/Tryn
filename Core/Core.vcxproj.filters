@@ -87,7 +87,7 @@
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ent\Entity.cpp">
+    <ClCompile Include="src\ecs\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexShader.cpp">
@@ -216,16 +216,16 @@
     <ClCompile Include="src\gfx\Model\InstancedModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ent\Component\ComponentManager.cpp">
+    <ClCompile Include="src\ecs\cmp\ComponentManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ent\sys\RenderSystem.cpp">
+    <ClCompile Include="src\ecs\sys\RenderSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ent\sys\SystemManager.cpp">
+    <ClCompile Include="src\ecs\sys\SystemManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ent\sys\TransformSystem.cpp">
+    <ClCompile Include="src\ecs\sys\TransformSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\dx11\imgui_impl_dx11.cpp">
@@ -234,10 +234,10 @@
     <ClCompile Include="src\win\imgui_impl_win32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ent\sys\UpdatePositionSystem.cpp">
+    <ClCompile Include="src\ecs\sys\UpdatePositionSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ent\sys\UpdateVelocitySystem.cpp">
+    <ClCompile Include="src\ecs\sys\UpdateVelocitySystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -353,7 +353,7 @@
     <ClInclude Include="src\gfx\GraphicsException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Entity.h">
+    <ClInclude Include="src\ecs\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\spa\Vec3.h">
@@ -1679,25 +1679,25 @@
     <ClInclude Include="src\utl\UUID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Component\ComponentManager.h">
+    <ClInclude Include="src\ecs\cmp\ComponentManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Component\ModelComponent.h">
+    <ClInclude Include="src\ecs\cmp\ModelComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Component\PositionComponent.h">
+    <ClInclude Include="src\ecs\cmp\PositionComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\sys\RenderSystem.h">
+    <ClInclude Include="src\ecs\sys\RenderSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\sys\SystemManager.h">
+    <ClInclude Include="src\ecs\sys\SystemManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Component\ComponentPack.h">
+    <ClInclude Include="src\ecs\cmp\ComponentPack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Component\Archetype.h">
+    <ClInclude Include="src\ecs\cmp\Archetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\mem\ArenaAllocator.h">
@@ -1712,19 +1712,19 @@
     <ClInclude Include="src\utl\Span.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Component\ScaleComponent.h">
+    <ClInclude Include="src\ecs\cmp\ScaleComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Component\RotationComponent.h">
+    <ClInclude Include="src\ecs\cmp\RotationComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Component\TransformComponent.h">
+    <ClInclude Include="src\ecs\cmp\TransformComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\sys\TransformSystem.h">
+    <ClInclude Include="src\ecs\sys\TransformSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Component\ActiveComponent.h">
+    <ClInclude Include="src\ecs\cmp\ActiveComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\dx11\imgui_impl_dx11.h">
@@ -1733,19 +1733,22 @@
     <ClInclude Include="src\win\imgui_impl_win32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Component\VelocityComponent.h">
+    <ClInclude Include="src\ecs\cmp\VelocityComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\sys\UpdatePositionSystem.h">
+    <ClInclude Include="src\ecs\sys\UpdatePositionSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utl\Stopwatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\sys\UpdateVelocitySystem.h">
+    <ClInclude Include="src\ecs\sys\UpdateVelocitySystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ent\Component\AccelerationComponent.h">
+    <ClInclude Include="src\ecs\cmp\AccelerationComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\cmp\InstancedModelChildComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

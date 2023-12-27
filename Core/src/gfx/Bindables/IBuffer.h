@@ -73,7 +73,7 @@ namespace tryn::gfx
 		}
 
 		template<BufferType T = Type, CachingPolicy P = Policy>
-			requires (T == BufferType::Index && P == CachingPolicy::Caching)
+		requires (T == BufferType::Index && P == CachingPolicy::Caching)
 		static std::shared_ptr<IIndexBuffer> Resolve(IGraphics& gfx, std::shared_ptr<IndexBuffer> indices, std::string tag = "?")
 		{
 			return gfx::BindablePool::Resolve<IIndexBuffer>(gfx, indices, tag);
@@ -188,7 +188,7 @@ namespace tryn::gfx
 		std::string path;
 		std::string tag;
 		std::shared_ptr<CPUBuffer> pCPUBuffer;
-		[[no_unique_address]] std::conditional<Type == BufferType::PxConstant || Type == BufferType::VtxConstant, int, empty_t<0>>::type slot;
+		[[no_unique_address]] std::conditional<Type == BufferType::PxConstant || Type == BufferType::VtxConstant || Type == BufferType::Instance, int, empty_t<0>>::type slot;
 		using Layout_Ty = std::conditional_t<Type == BufferType::Vertex, VertexLayout, empty_t<1>>;
 		[[no_unique_address]] Layout_Ty layout;
 	};

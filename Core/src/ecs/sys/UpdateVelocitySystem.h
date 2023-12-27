@@ -1,11 +1,11 @@
 #pragma once
 #include "SystemManager.h"
 #include <Core/src/utl/Span.h>
-#include <Core/src/ent/Component/AccelerationComponent.h>
-#include <Core/src/ent/Component/VelocityComponent.h>
+#include <Core/src/ecs/cmp/AccelerationComponent.h>
+#include <Core/src/ecs/cmp/VelocityComponent.h>
 #include <Core/src/utl/Stopwatch.h>
 
-namespace tryn::ent::sys
+namespace tryn::ecs::sys
 {
 	ZT_DEFINE_SYSTEM(UpdateVelocitySystem)
 	{

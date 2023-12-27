@@ -2,7 +2,7 @@
 #include "ComponentManager.h"
 #include <Core/third/glm/vec3.hpp>
 
-namespace tryn::ent::cmp
+namespace tryn::ecs::cmp
 {
 	ZT_DEFINE_COMPONENT(VelocityComponent)
 	{

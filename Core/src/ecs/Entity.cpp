@@ -1,7 +1,7 @@
 #include "Entity.h"
 #include <format>
 
-namespace tryn::ent
+namespace tryn::ecs
 {
 	Entity::~Entity()
 	{

@@ -3,11 +3,11 @@
 #include <Core/src/app/Initialization.h>
 #include <Core/src/win/Window.h>
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
-#include <Core/src/ent/Entity.h>
+#include <Core/src/ecs/Entity.h>
 #include <Core/src/gfx/RenderGraph.h>
-#include <Core/src/ent/Component/ComponentManager.h>
-#include <Core/src/ent/sys/SystemManager.h>
-#include <Core/src/ent/Component/ComponentPack.h>
+#include <Core/src/ecs/cmp/ComponentManager.h>
+#include <Core/src/ecs/sys/SystemManager.h>
+#include <Core/src/ecs/cmp/ComponentPack.h>
 #include <Core/src/utl/Timer.h>
 
 class ThunkRenderGraph : public tryn::gfx::IRenderGraph
@@ -19,7 +19,7 @@ public:
 	}
 };
 
-namespace tryn::ent
+namespace tryn::ecs
 {
 	ZT_DEFINE_COMPONENT(TestComponent1)
 	{
@@ -136,7 +136,7 @@ namespace tryn::ent
 		}
 		TEST_METHOD(SystemTests)
 		{
-			ent::sys::SystemGraph sysGraph;
+			ecs::sys::SystemGraph sysGraph;
 
 			sysGraph.RegisterSystem<System1>();
 			sysGraph.RegisterSystem<System2>();

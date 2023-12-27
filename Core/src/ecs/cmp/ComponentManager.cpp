@@ -1,9 +1,9 @@
 #include "ComponentManager.h"
-#include <Core/src/ent/Entity.h>
+#include <Core/src/ecs/Entity.h>
 
-namespace tryn::ent
+namespace tryn::ecs
 {
-	void tryn::ent::ComponentManager::ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex)
+	void tryn::ecs::ComponentManager::ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex)
 	{
 
 	}

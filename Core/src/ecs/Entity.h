@@ -2,11 +2,11 @@
 #include <memory>
 #include <Core/src/gfx/Model/Model.h>
 #include <Core/third/dynamic_bitset.hpp>
-#include <Core/src/ent/Component/ComponentManager.h>
+#include <Core/src/ecs/cmp/ComponentManager.h>
 #include <bitset>
 #include <array>
 
-namespace tryn::ent
+namespace tryn::ecs
 {
 	struct EntityID
 	{

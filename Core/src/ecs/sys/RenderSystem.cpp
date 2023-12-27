@@ -1,7 +1,7 @@
 #include "RenderSystem.h"
-#include <Core/src/ent/Component/ComponentManager.h>
+#include <Core/src/ecs/cmp/ComponentManager.h>
 
-namespace tryn::ent::sys
+namespace tryn::ecs::sys
 {
 	void RenderSystem::Execute()
 	{

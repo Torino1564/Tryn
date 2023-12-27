@@ -1,12 +1,12 @@
 #pragma once
-#include <Core/src/ent/sys/SystemManager.h>
-#include <Core/src/ent/Component/PositionComponent.h>
-#include <Core/src/ent/Component/ScaleComponent.h>
-#include <Core/src/ent/Component/RotationComponent.h>
-#include <Core/src/ent/Component/TransformComponent.h>
-#include <Core/src/ent/Component/ActiveComponent.h>
+#include <Core/src/ecs/sys/SystemManager.h>
+#include <Core/src/ecs/cmp/PositionComponent.h>
+#include <Core/src/ecs/cmp/ScaleComponent.h>
+#include <Core/src/ecs/cmp/RotationComponent.h>
+#include <Core/src/ecs/cmp/TransformComponent.h>
+#include <Core/src/ecs/cmp/ActiveComponent.h>
 
-namespace tryn::ent::sys
+namespace tryn::ecs::sys
 {
 	ZT_DEFINE_SYSTEM(TransformSystem)
 	{

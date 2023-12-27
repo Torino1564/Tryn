@@ -1,12 +1,12 @@
 #pragma once
 #include "SystemManager.h"
-#include <Core/src/ent/Component/ModelComponent.h>
-#include <Core/src/ent/Component/TransformComponent.h>
-#include <Core/src/ent/Component/ActiveComponent.h>
+#include <Core/src/ecs/cmp/ModelComponent.h>
+#include <Core/src/ecs/cmp/TransformComponent.h>
+#include <Core/src/ecs/cmp/ActiveComponent.h>
 #include <Core/src/utl/Span.h>
-#include <Core/src/ent/sys/TransformSystem.h>
+#include <Core/src/ecs/sys/TransformSystem.h>
 
-namespace tryn::ent::sys
+namespace tryn::ecs::sys
 {
 	ZT_DEFINE_SYSTEM(RenderSystem)
 	{

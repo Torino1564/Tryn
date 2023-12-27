@@ -25,4 +25,5 @@ namespace tryn::gfx
 	using IPxConstantBufferNCach	= IBuffer<BufferType::PxConstant, CachingPolicy::NonCaching>;
 	using IVertexBuffer				= IBuffer<BufferType::Vertex, CachingPolicy::Caching>;
 	using IIndexBuffer				= IBuffer<BufferType::Index, CachingPolicy::Caching>;
+	using IInstanceBuffer			= IBuffer<BufferType::Instance, CachingPolicy::Caching>;
 }

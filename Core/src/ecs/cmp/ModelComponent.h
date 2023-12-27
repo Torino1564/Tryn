@@ -3,7 +3,7 @@
 #include <Core/src/gfx/Model/Model.h>
 #include <string>
 
-namespace tryn::ent::cmp
+namespace tryn::ecs::cmp
 {
 	ZT_DEFINE_COMPONENT(ModelComponent)
 	{

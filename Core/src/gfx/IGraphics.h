@@ -120,6 +120,7 @@ namespace tryn::gfx
 		virtual std::shared_ptr<IVtxConstantBufferNCach>CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
 		virtual std::shared_ptr<IPxConstantBuffer>		CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
 		virtual std::shared_ptr<IPxConstantBufferNCach>	CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::unique_ptr<IInstanceBuffer>		CreateInstanceBuffer(ConstantBufferLayout&&, int slot = 2) = 0;
 		virtual std::shared_ptr<ITexture>				CreateTexture(std::filesystem::path path, int slot = 0) = 0;
 		virtual std::shared_ptr<IRasterizer>			CreateRasterizer(const bool twoSided = true) = 0;
 		virtual std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) = 0;

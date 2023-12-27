@@ -1,7 +1,7 @@
 #pragma once
 #include "ComponentManager.h"
 
-namespace tryn::ent::cmp
+namespace tryn::ecs::cmp
 {
 	ZT_DEFINE_COMPONENT(ActiveComponent)
 	{

@@ -1,6 +1,6 @@
 #pragma once
 #include <Core/src/app/App.h>
-#include <Core/src/ent/Entity.h>
+#include <Core/src/ecs/Entity.h>
 #include <Core/src/gfx/PointLight.h>
 #include <Core/src/gfx/Camera.h>
 #include <vector>
@@ -15,7 +15,7 @@ public:
 	void DoFrame() override;
 private:
 	std::unique_ptr<gfx::PointLight> pPointLight;
-	std::vector<ent::Entity> entities;
+	std::vector<ecs::Entity> entities;
 	gfx::Camera camera;
 
 	static constexpr const int entityCount1D = 3;

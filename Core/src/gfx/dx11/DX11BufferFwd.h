@@ -12,4 +12,5 @@ namespace tryn::gfx::dx11
 	using DX11PxConstantBufferNCach		= DX11Buffer<BufferType::PxConstant, CachingPolicy::NonCaching>;
 	using DX11VertexBuffer				= DX11Buffer<BufferType::Vertex, CachingPolicy::Caching>;
 	using DX11IndexBuffer				= DX11Buffer<BufferType::Index, CachingPolicy::Caching>;
+	using DX11InstanceBuffer			= DX11Buffer<BufferType::Instance, CachingPolicy::Caching>;
 }

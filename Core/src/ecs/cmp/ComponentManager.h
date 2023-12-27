@@ -17,9 +17,9 @@
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ x }
 
-#define ZT_DEFINE_COMPONENT(x) class x : public tryn::ent::Component<x>
+#define ZT_DEFINE_COMPONENT(x) class x : public tryn::ecs::Component<x>
 
-namespace tryn::ent
+namespace tryn::ecs
 {
 	class ComponentManager;
 

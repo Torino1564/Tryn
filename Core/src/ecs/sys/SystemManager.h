@@ -6,10 +6,10 @@
 #include <Core/src/log/Log.h>
 #include <ranges>
 
-#define ZT_DEFINE_SYSTEM(x) class x : public tryn::ent::sys::SystemImpl<x>
-#define ZT_SYSTEM_UID public: const static inline auto UID = tryn::ent::sys::System::SystemUID::Resolve()
+#define ZT_DEFINE_SYSTEM(x) class x : public tryn::ecs::sys::SystemImpl<x>
+#define ZT_SYSTEM_UID public: const static inline auto UID = tryn::ecs::sys::System::SystemUID::Resolve()
 
-namespace tryn::ent::sys
+namespace tryn::ecs::sys
 {
 	template <typename T>
 	class SystemImpl;

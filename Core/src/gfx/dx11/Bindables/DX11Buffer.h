@@ -51,7 +51,7 @@ namespace tryn::gfx::dx11
 		
 		// TODO: Add NonCaching variant
 		DX11Buffer(Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag = "?")
-		requires ((Type == BufferType::PxConstant || Type == BufferType::VtxConstant))
+		requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant || Type == BufferType::Instance)
 		: gfx(gfx)
 		{
 			this->slot = slot;
@@ -125,7 +125,7 @@ namespace tryn::gfx::dx11
 		}
 
 		void Bind_(ID3D11DeviceContext& context)
-			requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant)
+			requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant || Type == BufferType::Instance)
 		{
 			if (this->pCPUBuffer->Dirty())
 			{

@@ -319,6 +319,15 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
+	std::unique_ptr<IInstanceBuffer> Graphics::CreateInstanceBuffer(ConstantBufferLayout&& cbl, int slot)
+	{
+		cbl.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Bool, "EnabledInstance"));
+		auto future = Dispatch_([&] {
+			return std::make_unique<DX11InstanceBuffer>(*this, std::move(cbl), slot);
+			});
+		return future.get();
+	}
+
 	std::unique_ptr<ITransformCBuf> Graphics::CreateTransformCBuf()
 	{
 		auto future = Dispatch_([&] {

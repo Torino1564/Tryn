@@ -12,18 +12,18 @@
 #include <Core/src/gfx/RenderQueue/Step.h>
 #include <Core/src/gfx/Assimp.h>
 #include <Core/src/ccr/Master.h>
-#include <Core/src/ent/Component/ActiveComponent.h>
-#include <Core/src/ent/Component/ModelComponent.h>
-#include <Core/src/ent/Component/ScaleComponent.h>
-#include <Core/src/ent/Component/RotationComponent.h>
-#include <Core/src/ent/Component/PositionComponent.h>
-#include <Core/src/ent/Component/VelocityComponent.h>
-#include <Core/src/ent/Component/AccelerationComponent.h>
-#include <Core/src/ent/sys/SystemManager.h>
-#include <Core/src/ent/sys/TransformSystem.h>
-#include <Core/src/ent/sys/RenderSystem.h>
-#include <Core/src/ent/sys/UpdatePositionSystem.h>
-#include <Core/src/ent/sys/UpdateVelocitySystem.h>
+#include <Core/src/ecs/cmp/ActiveComponent.h>
+#include <Core/src/ecs/cmp/ModelComponent.h>
+#include <Core/src/ecs/cmp/ScaleComponent.h>
+#include <Core/src/ecs/cmp/RotationComponent.h>
+#include <Core/src/ecs/cmp/PositionComponent.h>
+#include <Core/src/ecs/cmp/VelocityComponent.h>
+#include <Core/src/ecs/cmp/AccelerationComponent.h>
+#include <Core/src/ecs/sys/SystemManager.h>
+#include <Core/src/ecs/sys/TransformSystem.h>
+#include <Core/src/ecs/sys/RenderSystem.h>
+#include <Core/src/ecs/sys/UpdatePositionSystem.h>
+#include <Core/src/ecs/sys/UpdateVelocitySystem.h>
 
 class TestRenderGraph : public gfx::IRenderGraph
 {
@@ -98,33 +98,33 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};
 
-	auto& sysManager = ent::sys::SystemManager::Get();
-	sysManager.RegisterSystem<ent::sys::TransformSystem>();
-	sysManager.RegisterSystem<ent::sys::RenderSystem>();
-	sysManager.RegisterSystem<ent::sys::UpdatePositionSystem>();
-	sysManager.RegisterSystem<ent::sys::UpdateVelocitySystem>();
+	auto& sysManager = ecs::sys::SystemManager::Get();
+	sysManager.RegisterSystem<ecs::sys::TransformSystem>();
+	sysManager.RegisterSystem<ecs::sys::RenderSystem>();
+	sysManager.RegisterSystem<ecs::sys::UpdatePositionSystem>();
+	sysManager.RegisterSystem<ecs::sys::UpdateVelocitySystem>();
 	sysManager.Finalize();
 
-	auto ent = ent::Entity::CreateNew<
-		ent::cmp::ActiveComponent,
-		ent::cmp::ModelComponent,
-		ent::cmp::TransformComponent,
-		ent::cmp::PositionComponent,
-		ent::cmp::VelocityComponent,
-		ent::cmp::AccelerationComponent,
-		ent::cmp::ScaleComponent,
-		ent::cmp::RotationComponent>("Gobber");
+	auto ent = ecs::Entity::CreateNew<
+		ecs::cmp::ActiveComponent,
+		ecs::cmp::ModelComponent,
+		ecs::cmp::TransformComponent,
+		ecs::cmp::PositionComponent,
+		ecs::cmp::VelocityComponent,
+		ecs::cmp::AccelerationComponent,
+		ecs::cmp::ScaleComponent,
+		ecs::cmp::RotationComponent>("Gobber");
 
 	entities.resize(pow(entityCount1D, 3));
 	ent.Instanciate({ entities });
 
 	for (auto& entity : entities)
 	{
-		entity.GetComponent<ent::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/gobber/GoblinX.obj");
-		entity.GetComponent<ent::cmp::ActiveComponent>().active = true;
-		entity.GetComponent<ent::cmp::ScaleComponent>().scale = { .3f,.3f,.3f };
-		entity.GetComponent<ent::cmp::VelocityComponent>().velocity = { .0f, 0.f, 0.f };
-		entity.GetComponent<ent::cmp::AccelerationComponent>().acceleration = { .1f, 0.f, 0.f };
+		entity.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/gobber/GoblinX.obj");
+		entity.GetComponent<ecs::cmp::ActiveComponent>().active = true;
+		entity.GetComponent<ecs::cmp::ScaleComponent>().scale = { .3f,.3f,.3f };
+		entity.GetComponent<ecs::cmp::VelocityComponent>().velocity = { .0f, 0.f, 0.f };
+		entity.GetComponent<ecs::cmp::AccelerationComponent>().acceleration = { .1f, 0.f, 0.f };
 	}
 
 	for (int i = 0; i < entityCount1D; i++)
@@ -133,14 +133,14 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		{
 			for (int k = 0; k < entityCount1D; k++)
 			{
-				auto& pPos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)].GetComponent<ent::cmp::PositionComponent>();
+				auto& pPos = entities[i + (entityCount1D * j) + (entityCount1D * entityCount1D * k)].GetComponent<ecs::cmp::PositionComponent>();
 				pPos.position.x = -entityCount1D / 2. + i;
 				pPos.position.y = -entityCount1D / 2. + j;
 				pPos.position.z = -entityCount1D / 2. + k;
 			}
 		}
 	}
-	//entities.emplace_back(std::make_unique<ent::BasicEntity>(Gfx(), "testPlane", "resources/models/TestPlane.fbx"));
+	//entities.emplace_back(std::make_unique<ecs::BasicEntity>(Gfx(), "testPlane", "resources/models/TestPlane.fbx"));
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
 	this->wnd->keyboard.DisableAutoRepeat();
@@ -238,5 +238,5 @@ void TestApp::DoFrame()
 		}
 		camera.Update();
 	}
-	ent::sys::SystemManager::Get().ExecuteSystems();
+	ecs::sys::SystemManager::Get().ExecuteSystems();
 }
