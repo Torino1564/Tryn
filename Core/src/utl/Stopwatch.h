@@ -11,17 +11,19 @@ namespace tryn::utl
 		void Start()
 		{
 			start = ch::high_resolution_clock::now();
+			running = true;
 		}
 		std::double_t Stop()
 		{
 			stop = ch::high_resolution_clock::now();
 			duration = stop - start;
-			return duration.count() * 10e-9;
+			running = false;
+			return duration.count() * 10e-10;
 		}
 		std::double_t Peek()
 		{
 			const auto now = ch::high_resolution_clock::now();
-			return (start - now).count() * 10e-9;
+			return (start - now).count() * 10e-10;
 		}
 		void Reset()
 		{
@@ -29,7 +31,7 @@ namespace tryn::utl
 		}
 		std::double_t StopAndRestart()
 		{
-			const auto previous = Stop();
+			const auto previous = running ? Stop() : 0.0f;
 			Reset();
 			Start();
 			return previous;
@@ -37,6 +39,7 @@ namespace tryn::utl
 	private:
 		ch::steady_clock::time_point start;
 		ch::steady_clock::time_point stop;
-		ch::nanoseconds duration = ch::nanoseconds::min();
+		bool running = false;
+		ch::nanoseconds duration = {};
 	};
 }

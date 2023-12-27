@@ -16,6 +16,7 @@
     <ClCompile Include="src\ccr\Thread.cpp" />
     <ClCompile Include="src\ccr\Worker.cpp" />
     <ClCompile Include="src\ent\Component\ComponentManager.cpp" />
+    <ClCompile Include="src\ent\sys\UpdateVelocitySystem.cpp" />
     <ClCompile Include="src\ent\sys\RenderSystem.cpp" />
     <ClCompile Include="src\ent\sys\SystemManager.cpp" />
     <ClCompile Include="src\ent\sys\TransformSystem.cpp" />
@@ -98,6 +99,7 @@
     <ClInclude Include="src\ccr\Task.h" />
     <ClInclude Include="src\ccr\Thread.h" />
     <ClInclude Include="src\ccr\Worker.h" />
+    <ClInclude Include="src\ent\Component\AccelerationComponent.h" />
     <ClInclude Include="src\ent\Component\ActiveComponent.h" />
     <ClInclude Include="src\ent\Component\Archetype.h" />
     <ClInclude Include="src\ent\Component\ComponentManager.h" />
@@ -112,6 +114,7 @@
     <ClInclude Include="src\ent\sys\SystemManager.h" />
     <ClInclude Include="src\ent\sys\TransformSystem.h" />
     <ClInclude Include="src\ent\sys\UpdatePositionSystem.h" />
+    <ClInclude Include="src\ent\sys\UpdateVelocitySystem.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />

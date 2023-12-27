@@ -12,7 +12,7 @@ namespace tryn::ent::sys
 	{
 		ZT_SYSTEM_UID;
 	public:
-		TransformSystem() = default;
+		TransformSystem();
 		static void Execute();
 	private:
 		static inline utl::MultiSpan<cmp::PositionComponent::SubresourceData> positionArray;

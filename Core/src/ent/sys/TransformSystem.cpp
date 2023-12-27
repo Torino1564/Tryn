@@ -1,9 +1,15 @@
 #include "TransformSystem.h"
 #include <Core/third/glm/ext.hpp>
 #include <Core/third/glm/gtx/euler_angles.hpp>
+#include <Core/src/ent/sys/UpdatePositionSystem.h>
 
 namespace tryn::ent::sys
 {
+	TransformSystem::TransformSystem()
+	{
+		AddDependency<sys::UpdatePositionSystem>();
+	}
+
 	void TransformSystem::Execute()
 	{
 		// Request Data

@@ -14,14 +14,16 @@
 #include <Core/src/ccr/Master.h>
 #include <Core/src/ent/Component/ActiveComponent.h>
 #include <Core/src/ent/Component/ModelComponent.h>
-#include <Core/src/ent/Component/PositionComponent.h>
 #include <Core/src/ent/Component/ScaleComponent.h>
 #include <Core/src/ent/Component/RotationComponent.h>
+#include <Core/src/ent/Component/PositionComponent.h>
 #include <Core/src/ent/Component/VelocityComponent.h>
+#include <Core/src/ent/Component/AccelerationComponent.h>
 #include <Core/src/ent/sys/SystemManager.h>
 #include <Core/src/ent/sys/TransformSystem.h>
 #include <Core/src/ent/sys/RenderSystem.h>
 #include <Core/src/ent/sys/UpdatePositionSystem.h>
+#include <Core/src/ent/sys/UpdateVelocitySystem.h>
 
 class TestRenderGraph : public gfx::IRenderGraph
 {
@@ -100,6 +102,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	sysManager.RegisterSystem<ent::sys::TransformSystem>();
 	sysManager.RegisterSystem<ent::sys::RenderSystem>();
 	sysManager.RegisterSystem<ent::sys::UpdatePositionSystem>();
+	sysManager.RegisterSystem<ent::sys::UpdateVelocitySystem>();
 	sysManager.Finalize();
 
 	auto ent = ent::Entity::CreateNew<
@@ -108,6 +111,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		ent::cmp::TransformComponent,
 		ent::cmp::PositionComponent,
 		ent::cmp::VelocityComponent,
+		ent::cmp::AccelerationComponent,
 		ent::cmp::ScaleComponent,
 		ent::cmp::RotationComponent>("Gobber");
 
@@ -118,8 +122,9 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	{
 		entity.GetComponent<ent::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/gobber/GoblinX.obj");
 		entity.GetComponent<ent::cmp::ActiveComponent>().active = true;
-		entity.GetComponent<ent::cmp::ScaleComponent>().scale = { .02f,.02f,.02f };
-		entity.GetComponent<ent::cmp::VelocityComponent>().velocity = { .01f,.01f,.01f };
+		entity.GetComponent<ent::cmp::ScaleComponent>().scale = { .3f,.3f,.3f };
+		entity.GetComponent<ent::cmp::VelocityComponent>().velocity = { .0f, 0.f, 0.f };
+		entity.GetComponent<ent::cmp::AccelerationComponent>().acceleration = { .1f, 0.f, 0.f };
 	}
 
 	for (int i = 0; i < entityCount1D; i++)

@@ -237,6 +237,9 @@
     <ClCompile Include="src\ent\sys\UpdatePositionSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ent\sys\UpdateVelocitySystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1737,6 +1740,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utl\Stopwatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ent\sys\UpdateVelocitySystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ent\Component\AccelerationComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
