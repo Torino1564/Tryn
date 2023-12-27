@@ -19,6 +19,7 @@
     <ClCompile Include="src\ent\sys\RenderSystem.cpp" />
     <ClCompile Include="src\ent\sys\SystemManager.cpp" />
     <ClCompile Include="src\ent\sys\TransformSystem.cpp" />
+    <ClCompile Include="src\ent\sys\UpdatePositionSystem.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
@@ -106,9 +107,11 @@
     <ClInclude Include="src\ent\Component\RotationComponent.h" />
     <ClInclude Include="src\ent\Component\ScaleComponent.h" />
     <ClInclude Include="src\ent\Component\TransformComponent.h" />
+    <ClInclude Include="src\ent\Component\VelocityComponent.h" />
     <ClInclude Include="src\ent\sys\RenderSystem.h" />
     <ClInclude Include="src\ent\sys\SystemManager.h" />
     <ClInclude Include="src\ent\sys\TransformSystem.h" />
+    <ClInclude Include="src\ent\sys\UpdatePositionSystem.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
@@ -206,6 +209,7 @@
     <ClInclude Include="src\utl\Probe.h" />
     <ClInclude Include="src\utl\Span.h" />
     <ClInclude Include="src\utl\StackTrace.h" />
+    <ClInclude Include="src\utl\Stopwatch.h" />
     <ClInclude Include="src\utl\String.h" />
     <ClInclude Include="src\utl\Timer.h" />
     <ClInclude Include="src\utl\UUID.h" />

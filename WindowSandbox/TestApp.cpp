@@ -17,9 +17,11 @@
 #include <Core/src/ent/Component/PositionComponent.h>
 #include <Core/src/ent/Component/ScaleComponent.h>
 #include <Core/src/ent/Component/RotationComponent.h>
+#include <Core/src/ent/Component/VelocityComponent.h>
 #include <Core/src/ent/sys/SystemManager.h>
 #include <Core/src/ent/sys/TransformSystem.h>
 #include <Core/src/ent/sys/RenderSystem.h>
+#include <Core/src/ent/sys/UpdatePositionSystem.h>
 
 class TestRenderGraph : public gfx::IRenderGraph
 {
@@ -97,6 +99,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	auto& sysManager = ent::sys::SystemManager::Get();
 	sysManager.RegisterSystem<ent::sys::TransformSystem>();
 	sysManager.RegisterSystem<ent::sys::RenderSystem>();
+	sysManager.RegisterSystem<ent::sys::UpdatePositionSystem>();
 	sysManager.Finalize();
 
 	auto ent = ent::Entity::CreateNew<
@@ -104,6 +107,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		ent::cmp::ModelComponent,
 		ent::cmp::TransformComponent,
 		ent::cmp::PositionComponent,
+		ent::cmp::VelocityComponent,
 		ent::cmp::ScaleComponent,
 		ent::cmp::RotationComponent>("Gobber");
 
@@ -115,6 +119,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		entity.GetComponent<ent::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/gobber/GoblinX.obj");
 		entity.GetComponent<ent::cmp::ActiveComponent>().active = true;
 		entity.GetComponent<ent::cmp::ScaleComponent>().scale = { .02f,.02f,.02f };
+		entity.GetComponent<ent::cmp::VelocityComponent>().velocity = { .01f,.01f,.01f };
 	}
 
 	for (int i = 0; i < entityCount1D; i++)

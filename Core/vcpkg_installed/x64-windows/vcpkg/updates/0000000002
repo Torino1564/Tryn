@@ -1,6 +1,0 @@
-Package: imgui
-Feature: dx12-binding
-Architecture: x64-windows
-Multi-Arch: same
-Description: Make available DirectX12 binding
-Status: purge ok half-installed
