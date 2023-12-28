@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Core\Core.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTest.vcxproj", "{67C36A9A-A169-400E-AF57-B3C51B36766C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowSandbox", "WindowSandbox\WindowSandbox.vcxproj", "{44A10958-F1D2-4830-9488-D0D5DDC6EE4E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestApp", "WindowSandbox\WindowSandbox.vcxproj", "{44A10958-F1D2-4830-9488-D0D5DDC6EE4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

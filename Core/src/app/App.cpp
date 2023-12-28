@@ -1,5 +1,5 @@
 #include "App.h"
-#include <Core/src/ent/Entity.h>
+#include <Core/src/ecs/Entity.h>
 #include <chrono>
 #include <Core/src/gfx/Profiler.h>
 

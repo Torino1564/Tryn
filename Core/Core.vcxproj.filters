@@ -2195,7 +2195,6 @@
     <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\gfx\dx11\VS\VertexShader.hlsl" />
     <FxCompile Include="src\gfx\dx11\PS\PixelShader.hlsl" />
     <FxCompile Include="src\gfx\dx11\PS\PhongFlat_PS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\PhongFlat_VS.hlsl" />

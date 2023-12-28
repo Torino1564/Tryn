@@ -2,7 +2,7 @@
 
 namespace tryn::gfx
 {
-	InstancedModelParent::InstancedModelParent(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, Techniques defaultTechnique = Techniques::Phong, std::optional<std::uint32_t> numInstances = std::nullopt)
+	InstancedModelParent::InstancedModelParent(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, Techniques defaultTechnique, std::optional<std::uint32_t> numInstances)
 		:
 		Model(gfx, path, scale, defaultTechnique)
 	{

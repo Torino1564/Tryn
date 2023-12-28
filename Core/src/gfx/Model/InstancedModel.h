@@ -2,9 +2,12 @@
 #include "Model.h"
 #include <Core/src/gfx/Bindables/IBuffer.h>
 #include <optional>
+#include <span>
 
 namespace tryn::gfx
 {
+	class InstancedModelChild;
+
 	class InstancedModelParent : public Model
 	{
 	public:
