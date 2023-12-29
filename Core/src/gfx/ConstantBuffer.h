@@ -169,7 +169,6 @@ namespace tryn::gfx
 		ElementView operator[](std::string id)
 		{
 			trynass_msg(node.GetType() == ConstantBufferLayout::Type::Struct, L"Tried to index to a non struct ElementView!");
-
 			return ElementView(node[id], pBytes - (node[id].GetOffset() - node.GetOffset()));
 		}
 
