@@ -5,6 +5,7 @@
 #include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
 #include <Core/src/app/Initialization.h>
 #include <Core/src/gfx/ConstantBuffer.h>
+#include <imgui.h>
 
 using namespace tryn;
 

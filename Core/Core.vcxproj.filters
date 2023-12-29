@@ -240,6 +240,9 @@
     <ClCompile Include="src\ecs\sys\UpdateVelocitySystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="third\vcpkg\x64-windows-static\include\stb_vorbis.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1751,6 +1754,1185 @@
     <ClInclude Include="src\ecs\cmp\InstancedModelChildComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Compiler\poppack1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Compiler\pstdint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Compiler\pushpack1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\aabb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\ai_assert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\anim.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\AssertHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Base64.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\BaseImporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Bitmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\BlobIOSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\ByteSwapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\cexport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\cfileio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\cimport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\ColladaMetaData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\color4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\commonMetaData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\CreateAnimMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\DefaultIOStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\DefaultIOSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\DefaultLogger.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Exceptional.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Exporter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\fast_atof.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\GenericProperty.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\GltfMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Importer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\importerdesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\IOStream.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\IOStreamBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\IOSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\LineSplitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\LogAux.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Logger.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\LogStream.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\MathFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\matrix3x3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\matrix4x4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\MemoryIOWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\metadata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\NullLogger.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\ObjMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\ParsingUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\pbrmaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\postprocess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Profiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\ProgressHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\qnan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\quaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\RemoveComments.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\SceneCombiner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\SGSpatialSort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\SkeletonMeshBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\SmallVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\SmoothingGroups.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\SpatialSort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\StandardShapes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\StreamReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\StreamWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\StringComparison.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\StringUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Subdivision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\TinyFormatter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\vector2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\XmlParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\XMLTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\assimp\ZipArchiveIOSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\impl\App_inl.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\impl\Config_inl.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\impl\Formatter_inl.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\impl\Option_inl.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\impl\Split_inl.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\impl\StringTools_inl.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\impl\Validators_inl.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\App.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\CLI.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\Config.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\ConfigFwd.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\Error.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\Formatter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\FormatterFwd.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\Macros.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\Option.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\Split.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\StringTools.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\Timer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\TypeTools.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\Validators.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\CLI\Version.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\animation\keyframe_animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\animation\keyframe_animation_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\animation\keyframe_animation_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\attributes\attribute_octahedron_transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\attributes\attribute_quantization_transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\attributes\attribute_transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\attributes\attribute_transform_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\attributes\attribute_transform_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\attributes\geometry_attribute.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\attributes\geometry_indices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\attributes\point_attribute.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_shared.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_predictor_area.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_predictor_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_multi_parallelogram_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_multi_parallelogram_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_shared.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_predictor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder_factory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_decoding_transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_delta_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_delta_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_factory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_encoding_transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_factory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_decoding_transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_encoding_transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_transform_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_decoding_transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_encoding_transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_transform_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_decoding_transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_encoding_transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_transform_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\attributes_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\attributes_decoder_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\attributes_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\kd_tree_attributes_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\kd_tree_attributes_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\kd_tree_attributes_shared.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\linear_sequencer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\mesh_attribute_indices_encoding_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\normal_compression_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\point_d_vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\points_sequencer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\sequential_attribute_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\sequential_attribute_decoders_controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\sequential_attribute_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\sequential_attribute_encoders_controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\sequential_integer_attribute_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\sequential_integer_attribute_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\sequential_normal_attribute_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\sequential_normal_attribute_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\sequential_quantization_attribute_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\attributes\sequential_quantization_attribute_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\bit_coders\adaptive_rans_bit_coding_shared.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\bit_coders\adaptive_rans_bit_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\bit_coders\adaptive_rans_bit_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\bit_coders\direct_bit_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\bit_coders\direct_bit_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\bit_coders\folded_integer_bit_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\bit_coders\folded_integer_bit_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\bit_coders\rans_bit_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\bit_coders\rans_bit_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\bit_coders\symbol_bit_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\bit_coders\symbol_bit_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\config\compression_shared.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\config\decoder_options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\config\draco_options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\config\encoder_options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\config\encoding_features.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\entropy\ans.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\entropy\rans_symbol_coding.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\entropy\rans_symbol_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\entropy\rans_symbol_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\entropy\shannon_entropy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\entropy\symbol_decoding.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\entropy\symbol_encoding.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\traverser\depth_first_traverser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\traverser\max_prediction_degree_traverser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\traverser\mesh_attribute_indices_encoding_observer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\traverser\mesh_traversal_sequencer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\traverser\traverser_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_decoder_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_decoder_impl_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_encoder_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_encoder_impl_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_shared.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_traversal_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_traversal_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_traversal_predictive_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_traversal_predictive_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_traversal_valence_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_edgebreaker_traversal_valence_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_sequential_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\mesh\mesh_sequential_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\algorithms\float_points_tree_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\algorithms\float_points_tree_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\algorithms\point_cloud_compression_method.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\algorithms\point_cloud_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\algorithms\quantize_points_3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\algorithms\queuing_policy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\point_cloud_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\point_cloud_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\point_cloud_kd_tree_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\point_cloud_kd_tree_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\point_cloud_sequential_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\point_cloud\point_cloud_sequential_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\decode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\draco_compression_options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\encode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\encode_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\compression\expert_encode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\bit_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\bounding_box.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\cycle_timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\data_buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\decoder_buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\divide.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\draco_index_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\draco_index_type_vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\draco_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\draco_version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\encoder_buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\hash_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\macros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\math_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\quantization_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\status.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\status_or.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\varint_decoding.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\varint_encoding.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\core\vector_d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\file_reader_factory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\file_reader_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\file_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\file_writer_factory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\file_writer_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\file_writer_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\mesh_io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\obj_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\obj_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\parser_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\ply_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\ply_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\ply_property_reader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\ply_property_writer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\ply_reader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\point_cloud_io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\stdio_file_reader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\stdio_file_writer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\stl_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\io\stl_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\mesh\corner_table.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\mesh\corner_table_iterators.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\mesh\mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\mesh\mesh_are_equivalent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\mesh\mesh_attribute_corner_table.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\mesh\mesh_cleanup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\mesh\mesh_features.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\mesh\mesh_indices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\mesh\mesh_misc_functions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\mesh\mesh_stripifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\mesh\triangle_soup_mesh_builder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\mesh\valence_cache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\metadata\geometry_metadata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\metadata\metadata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\metadata\metadata_decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\metadata\metadata_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\metadata\property_table.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\metadata\structural_metadata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\point_cloud\point_cloud.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\point_cloud\point_cloud_builder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\draco\draco_features.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\kubazip\zip\zip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\minizip\crypt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\minizip\ioapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\minizip\iowin32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\minizip\mztools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\minizip\unzip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\minizip\zip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\poly2tri\common\shapes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\poly2tri\common\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\poly2tri\sweep\advancing_front.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\poly2tri\sweep\cdt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\poly2tri\sweep\sweep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\poly2tri\sweep\sweep_context.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\poly2tri\poly2tri.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\polyclipping\clipper.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\error\en.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\error\error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\biginteger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\clzll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\diyfp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\dtoa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\ieee754.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\itoa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\meta.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\pow10.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\regex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\stack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\strfunc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\strtod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\internal\swap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\msinttypes\inttypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\msinttypes\stdint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\allocators.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\cursorstreamwrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\document.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\encodedstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\encodings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\filereadstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\filewritestream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\fwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\istreamwrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\memorybuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\memorystream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\ostreamwrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\pointer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\prettywriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\rapidjson.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\reader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\schema.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\stream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\stringbuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\uri.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\rapidjson\writer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\utf8cpp\utf8\checked.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\utf8cpp\utf8\core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\utf8cpp\utf8\cpp11.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\utf8cpp\utf8\cpp17.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\utf8cpp\utf8\cpp20.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\utf8cpp\utf8\unchecked.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\utf8cpp\utf8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\imconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\imgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\imgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\imgui_stdlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\pugiconfig.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\pugixml.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_c_lexer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_connected_components.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_divide.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_ds.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_dxt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_easy_font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_herringbone_wang_tile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_hexwave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_image_resize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_image_write.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_include.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_leakcheck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_perlin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_rect_pack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_sprintf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_tilemap_editor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\stb_voxel_render.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\zconf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\vcpkg\x64-windows-static\include\zlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">
@@ -2192,7 +3374,31 @@
     <None Include="src\gfx\vulkan\vulkan\glsl_shader.frag" />
     <None Include="src\gfx\dx11\PS\LightVector.hlsli" />
     <None Include="src\gfx\dx11\PS\Operations.hlsli" />
-    <None Include="vcpkg.json" />
+    <None Include="third\vcpkg\.msbuildstamp-x64-windows-static.x64-windows-static.stamp" />
+    <None Include="third\vcpkg\x64-windows-static\include\assimp\color4.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="third\vcpkg\x64-windows-static\include\assimp\material.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="third\vcpkg\x64-windows-static\include\assimp\matrix3x3.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="third\vcpkg\x64-windows-static\include\assimp\matrix4x4.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="third\vcpkg\x64-windows-static\include\assimp\quaternion.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="third\vcpkg\x64-windows-static\include\assimp\SmoothingGroups.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="third\vcpkg\x64-windows-static\include\assimp\vector2.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="third\vcpkg\x64-windows-static\include\assimp\vector3.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\gfx\dx11\PS\PixelShader.hlsl" />

@@ -1,0 +1,14 @@
+{
+  "name": "tryn",
+  "version": "0.1.0",
+  "dependencies": [
+    "assimp",
+    "cli11",
+    {
+      "name": "imgui",
+      "features": [
+        "docking-experimental"
+      ]
+    }
+  ]
+}
