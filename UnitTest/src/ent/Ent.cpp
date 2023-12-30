@@ -101,9 +101,6 @@ namespace tryn::ecs
 		}
 		TEST_METHOD(ECSTest)
 		{
-			Entity ent1("Test entity 1");
-			Entity ent2("Test entity 2");
-			Entity ent3("Test entity 3");
 
 		}
 		TEST_METHOD(ArchetypeTests)

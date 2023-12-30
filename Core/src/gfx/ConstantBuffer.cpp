@@ -24,6 +24,10 @@ namespace tryn::gfx
 		child.parent = this;
 		children.push_back(std::move(child));
 	}
+	void ConstantBufferLayout::Node::Append(ConstantBufferLayout::Type type, std::string name)
+	{
+		Append(ConstantBufferLayout::Node(type, std::move(name)));
+	}
 	bool ConstantBufferLayout::Node::IsRoot() const
 	{
 		return !parent.has_value();
@@ -41,9 +45,13 @@ namespace tryn::gfx
 	{
 		return IndexByName(id);
 	}
+	ConstantBufferLayout::Node& ConstantBufferLayout::Node::operator[](std::size_t index)
+	{
+		return IndexByKey(index);
+	}
 	ConstantBufferLayout::Node& ConstantBufferLayout::Node::IndexByName(std::string id)
 	{
-		trynass_msg(type == Type::Struct || type == Type::Array, L"Attempted to index an element to a non array/struct node");
+		trynass_msg(type == Type::Struct || type == Type::Array, L"Attempted to index by name into a non struct node");
 		for (auto& child : children)
 		{
 			if (child.id == id)
@@ -52,6 +60,19 @@ namespace tryn::gfx
 			}
 		}
 		return GetEmpty();
+	}
+	ConstantBufferLayout::Node& ConstantBufferLayout::Node::IndexByKey(std::size_t key)
+	{
+		trynass_msg(type == Type::Array, L"Attempted to index by key into a non array node");
+		trynass_msg( key < children.size(), L"Out of bounds access into constant buffer array node");
+		return children[key];
+	}
+	void ConstantBufferLayout::Node::Resize(std::size_t newSize, ConstantBuffer& buffer)
+	{
+		trynass_msg(GetType() == ConstantBufferLayout::Type::Array, L"Tried to resize a non array element");
+		children.resize(newSize, children[0]);
+		buffer.layout.Solidify();
+		buffer.Rebase();
 	}
 	bool ConstantBufferLayout::Node::Validate() const
 	{
@@ -68,6 +89,15 @@ namespace tryn::gfx
 			trylog.warn(L"Called member GetOffset in a non solid Node. The result may be subject to future changes");
 #endif
 		return offset;
+	}
+
+	void ConstantBufferLayout::Node::Set(Node node, std::size_t numElements)
+	{
+		children.reserve(numElements);
+		for (auto i = 0; i < numElements; i++)
+		{
+			children.push_back(node);
+		}
 	}
 
 	template<ConstantBufferLayout::Type type>
@@ -90,6 +120,10 @@ namespace tryn::gfx
 	void ConstantBufferLayout::Append(Node child)
 	{
 		root->Append(std::move(child));
+	}
+	void ConstantBufferLayout::Append(ConstantBufferLayout::Type type, std::string name)
+	{
+		Append(ConstantBufferLayout::Node(type, std::move(name)));
 	}
 	bool ConstantBufferLayout::IsSolid() const
 	{
@@ -160,10 +194,11 @@ namespace tryn::gfx
 		return *root;
 	}
 
-	ElementView::ElementView(ConstantBufferLayout::Node& node, char* pBytes)
+	ElementView::ElementView(ConstantBufferLayout::Node& node, char* pBytes, ConstantBuffer* pBuffer)
 		:
-		node(node),
-		pBytes(pBytes)
+		node(node), 
+		pBytes(pBytes),
+		pBuffer(pBuffer)
 	{}
 	bool ElementView::Exists() const
 	{

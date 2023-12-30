@@ -99,6 +99,7 @@
   <ItemGroup>
     <ClCompile Include="src\ent\Ent.cpp" />
     <ClCompile Include="src\gfx\D3d11Buffer.cpp" />
+    <ClCompile Include="src\gfx\dcb.cpp" />
     <ClCompile Include="src\ioc\Ioc.cpp" />
     <ClCompile Include="src\log\Log.cpp" />
     <ClCompile Include="src\log\LogTextFormatter.cpp" />
