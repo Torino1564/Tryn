@@ -9,6 +9,7 @@
 
 namespace tryn::gfx::dx11
 {
+	using cbType = ConstantBufferLayout::Type;
 	template <BufferType Type>
 	constexpr int GetBindFlag() {}
 
@@ -51,7 +52,7 @@ namespace tryn::gfx::dx11
 		
 		// TODO: Add NonCaching variant
 		DX11Buffer(Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag = "?")
-		requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant || Type == BufferType::Instance)
+		requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant)
 		: gfx(gfx)
 		{
 			this->slot = slot;
@@ -61,6 +62,42 @@ namespace tryn::gfx::dx11
 			this->type = GraphicAPI::DX11;
 			this->pCPUBuffer = std::make_shared<ConstantBuffer>(std::move(cbl));
 
+			InitDynamicCBufferOnGPU();
+		}
+
+		DX11Buffer(Graphics& gfx, ConstantBufferLayout::Node arrayElement, int slot, std::size_t numInstances)
+		requires (Type == BufferType::Instance && Policy == CachingPolicy::Caching)
+		: gfx(gfx)
+		{
+			ConstantBufferLayout layout;
+			layout.Append(cbType::Array, "InstanceArray");
+
+			layout["InstanceArray"].Set(arrayElement, 100);
+			layout.Solidify();
+			InitDynamicCBufferOnGPU();
+		}
+
+		void Resize(const std::size_t newSize) override
+		{
+			Resize_(newSize);
+		}
+
+		template <BufferType T = Type>
+		requires (T == BufferType::Instance)
+		void Resize_(const std::size_t newSize)
+		{
+			auto& cbuf = *std::dynamic_pointer_cast<ConstantBuffer>(this->pCPUBuffer);
+			cbuf["InstanceArray"].Resize(newSize);
+			InitDynamicCBufferOnGPU();
+		}
+
+		void Resize_(const std::size_t newSize)
+		{
+			throw BufferMissmatchException("Cannot resize a buffer thats not an instance buffer!");
+		}
+
+		void InitDynamicCBufferOnGPU()
+		{
 			D3D11_BUFFER_DESC cbd = {};
 			cbd.Usage = D3D11_USAGE_DYNAMIC;
 			cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;

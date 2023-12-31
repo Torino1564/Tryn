@@ -168,6 +168,8 @@ namespace tryn::gfx
 			return layout;
 		}
 
+		virtual void Resize(const std::size_t newSize) = 0;
+
 		template <BufferType T = Type>
 		requires (T == BufferType::VtxConstant || T == BufferType::PxConstant)
 		ElementView operator[](std::string id)

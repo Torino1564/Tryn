@@ -21,6 +21,7 @@
 #include <Core/src/gfx/GraphicAPI.h>
 #include <Core/src/utl/LocalGenericTaskQueue.h>
 #include <Core/src/gfx/IBufferFwd.h>
+#include <Core/src/gfx/ConstantBuffer.h>
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
@@ -46,7 +47,6 @@ namespace tryn::gfx
 	class IInputLayout;
 	class IBindable;
 	class IPrimitiveTopology;
-	class ConstantBufferLayout;
 	class ITransformCBuf;
 	class ITexture;
 	class ISampler;
@@ -120,7 +120,7 @@ namespace tryn::gfx
 		virtual std::shared_ptr<IVtxConstantBufferNCach>CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
 		virtual std::shared_ptr<IPxConstantBuffer>		CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
 		virtual std::shared_ptr<IPxConstantBufferNCach>	CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
-		virtual std::unique_ptr<IInstanceBuffer>		CreateInstanceBuffer(ConstantBufferLayout&&, int slot = 2) = 0;
+		virtual std::unique_ptr<IInstanceBuffer>		CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot = 2) = 0;
 		virtual std::shared_ptr<ITexture>				CreateTexture(std::filesystem::path path, int slot = 0) = 0;
 		virtual std::shared_ptr<IRasterizer>			CreateRasterizer(const bool twoSided = true) = 0;
 		virtual std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) = 0;

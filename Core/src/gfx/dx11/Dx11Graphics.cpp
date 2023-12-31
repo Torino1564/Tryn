@@ -156,7 +156,7 @@ namespace tryn::gfx::dx11
 			ImGui::RenderPlatformWindowsDefault();
 			auto dd = ImGui::GetDrawData();
 			ImGui_ImplDX11_RenderDrawData(dd);
-			pSwap->Present(0u, 0u) >> chk;
+			pSwap->Present(1u, 0u) >> chk;
 			});
 
 		future.get();
@@ -185,7 +185,6 @@ namespace tryn::gfx::dx11
 	{
 		return *pDevice.Get();
 	}
-
 	void Graphics::DrawInstancedIndexed(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation)
 	{
 		GetContext().DrawIndexedInstanced(indexCount, instanceCount, startIndexLocation, baseVertexLocation, startInstanceLocation);
@@ -319,11 +318,11 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::unique_ptr<IInstanceBuffer> Graphics::CreateInstanceBuffer(ConstantBufferLayout&& cbl, int slot)
+	std::unique_ptr<IInstanceBuffer> Graphics::CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot)
 	{
-		cbl.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Bool, "EnabledInstance"));
+		node.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Bool, "EnabledInstance"));
 		auto future = Dispatch_([&] {
-			return std::make_unique<DX11InstanceBuffer>(*this, std::move(cbl), slot);
+			return std::make_unique<DX11InstanceBuffer>(*this, node, slot, size);
 			});
 		return future.get();
 	}

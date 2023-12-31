@@ -1,5 +1,4 @@
 #pragma once
-#include <Core/src/gfx/Bindables/Bindable.h>
 #include <vector>
 #include <Core/third/glm/glm.hpp>
 #include <string>
@@ -7,10 +6,9 @@
 #include <utility>
 #include <memory>
 #include <Core/src/utl/Exception.h>
-#include <unordered_map>
-#include <Core/src/gfx/BindablePool.h>
 #include <Core/src/gfx/CPUBuffer.h>
 #include <Core/src/gfx/IBufferFwd.h>
+#include <Core/src/utl/Assert.h>
 
 ZT_EX_DEF(DcbException);
 
@@ -124,9 +122,11 @@ namespace tryn::gfx
 
 		static constexpr size_t SizeOf(ConstantBufferLayout::Type type);
 
-		struct Node
+		class Node
 		{
 			friend class ConstantBufferLayout;
+
+		public:
 
 			Node(Type type, std::string id);
 			void Append(Node child);

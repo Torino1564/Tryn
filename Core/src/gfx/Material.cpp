@@ -12,7 +12,7 @@
 
 namespace tryn::gfx
 {
-	Material::Material(IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, Techniques defaultTechnique)
+	Material::Material(IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, Techniques defaultTechnique, bool instanced)
 	{
 		const auto rootPath = path.parent_path().string() + "\\";
 		static bool isInitialized = false;
@@ -114,7 +114,7 @@ namespace tryn::gfx
 				}
 				// Common
 				{
-					auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + "_VS.cso");
+					auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (instanced ? "Inst" : "") + "_VS.cso");
 					step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 					step.AddBindable(std::move(pvs));
 					step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));

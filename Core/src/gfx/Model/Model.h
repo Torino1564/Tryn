@@ -16,7 +16,7 @@ namespace tryn::gfx
 	class Model
 	{
 	public:
-		Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, Techniques defaultTechnique = Techniques::Phong );
+		Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, Techniques defaultTechnique = Techniques::Phong, bool instanced = false );
 		virtual void Submit(const glm::mat4& entityTransform);
 		void SpawnControlWindow();
 		glm::vec3 GetPosition() const;
