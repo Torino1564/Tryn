@@ -156,7 +156,7 @@ namespace tryn::gfx::dx11
 			ImGui::RenderPlatformWindowsDefault();
 			auto dd = ImGui::GetDrawData();
 			ImGui_ImplDX11_RenderDrawData(dd);
-			pSwap->Present(1u, 0u) >> chk;
+			pSwap->Present(0u, 0u) >> chk;
 			});
 
 		future.get();

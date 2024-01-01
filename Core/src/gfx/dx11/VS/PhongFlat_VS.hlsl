@@ -14,7 +14,7 @@ struct VSOut
 
 VSOut main(float3 pos : POSITION, float3 n : normal)
 {
-    const matrix modelView = mul(model, model);
+    const matrix modelView = mul(model, view);
     const matrix modelViewProj = mul(model, viewProjection);
 	VSOut vso;
 	vso.viewPos = (float3)mul(float4(pos, 1.0f), modelView);
