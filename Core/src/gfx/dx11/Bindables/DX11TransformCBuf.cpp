@@ -11,8 +11,8 @@ namespace tryn::gfx::dx11
 		{
 			ConstantBufferLayout cblayout;
 			cblayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Matrix4, "model"));
-			cblayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Matrix4, "modelView"));
-			cblayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Matrix4, "modelViewProj"));
+			cblayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Matrix4, "view"));
+			cblayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Matrix4, "viewProjection"));
 			cblayout.Solidify();
 			pVCB = std::make_unique<DX11VtxConstantBuffer>(gfx, std::move(cblayout), 0, "transformCbuf");
 		}
