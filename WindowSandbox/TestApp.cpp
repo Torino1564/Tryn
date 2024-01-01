@@ -124,7 +124,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		entity.GetComponent<ecs::cmp::ActiveComponent>().active = true;
 		entity.GetComponent<ecs::cmp::ScaleComponent>().scale = { .3f,.3f,.3f };
 		entity.GetComponent<ecs::cmp::VelocityComponent>().velocity = { .0f, 0.f, 0.f };
-		entity.GetComponent<ecs::cmp::AccelerationComponent>().acceleration = { .1f, 0.f, 0.f };
+		entity.GetComponent<ecs::cmp::AccelerationComponent>().acceleration = { .0f, 0.f, 0.f };
 	}
 
 	for (int i = 0; i < entityCount1D; i++)
