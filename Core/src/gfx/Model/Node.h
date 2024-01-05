@@ -12,6 +12,7 @@ namespace tryn::gfx
 	public:
 		Node(int id, std::string_view name, std::vector<Mesh*> pMeshes, glm::mat4 transform);
 		void Submit(IGraphics& gfx, glm::mat4 accumulatedTransform);
+		void Submit(IGraphics& gfx, std::span<const glm::mat4> accumulatedTransforms, InstancedModelParent& parent);
 		void AddChild(Node);
 	private:
 		std::string name;

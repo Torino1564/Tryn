@@ -15,15 +15,18 @@ namespace tryn::gfx
 
 	class Model
 	{
+		friend class InstancedModelParent;
 	public:
 		Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, Techniques defaultTechnique = Techniques::Phong, bool instanced = false );
-		virtual void Submit(const glm::mat4& entityTransform);
+		void Submit(const glm::mat4& entityTransform);
 		void SpawnControlWindow();
 		glm::vec3 GetPosition() const;
+		std::uint16_t GetMeshAmount() const;
 	private:
 		Node ParseNode(int& nextId, const aiNode& node, glm::vec3 scale);
 		Settings settings = {};
 	private:
+		std::uint16_t meshCounter = 0;
 		gfx::IGraphics& gfx;
 		std::string name;
 		std::unique_ptr<Node> root;

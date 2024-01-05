@@ -320,7 +320,6 @@ namespace tryn::gfx::dx11
 
 	std::unique_ptr<IInstanceBuffer> Graphics::CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot)
 	{
-		node.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Bool, "EnabledInstance"));
 		auto future = Dispatch_([&] {
 			return std::make_unique<DX11InstanceBuffer>(*this, node, slot, size);
 			});

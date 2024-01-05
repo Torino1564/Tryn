@@ -143,7 +143,7 @@ namespace tryn::gfx
 			Type GetType() const;
 			size_t GetOffset() const;
 			void Set(Node, std::size_t numElements);
-
+			std::size_t Size() const;
 		private:
 			std::vector<Node> children;
 			Type type = Type::Empty;
@@ -169,7 +169,7 @@ namespace tryn::gfx
 
 	class ElementView
 	{
-		friend struct ConstantBufferLayout::Node;
+		friend class ConstantBufferLayout::Node;
 	public:
 		ElementView(ConstantBufferLayout::Node& node, char* pBytes, ConstantBuffer* pBuffer);
 		ElementView operator[](std::string id)
@@ -195,7 +195,10 @@ namespace tryn::gfx
 
 			return *reinterpret_cast<T*>(pBytes);
 		}
-
+		auto& Node()
+		{
+			return node;
+		}
 		bool Exists() const;
 
 		template<typename T>

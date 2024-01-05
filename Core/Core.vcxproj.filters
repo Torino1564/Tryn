@@ -2933,6 +2933,9 @@
     <ClInclude Include="third\vcpkg\x64-windows-static\include\zlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ecs\cmp\InstancedModelParentComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">

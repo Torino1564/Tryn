@@ -186,6 +186,13 @@ namespace tryn::gfx
 				pCPUBuffer->SetDirty();
 			}
 		}
+
+		template <BufferType T = Type>
+		requires (T == BufferType::Instance)
+		auto& GetCPUBuffer()
+		{
+			return reinterpret_cast<ConstantBuffer&>(*pCPUBuffer.get());
+		}
 	protected:
 		std::string path;
 		std::string tag;

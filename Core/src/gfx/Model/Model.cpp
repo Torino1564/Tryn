@@ -6,6 +6,7 @@
 #include <Core/third/glm/gtc/type_ptr.hpp>
 #include <Core/third/glm/glm.hpp>
 #include <Core/src/gfx/Model/StaticMesh.h>
+#include <Core/src/mem/ArenaAllocator.h>
 
 namespace tryn::gfx
 {
@@ -75,7 +76,7 @@ namespace tryn::gfx
 		for (size_t i = 0; i < pScene->mNumMeshes; i++)
 		{
 			const auto& mesh = *pScene->mMeshes[i];
-			pMeshes.push_back(std::make_unique<StaticMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), scale));
+			pMeshes.push_back(std::make_unique<StaticMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), scale, meshCounter++));
 		}
 
 		int nextId = 0;
@@ -107,6 +108,10 @@ namespace tryn::gfx
 	glm::vec3 Model::GetPosition() const
 	{
 		return settings.position;
+	}
+	std::uint16_t Model::GetMeshAmount() const
+	{
+		return meshCounter + 1;
 	}
 	Node Model::ParseNode(int& nextId, const aiNode& node, glm::vec3 scale)
 	{

@@ -100,6 +100,12 @@ namespace tryn::gfx
 		}
 	}
 
+	std::size_t ConstantBufferLayout::Node::Size() const
+	{
+		trynass_msg(GetType() == ConstantBufferLayout::Type::Array, L"Tried to resize a non array element");
+		return children.size();
+	}
+
 	template<ConstantBufferLayout::Type type>
 	struct TrueTypeSizeLookup
 	{

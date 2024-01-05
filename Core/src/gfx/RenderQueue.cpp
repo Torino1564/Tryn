@@ -4,6 +4,7 @@
 #include <Core/src/log/Log.h>
 #include <Core/src/gfx/RenderTask.h>
 #include <Core/src/gfx/PointLight.h>
+#include <Core/src/gfx/Model/InstancedModel.h>
 
 namespace tryn::gfx
 {
@@ -95,9 +96,14 @@ namespace tryn::gfx
 
 	void Job::Execute(IGraphics& gfx)
 	{
-		data.pDrawable->BindBase();
-		data.pStep->Bind(gfx);
-		gfx.DrawIndexed(data.pDrawable->GetIndexCount());
+		if (instanceData.instanceParent == nullptr)
+		{
+			Execute_(gfx);
+		}
+		else
+		{
+			ExecuteInsanced_(gfx);
+		}
 	}
 
 	void Job::ExecuteAsync(IGraphics& gfx, RenderWorker* worker, std::optional<std::shared_ptr<RenderTask>> taskPtr)
@@ -134,6 +140,39 @@ namespace tryn::gfx
 	Job::Data& Job::GetData()
 	{
 		return data;
+	}
+	Job::InstancedData & Job::GetInstanceData()
+	{
+		return instanceData;
+	}
+	void Job::Execute_(IGraphics& gfx)
+	{
+		data.pDrawable->BindBase();
+		data.pDrawable->BindTransformCBuf();
+		data.pStep->Bind(gfx);
+		gfx.DrawIndexed(data.pDrawable->GetIndexCount());
+	}
+	void Job::ExecuteInsanced_(IGraphics& gfx)
+	{
+		auto& instanceBuffer = instanceData.instanceParent->RequestInstanceBuffer(data.pDrawable->GetID());
+		auto& constantBuffer = instanceBuffer.GetCPUBuffer();
+		auto instanceArray = constantBuffer["InstanceArray"];
+		if (instanceArray.Node().Size() < instanceData.transforms.size())
+		{
+			instanceArray.Resize(instanceData.transforms.size() + 10);
+		}
+
+		memset(constantBuffer.Data(), 0, instanceArray.Node().Size());
+
+		for (auto i = 0; i < instanceData.transforms.size(); i++)
+		{
+			instanceArray[i].Get<glm::mat4>() = instanceData.transforms[i];
+		}
+		
+		instanceBuffer.Bind();
+		data.pDrawable->BindBase();
+		data.pStep->Bind(gfx);
+		gfx.DrawInstancedIndexed(data.pDrawable->GetIndexCount(), instanceData.transforms.size(), 0u, 0u, 0u);
 	}
 }
 

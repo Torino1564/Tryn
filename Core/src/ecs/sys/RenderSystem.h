@@ -1,9 +1,11 @@
 #pragma once
 #include "SystemManager.h"
+#include <Core/src/utl/Span.h>
+#include <Core/src/ecs/cmp/ActiveComponent.h>
 #include <Core/src/ecs/cmp/ModelComponent.h>
 #include <Core/src/ecs/cmp/TransformComponent.h>
-#include <Core/src/ecs/cmp/ActiveComponent.h>
-#include <Core/src/utl/Span.h>
+#include <Core/src/ecs/cmp/InstancedModelChildComponent.h>
+#include <Core/src/ecs/cmp/InstancedModelParentComponent.h>
 #include <Core/src/ecs/sys/TransformSystem.h>
 
 namespace tryn::ecs::sys
@@ -21,5 +23,13 @@ namespace tryn::ecs::sys
 		static inline utl::MultiSpan<cmp::ModelComponent::SubresourceData> modelArray;
 		static inline utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformArray;
 		static inline utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeArray;
+
+		static inline utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeChildrenArray;
+		static inline utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformChildrenArray;
+		static inline utl::MultiSpan<cmp::InstancedModelChildComponent::SubresourceData> childrenModelArray;
+
+		static inline utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeParentArray;
+		static inline utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformParentArray;
+		static inline utl::MultiSpan<cmp::InstancedModelParentComponent::SubresourceData> parentModelArray;
 	};
 }

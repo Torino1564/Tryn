@@ -5,6 +5,7 @@
 #include <Core/third/glm/glm.hpp>
 #include <Core/third/glm/gtx/euler_angles.hpp>
 #include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Model/InstancedModel.h>
 
 namespace tryn::gfx
 {
@@ -45,19 +46,32 @@ namespace tryn::gfx
 			technique.Submit(gfx, this);
 		}
 	}
+	void Drawable::Submit(IGraphics& gfx, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
+	{
+		for (auto& technique : techniques)
+		{
+			technique.Submit(gfx, this, transforms, instancedParent);
+		}
+	}
 	void Drawable::BindBase() const
 	{
 		pVertexBuffer->Bind();
 		pIndexBuffer->Bind();
 		pTopology->Bind();
-		pTransformCBuf->BindTransformCBuf(this);
 	}
 	void Drawable::BindBase(IContext& context) const
 	{
 		pVertexBuffer->Bind(context);
 		pIndexBuffer->Bind(context);
 		pTopology->Bind(context);
-		pTransformCBuf->BindTransformCBuf(this,context);
+	}
+	void Drawable::BindTransformCBuf() const
+	{
+		pTransformCBuf->BindTransformCBuf(this);
+	}
+	void Drawable::BindTransformCBuf(IContext& context) const
+	{
+		pTransformCBuf->BindTransformCBuf(this, context);
 	}
 	void Drawable::InitTransformCBuf(IGraphics& gfx)
 	{
@@ -78,5 +92,9 @@ namespace tryn::gfx
 	glm::mat4 Drawable::GetTransformMatrix() const
 	{
 		return transform;
+	}
+	std::uint16_t Drawable::GetID() const
+	{
+		return ID;
 	}
 }

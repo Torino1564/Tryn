@@ -2,6 +2,7 @@
 #include <queue>
 #include <functional>
 #include <Core/src/gfx/RenderWorker.h>
+#include <Core/third/glm/mat4x4.hpp>
 
 namespace tryn::gfx
 {
@@ -17,14 +18,21 @@ namespace tryn::gfx
 		Job(Drawable* parent, Step* step);
 		void Execute(IGraphics& gfx);
 		void ExecuteAsync(IGraphics& gfx, RenderWorker* worker, std::optional<std::shared_ptr<RenderTask>> taskPtr = std::nullopt);
-
 	private:
+		void Execute_(IGraphics& gfx);
+		void ExecuteInsanced_(IGraphics& gfx);
+
 		struct Data {
-			Drawable* pDrawable;
-			Step* pStep;
+			Drawable* pDrawable = nullptr;
+			Step* pStep = nullptr;
 		} data;
+		struct InstancedData {
+			std::span<const glm::mat4> transforms = {};
+			class InstancedModelParent* instanceParent = nullptr;
+		} instanceData = {};
 	public:
 		Data& GetData();
+		InstancedData& GetInstanceData();
 	};
 
 	class RenderQueue
