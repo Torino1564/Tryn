@@ -202,10 +202,19 @@ namespace tryn::gfx::dx11
 				descriptor.SemanticName = vLayout.Elements[i].first.GetName();
 				descriptor.SemanticIndex = vLayout.Elements[i].second;
 				descriptor.Format = MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
-				descriptor.InputSlot = (UINT)slot;
-				descriptor.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-				descriptor.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-				descriptor.InstanceDataStepRate = 0u;
+				if (vLayout.Elements[i].first.GetType() == VertexLayout::VertexElement::InstanceID)
+				{
+					descriptor.InputSlot = (UINT)1;
+					descriptor.InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+					descriptor.AlignedByteOffset = 0u;
+					descriptor.InstanceDataStepRate = 1u;
+				}
+				else {
+					descriptor.InputSlot = (UINT)slot;
+					descriptor.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+					descriptor.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+					descriptor.InstanceDataStepRate = 0u;
+				}
 				layout.push_back(descriptor);
 			}
 
