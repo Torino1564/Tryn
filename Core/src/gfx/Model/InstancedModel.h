@@ -3,6 +3,7 @@
 #include <Core/src/gfx/Bindables/IBuffer.h>
 #include <optional>
 #include <span>
+#include <Core/third/dynamic_bitset.hpp>
 
 namespace tryn::gfx
 {
@@ -18,19 +19,26 @@ namespace tryn::gfx
 		void Instanciate(std::span<InstancedModelChild> childSpan);
 		IInstanceBuffer& RequestInstanceBuffer(std::uint16_t key);
 	private:
+		std::uint32_t ResolveID();
+		void Resize(std::size_t newSize);
 		std::string instancedGroup;
-		std::uint32_t numInstanced;
+		std::uint32_t numInstanced = 0;
+		std::uint32_t upperLimit = 0;
 		std::unique_ptr<Model> pBase;
 		std::vector<glm::mat4> transforms;
+		sul::dynamic_bitset<> booker;
 		std::vector<std::unique_ptr<IInstanceBuffer>> pTransformationBuffers;
 	};
 
 	class InstancedModelChild
 	{
+		friend class InstancedModelParent;
 	public:	
+		~InstancedModelChild();
 		void Submit(const glm::mat4& transformation);
 	public:
+
 		std::uint16_t instanceID;
-		InstancedModelParent& parentModel;
+		InstancedModelParent* pParentModel;
 	};
 }

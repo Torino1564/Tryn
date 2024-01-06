@@ -127,7 +127,7 @@ namespace tryn::gfx
 			friend class ConstantBufferLayout;
 
 		public:
-
+			Node() = default;
 			Node(Type type, std::string id);
 			void Append(Node child);
 			void Append(ConstantBufferLayout::Type type, std::string name);
@@ -148,7 +148,7 @@ namespace tryn::gfx
 			std::vector<Node> children;
 			Type type = Type::Empty;
 			std::optional<Node*> parent;
-			std::string id;
+			std::string id = "";
 			bool solid = false;
 			size_t offset = 0;
 		};

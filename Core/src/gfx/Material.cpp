@@ -114,6 +114,10 @@ namespace tryn::gfx
 				}
 				// Common
 				{
+					if (instanced)
+					{
+						vLayout.AppendElement(VertexLayout::InstanceID);
+					}
 					auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (instanced ? "Inst" : "") + "_VS.cso");
 					step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 					step.AddBindable(std::move(pvs));

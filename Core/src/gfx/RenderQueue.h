@@ -3,6 +3,7 @@
 #include <functional>
 #include <Core/src/gfx/RenderWorker.h>
 #include <Core/third/glm/mat4x4.hpp>
+#include <span>
 
 namespace tryn::gfx
 {
@@ -16,6 +17,7 @@ namespace tryn::gfx
 	friend class RenderQueue;
 	public:
 		Job(Drawable* parent, Step* step);
+		Job(Drawable* parent, Step* step, std::span<const glm::mat4> transforms, class InstancedModelParent* pParentInstanced);
 		void Execute(IGraphics& gfx);
 		void ExecuteAsync(IGraphics& gfx, RenderWorker* worker, std::optional<std::shared_ptr<RenderTask>> taskPtr = std::nullopt);
 	private:

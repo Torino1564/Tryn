@@ -105,22 +105,40 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	sysManager.RegisterSystem<ecs::sys::UpdateVelocitySystem>();
 	sysManager.Finalize();
 
-	auto ent = ecs::Entity::CreateNew<
+	auto entParent = ecs::Entity::CreateNew<
 		ecs::cmp::ActiveComponent,
-		ecs::cmp::ModelComponent,
+		ecs::cmp::InstancedModelParentComponent,
 		ecs::cmp::TransformComponent,
 		ecs::cmp::PositionComponent,
 		ecs::cmp::VelocityComponent,
 		ecs::cmp::AccelerationComponent,
 		ecs::cmp::ScaleComponent,
-		ecs::cmp::RotationComponent>("Gobber");
+		ecs::cmp::RotationComponent>("GobberParent");
+
+	auto entChild = ecs::Entity::CreateNew<
+		ecs::cmp::ActiveComponent,
+		ecs::cmp::InstancedModelChildComponent,
+		ecs::cmp::TransformComponent,
+		ecs::cmp::PositionComponent,
+		ecs::cmp::VelocityComponent,
+		ecs::cmp::AccelerationComponent,
+		ecs::cmp::ScaleComponent,
+		ecs::cmp::RotationComponent>("GobberChild");
 
 	entities.resize(pow(entityCount1D, 3));
-	ent.Instanciate({ entities });
+	entChild.Instanciate({ entities });
+
+	entParent.GetComponent<ecs::cmp::InstancedModelParentComponent>().parentModel = gfx::InstancedModelParent(Gfx(), "resources/models/gobber/GoblinX.obj");
+	entParent.GetComponent<ecs::cmp::ActiveComponent>().active = true;
+	entParent.GetComponent<ecs::cmp::ScaleComponent>().scale = { .3f,.3f,.3f };
+	entParent.GetComponent<ecs::cmp::VelocityComponent>().velocity = { .0f, 0.f, 0.f };
+	entParent.GetComponent<ecs::cmp::AccelerationComponent>().acceleration = { .0f, 0.f, 0.f };
+
+	auto& instanceParent = entParent.GetComponent<ecs::cmp::InstancedModelParentComponent>().parentModel;
 
 	for (auto& entity : entities)
 	{
-		entity.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/gobber/GoblinX.obj");
+		entity.GetComponent<ecs::cmp::InstancedModelChildComponent>().childModel = instanceParent.Instanciate();
 		entity.GetComponent<ecs::cmp::ActiveComponent>().active = true;
 		entity.GetComponent<ecs::cmp::ScaleComponent>().scale = { .3f,.3f,.3f };
 		entity.GetComponent<ecs::cmp::VelocityComponent>().velocity = { .0f, 0.f, 0.f };
@@ -148,6 +166,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 void TestApp::DoFrame()
 {
+	mem::ArenaAllocator<>::GP().Wipe();	
 	camera.Submit(Gfx());
 	pPointLight->SubmitLight(Gfx());
 

@@ -3425,5 +3425,15 @@
     <FxCompile Include="src\gfx\dx11\VS\PhongTexMskNrm_VS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpc_VS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcNrm_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\FlatInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongFlatInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskNrmInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcNrmInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexNrmInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcNrmInst_VS.hlsl" />
   </ItemGroup>
 </Project>

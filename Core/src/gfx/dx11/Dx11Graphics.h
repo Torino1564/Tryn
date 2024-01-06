@@ -57,6 +57,9 @@ namespace tryn::gfx::dx11
 			case VertexLayout::Format::Vec4C_UNorm:
 				return DXGI_FORMAT_R8G8B8A8_UNORM;
 				break;
+			case VertexLayout::Format::Float_Uint:
+				return DXGI_FORMAT_R32_UINT;
+				break;
 			}
 			return DXGI_FORMAT_UNKNOWN;
 		}

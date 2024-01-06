@@ -28,6 +28,15 @@ namespace tryn::ecs::sys
 
 		transformArray.Clear();
 		modelArray.Clear();
+		activeArray.Clear();
+
+		transformChildrenArray.Clear();
+		activeChildrenArray.Clear();
+		childrenModelArray.Clear();
+
+		transformParentArray.Clear();
+		activeParentArray.Clear();
+		parentModelArray.Clear();
 
 		// Fill data arrays
 

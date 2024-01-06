@@ -11,6 +11,7 @@
 #include <Core/src/log/Log.h>
 #include <assimp/scene.h>
 #include <Core/src/gfx/CPUBuffer.h>
+#include <concepts>
 
 #define DVTX_ELEMENT_AI_EXTRACTOR(member) static SysType Extract( const aiMesh& mesh,size_t i ) noexcept {return *reinterpret_cast<const SysType*>(&mesh.member[i]);}
 
@@ -26,6 +27,7 @@ ZT_EX_DEF(DvtxException);
 		X( Char4Color ) \
 		X( Tangent ) \
 		X( Bitangent ) \
+		X( InstanceID ) \
 		X( Unknown )
 
 struct BGRAColor
@@ -35,6 +37,7 @@ struct BGRAColor
 	unsigned char g;
 	unsigned char b;
 };
+
 namespace tryn::gfx
 {
 
@@ -53,6 +56,7 @@ namespace tryn::gfx
 			Vec3F,
 			Vec4F,
 			Vec4C_UNorm,
+			Float_Uint,
 			Unknown
 		};
 
@@ -130,6 +134,13 @@ namespace tryn::gfx
 			static constexpr const char* code = "Bt";
 			DVTX_ELEMENT_AI_EXTRACTOR(mBitangents)
 		};
+		template <> struct VertexElementAttr<InstanceID>
+		{
+			using SysType = float;
+			static constexpr Format format = Format::Float_Uint;
+			static constexpr const char* semantic = "InstanceID";
+			static constexpr const char* code = "IDI";
+		};
 		template <> struct VertexElementAttr<Unknown>
 		{
 			using SysType = int;
@@ -192,12 +203,19 @@ namespace tryn::gfx
 			template<VertexLayout::VertexElement type>
 			struct AttributeAiMeshFill
 			{
+				template <VertexLayout::VertexElement T = type>
+				requires (T != VertexLayout::VertexElement::InstanceID)
 				static constexpr void Exec(VertexBuffer& pBuf, const aiMesh& mesh)
 				{
 					for (auto end = mesh.mNumVertices, i = 0u; i < end; i++)
 					{
 						pBuf[i].Attr<type>(0) = VertexLayout::VertexElementAttr<type>::Extract(mesh, i);
 					}
+				}
+
+				static constexpr void Exec(VertexBuffer& pBuf, const aiMesh& mesh)
+				{
+					return;
 				}
 			};
 		public:

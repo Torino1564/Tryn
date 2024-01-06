@@ -40,7 +40,7 @@ namespace tryn::gfx
 	void Step::Submit(IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instanceParent)
 	{
 		auto& renderGraph = gfx.GetRenderGraph();
-		renderGraph.GetRenderQueueByID(renderQueueID).Push(Job(parent, this));
+		renderGraph.GetRenderQueueByID(renderQueueID).Push(Job(parent, this, transforms, &instanceParent));
 	}
 	void Step::Accept(TechniqueProbe& probe)
 	{

@@ -94,6 +94,13 @@ namespace tryn::gfx
 		data{ parent,step }
 	{}
 
+	Job::Job(Drawable * parent, Step * step, std::span<const glm::mat4> transforms, InstancedModelParent * pParentInstanced)
+		:
+		data{parent, step},
+		instanceData{transforms, pParentInstanced}
+	{
+	}
+
 	void Job::Execute(IGraphics& gfx)
 	{
 		if (instanceData.instanceParent == nullptr)
