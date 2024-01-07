@@ -14,17 +14,12 @@ namespace tryn::gfx
 
 		numInstanced = 0;
 		upperLimit = numInstances.value_or(10);
-		transforms.resize(numInstances.value_or(10));
-		booker.resize(numInstances.value_or(10), true);
-		ConstantBufferLayout::Node arrayElement(ConstantBufferLayout::Type::Struct, "arrayStruct");
-		arrayElement.Append(ConstantBufferLayout::Type::Matrix4, "transform");
-
+		ConstantBufferLayout::Node arrayElement_(ConstantBufferLayout::Type::Struct, "arrayStruct");
+		arrayElement_.Append(ConstantBufferLayout::Type::Matrix4, "transform");
+		this->arrayElement = std::move(arrayElement_);
 		pTransformationBuffers.reserve(pBase->GetMeshAmount());
 
-		for (auto i = 0; i < pBase->GetMeshAmount(); i++)
-		{
-			pTransformationBuffers.emplace_back(gfx.CreateInstanceBuffer(arrayElement, upperLimit));
-		}
+		Resize(upperLimit);
 	}
 	void InstancedModelParent::Submit(const glm::mat4& transformation)
 	{
@@ -69,7 +64,7 @@ namespace tryn::gfx
 		auto slot = booker.find_next(numInstanced);
 		if (slot == booker.npos)
 		{
-			Resize((booker.size() + 10) * 1.5f);
+			Resize((booker.size() + 10) * 2.0f);
 			slot = booker.find_next(numInstanced);
 		}
 		booker[slot].flip();
@@ -85,6 +80,11 @@ namespace tryn::gfx
 	{
 		transforms.resize(newSize, glm::mat4{ 0.0f });
 		booker.resize(newSize, true);
+		pTransformationBuffers.clear();
+		for (auto i = 0; i < pBase->GetMeshAmount(); i++)
+		{
+			pTransformationBuffers.emplace_back(pBase->gfx.CreateInstanceBuffer(arrayElement, upperLimit));
+		}
 	}
 	InstancedModelChild::~InstancedModelChild()
 	{

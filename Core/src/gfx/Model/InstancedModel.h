@@ -27,6 +27,7 @@ namespace tryn::gfx
 		std::unique_ptr<Model> pBase;
 		std::vector<glm::mat4> transforms;
 		sul::dynamic_bitset<> booker;
+		gfx::ConstantBufferLayout::Node arrayElement;
 		std::vector<std::unique_ptr<IInstanceBuffer>> pTransformationBuffers;
 	};
 

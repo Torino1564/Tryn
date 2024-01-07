@@ -180,7 +180,8 @@ namespace tryn::gfx
 		ElementView operator[](std::size_t key)
 		{
 			trynass_msg(node.GetType() == ConstantBufferLayout::Type::Array, L"Tried to index by key into a non array ElementView!");
-			return ElementView(node[key], pBytes + (node[key].GetOffset() - node.GetOffset()), pBuffer);
+			auto finalOffset = node[key].GetOffset() - node.GetOffset();
+			return ElementView(node[key], pBytes + finalOffset, pBuffer);
 		}
 		void Resize(std::size_t newSize)
 		{

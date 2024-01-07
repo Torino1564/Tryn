@@ -169,9 +169,9 @@ namespace tryn::gfx
 			instanceArray.Resize(instanceData.transforms.size() + 10);
 		}
 
-		memset(constantBuffer.Data(), 0, instanceArray.Node().Size());
+		memset(constantBuffer.Data(), 0, constantBuffer.ByteSize());
 
-		for (auto i = 0; i < instanceData.transforms.size(); i++)
+		for (auto i = 0; i < instanceData.transforms.size() - 1; i++)
 		{
 			instanceArray[i].Get<glm::mat4>() = instanceData.transforms[i];
 		}
