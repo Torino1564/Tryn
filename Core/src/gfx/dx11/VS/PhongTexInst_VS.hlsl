@@ -18,9 +18,7 @@ struct VSOut
 	float4 pos : SV_Position;
 };
 
-uint instanceID : SV_InstanceID;
-
-VSOut main(float3 pos : Position, float3 n : Normal, float2 tc : Texcoord)
+VSOut main(float3 pos : Position, float3 n : Normal, float2 tc : Texcoord, uint instanceID : SV_InstanceID)
 {
     const matrix modelView = mul(modelArray[instanceID], view);
     const matrix modelViewProj = mul(modelArray[instanceID], viewProjection);

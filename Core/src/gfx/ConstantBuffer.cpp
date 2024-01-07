@@ -187,6 +187,25 @@ namespace tryn::gfx
 				q.push(&child);
 			}
 		}
+
+		// Add offset to structs
+		q.push(root.get());
+		while (!q.empty())
+		{
+			current = q.front();
+			q.pop();
+
+			for (auto& child : current->children)
+			{
+				q.push(&child);
+			}
+
+			if (current->type == ConstantBufferLayout::Struct && !current->children.empty())
+			{
+				current->offset = current->children[0].offset;
+			}
+		}
+
 		solid = true;
 		size = accumulatedOffset + (16 - accumulatedOffset % 16);
 	}

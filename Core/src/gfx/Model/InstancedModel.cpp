@@ -92,6 +92,6 @@ namespace tryn::gfx
 	}
 	void InstancedModelChild::Submit(const glm::mat4& transformation)
 	{
-		pParentModel->transforms[instanceID] = transformation;
+		pParentModel->transforms[instanceID] = transpose(transformation);
 	}
 }

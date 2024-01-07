@@ -27,7 +27,6 @@ ZT_EX_DEF(DvtxException);
 		X( Char4Color ) \
 		X( Tangent ) \
 		X( Bitangent ) \
-		X( InstanceID ) \
 		X( Unknown )
 
 struct BGRAColor
@@ -134,13 +133,6 @@ namespace tryn::gfx
 			static constexpr const char* code = "Bt";
 			DVTX_ELEMENT_AI_EXTRACTOR(mBitangents)
 		};
-		template <> struct VertexElementAttr<InstanceID>
-		{
-			using SysType = float;
-			static constexpr Format format = Format::Float_Uint;
-			static constexpr const char* semantic = "InstanceID";
-			static constexpr const char* code = "IDI";
-		};
 		template <> struct VertexElementAttr<Unknown>
 		{
 			using SysType = int;
@@ -203,19 +195,12 @@ namespace tryn::gfx
 			template<VertexLayout::VertexElement type>
 			struct AttributeAiMeshFill
 			{
-				template <VertexLayout::VertexElement T = type>
-				requires (T != VertexLayout::VertexElement::InstanceID)
 				static constexpr void Exec(VertexBuffer& pBuf, const aiMesh& mesh)
 				{
 					for (auto end = mesh.mNumVertices, i = 0u; i < end; i++)
 					{
 						pBuf[i].Attr<type>(0) = VertexLayout::VertexElementAttr<type>::Extract(mesh, i);
 					}
-				}
-
-				static constexpr void Exec(VertexBuffer& pBuf, const aiMesh& mesh)
-				{
-					return;
 				}
 			};
 		public:

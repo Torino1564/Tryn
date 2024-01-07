@@ -71,7 +71,7 @@ namespace tryn::gfx::dx11
 		{
 			ConstantBufferLayout layout;
 			layout.Append(cbType::Array, "InstanceArray");
-
+			this->slot = slot;
 			layout["InstanceArray"].Set(arrayElement, numInstances);
 			layout.Solidify();
 			this->pCPUBuffer = std::make_shared<ConstantBuffer>(std::move(layout));
@@ -207,13 +207,7 @@ namespace tryn::gfx::dx11
 				descriptor.SemanticIndex = vLayout.Elements[i].second;
 				descriptor.Format = Graphics::MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
 				descriptor.InputSlot = (UINT)slot;
-				if (vLayout.Elements[i].GetType() == VertexLayout::VertexElement::InstanceID)
-				{
-					descriptor.InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
-				}
-				else {
-					descriptor.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-				}
+				descriptor.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 				descriptor.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 				descriptor.InstanceDataStepRate = 0u;
 				layout.push_back(descriptor);
