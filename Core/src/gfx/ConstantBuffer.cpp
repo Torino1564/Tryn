@@ -41,7 +41,7 @@ namespace tryn::gfx
 		static Node empty(Type::Empty, "Empty");
 		return empty;
 	}
-	ConstantBufferLayout::Node& ConstantBufferLayout::Node::operator[](std::string id)
+	ConstantBufferLayout::Node& ConstantBufferLayout::Node::operator[](std::string_view id)
 	{
 		return IndexByName(id);
 	}
@@ -49,7 +49,7 @@ namespace tryn::gfx
 	{
 		return IndexByKey(index);
 	}
-	ConstantBufferLayout::Node& ConstantBufferLayout::Node::IndexByName(std::string id)
+	ConstantBufferLayout::Node& ConstantBufferLayout::Node::IndexByName(std::string_view id)
 	{
 		trynass_msg(type == Type::Struct || type == Type::Array, L"Attempted to index by name into a non struct node");
 		for (auto& child : children)

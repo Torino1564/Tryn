@@ -134,9 +134,9 @@ namespace tryn::gfx
 			//bool IsRoot() const;
 			bool IsLeaf() const;
 			static Node& GetEmpty();
-			Node& operator[](std::string id);
+			Node& operator[](std::string_view id);
 			Node& operator[](std::size_t index);
-			Node& IndexByName(std::string id);
+			Node& IndexByName(std::string_view id);
 			Node& IndexByKey(std::size_t key);
 			void Resize(std::size_t newSize, class ConstantBuffer& layout);
 			bool Validate() const;
@@ -172,7 +172,7 @@ namespace tryn::gfx
 		friend class ConstantBufferLayout::Node;
 	public:
 		ElementView(ConstantBufferLayout::Node& node, char* pBytes, ConstantBuffer* pBuffer);
-		ElementView operator[](std::string id)
+		ElementView operator[](std::string_view id)
 		{
 			trynass_msg(node.GetType() == ConstantBufferLayout::Type::Struct, L"Tried to index by name into a non struct ElementView!");
 			const auto finalOffset = node[id].GetOffset() - node.GetOffset();
@@ -229,7 +229,7 @@ namespace tryn::gfx
 		{
 			buffer.resize(layout.Size());
 		}
-		ElementView operator[](std::string id)
+		ElementView operator[](std::string_view id)
 		{
 			SetDirty(); 
 			auto& indexTo = layout.GetRoot().IndexByName(id);
