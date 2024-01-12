@@ -27,7 +27,7 @@ namespace tryn::gfx
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
 		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
 		const auto transform = translation * rotation;
-		auto modifiedTransforms = mem::ArenaAllocator<>::GP().MakeNewArray<glm::mat4>(numInstanced);
+		auto modifiedTransforms = mem::ArenaAllocator<>::GP().MakeNewArray<glm::mat4>(upperLimit);
 		for (auto [index, modifiedTransform] : std::ranges::views::enumerate(modifiedTransforms))
 		{
 			modifiedTransform = transforms[index] * transform;
@@ -61,17 +61,27 @@ namespace tryn::gfx
 	}
 	std::uint32_t InstancedModelParent::ResolveID()
 	{
-		auto slot = booker.find_next(numInstanced);
-		if (slot == booker.npos)
+		size_t slot = 0;
+		if (numInstanced == 0)
 		{
-			Resize((booker.size() + 10) * 2.0f);
-			slot = booker.find_next(numInstanced);
+			slot = 0;
+			numInstanced++;
 		}
-		booker[slot].flip();
-		numInstanced = slot;
-		if (numInstanced > upperLimit)
+		else
 		{
-			upperLimit = numInstanced;
+			slot = booker.find_next(numInstanced - 1);
+			if (slot == booker.npos)
+			{
+				Resize((booker.size() + 10) * 2.0f);
+				slot = booker.find_next(numInstanced - 1);
+			}
+			numInstanced = slot;
+			numInstanced++;
+			booker[slot].flip();
+			if (numInstanced + 1 > upperLimit)
+			{
+				upperLimit = numInstanced + 1;
+			}
 		}
 
 		return slot;
@@ -92,6 +102,6 @@ namespace tryn::gfx
 	}
 	void InstancedModelChild::Submit(const glm::mat4& transformation)
 	{
-		pParentModel->transforms[instanceID] = transpose(transformation);
+		pParentModel->transforms[instanceID] = transformation;
 	}
 }

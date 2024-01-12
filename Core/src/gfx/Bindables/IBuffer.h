@@ -200,5 +200,6 @@ namespace tryn::gfx
 		[[no_unique_address]] std::conditional<Type == BufferType::PxConstant || Type == BufferType::VtxConstant || Type == BufferType::Instance, int, empty_t<0>>::type slot;
 		using Layout_Ty = std::conditional_t<Type == BufferType::Vertex, VertexLayout, empty_t<1>>;
 		[[no_unique_address]] Layout_Ty layout;
+		[[no_unique_address]] std::conditional_t<Type == BufferType::Instance, size_t, empty_t<2>> gpuSize;
 	};
 }

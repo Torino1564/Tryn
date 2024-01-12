@@ -75,6 +75,7 @@ namespace tryn::gfx::dx11
 			layout["InstanceArray"].Set(arrayElement, numInstances);
 			layout.Solidify();
 			this->pCPUBuffer = std::make_shared<ConstantBuffer>(std::move(layout));
+			this->gpuSize = this->pCPUBuffer->Size();
 			InitDynamicCBufferOnGPU();
 		}
 
@@ -137,6 +138,8 @@ namespace tryn::gfx::dx11
 		{
 			D3D11_MAPPED_SUBRESOURCE msr;
 
+			CheckForGPUSizeChanges();
+
 			context.Map(
 				Data(), 0u,
 				D3D11_MAP_WRITE_DISCARD, 0u,
@@ -150,6 +153,19 @@ namespace tryn::gfx::dx11
 			context.Unmap(Data(), 0u);
 		}
 	private:
+		void CheckForGPUSizeChanges()
+			requires (Type == BufferType::Instance)
+		{
+			if (this->gpuSize < this->pCPUBuffer->ByteSize() ||
+				this->gpuSize * 0.6 > this->pCPUBuffer->ByteSize())
+			{
+				InitDynamicCBufferOnGPU();
+			}
+		}
+		void CheckForGPUSizeChanges()
+		{
+			return;
+		}
 		void Bind_(ID3D11DeviceContext& context)
 			requires (Type == BufferType::Vertex)
 		{

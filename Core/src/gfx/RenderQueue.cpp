@@ -164,16 +164,19 @@ namespace tryn::gfx
 		auto& instanceBuffer = instanceData.instanceParent->RequestInstanceBuffer(data.pDrawable->GetID());
 		auto& constantBuffer = instanceBuffer.GetCPUBuffer();
 		auto instanceArray = constantBuffer["InstanceArray"];
+
 		if (instanceArray.Node().Size() < instanceData.transforms.size())
 		{
 			instanceArray.Resize(instanceData.transforms.size() + 10);
 		}
 
+		auto updatedInstanceArray = constantBuffer["InstanceArray"];
+
 		memset(constantBuffer.Data(), 0, constantBuffer.ByteSize());
 
-		for (auto i = 0; i < instanceData.transforms.size() - 1; i++)
+		for (auto i = 0; i < instanceData.transforms.size(); i++)
 		{
-			instanceArray[i].Get<glm::mat4>() = instanceData.transforms[i];
+			updatedInstanceArray[i]["transform"].Get<glm::mat4>() = transpose(instanceData.transforms[i]);
 		}
 		
 		instanceBuffer.Bind();
@@ -182,4 +185,3 @@ namespace tryn::gfx
 		gfx.DrawInstancedIndexed(data.pDrawable->GetIndexCount(), instanceData.transforms.size(), 0u, 0u, 0u);
 	}
 }
-

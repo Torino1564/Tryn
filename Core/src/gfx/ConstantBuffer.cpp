@@ -21,17 +21,17 @@ namespace tryn::gfx
 		{
 			trynass_msg(existingChild.id != child.id, L"Attempted to append an element with a duplicate ID");
 		}
-		child.parent = this;
+		//child.parent = this;
 		children.push_back(std::move(child));
 	}
 	void ConstantBufferLayout::Node::Append(ConstantBufferLayout::Type type, std::string name)
 	{
 		Append(ConstantBufferLayout::Node(type, std::move(name)));
 	}
-	bool ConstantBufferLayout::Node::IsRoot() const
+	/*bool ConstantBufferLayout::Node::IsRoot() const
 	{
 		return !parent.has_value();
-	}
+	}*/
 	bool ConstantBufferLayout::Node::IsLeaf() const
 	{
 		return children.empty();

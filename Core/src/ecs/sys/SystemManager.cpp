@@ -75,7 +75,7 @@ namespace tryn::ecs::sys
 
 		for (auto [levelIndex, level] : std::ranges::views::enumerate(levels))
 		{
-			trylog.verbose(utl::ToWide(std::format("Executing level {}", levelIndex)));
+//			trylog.verbose(utl::ToWide(std::format("Executing level {}", levelIndex)));
 			// execute async
 			for (auto systemIndex : level.systemIndices)
 			{

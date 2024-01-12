@@ -243,6 +243,9 @@
     <ClCompile Include="third\vcpkg\x64-windows-static\include\stb_vorbis.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\dbg\DebugHeader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -2934,6 +2937,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ecs\cmp\InstancedModelParentComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mem\debugMem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dbg\DebugHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utl\Bitset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

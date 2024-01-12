@@ -24,6 +24,7 @@ namespace tryn::gfx
 		std::string instancedGroup;
 		std::uint32_t numInstanced = 0;
 		std::uint32_t upperLimit = 0;
+		std::uint32_t bookerPointer;
 		std::unique_ptr<Model> pBase;
 		std::vector<glm::mat4> transforms;
 		sul::dynamic_bitset<> booker;

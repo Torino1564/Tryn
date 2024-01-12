@@ -131,7 +131,7 @@ namespace tryn::gfx
 			Node(Type type, std::string id);
 			void Append(Node child);
 			void Append(ConstantBufferLayout::Type type, std::string name);
-			bool IsRoot() const;
+			//bool IsRoot() const;
 			bool IsLeaf() const;
 			static Node& GetEmpty();
 			Node& operator[](std::string id);
@@ -147,7 +147,7 @@ namespace tryn::gfx
 		private:
 			std::vector<Node> children;
 			Type type = Type::Empty;
-			std::optional<Node*> parent;
+			//std::optional<Node*> parent = std::nullopt;
 			std::string id = "";
 			bool solid = false;
 			size_t offset = 0;
@@ -175,7 +175,8 @@ namespace tryn::gfx
 		ElementView operator[](std::string id)
 		{
 			trynass_msg(node.GetType() == ConstantBufferLayout::Type::Struct, L"Tried to index by name into a non struct ElementView!");
-			return ElementView(node[id], pBytes + (node[id].GetOffset() - node.GetOffset()), pBuffer);
+			const auto finalOffset = node[id].GetOffset() - node.GetOffset();
+			return ElementView(node[id], pBytes + finalOffset, pBuffer);
 		}
 		ElementView operator[](std::size_t key)
 		{
