@@ -14,8 +14,8 @@ namespace tryn::gfx
 	class Material
 	{
 	public:
-		Material(IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, Techniques defaultTechnique = Techniques::Phong, bool instanced = false);
-		VertexBuffer ExtractVertices(const aiMesh& mesh) const noexcept;
+		Material(IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, Techniques defaultTechnique = Techniques::Phong, bool instanced = false, bool skinned = false);
+		VertexBuffer ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton = nullptr) const noexcept;
 		IndexBuffer ExtractIndices(const aiMesh& mesh) const noexcept;
 		std::vector<Technique> GetTechniques() const noexcept;
 

@@ -105,6 +105,8 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	sysManager.RegisterSystem<ecs::sys::UpdateVelocitySystem>();
 	sysManager.Finalize();
 
+	//gfx::Model testBonedModel(Gfx(), "resources/models/hand/Rigged Hand.fbx");
+
 	auto entParent = ecs::Entity::CreateNew<
 		ecs::cmp::ActiveComponent,
 		ecs::cmp::InstancedModelParentComponent,
@@ -158,7 +160,21 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 			}
 		}
 	}
-	//entities.emplace_back(std::make_unique<ecs::BasicEntity>(Gfx(), "testPlane", "resources/models/TestPlane.fbx"));
+	
+	auto testTerrain = ecs::Entity::CreateNew<
+		ecs::cmp::ActiveComponent,
+		ecs::cmp::PositionComponent,
+		ecs::cmp::TransformComponent,
+		ecs::cmp::ModelComponent,
+		ecs::cmp::ScaleComponent,
+		ecs::cmp::RotationComponent>("testTerrain");
+
+	testTerrain.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
+	testTerrain.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/TestTerrain.obj");
+	testTerrain.GetComponent<ecs::cmp::ScaleComponent>().scale = { 1.0f, 1.0f, 1.0f };
+	testTerrain.GetComponent<ecs::cmp::ActiveComponent>().active = true;
+
+	entities.push_back(std::move(testTerrain));
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
 	this->wnd->keyboard.DisableAutoRepeat();

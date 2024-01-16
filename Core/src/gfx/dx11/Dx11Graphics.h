@@ -1,8 +1,8 @@
 #pragma once
 #include "TrynWLR.h"
+#include <Core/src/gfx/Vertex.h>
 #include <Core/src/gfx/IGraphics.h>
 #include <d3d11_1.h>
-#include <Core/src/gfx/Vertex.h>
 #include <Core/src/gfx/dx11/Dx11Context.h>
 #include <Core/third/stb_image/stb_image.h>
 
@@ -59,6 +59,9 @@ namespace tryn::gfx::dx11
 				break;
 			case VertexLayout::Format::Float_Uint:
 				return DXGI_FORMAT_R32_UINT;
+				break;
+			case VertexLayout::Format::Vec4UI16:
+				return DXGI_FORMAT_R16G16B16A16_UINT;
 				break;
 			}
 			return DXGI_FORMAT_UNKNOWN;

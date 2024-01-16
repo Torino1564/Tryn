@@ -6,7 +6,10 @@
 #include <Core/third/glm/gtc/type_ptr.hpp>
 #include <Core/third/glm/glm.hpp>
 #include <Core/src/gfx/Model/StaticMesh.h>
+#include <Core/src/gfx/Animation/BonedMesh.h>
 #include <Core/src/mem/ArenaAllocator.h>
+#include <queue>
+#include <Core/src/gfx/Animation/Bone.h>
 
 namespace tryn::gfx
 {
@@ -65,23 +68,51 @@ namespace tryn::gfx
 			}
 		}
 
+		int nextId = 0;
+		root = std::make_unique<Node>(ParseNode(nextId, *pScene->mRootNode, scale, true));
+
 		// parse materials
 		std::vector<Material> materials;
 		materials.reserve(pScene->mNumMaterials);
 		for (size_t i = 0; i < pScene->mNumMaterials; i++)
 		{
-			materials.emplace_back(gfx, *pScene->mMaterials[i], path, defaultTechnique, instanced);
+			materials.emplace_back(gfx, *pScene->mMaterials[i], path, defaultTechnique, instanced, skeleton.has_value());
 		}
 
-		for (size_t i = 0; i < pScene->mNumMeshes; i++)
+
+		if (skeleton.has_value())
 		{
-			const auto& mesh = *pScene->mMeshes[i];
-			pMeshes.push_back(std::make_unique<StaticMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), scale, meshCounter++));
+			for (size_t i = 0; i < pScene->mNumMeshes; i++)
+			{
+				const auto& mesh = *pScene->mMeshes[i];
+				pMeshes.push_back(std::make_unique<ani::BonedMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), skeleton.value(), scale, meshCounter++));
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i < pScene->mNumMeshes; i++)
+			{
+				const auto& mesh = *pScene->mMeshes[i];
+				pMeshes.push_back(std::make_unique<StaticMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), scale, meshCounter++));
+			}
 		}
 
-		int nextId = 0;
+		// Set mesh Span
+		std::queue<Node*> q;
+		q.push(root.get());
 
-		root = std::make_unique<Node>(ParseNode(nextId, *pScene->mRootNode, scale));
+		while (!q.empty())
+		{
+			auto& current = *q.front();
+			q.pop();
+			
+			current.SetMeshSpan({ pMeshes });
+
+			for (auto& child : current.GetChildren())
+			{
+				q.push(&child);
+			}
+		}
 	}
 
 	void Model::Submit(const glm::mat4& entityTransform = glm::identity<glm::mat4>())
@@ -113,24 +144,88 @@ namespace tryn::gfx
 	{
 		return meshCounter + 1;
 	}
-	Node Model::ParseNode(int& nextId, const aiNode& node, glm::vec3 scale)
+	Node Model::ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root)
 	{
+		auto skeletonNodeIndex = -1;
+		// If its a root node, find if theres a skeleton
+		if (root)
+		{
+			for (int i = 0; i < node.mNumChildren; i++)
+			{
+				auto& child = *node.mChildren[i];
+
+				// find if any children is a skeleton
+
+				auto isSkeleton = true;
+				auto numChildren = 0;
+
+				std::queue<aiNode*> q;
+				q.push(&child);
+
+				while (!q.empty())
+				{
+					auto current = q.front();
+					q.pop();
+					if (current->mNumMeshes != 0)
+					{
+						isSkeleton = false;
+						break;
+					}
+					for (int i = 0; i < current->mNumChildren; i++)
+					{
+						numChildren++;
+						q.push(current->mChildren[i]);
+					}
+				}
+				
+				// Parse Skeleton if found any
+				if (isSkeleton && (numChildren != 0))
+				{
+					ParseSkeleton(child);
+					// Supports only one skeleton!
+					skeletonNodeIndex = i;
+					break;
+				}
+
+			}
+		}
+
 		const auto transform = ScaleTranslation(transpose(glm::make_mat4(reinterpret_cast<const float*>(&node.mTransformation))), scale);
 
-		std::vector<Mesh*> meshes;
-		meshes.reserve(node.mNumMeshes);
+		std::vector<uint16_t> meshIds;
+		meshIds.reserve(node.mNumMeshes);
 		for (unsigned int i = 0; i < node.mNumMeshes; i++)
 		{
 			const auto meshIdx = node.mMeshes[i];
-			meshes.push_back(pMeshes.at(meshIdx).get());
+			meshIds.push_back(meshIdx);
 		}
 
-		Node node_(nextId++, node.mName.C_Str(), std::move(meshes), transform);
-		for (size_t i = 0; i < node.mNumChildren; i++)
+		Node node_(nextId++, node.mName.C_Str(), std::move(meshIds), transform);
+		for (auto i = 0; i < node.mNumChildren; i++)
 		{
+			if (root && i == skeletonNodeIndex)
+				continue;
 			node_.AddChild(std::move(ParseNode(nextId, *node.mChildren[i], scale)));
 		}
 
 		return node_;
+	}
+	void Model::ParseSkeleton(const aiNode& boneRoot)
+	{
+		skeleton.emplace();
+		skeleton->bones.emplace_back(boneRoot.mName.C_Str(), 0, 0);
+		for (auto i = 0; i < boneRoot.mNumChildren; i++)
+		{
+			ParseBone(*boneRoot.mChildren[i], 0);
+		}
+	}
+	void Model::ParseBone(const aiNode& bone, const uint32_t parentID)
+	{
+		auto thisID = skeleton->NextID();
+		skeleton->bones.emplace_back(bone.mName.C_Str(), thisID, parentID);
+		for (auto i = 0; i < bone.mNumChildren; i++)
+		{
+			ParseBone(*bone.mChildren[i], thisID);
+		}
 	}
 }

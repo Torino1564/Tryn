@@ -5,6 +5,7 @@
 #include <Core/src/gfx/RenderTask.h>
 #include <Core/src/gfx/PointLight.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
+#include <Core/src/gfx/Bindables/IBuffer.h>
 
 namespace tryn::gfx
 {
@@ -155,32 +156,16 @@ namespace tryn::gfx
 	void Job::Execute_(IGraphics& gfx)
 	{
 		data.pDrawable->BindBase();
+		data.pDrawable->BindExtraBinds();
 		data.pDrawable->BindTransformCBuf();
 		data.pStep->Bind(gfx);
 		gfx.DrawIndexed(data.pDrawable->GetIndexCount());
 	}
 	void Job::ExecuteInsanced_(IGraphics& gfx)
 	{
-		auto& instanceBuffer = instanceData.instanceParent->RequestInstanceBuffer(data.pDrawable->GetID());
-		auto& constantBuffer = instanceBuffer.GetCPUBuffer();
-		auto instanceArray = constantBuffer["InstanceArray"];
-
-		if (instanceArray.Node().Size() < instanceData.transforms.size())
-		{
-			instanceArray.Resize(instanceData.transforms.size() + 10);
-		}
-
-		auto updatedInstanceArray = constantBuffer["InstanceArray"];
-
-		memset(constantBuffer.Data(), 0, constantBuffer.ByteSize());
-
-		for (auto i = 0; i < instanceData.transforms.size(); i++)
-		{
-			updatedInstanceArray[i]["transform"].Get<glm::mat4>() = transpose(instanceData.transforms[i]);
-		}
-		
-		instanceBuffer.Bind();
 		data.pDrawable->BindBase();
+		data.pDrawable->BindExtraBinds();
+		data.pDrawable->BindTransformCBuf();
 		data.pStep->Bind(gfx);
 		gfx.DrawInstancedIndexed(data.pDrawable->GetIndexCount(), instanceData.transforms.size(), 0u, 0u, 0u);
 	}

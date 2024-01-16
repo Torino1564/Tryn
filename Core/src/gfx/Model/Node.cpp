@@ -5,9 +5,9 @@
 
 namespace tryn::gfx
 {
-	Node::Node(int id, std::string_view name, std::vector<Mesh*> pMeshes, glm::mat4 transform)
+	Node::Node(int id, std::string_view name, std::vector<uint16_t> meshIds, glm::mat4 transform, bool isSkeleton)
 		:
-		id(id), name(name.data()), pMeshes(std::move(pMeshes))
+		id(id), name(name.data()), meshIds(std::move(meshIds)), isSkeleton(isSkeleton)
 	{
 		this->transform = std::move(transform);
 		this->appliedTransform = glm::identity<glm::mat4>();
@@ -15,9 +15,9 @@ namespace tryn::gfx
 	void Node::Submit(IGraphics& gfx, glm::mat4 accumulatedTransform)
 	{
 		const auto finalTransform = appliedTransform * transform * accumulatedTransform;
-		for (auto mesh : pMeshes)
+		for (auto id : meshIds)
 		{
-			mesh->Submit(gfx, finalTransform);
+			meshes[id]->Submit(gfx, finalTransform);
 		}
 		for (auto& child : children)
 		{
@@ -31,9 +31,9 @@ namespace tryn::gfx
 		{
 			finalTransforms[i] = appliedTransform * transform * accumulatedTransform;
 		}
-		for (auto mesh : pMeshes)
+		for (auto id : meshIds)
 		{
-			mesh->Submit(gfx, {finalTransforms}, parent);
+			meshes[id]->Submit(gfx, {finalTransforms}, parent);
 		}
 		for (auto& child : children)
 		{
@@ -43,5 +43,13 @@ namespace tryn::gfx
 	void Node::AddChild(Node child)
 	{
 		children.push_back(std::move(child));
+	}
+	void Node::SetMeshSpan(std::span<std::shared_ptr<Mesh>> meshSpan)
+	{
+		meshes = meshSpan;
+	}
+	std::vector<Node>& Node::GetChildren()
+	{
+		return children;
 	}
 }

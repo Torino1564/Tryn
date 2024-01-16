@@ -17,6 +17,7 @@ namespace tryn::gfx
 		{
 			this->tag = tag;
 		}
+
 		ID = meshID.value_or(0);
 		auto vertexBuffer = material.ExtractVertices(mesh);
 		vertexBuffer.SetClean();

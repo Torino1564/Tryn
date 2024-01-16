@@ -4,6 +4,7 @@
 #include <Core/src/gfx/IGraphics.h>
 #include "Mesh.h"
 #include <Core/src/gfx/ImguiManager.h>
+#include <Core/src/gfx/Animation/Bone.h>
 
 namespace tryn::gfx
 {
@@ -23,9 +24,12 @@ namespace tryn::gfx
 		glm::vec3 GetPosition() const;
 		std::uint16_t GetMeshAmount() const;
 	private:
-		Node ParseNode(int& nextId, const aiNode& node, glm::vec3 scale);
+		Node ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);
+		void ParseSkeleton(const aiNode& boneRoot);
+		void ParseBone(const aiNode& bone, const uint32_t parentID);
 		Settings settings = {};
 	private:
+		std::optional<ani::Skeleton> skeleton = std::nullopt;
 		std::uint16_t meshCounter = 0;
 		gfx::IGraphics& gfx;
 		std::string name;

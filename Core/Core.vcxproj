@@ -26,6 +26,8 @@
     <ClCompile Include="src\ecs\sys\SystemManager.cpp" />
     <ClCompile Include="src\ecs\sys\TransformSystem.cpp" />
     <ClCompile Include="src\ecs\sys\UpdatePositionSystem.cpp" />
+    <ClCompile Include="src\gfx\Animation\Bone.cpp" />
+    <ClCompile Include="src\gfx\Animation\BonedMesh.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
@@ -124,6 +126,10 @@
     <ClInclude Include="src\ecs\sys\TransformSystem.h" />
     <ClInclude Include="src\ecs\sys\UpdatePositionSystem.h" />
     <ClInclude Include="src\ecs\sys\UpdateVelocitySystem.h" />
+    <ClInclude Include="src\gfx\Animation\Animation.h" />
+    <ClInclude Include="src\gfx\Animation\Bone.h" />
+    <ClInclude Include="src\gfx\Animation\BonedMesh.h" />
+    <ClInclude Include="src\gfx\Animation\Key.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />

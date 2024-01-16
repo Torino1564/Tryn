@@ -18,6 +18,9 @@ namespace tryn::gfx
 		void Submit(IGraphics& gfx, std::span<const glm::mat4> transforms, class InstancedModelParent& parent);
 		void BindBase() const;
 		void BindBase(IContext& context) const;
+		void BindExtraBinds();
+		void BindExtraBinds(IContext& context);
+		void AddExtraBind(IBindable* pBindable);
 		void BindTransformCBuf() const;
 		void BindTransformCBuf(IContext& context) const;
 		void InitTransformCBuf(IGraphics& gfx);
@@ -26,8 +29,10 @@ namespace tryn::gfx
 		void AddTechnique(Technique technique);
 		[[nodiscard]] glm::mat4 GetTransformMatrix() const;
 		[[nodiscard]] std::uint16_t GetID() const;
-	protected:
 
+	protected:
+		virtual void inline ExtraSubmitBehavior() {}
+		std::array<IBindable*, 10> extraBindPtrs;
 		std::shared_ptr<IVertexBuffer> pVertexBuffer;
 		std::shared_ptr<IIndexBuffer> pIndexBuffer;
 		std::shared_ptr<IPrimitiveTopology> pTopology;
