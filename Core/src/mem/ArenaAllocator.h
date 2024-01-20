@@ -2,6 +2,7 @@
 #include <vector>
 #include <Core/src/utl/Assert.h>
 #include <new>
+#include <span>
 
 namespace tryn::mem
 {
@@ -29,10 +30,21 @@ namespace tryn::mem
 			return reinterpret_cast<void*>(&ref);
 		}
 		template <typename T, typename... Args>
-		T* MakeNew()
+		T* MakeNew(Args... args)
 		{
 			auto ptr = Allocate(sizeof(T));
-			return new(ptr) T(Args...);
+			return new(ptr) T(args...);
+		}
+		template <typename T, typename... Args>
+		std::span<T> MakeNewArray(std::size_t numElements, Args... args)
+		{
+			auto ptr = static_cast<T*>(Allocate(sizeof(T) * numElements));
+			const auto start = new(ptr) T{ args... };
+			for (auto i = 1; i < numElements; i++)
+			{
+				new(&ptr[i]) T{args...};
+			}
+			return { start , numElements};
 		}
 		void Wipe()
 		{
@@ -47,6 +59,11 @@ namespace tryn::mem
 		void Resize(std::size_t newSize)
 		{
 			buffer.resize(newSize);
+		}
+		static ArenaAllocator& GP()
+		{
+			static ArenaAllocator generalPurpose;
+			return generalPurpose;
 		}
 	private:
 		bool overflow = false;

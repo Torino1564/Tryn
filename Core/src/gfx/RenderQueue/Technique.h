@@ -39,6 +39,13 @@ namespace tryn::gfx
 				step.Submit(gfx, parent);
 			}
 		}
+		void Submit(IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
+		{
+			for (auto& step : steps)
+			{
+				step.Submit(gfx, parent, transforms, instancedParent);
+			}
+		}
 		void Accept(TechniqueProbe& probe)
 		{
 			probe.SetTechnique(this);

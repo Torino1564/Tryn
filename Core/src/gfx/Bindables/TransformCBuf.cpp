@@ -30,22 +30,16 @@ namespace tryn::gfx
 	}
 	void ITransformCBuf::Update() const
 	{
-		const auto model = parent->GetTransformMatrix();
-		const auto modelView = gfx.GetCameraMatrix() * model;
-		const auto modelViewProj = gfx.GetProjectionMatrix() * modelView;
-
-		(*pVCB)["model"].Get<glm::mat4>() = transpose(model);
-		(*pVCB)["modelView"].Get<glm::mat4>() = transpose(modelView);
-		(*pVCB)["modelViewProj"].Get<glm::mat4>() = transpose(modelViewProj);
+		(*pVCB)["model"].Get<glm::mat4>() = transpose(parent->GetTransformMatrix());
+		const auto& viewMatrix = gfx.GetCameraMatrix();
+		(*pVCB)["view"].Get<glm::mat4>() = transpose(viewMatrix);
+		(*pVCB)["viewProjection"].Get<glm::mat4>() = transpose(gfx.GetProjectionMatrix() * viewMatrix);
 	}
 	void ITransformCBuf::Update(IContext& context) const
 	{
-		const auto model = parent->GetTransformMatrix();
-		const auto modelView = gfx.GetCameraMatrix() * model;
-		const auto modelViewProj = gfx.GetProjectionMatrix() * modelView;
-
-		context.GetTransfromBuffer()["model"].Get<glm::mat4>() = transpose(model);
-		context.GetTransfromBuffer()["modelView"].Get<glm::mat4>() = transpose(modelView);
-		context.GetTransfromBuffer()["modelViewProj"].Get<glm::mat4>() = transpose(modelViewProj);
+		context.GetTransfromBuffer()["model"].Get<glm::mat4>() = transpose(parent->GetTransformMatrix());
+		const auto& viewMatrix = gfx.GetCameraMatrix();
+		context.GetTransfromBuffer()["view"].Get<glm::mat4>() = transpose(viewMatrix);
+		context.GetTransfromBuffer()["viewProjection"].Get<glm::mat4>() = transpose(gfx.GetProjectionMatrix() * viewMatrix);
 	}
 }

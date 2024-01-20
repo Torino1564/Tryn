@@ -7,7 +7,7 @@
 
 namespace tryn::gfx
 {
-	StaticMesh::StaticMesh(IGraphics& gfx, const Material& material, const aiMesh& mesh, std::string_view tag, glm::vec3 scale)
+	StaticMesh::StaticMesh(IGraphics& gfx, const Material& material, const aiMesh& mesh, std::string_view tag, glm::vec3 scale, std::optional<std::uint16_t> meshID)
 	{
 		if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f)
 		{
@@ -18,6 +18,7 @@ namespace tryn::gfx
 			this->tag = tag;
 		}
 
+		ID = meshID.value_or(0);
 		auto vertexBuffer = material.ExtractVertices(mesh);
 		vertexBuffer.SetClean();
 		const auto indices = material.ExtractIndices(mesh);
@@ -35,8 +36,8 @@ namespace tryn::gfx
 		}
 	}
 
-	bool StaticMesh::IsStatic() const
+	MeshType StaticMesh::Type() const
 	{
-		return true;
+		return MeshType::Static;
 	}
 }

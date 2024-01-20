@@ -12,7 +12,7 @@
 
 namespace tryn::gfx
 {
-	Material::Material(IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, Techniques defaultTechnique, bool instanced)
+	Material::Material(IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, Techniques defaultTechnique, bool instanced, bool skinned)
 	{
 		const auto rootPath = path.parent_path().string() + "\\";
 		static bool isInitialized = false;
@@ -114,7 +114,12 @@ namespace tryn::gfx
 				}
 				// Common
 				{
-					auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (instanced ? "Inst" : "") + "_VS.cso");
+					if (skinned)
+					{
+						vLayout.AppendElement(VertexLayout::BoneIds);
+						vLayout.AppendElement(VertexLayout::BoneWeights);
+					}
+					auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (instanced ? "Inst" : "") + (skinned ? "Skn" : "") + "_VS.cso");
 					step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 					step.AddBindable(std::move(pvs));
 					step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
@@ -253,9 +258,9 @@ namespace tryn::gfx
 		}
 		}
 	}
-	VertexBuffer Material::ExtractVertices(const aiMesh& mesh) const noexcept
+	VertexBuffer Material::ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton) const noexcept
 	{
-		return { vLayout,mesh };
+		return { vLayout, mesh, skeleton};
 	}
 	IndexBuffer Material::ExtractIndices(const aiMesh& mesh) const noexcept
 	{

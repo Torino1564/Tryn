@@ -8,6 +8,7 @@
 
 #define ZT_DEFINE_SYSTEM(x) class x : public tryn::ecs::sys::SystemImpl<x>
 #define ZT_SYSTEM_UID public: const static inline auto UID = tryn::ecs::sys::System::SystemUID::Resolve()
+#define ZT_NATIVE_ARRAY(x) private: static inline tryn::utl::MultiSpan<cmp::x::SubresourceData>
 
 namespace tryn::ecs::sys
 {
@@ -111,6 +112,7 @@ namespace tryn::ecs::sys
 		{
 			T::Execute();
 		}
+		static void 
 	};
 
 	class SystemManager

@@ -21,17 +21,17 @@ namespace tryn::gfx
 		{
 			trynass_msg(existingChild.id != child.id, L"Attempted to append an element with a duplicate ID");
 		}
-		child.parent = this;
+		//child.parent = this;
 		children.push_back(std::move(child));
 	}
 	void ConstantBufferLayout::Node::Append(ConstantBufferLayout::Type type, std::string name)
 	{
 		Append(ConstantBufferLayout::Node(type, std::move(name)));
 	}
-	bool ConstantBufferLayout::Node::IsRoot() const
+	/*bool ConstantBufferLayout::Node::IsRoot() const
 	{
 		return !parent.has_value();
-	}
+	}*/
 	bool ConstantBufferLayout::Node::IsLeaf() const
 	{
 		return children.empty();
@@ -41,7 +41,7 @@ namespace tryn::gfx
 		static Node empty(Type::Empty, "Empty");
 		return empty;
 	}
-	ConstantBufferLayout::Node& ConstantBufferLayout::Node::operator[](std::string id)
+	ConstantBufferLayout::Node& ConstantBufferLayout::Node::operator[](std::string_view id)
 	{
 		return IndexByName(id);
 	}
@@ -49,7 +49,7 @@ namespace tryn::gfx
 	{
 		return IndexByKey(index);
 	}
-	ConstantBufferLayout::Node& ConstantBufferLayout::Node::IndexByName(std::string id)
+	ConstantBufferLayout::Node& ConstantBufferLayout::Node::IndexByName(std::string_view id)
 	{
 		trynass_msg(type == Type::Struct || type == Type::Array, L"Attempted to index by name into a non struct node");
 		for (auto& child : children)
@@ -98,6 +98,12 @@ namespace tryn::gfx
 		{
 			children.push_back(node);
 		}
+	}
+
+	std::size_t ConstantBufferLayout::Node::Size() const
+	{
+		trynass_msg(GetType() == ConstantBufferLayout::Type::Array, L"Tried to resize a non array element");
+		return children.size();
 	}
 
 	template<ConstantBufferLayout::Type type>
@@ -181,6 +187,25 @@ namespace tryn::gfx
 				q.push(&child);
 			}
 		}
+
+		// Add offset to structs
+		q.push(root.get());
+		while (!q.empty())
+		{
+			current = q.front();
+			q.pop();
+
+			for (auto& child : current->children)
+			{
+				q.push(&child);
+			}
+
+			if (current->type == ConstantBufferLayout::Struct && !current->children.empty())
+			{
+				current->offset = current->children[0].offset;
+			}
+		}
+
 		solid = true;
 		size = accumulatedOffset + (16 - accumulatedOffset % 16);
 	}

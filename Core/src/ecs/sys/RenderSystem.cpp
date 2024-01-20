@@ -10,12 +10,44 @@ namespace tryn::ecs::sys
 		auto data = ECS::Get().archetypeManager.GetComponentGroups<
 			ReadOnly<cmp::TransformComponent>,
 			ReadOnly<cmp::ActiveComponent>,
-			WriteOnly<cmp::ModelComponent>>();
+			WriteOnly<cmp::ModelComponent>
+		>();
+
+		auto dataChildren = ECS::Get().archetypeManager.GetComponentGroups<
+			WriteOnly<cmp::InstancedModelChildComponent>,
+			ReadOnly<cmp::TransformComponent>,
+			ReadOnly<cmp::ActiveComponent>>();
+
+		auto dataParents = ECS::Get().archetypeManager.GetComponentGroups<
+			WriteOnly<cmp::InstancedModelParentComponent>,
+			ReadOnly<cmp::TransformComponent>,
+			ReadOnly<cmp::ActiveComponent>
+		>();
+
+		auto dataSkinned = ECS::Get().archetypeManager.GetComponentGroups<
+			ReadOnly<cmp::ActiveComponent>,
+			ReadOnly<cmp::TransformComponent>,
+			ReadOnly<cmp::BoneTransformsComponent>,
+			ReadWrite<cmp::ModelComponent>
+		>();
 
 		// Reset data arrays
 
 		transformArray.Clear();
 		modelArray.Clear();
+		activeArray.Clear();
+
+		transformChildrenArray.Clear();
+		activeChildrenArray.Clear();
+		childrenModelArray.Clear();
+
+		transformParentArray.Clear();
+		activeParentArray.Clear();
+		parentModelArray.Clear();
+
+		activeSkinnedArray.Clear();
+		transformSkinnedArray.Clear();
+		boneTransformArray.Clear();
 
 		// Fill data arrays
 
@@ -24,6 +56,28 @@ namespace tryn::ecs::sys
 			transformArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
 			modelArray.PushBack(std::get<std::span<cmp::ModelComponent::SubresourceData>>(queriedData));
 			activeArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
+		}
+
+		for (auto& queriedData : dataChildren)
+		{
+			activeChildrenArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
+			transformChildrenArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
+			childrenModelArray.PushBack(std::get<std::span<cmp::InstancedModelChildComponent::SubresourceData>>(queriedData));
+		}
+
+		for (auto& queriedData : dataParents)
+		{
+			activeParentArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
+			parentModelArray.PushBack(std::get<std::span<cmp::InstancedModelParentComponent::SubresourceData>>(queriedData));
+			transformParentArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
+		}
+
+		for (auto& queriedData : dataSkinned)
+		{
+			activeSkinnedArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
+			boneTransformArray.PushBack(std::get<std::span<cmp::BoneTransformsComponent::SubresourceData>>(queriedData));
+			transformSkinnedArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
+			skinnedModelArray.PushBack(std::get<std::span<cmp::ModelComponent::SubresourceData>>(queriedData));
 		}
 
 		// Kernel
@@ -36,6 +90,29 @@ namespace tryn::ecs::sys
 			}
 		}
 
+		for (auto i = 0; i < childrenModelArray.Size(); i++)
+		{
+			if (activeChildrenArray[i].active)
+			{
+				childrenModelArray[i].childModel.Submit(transformChildrenArray[i].transform);
+			}
+		}
+
+		for (auto i = 0; i < parentModelArray.Size(); i++)
+		{
+			if (activeParentArray[i].active)
+			{
+				parentModelArray[i].parentModel.Submit(transformParentArray[i].transform);
+			}
+		}
+
+		for (auto i = 0; i < activeSkinnedArray.Size(); i++)
+		{
+			if (!activeSkinnedArray[i].active)
+				continue;
+
+			skinnedModelArray[i].pModel->Submit(transformSkinnedArray[i].transform, boneTransformArray[i].transforms);
+		}
 	}
 }
 

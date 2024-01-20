@@ -1,6 +1,7 @@
 #include "Step.h"
-#include <Core/src/gfx/Drawable.h>
+#include <Core/src/gfx/Model/Mesh.h>
 #include <Core/src/gfx/RenderQueue/TechniqueProbe.h>
+#include <Core/src/gfx/Model/InstancedModel.h>
 
 namespace tryn::gfx
 {
@@ -35,6 +36,11 @@ namespace tryn::gfx
 	{
 		auto& renderGraph = gfx.GetRenderGraph();
 		renderGraph.GetRenderQueueByID(renderQueueID).Push(Job(parent,this));
+	}
+	void Step::Submit(IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instanceParent)
+	{
+		auto& renderGraph = gfx.GetRenderGraph();
+		renderGraph.GetRenderQueueByID(renderQueueID).Push(Job(parent, this, transforms, &instanceParent));
 	}
 	void Step::Accept(TechniqueProbe& probe)
 	{

@@ -5,6 +5,7 @@
 #include <Core/third/glm/glm.hpp>
 #include <Core/third/glm/gtx/euler_angles.hpp>
 #include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Model/InstancedModel.h>
 
 namespace tryn::gfx
 {
@@ -38,6 +39,8 @@ namespace tryn::gfx
 	}
 	void Drawable::Submit(IGraphics& gfx, glm::mat4 transform)
 	{
+		extraBindPtrs = {};
+		ExtraSubmitBehavior();
 		this->transform = transform;
 
 		for (auto& technique : techniques)
@@ -45,19 +48,87 @@ namespace tryn::gfx
 			technique.Submit(gfx, this);
 		}
 	}
+	void Drawable::Submit(IGraphics& gfx, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
+	{
+		extraBindPtrs = {};
+		ExtraSubmitBehavior();
+
+		auto& instanceBuffer = instancedParent.RequestInstanceBuffer(ID);
+		auto& constantBuffer = instanceBuffer.GetCPUBuffer();
+		auto instanceArray = constantBuffer["InstanceArray"];
+
+		if (instanceArray.Node().Size() < transforms.size())
+		{
+			instanceArray.Resize(transforms.size() + 10);
+		}
+
+		auto updatedInstanceArray = constantBuffer["InstanceArray"];
+
+		memset(constantBuffer.Data(), 0, constantBuffer.ByteSize());
+
+		for (auto i = 0; i < transforms.size(); i++)
+		{
+			updatedInstanceArray[i]["transform"].Get<glm::mat4>() = transpose(transforms[i]);
+		}
+
+		AddExtraBind(&instanceBuffer);
+
+		for (auto& technique : techniques)
+		{
+			technique.Submit(gfx, this, transforms, instancedParent);
+		}
+	}
 	void Drawable::BindBase() const
 	{
 		pVertexBuffer->Bind();
 		pIndexBuffer->Bind();
 		pTopology->Bind();
-		pTransformCBuf->BindTransformCBuf(this);
 	}
 	void Drawable::BindBase(IContext& context) const
 	{
 		pVertexBuffer->Bind(context);
 		pIndexBuffer->Bind(context);
 		pTopology->Bind(context);
-		pTransformCBuf->BindTransformCBuf(this,context);
+	}
+	void Drawable::BindExtraBinds()
+	{
+		for (auto bindPtr : extraBindPtrs)
+		{
+			if (bindPtr != nullptr)
+			{
+				bindPtr->Bind();
+			}
+		}
+	}
+	void Drawable::BindExtraBinds(IContext& context)
+	{
+		for (auto bindPtr : extraBindPtrs)
+		{
+			if (bindPtr != nullptr)
+			{
+				bindPtr->Bind(context);
+			}
+		}
+	}
+	void Drawable::AddExtraBind(IBindable* pBindable)
+	{
+		for (auto& bindPtr : extraBindPtrs)
+		{
+			if (bindPtr == nullptr)
+			{
+				bindPtr = pBindable;
+				return;
+			}
+		}
+		trylog.warn(L"Failed to add extra bind: the 10 slot limit was reached.");
+	}
+	void Drawable::BindTransformCBuf() const
+	{
+		pTransformCBuf->BindTransformCBuf(this);
+	}
+	void Drawable::BindTransformCBuf(IContext& context) const
+	{
+		pTransformCBuf->BindTransformCBuf(this, context);
 	}
 	void Drawable::InitTransformCBuf(IGraphics& gfx)
 	{
@@ -78,5 +149,9 @@ namespace tryn::gfx
 	glm::mat4 Drawable::GetTransformMatrix() const
 	{
 		return transform;
+	}
+	std::uint16_t Drawable::GetID() const
+	{
+		return ID;
 	}
 }

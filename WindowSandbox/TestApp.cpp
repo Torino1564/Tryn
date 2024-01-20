@@ -19,11 +19,15 @@
 #include <Core/src/ecs/cmp/PositionComponent.h>
 #include <Core/src/ecs/cmp/VelocityComponent.h>
 #include <Core/src/ecs/cmp/AccelerationComponent.h>
+#include <Core/src/ecs/cmp/AnimatedComponent.h>
+#include <Core/src/ecs/cmp/BoneTransformsComponents.h>
 #include <Core/src/ecs/sys/SystemManager.h>
 #include <Core/src/ecs/sys/TransformSystem.h>
 #include <Core/src/ecs/sys/RenderSystem.h>
 #include <Core/src/ecs/sys/UpdatePositionSystem.h>
 #include <Core/src/ecs/sys/UpdateVelocitySystem.h>
+#include <Core/src/ecs/sys/AnimationSystem.h>
+#include <Core/src/gfx/Animation/AnimationManager.h>
 
 class TestRenderGraph : public gfx::IRenderGraph
 {
@@ -103,29 +107,76 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	sysManager.RegisterSystem<ecs::sys::RenderSystem>();
 	sysManager.RegisterSystem<ecs::sys::UpdatePositionSystem>();
 	sysManager.RegisterSystem<ecs::sys::UpdateVelocitySystem>();
+	sysManager.RegisterSystem<ecs::sys::AnimationSystem>();
 	sysManager.Finalize();
 
-	auto ent = ecs::Entity::CreateNew<
+	auto entParent = ecs::Entity::CreateNew<
 		ecs::cmp::ActiveComponent,
-		ecs::cmp::ModelComponent,
+		ecs::cmp::InstancedModelParentComponent,
 		ecs::cmp::TransformComponent,
 		ecs::cmp::PositionComponent,
 		ecs::cmp::VelocityComponent,
 		ecs::cmp::AccelerationComponent,
 		ecs::cmp::ScaleComponent,
-		ecs::cmp::RotationComponent>("Gobber");
+		ecs::cmp::RotationComponent>("GobberParent");
+
+	auto entChild = ecs::Entity::CreateNew<
+		ecs::cmp::ActiveComponent,
+		ecs::cmp::InstancedModelChildComponent,
+		ecs::cmp::TransformComponent,
+		ecs::cmp::PositionComponent,
+		ecs::cmp::VelocityComponent,
+		ecs::cmp::AccelerationComponent,
+		ecs::cmp::ScaleComponent,
+		ecs::cmp::RotationComponent>("GobberChild");
 
 	entities.resize(pow(entityCount1D, 3));
-	ent.Instanciate({ entities });
+	entChild.Instanciate({ entities });
+
+	auto mutant = ecs::Entity::CreateNew<
+		ecs::cmp::ActiveComponent,
+		ecs::cmp::ModelComponent,
+		ecs::cmp::AnimatedComponent,
+		ecs::cmp::BoneTransformsComponent,
+		ecs::cmp::TransformComponent,
+		ecs::cmp::PositionComponent,
+		ecs::cmp::ScaleComponent,
+		ecs::cmp::RotationComponent
+	>("Hands");
+
+	mutant.GetComponent<ecs::cmp::ActiveComponent>().active = true;
+	mutant.GetComponent<ecs::cmp::ScaleComponent>().scale = { 0.05f,0.05f,0.05f };
+	mutant.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 5.0f, 0.0f };
+	mutant.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/Mutant.fbx");
+
+	auto animID = gfx::ani::AnimationManager::Get().New("resources/animations/Capoeira.fbx");
+
+	auto mainMesh = mutant.GetComponent<ecs::cmp::ModelComponent>().pModel->GetMainMesh();
+	mainMesh->AddAnimation(gfx::ani::AnimationManager::Get().Resolve(animID), "capoeira");
+	auto& mutantAnimatedCmp = mutant.GetComponent<ecs::cmp::AnimatedComponent>();
+	mutantAnimatedCmp.previousKey = 0;
+	mutantAnimatedCmp.pAnimationSkeletonInterface = mainMesh->GetAnimationInterface("capoeira");
+	mutantAnimatedCmp.state = gfx::ani::AnimationState::Playing;
+	mutantAnimatedCmp.time = 0;
+
+	entParent.GetComponent<ecs::cmp::InstancedModelParentComponent>().parentModel = gfx::InstancedModelParent(Gfx(), "resources/models/gobber/GoblinX.obj");
+	entParent.GetComponent<ecs::cmp::ActiveComponent>().active = true;
+	entParent.GetComponent<ecs::cmp::ScaleComponent>().scale = { .3f,.3f,.3f };
+	entParent.GetComponent<ecs::cmp::VelocityComponent>().velocity = { .0f, 0.f, 0.f };
+	entParent.GetComponent<ecs::cmp::AccelerationComponent>().acceleration = { .0f, 0.f, 0.f };
+
+	auto& instanceParent = entParent.GetComponent<ecs::cmp::InstancedModelParentComponent>().parentModel;
 
 	for (auto& entity : entities)
 	{
-		entity.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/gobber/GoblinX.obj");
+		entity.GetComponent<ecs::cmp::InstancedModelChildComponent>().childModel = instanceParent.Instanciate();
 		entity.GetComponent<ecs::cmp::ActiveComponent>().active = true;
 		entity.GetComponent<ecs::cmp::ScaleComponent>().scale = { .3f,.3f,.3f };
 		entity.GetComponent<ecs::cmp::VelocityComponent>().velocity = { .0f, 0.f, 0.f };
 		entity.GetComponent<ecs::cmp::AccelerationComponent>().acceleration = { .0f, 0.f, 0.f };
 	}
+
+	entities.push_back(std::move(mutant));
 
 	for (int i = 0; i < entityCount1D; i++)
 	{
@@ -140,7 +191,21 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 			}
 		}
 	}
-	//entities.emplace_back(std::make_unique<ecs::BasicEntity>(Gfx(), "testPlane", "resources/models/TestPlane.fbx"));
+	
+	auto testTerrain = ecs::Entity::CreateNew<
+		ecs::cmp::ActiveComponent,
+		ecs::cmp::PositionComponent,
+		ecs::cmp::TransformComponent,
+		ecs::cmp::ModelComponent,
+		ecs::cmp::ScaleComponent,
+		ecs::cmp::RotationComponent>("testTerrain");
+
+	testTerrain.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
+	testTerrain.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/TestTerrain.obj");
+	testTerrain.GetComponent<ecs::cmp::ScaleComponent>().scale = { 1.0f, 1.0f, 1.0f };
+	testTerrain.GetComponent<ecs::cmp::ActiveComponent>().active = true;
+
+	entities.push_back(std::move(testTerrain));
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
 	this->wnd->keyboard.DisableAutoRepeat();
@@ -148,6 +213,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 
 void TestApp::DoFrame()
 {
+	mem::ArenaAllocator<>::GP().Wipe();	
 	camera.Submit(Gfx());
 	pPointLight->SubmitLight(Gfx());
 

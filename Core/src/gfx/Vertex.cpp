@@ -81,14 +81,15 @@ namespace tryn::gfx
 		Resize(layout.Size() * size);
 	}
 
-	VertexBuffer::VertexBuffer(VertexLayout layout, const aiMesh& mesh)
+	VertexBuffer::VertexBuffer(VertexLayout layout, const aiMesh& mesh, ani::Skeleton* skeleton)
 	{
 		this->layout = std::move(layout);
 		Resize(mesh.mNumVertices);
 
 		for (unsigned int i = 0; i < this->layout.GetElementCount(); i++)
 		{
-			VertexLayout::Bridge<VertexLayout::Element::AttributeAiMeshFill>(this->layout.ResolveByIndex(i).GetType(), *this, mesh);
+			VertexLayout::Bridge<VertexLayout::Element::AttributeAiMeshFill>(this->layout.ResolveByIndex(i).GetType(), *this, mesh, skeleton);
+			
 		}
 	}
 	void VertexBuffer::Resize(size_t newSize)
@@ -103,7 +104,7 @@ namespace tryn::gfx
 	{
 		return buffer.size();
 	}
-	Vertex VertexBuffer::operator[](int i)
+	Vertex VertexBuffer::operator[](size_t i)
 	{
 		trynass_msg(i < ByteSize(), L"VertexBuffer indexed out of bounds");
 		return Vertex{ buffer.data() + layout.Size() * i, layout };

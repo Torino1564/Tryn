@@ -1,12 +1,11 @@
 #pragma once
-#include "Bindable.h"
-#include <Core/src/gfx/CPUBuffer.h>
-#include <Core/src/gfx/BindablePool.h>
-#include <Core/src/gfx/IBufferFwd.h>
-#include <Core/src/gfx/ConstantBuffer.h>
 #include <Core/src/gfx/Vertex.h>
-#include <any>
+#include <memory>
+#include <Core/src/gfx/IBufferFwd.h>
+#include <Core/src/gfx/BindablePool.h>
+#include <Core/src/gfx/ConstantBuffer.h>
 #include <Core/src/gfx/RenderQueue/TechniqueProbe.h>
+#include <any>
 
 ZT_EX_DEF(BufferMissmatchException);
 
@@ -186,6 +185,13 @@ namespace tryn::gfx
 				pCPUBuffer->SetDirty();
 			}
 		}
+
+		template <BufferType T = Type>
+		requires (T == BufferType::Instance || T == BufferType::VtxConstant)
+		auto& GetCPUBuffer()
+		{
+			return reinterpret_cast<ConstantBuffer&>(*pCPUBuffer.get());
+		}
 	protected:
 		std::string path;
 		std::string tag;
@@ -193,5 +199,6 @@ namespace tryn::gfx
 		[[no_unique_address]] std::conditional<Type == BufferType::PxConstant || Type == BufferType::VtxConstant || Type == BufferType::Instance, int, empty_t<0>>::type slot;
 		using Layout_Ty = std::conditional_t<Type == BufferType::Vertex, VertexLayout, empty_t<1>>;
 		[[no_unique_address]] Layout_Ty layout;
+		[[no_unique_address]] std::conditional_t<Type == BufferType::Instance, size_t, empty_t<2>> gpuSize;
 	};
 }

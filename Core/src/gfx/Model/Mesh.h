@@ -10,6 +10,12 @@
 
 namespace tryn::gfx
 {
+	enum class MeshType
+	{
+		Static,
+		Boned
+	};
+
 	class Mesh : public Drawable
 	{
 	public:
@@ -20,7 +26,7 @@ namespace tryn::gfx
 			return tag;
 		}
 
-		[[nodiscard]] virtual bool IsStatic() const = 0;
+		[[nodiscard]] virtual MeshType Type() const = 0;
 	protected:
 		std::string tag;
 	};

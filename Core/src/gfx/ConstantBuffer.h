@@ -127,28 +127,28 @@ namespace tryn::gfx
 			friend class ConstantBufferLayout;
 
 		public:
-
+			Node() = default;
 			Node(Type type, std::string id);
 			void Append(Node child);
 			void Append(ConstantBufferLayout::Type type, std::string name);
-			bool IsRoot() const;
+			//bool IsRoot() const;
 			bool IsLeaf() const;
 			static Node& GetEmpty();
-			Node& operator[](std::string id);
+			Node& operator[](std::string_view id);
 			Node& operator[](std::size_t index);
-			Node& IndexByName(std::string id);
+			Node& IndexByName(std::string_view id);
 			Node& IndexByKey(std::size_t key);
 			void Resize(std::size_t newSize, class ConstantBuffer& layout);
 			bool Validate() const;
 			Type GetType() const;
 			size_t GetOffset() const;
 			void Set(Node, std::size_t numElements);
-
+			std::size_t Size() const;
 		private:
 			std::vector<Node> children;
 			Type type = Type::Empty;
-			std::optional<Node*> parent;
-			std::string id;
+			//std::optional<Node*> parent = std::nullopt;
+			std::string id = "";
 			bool solid = false;
 			size_t offset = 0;
 		};
@@ -169,18 +169,20 @@ namespace tryn::gfx
 
 	class ElementView
 	{
-		friend struct ConstantBufferLayout::Node;
+		friend class ConstantBufferLayout::Node;
 	public:
 		ElementView(ConstantBufferLayout::Node& node, char* pBytes, ConstantBuffer* pBuffer);
-		ElementView operator[](std::string id)
+		ElementView operator[](std::string_view id)
 		{
 			trynass_msg(node.GetType() == ConstantBufferLayout::Type::Struct, L"Tried to index by name into a non struct ElementView!");
-			return ElementView(node[id], pBytes + (node[id].GetOffset() - node.GetOffset()), pBuffer);
+			const auto finalOffset = node[id].GetOffset() - node.GetOffset();
+			return ElementView(node[id], pBytes + finalOffset, pBuffer);
 		}
 		ElementView operator[](std::size_t key)
 		{
 			trynass_msg(node.GetType() == ConstantBufferLayout::Type::Array, L"Tried to index by key into a non array ElementView!");
-			return ElementView(node[key], pBytes + (node[key].GetOffset() - node.GetOffset()), pBuffer);
+			auto finalOffset = node[key].GetOffset() - node.GetOffset();
+			return ElementView(node[key], pBytes + finalOffset, pBuffer);
 		}
 		void Resize(std::size_t newSize)
 		{
@@ -195,7 +197,10 @@ namespace tryn::gfx
 
 			return *reinterpret_cast<T*>(pBytes);
 		}
-
+		auto& Node()
+		{
+			return node;
+		}
 		bool Exists() const;
 
 		template<typename T>
@@ -224,7 +229,7 @@ namespace tryn::gfx
 		{
 			buffer.resize(layout.Size());
 		}
-		ElementView operator[](std::string id)
+		ElementView operator[](std::string_view id)
 		{
 			SetDirty(); 
 			auto& indexTo = layout.GetRoot().IndexByName(id);

@@ -4,6 +4,8 @@
 #include <Core/src/log/Log.h>
 #include <Core/src/gfx/RenderTask.h>
 #include <Core/src/gfx/PointLight.h>
+#include <Core/src/gfx/Model/InstancedModel.h>
+#include <Core/src/gfx/Bindables/IBuffer.h>
 
 namespace tryn::gfx
 {
@@ -93,11 +95,23 @@ namespace tryn::gfx
 		data{ parent,step }
 	{}
 
+	Job::Job(Drawable * parent, Step * step, std::span<const glm::mat4> transforms, InstancedModelParent * pParentInstanced)
+		:
+		data{parent, step},
+		instanceData{transforms, pParentInstanced}
+	{
+	}
+
 	void Job::Execute(IGraphics& gfx)
 	{
-		data.pDrawable->BindBase();
-		data.pStep->Bind(gfx);
-		gfx.DrawIndexed(data.pDrawable->GetIndexCount());
+		if (instanceData.instanceParent == nullptr)
+		{
+			Execute_(gfx);
+		}
+		else
+		{
+			ExecuteInsanced_(gfx);
+		}
 	}
 
 	void Job::ExecuteAsync(IGraphics& gfx, RenderWorker* worker, std::optional<std::shared_ptr<RenderTask>> taskPtr)
@@ -135,5 +149,24 @@ namespace tryn::gfx
 	{
 		return data;
 	}
+	Job::InstancedData & Job::GetInstanceData()
+	{
+		return instanceData;
+	}
+	void Job::Execute_(IGraphics& gfx)
+	{
+		data.pDrawable->BindBase();
+		data.pDrawable->BindExtraBinds();
+		data.pDrawable->BindTransformCBuf();
+		data.pStep->Bind(gfx);
+		gfx.DrawIndexed(data.pDrawable->GetIndexCount());
+	}
+	void Job::ExecuteInsanced_(IGraphics& gfx)
+	{
+		data.pDrawable->BindBase();
+		data.pDrawable->BindExtraBinds();
+		data.pDrawable->BindTransformCBuf();
+		data.pStep->Bind(gfx);
+		gfx.DrawInstancedIndexed(data.pDrawable->GetIndexCount(), instanceData.transforms.size(), 0u, 0u, 0u);
+	}
 }
-

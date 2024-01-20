@@ -5,15 +5,18 @@
 #include <unordered_map>
 #include <typeinfo>
 #include <utility>
+#include <optional>
 #include <Core/src/utl/Assert.h>
 #include <Core/src/utl/Exception.h>
-#include <Core/src/gfx/Bindables/Bindable.h>
 #include <Core/src/log/Log.h>
 #include <assimp/scene.h>
 #include <Core/src/gfx/CPUBuffer.h>
+#include <concepts>
+#include <Core/src/gfx/Animation/Bone.h>
 
-#define DVTX_ELEMENT_AI_EXTRACTOR(member) static SysType Extract( const aiMesh& mesh,size_t i ) noexcept {return *reinterpret_cast<const SysType*>(&mesh.member[i]);}
-
+#define DVTX_ELEMENT_AI_EXTRACTOR(member) static void ExtractAndFill( VertexBuffer& buf, const aiMesh& mesh,size_t i, ani::Skeleton const* skeleton = nullptr ) noexcept {buf[i].Attr<type>(0) = *reinterpret_cast<const SysType*>(&mesh.member[i]);}
+#define DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION static inline void ExtractAndFill( VertexBuffer& buf, const aiMesh& mesh,size_t i, ani::Skeleton const* skeleton = nullptr ) noexcept
+#define DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(vertexElement, member) void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::vertexElement>::ExtractAndFill(VertexBuffer& buf, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept { buf[i].Attr<VertexLayout::VertexElement::vertexElement>(0) = *reinterpret_cast<const SysType*>(&mesh.member[i]); }
 ZT_EX_DEF(DvtxException);
 
 #define LAYOUT_ELEMENT_TYPES \
@@ -26,6 +29,8 @@ ZT_EX_DEF(DvtxException);
 		X( Char4Color ) \
 		X( Tangent ) \
 		X( Bitangent ) \
+		X( BoneIds ) \
+		X( BoneWeights ) \
 		X( Unknown )
 
 struct BGRAColor
@@ -35,17 +40,18 @@ struct BGRAColor
 	unsigned char g;
 	unsigned char b;
 };
+
 namespace tryn::gfx
 {
-
+	class VertexBuffer;
 	class VertexLayout
 	{
 	public:
 		enum VertexElement
 		{
-			#define X(el) el,
+#define X(el) el,
 			LAYOUT_ELEMENT_TYPES
-			#undef X
+#undef X
 		};
 		enum class Format
 		{
@@ -53,100 +59,128 @@ namespace tryn::gfx
 			Vec3F,
 			Vec4F,
 			Vec4C_UNorm,
+			Vec4UI16,
+			Float_Uint,
 			Unknown
 		};
 
-		template <VertexElement>
-		struct VertexElementAttr {};
-		template <> struct VertexElementAttr<Position2D>
+		template <VertexElement Element>
+		struct VertexElementAttrBase
+		{
+			static constexpr VertexElement type = Element;
+		};
+#define VERTEX_ELEMENT_ATTR(x) template <> struct VertexElementAttr<x> : public VertexElementAttrBase<x>
+
+		template <VertexElement Element>
+		struct VertexElementAttr : public VertexElementAttrBase<Element> {
+		};
+
+		VERTEX_ELEMENT_ATTR(Position2D)
 		{
 			using SysType = glm::vec2;
 			static constexpr Format format = Format::Vec2F;
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P2";
-			DVTX_ELEMENT_AI_EXTRACTOR(mVertices)
+			
+			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
 		};
-		template <> struct VertexElementAttr<Position3D>
+		VERTEX_ELEMENT_ATTR(Position3D)
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P3";
-			DVTX_ELEMENT_AI_EXTRACTOR(mVertices)
+			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
 		};
-		template <> struct VertexElementAttr<Normal>
+		VERTEX_ELEMENT_ATTR(Normal)
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Normal";
 			static constexpr const char* code = "N";
-			DVTX_ELEMENT_AI_EXTRACTOR(mNormals)
+			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
 		};
-		template <> struct VertexElementAttr<UV>
+		VERTEX_ELEMENT_ATTR(UV)
 		{
 			using SysType = glm::vec2;
 			static constexpr Format format = Format::Vec2F;
 			static constexpr const char* semantic = "Texcoord";
 			static constexpr const char* code = "UV";
-			DVTX_ELEMENT_AI_EXTRACTOR(mTextureCoords[0])
+			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
 		};
-		template <> struct VertexElementAttr<Float3Color>
+		VERTEX_ELEMENT_ATTR(Float3Color)
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "Cf3";
-			DVTX_ELEMENT_AI_EXTRACTOR(mColors[0])
+			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
 		};
-		template <> struct VertexElementAttr<Float4Color>
+		VERTEX_ELEMENT_ATTR(Float4Color)
 		{
 			using SysType = glm::vec4;
 			static constexpr Format format = Format::Vec4F;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "Cf4";
-			DVTX_ELEMENT_AI_EXTRACTOR(mColors[0])
+			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
 		};
-		template <> struct VertexElementAttr<Char4Color>
+		VERTEX_ELEMENT_ATTR(Char4Color)
 		{
 			using SysType = BGRAColor;
 			static constexpr Format format = Format::Vec4C_UNorm;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "Cc4";
-			DVTX_ELEMENT_AI_EXTRACTOR(mColors[0])
+			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
 		};
-		template <> struct VertexElementAttr<Tangent>
+		VERTEX_ELEMENT_ATTR(Tangent)
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Tangent";
 			static constexpr const char* code = "T";
-			DVTX_ELEMENT_AI_EXTRACTOR(mTangents)
+			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
 		};
-		template <> struct VertexElementAttr<Bitangent>
+		VERTEX_ELEMENT_ATTR(Bitangent)
 		{
 			using SysType = glm::vec3;
 			static constexpr Format format = Format::Vec3F;
 			static constexpr const char* semantic = "Bitangent";
 			static constexpr const char* code = "Bt";
-			DVTX_ELEMENT_AI_EXTRACTOR(mBitangents)
+			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
 		};
-		template <> struct VertexElementAttr<Unknown>
+		VERTEX_ELEMENT_ATTR(BoneIds)
+		{
+			using SysType = glm::vec<4, uint16_t>;
+			static constexpr Format format = Format::Vec4UI16;
+			static constexpr const char* semantic = "BoneIds";
+			static constexpr const char* code = "BId";
+			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+		};
+		VERTEX_ELEMENT_ATTR(BoneWeights)
+		{
+			using SysType = glm::vec4;
+			static constexpr Format format = Format::Vec4F;
+			static constexpr const char* semantic = "BoneWeights";
+			static constexpr const char* code = "BWs";
+			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+		};
+		VERTEX_ELEMENT_ATTR(Unknown)
 		{
 			using SysType = int;
 			static constexpr Format format = Format::Unknown;
 			static constexpr const char* semantic = "Unknown";
 			static constexpr const char* code = "?";
-			DVTX_ELEMENT_AI_EXTRACTOR(mFaces)
+			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
 		};
-		
+
 		template<template<VertexElement> class F, typename... Args>
 		static constexpr auto Bridge(VertexElement type, Args&&... args)
 		{
 			switch (type)
 			{
-				#define X(el) case VertexLayout::el: return F<VertexLayout::el>::Exec( std::forward<Args>( args )... );
+#define X(el) case VertexLayout::el: return F<VertexLayout::el>::Exec( std::forward<Args>( args )... );
 				LAYOUT_ELEMENT_TYPES
-				#undef X
+#undef X
 			}
 			throw DvtxException(L"Invalid element type");
 			return F<VertexLayout::VertexElement::Unknown>::Exec(std::forward<Args>(args)...);
@@ -192,11 +226,11 @@ namespace tryn::gfx
 			template<VertexLayout::VertexElement type>
 			struct AttributeAiMeshFill
 			{
-				static constexpr void Exec(VertexBuffer& pBuf, const aiMesh& mesh)
+				static constexpr void Exec(VertexBuffer& buf, const aiMesh& mesh, ani::Skeleton const* skeleton = nullptr)
 				{
 					for (auto end = mesh.mNumVertices, i = 0u; i < end; i++)
 					{
-						pBuf[i].Attr<type>(0) = VertexLayout::VertexElementAttr<type>::Extract(mesh, i);
+						VertexLayout::VertexElementAttr<type>::ExtractAndFill(buf, mesh, i, skeleton);
 					}
 				}
 			};
@@ -234,12 +268,12 @@ namespace tryn::gfx
 	public:
 		VertexLayout();
 		template <typename...Args>
-		VertexLayout( Args... args )
+		VertexLayout(Args... args)
 		{
 			int offset = 0;
 			elCounter.resize(static_cast<int>(VertexElement::Unknown));
 
-			AppendElement( offset , args...);
+			AppendElement(offset, args...);
 			size = Elements.back().first.GetOffsetAfter();
 		}
 		// Returns size in bytes
@@ -280,27 +314,31 @@ namespace tryn::gfx
 		std::string GetCode() const;
 	private:
 		template <typename Element>
-		void AppendElement( int& offset, Element element)
+		void AppendElement(int& offset, Element element)
 		{
 			Elements.emplace_back(VertexLayout::Element(element, offset), elCounter[static_cast<int>(element)]++);
 			offset += static_cast<int>(VertexLayout::Element::SizeOf(element));
 		}
-		template <typename First , typename ... Args>
-		void AppendElement( int& offset , First first, Args ... rest)
+		template <typename First, typename ... Args>
+		void AppendElement(int& offset, First first, Args ... rest)
 		{
-			AppendElement( offset , first);
-			AppendElement( offset , rest...);
+			AppendElement(offset, first);
+			AppendElement(offset, rest...);
 		}
 	public:
-		std::vector<std::pair<Element,int>> Elements;
+		std::vector<std::pair<Element, int>> Elements;
 	private:
 		std::vector<int> elCounter = {};
 		size_t size;
 	};
 
+
 	class Vertex
 	{
 		friend class VertexBuffer;
+
+	protected:
+		Vertex(char* pData, const VertexLayout& layout);
 
 		template<VertexLayout::VertexElement type>
 		struct AttributeSetting
@@ -311,8 +349,6 @@ namespace tryn::gfx
 				return pVertex->SetAttribute<type>(pAttribute, std::forward<T>(val));
 			}
 		};
-	protected:
-		Vertex(char* pData, const VertexLayout& layout);
 
 	public:
 		template<VertexLayout::VertexElement Type>
@@ -367,11 +403,11 @@ namespace tryn::gfx
 	{
 	public:
 		VertexBuffer(VertexLayout layout_, size_t size = 0);
-		VertexBuffer(VertexLayout layout, const aiMesh& mesh);
+		VertexBuffer(VertexLayout layout, const aiMesh& mesh, ani::Skeleton* skeleton = nullptr);
 		void Resize(size_t newSize) override;
 		constexpr std::size_t ByteSize() const noexcept override;
 		constexpr std::size_t Size() const noexcept override;
-		Vertex operator[](int i);
+		Vertex operator[](size_t i);
 		Vertex Back();
 		constexpr void* Data() const noexcept override;
 		std::size_t NumElements() const noexcept;
@@ -391,4 +427,47 @@ namespace tryn::gfx
 		VertexLayout layout;
 		std::vector<char> buffer;
 	};
+
+	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Position2D, mVertices);
+	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Position3D, mVertices);
+	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Normal, mNormals);
+	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(UV, mTextureCoords[0]);
+	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Float3Color, mColors[0]);
+	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Float4Color, mColors[0]);
+	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Char4Color, mColors[0]);
+	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Tangent, mTangents);
+	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Bitangent, mBitangents);
+
+	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::BoneIds>::ExtractAndFill(VertexBuffer& buf, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
+	{
+		auto& viewBoneIDs = buf[i].Attr<VertexLayout::VertexElement::BoneIds>(0);
+		auto& viewBoneWeights = buf[i].Attr<VertexLayout::VertexElement::BoneWeights>(0);
+		for (auto& bone : skeleton->bones)
+		{
+			for (auto& weight : bone.boneWeights)
+			{
+				if (weight.vertexID == i)
+				{
+					for (int j = 0; j < 4; j++)
+					{
+						if (viewBoneIDs[j] == 0u)
+						{
+							viewBoneIDs[j] = bone.ID;
+							viewBoneWeights[j] = weight.weight;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::BoneWeights>::ExtractAndFill(VertexBuffer& buf, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
+	{
+
+	}
+	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::Unknown>::ExtractAndFill(VertexBuffer& buf, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
+	{
+
+	}
 }

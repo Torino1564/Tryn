@@ -243,6 +243,27 @@
     <ClCompile Include="third\vcpkg\x64-windows-static\include\stb_vorbis.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\dbg\DebugHeader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Animation\BonedMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Animation\Bone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Animation\AnimationManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Animation\Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\sys\AnimationSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Bindables\JITUpdateBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -2933,6 +2954,45 @@
     <ClInclude Include="third\vcpkg\x64-windows-static\include\zlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ecs\cmp\InstancedModelParentComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mem\debugMem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dbg\DebugHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utl\Bitset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Animation\Animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Animation\Bone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Animation\Key.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Animation\BonedMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Animation\AnimationManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\cmp\AnimatedComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\sys\AnimationSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\cmp\BoneTransformsComponents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Bindables\JITUpdateBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">
@@ -3399,6 +3459,7 @@
     <None Include="third\vcpkg\x64-windows-static\include\assimp\vector3.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="src\gfx\dx11\VS\BoneTransform.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\gfx\dx11\PS\PixelShader.hlsl" />
@@ -3422,5 +3483,35 @@
     <FxCompile Include="src\gfx\dx11\VS\PhongTexMskNrm_VS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpc_VS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcNrm_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\FlatInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongFlatInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskNrmInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcNrmInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexNrmInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcNrmInst_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\FlatInstSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\FlatSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongFlatInstSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongFlatSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexInstSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskInstSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskNrmInstSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskNrmSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcInstSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcNrmInstSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcNrmSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexNrmInstSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexNrmSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcInstSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcNrmInstSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcNrmSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcSkn_VS.hlsl" />
   </ItemGroup>
 </Project>

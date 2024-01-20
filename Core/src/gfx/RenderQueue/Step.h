@@ -5,6 +5,7 @@
 namespace tryn::gfx
 {
 	class Drawable;
+	class Mesh;
 
 	class Step
 	{
@@ -15,6 +16,7 @@ namespace tryn::gfx
 		void Bind(IGraphics& gfx, IContext& context) const;
 		void Draw(IGraphics& gfx, Drawable* parent) const;
 		void Submit(IGraphics& gfx, Drawable* parent);
+		void Submit(IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instanceParent);
 		void Accept(class TechniqueProbe& probe);
 		std::vector<std::shared_ptr<gfx::IBindable>> bindables;
 	private:

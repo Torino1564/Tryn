@@ -6,6 +6,7 @@ namespace tryn::gfx
 	void RenderTask::operator()()
 	{
 		params.pDrawable->BindBase(*params.pContext);
+		params.pDrawable->BindTransformCBuf(*params.pContext);
 		params.pStep->Bind(*params.pGfx, *params.pContext);
 		params.pContext->DrawIndexed(params.pDrawable->GetIndexCount());
 	}
@@ -19,6 +20,7 @@ namespace tryn::gfx
 			auto pStep = data.pStep;
 
 			pDrawable->BindBase(*params.pContext);
+			pDrawable->BindTransformCBuf(*params.pContext);
 			pStep->Bind(*params.pGfx, *params.pContext);
 			params.pContext->DrawIndexed(pDrawable->GetIndexCount());
 		}
