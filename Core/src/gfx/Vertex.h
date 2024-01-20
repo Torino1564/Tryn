@@ -448,12 +448,13 @@ namespace tryn::gfx
 			{
 				if (weight.vertexID == i)
 				{
-					for (int i = 0; i < 4; i++)
+					for (int j = 0; j < 4; j++)
 					{
-						if (viewBoneIDs[i] == 0u)
+						if (viewBoneIDs[j] == 0u)
 						{
-							viewBoneIDs[i] = bone.ID;
-							viewBoneWeights[i] = weight.weight;
+							viewBoneIDs[j] = bone.ID;
+							viewBoneWeights[j] = weight.weight;
+							break;
 						}
 					}
 				}

@@ -40,6 +40,12 @@ namespace tryn::gfx
 			child.Submit(gfx, { finalTransforms }, parent);
 		}
 	}
+	void Node::Submit(IGraphics& gfx, glm::mat4 accumulatedTransform, std::span<const glm::mat4> boneTransforms)
+	{
+		// get main mesh
+		ani::BonedMesh* pBonedMesh = reinterpret_cast<ani::BonedMesh*>(meshes[0].get());
+		pBonedMesh->Submit(gfx, accumulatedTransform, boneTransforms);
+	}
 	void Node::AddChild(Node child)
 	{
 		children.push_back(std::move(child));

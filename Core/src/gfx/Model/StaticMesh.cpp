@@ -36,8 +36,8 @@ namespace tryn::gfx
 		}
 	}
 
-	bool StaticMesh::IsStatic() const
+	MeshType StaticMesh::Type() const
 	{
-		return true;
+		return MeshType::Static;
 	}
 }

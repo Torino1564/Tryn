@@ -24,6 +24,13 @@ namespace tryn::ecs::sys
 			ReadOnly<cmp::ActiveComponent>
 		>();
 
+		auto dataSkinned = ECS::Get().archetypeManager.GetComponentGroups<
+			ReadOnly<cmp::ActiveComponent>,
+			ReadOnly<cmp::TransformComponent>,
+			ReadOnly<cmp::BoneTransformsComponent>,
+			ReadWrite<cmp::ModelComponent>
+		>();
+
 		// Reset data arrays
 
 		transformArray.Clear();
@@ -38,6 +45,10 @@ namespace tryn::ecs::sys
 		activeParentArray.Clear();
 		parentModelArray.Clear();
 
+		activeSkinnedArray.Clear();
+		transformSkinnedArray.Clear();
+		boneTransformArray.Clear();
+
 		// Fill data arrays
 
 		for (auto& queriedData : data)
@@ -45,7 +56,6 @@ namespace tryn::ecs::sys
 			transformArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
 			modelArray.PushBack(std::get<std::span<cmp::ModelComponent::SubresourceData>>(queriedData));
 			activeArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
-
 		}
 
 		for (auto& queriedData : dataChildren)
@@ -60,6 +70,14 @@ namespace tryn::ecs::sys
 			activeParentArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
 			parentModelArray.PushBack(std::get<std::span<cmp::InstancedModelParentComponent::SubresourceData>>(queriedData));
 			transformParentArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
+		}
+
+		for (auto& queriedData : dataSkinned)
+		{
+			activeSkinnedArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
+			boneTransformArray.PushBack(std::get<std::span<cmp::BoneTransformsComponent::SubresourceData>>(queriedData));
+			transformSkinnedArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
+			skinnedModelArray.PushBack(std::get<std::span<cmp::ModelComponent::SubresourceData>>(queriedData));
 		}
 
 		// Kernel
@@ -86,6 +104,14 @@ namespace tryn::ecs::sys
 			{
 				parentModelArray[i].parentModel.Submit(transformParentArray[i].transform);
 			}
+		}
+
+		for (auto i = 0; i < activeSkinnedArray.Size(); i++)
+		{
+			if (!activeSkinnedArray[i].active)
+				continue;
+
+			skinnedModelArray[i].pModel->Submit(transformSkinnedArray[i].transform, boneTransformArray[i].transforms);
 		}
 	}
 }

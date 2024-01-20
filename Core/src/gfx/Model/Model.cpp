@@ -10,6 +10,7 @@
 #include <Core/src/mem/ArenaAllocator.h>
 #include <queue>
 #include <Core/src/gfx/Animation/Bone.h>
+#include <Core/src/gfx/Animation/AnimationManager.h>
 
 namespace tryn::gfx
 {
@@ -68,6 +69,11 @@ namespace tryn::gfx
 			}
 		}
 
+		for (auto i = 0; i < pScene->mNumAnimations; i++)
+		{
+			ani::AnimationManager::Get().New(name, *pScene->mAnimations[i]);
+		}
+
 		int nextId = 0;
 		root = std::make_unique<Node>(ParseNode(nextId, *pScene->mRootNode, scale, true));
 
@@ -122,6 +128,13 @@ namespace tryn::gfx
 		const auto transform = translation * rotation;
 		root->Submit(gfx, entityTransform * transform);
 	}
+	void Model::Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms)
+	{
+		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
+		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
+		const auto transform = translation * rotation;
+		root->Submit(gfx, entityTransform, boneTransforms );
+	}
 	void Model::SpawnControlWindow()
 	{
 		ImGui::Begin(name.c_str());
@@ -135,6 +148,12 @@ namespace tryn::gfx
 		ImGui::SliderFloat("Y", &settings.position.y, -20.0f, 20.0f);
 		ImGui::SliderFloat("Z", &settings.position.z, -20.0f, 20.0f);
 		ImGui::End();
+	}
+	void Model::AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string& name)
+	{
+		auto& bonedMesh = *GetMainMesh();
+
+		bonedMesh.AddAnimation(pAnimation, name);
 	}
 	glm::vec3 Model::GetPosition() const
 	{
@@ -227,5 +246,9 @@ namespace tryn::gfx
 		{
 			ParseBone(*bone.mChildren[i], thisID);
 		}
+	}
+	ani::BonedMesh* Model::GetMainMesh()
+	{
+		return reinterpret_cast<ani::BonedMesh*>(pMeshes[0].get());
 	}
 }

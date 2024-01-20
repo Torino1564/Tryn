@@ -13,6 +13,7 @@ namespace tryn::gfx
 		Node(int id, std::string_view name, std::vector<uint16_t> meshIds, glm::mat4 transform, bool isSkeleton = false);
 		void Submit(IGraphics& gfx, glm::mat4 accumulatedTransform);
 		void Submit(IGraphics& gfx, std::span<const glm::mat4> accumulatedTransforms, InstancedModelParent& parent);
+		void Submit(IGraphics& gfx, glm::mat4 accumulatedTransform, std::span<const glm::mat4> boneTransforms);
 		void AddChild(Node);
 		void SetMeshSpan(std::span<std::shared_ptr<Mesh>> meshSpan);
 		std::vector<Node>& GetChildren();

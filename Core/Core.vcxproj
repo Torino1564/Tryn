@@ -21,13 +21,17 @@
     <ClCompile Include="src\ccr\Worker.cpp" />
     <ClCompile Include="src\dbg\DebugHeader.cpp" />
     <ClCompile Include="src\ecs\cmp\ComponentManager.cpp" />
+    <ClCompile Include="src\ecs\sys\AnimationSystem.cpp" />
     <ClCompile Include="src\ecs\sys\UpdateVelocitySystem.cpp" />
     <ClCompile Include="src\ecs\sys\RenderSystem.cpp" />
     <ClCompile Include="src\ecs\sys\SystemManager.cpp" />
     <ClCompile Include="src\ecs\sys\TransformSystem.cpp" />
     <ClCompile Include="src\ecs\sys\UpdatePositionSystem.cpp" />
+    <ClCompile Include="src\gfx\Animation\Animation.cpp" />
+    <ClCompile Include="src\gfx\Animation\AnimationManager.cpp" />
     <ClCompile Include="src\gfx\Animation\Bone.cpp" />
     <ClCompile Include="src\gfx\Animation\BonedMesh.cpp" />
+    <ClCompile Include="src\gfx\Bindables\JITUpdateBuffer.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
@@ -110,7 +114,9 @@
     <ClInclude Include="src\dbg\DebugHeader.h" />
     <ClInclude Include="src\ecs\cmp\AccelerationComponent.h" />
     <ClInclude Include="src\ecs\cmp\ActiveComponent.h" />
+    <ClInclude Include="src\ecs\cmp\AnimatedComponent.h" />
     <ClInclude Include="src\ecs\cmp\Archetype.h" />
+    <ClInclude Include="src\ecs\cmp\BoneTransformsComponents.h" />
     <ClInclude Include="src\ecs\cmp\ComponentManager.h" />
     <ClInclude Include="src\ecs\cmp\ComponentPack.h" />
     <ClInclude Include="src\ecs\cmp\InstancedModelChildComponent.h" />
@@ -121,18 +127,21 @@
     <ClInclude Include="src\ecs\cmp\ScaleComponent.h" />
     <ClInclude Include="src\ecs\cmp\TransformComponent.h" />
     <ClInclude Include="src\ecs\cmp\VelocityComponent.h" />
+    <ClInclude Include="src\ecs\sys\AnimationSystem.h" />
     <ClInclude Include="src\ecs\sys\RenderSystem.h" />
     <ClInclude Include="src\ecs\sys\SystemManager.h" />
     <ClInclude Include="src\ecs\sys\TransformSystem.h" />
     <ClInclude Include="src\ecs\sys\UpdatePositionSystem.h" />
     <ClInclude Include="src\ecs\sys\UpdateVelocitySystem.h" />
     <ClInclude Include="src\gfx\Animation\Animation.h" />
+    <ClInclude Include="src\gfx\Animation\AnimationManager.h" />
     <ClInclude Include="src\gfx\Animation\Bone.h" />
     <ClInclude Include="src\gfx\Animation\BonedMesh.h" />
     <ClInclude Include="src\gfx\Animation\Key.h" />
     <ClInclude Include="src\gfx\Assimp.h" />
     <ClInclude Include="src\gfx\BindablePool.h" />
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
+    <ClInclude Include="src\gfx\Bindables\JITUpdateBuffer.h" />
     <ClInclude Include="src\gfx\ConstantBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\IBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\InputLayout.h" />
@@ -1004,6 +1013,7 @@
   <ItemGroup>
     <None Include="src\gfx\dx11\PS\LightVector.hlsli" />
     <None Include="src\gfx\dx11\PS\Operations.hlsli" />
+    <None Include="src\gfx\dx11\VS\BoneTransform.hlsli" />
     <None Include="src\gfx\vulkan\vulkan\generate_spv.sh" />
     <None Include="src\gfx\vulkan\vulkan\glsl_shader.frag" />
     <None Include="src\gfx\vulkan\vulkan\glsl_shader.vert" />
@@ -1232,6 +1242,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\FlatInstSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\FlatInst_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
@@ -1241,6 +1259,22 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\FlatSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongFlatInstSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\PhongFlatInst_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
@@ -1249,6 +1283,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongFlatSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\PhongFlat_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -1268,6 +1310,30 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexInstSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskInstSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskNrmInstSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\PhongTexMskNrmInst_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
@@ -1276,6 +1342,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskNrmSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\PhongTexMskNrm_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -1286,6 +1360,30 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcInstSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcNrmInstSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcNrmInst_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
@@ -1294,6 +1392,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcNrmSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcNrm_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -1312,6 +1418,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpcSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\PhongTexMskSpc_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -1340,6 +1454,14 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexNrmInstSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\PhongTexNrmInst_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
@@ -1348,6 +1470,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexNrmSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\PhongTexNrm_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -1358,6 +1488,30 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcInstSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcNrmInstSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcNrmInst_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
@@ -1366,6 +1520,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcNrmSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcNrm_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -1384,6 +1546,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcSkn_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\PhongTexSpc_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

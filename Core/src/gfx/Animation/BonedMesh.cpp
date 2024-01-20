@@ -1,6 +1,7 @@
 #include "BonedMesh.h"
 #include <Core/src/gfx/Bindables/IBuffer.h>
-
+#include <Core/src/mem/ArenaAllocator.h>
+#include <Core/src/gfx/Bindables/JITUpdateBuffer.h>
 namespace tryn::gfx::ani
 {
 	glm::mat4 convertAiToGlm(const aiMatrix4x4& aiMat) {
@@ -47,7 +48,7 @@ namespace tryn::gfx::ani
 
 			boneIt->inverseBP = convertAiToGlm(bone.mOffsetMatrix);
 			
-			boneIt->boneWeights.resize(bone.mNumWeights);
+			boneIt->boneWeights.reserve(bone.mNumWeights);
 
 			for (auto i = 0; i < bone.mNumWeights; i++)
 			{
@@ -79,9 +80,34 @@ namespace tryn::gfx::ani
 			techniques.push_back(technique);
 		}
 	}
-	bool BonedMesh::IsStatic() const
+	MeshType BonedMesh::Type() const
 	{
-		return false;
+		return MeshType::Boned;
+	}
+	void BonedMesh::Submit(IGraphics& gfx, const glm::mat4 finalTransform, std::span<const glm::mat4> boneTransforms)
+	{
+		extraBindPtrs = {};
+
+		this->transform = finalTransform;
+
+		auto jitBuffer = mem::ArenaAllocator<>::GP().MakeNew<JITUpdateBuffer>(pSkeletonCBuffer.get(), (void*)boneTransforms.data(), boneTransforms.size_bytes());
+
+		AddExtraBind(jitBuffer);
+
+		for (auto& technique : techniques)
+		{
+			technique.Submit(gfx, this);
+		}
+	}
+	void BonedMesh::AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string& name)
+	{
+		animationNameMapper[name] = pAnimations.size();
+		pAnimations.push_back(pAnimation);
+		interfaces.emplace_back(skeleton, *pAnimation);
+	}
+	AnimationSkeletonInterface* BonedMesh::GetAnimationInterface(const std::string& name)
+	{
+		return &interfaces[animationNameMapper.at(name)];
 	}
 	inline void BonedMesh::ExtraSubmitBehavior()
 	{

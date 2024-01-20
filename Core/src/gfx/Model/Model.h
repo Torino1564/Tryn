@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include <Core/src/gfx/ImguiManager.h>
 #include <Core/src/gfx/Animation/Bone.h>
+#include <Core/src/gfx/Animation/BonedMesh.h>
 
 namespace tryn::gfx
 {
@@ -20,9 +21,12 @@ namespace tryn::gfx
 	public:
 		Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, Techniques defaultTechnique = Techniques::Phong, bool instanced = false );
 		void Submit(const glm::mat4& entityTransform);
+		void Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms);
 		void SpawnControlWindow();
+		void AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string&);
 		glm::vec3 GetPosition() const;
 		std::uint16_t GetMeshAmount() const;
+		ani::BonedMesh* GetMainMesh();
 	private:
 		Node ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);
 		void ParseSkeleton(const aiNode& boneRoot);

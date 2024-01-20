@@ -1,0 +1,1 @@
+#include "PhongTexNrmSkn_VS.hlsl"

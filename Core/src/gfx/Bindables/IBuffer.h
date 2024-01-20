@@ -187,7 +187,7 @@ namespace tryn::gfx
 		}
 
 		template <BufferType T = Type>
-		requires (T == BufferType::Instance)
+		requires (T == BufferType::Instance || T == BufferType::VtxConstant)
 		auto& GetCPUBuffer()
 		{
 			return reinterpret_cast<ConstantBuffer&>(*pCPUBuffer.get());

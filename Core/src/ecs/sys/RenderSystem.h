@@ -6,7 +6,9 @@
 #include <Core/src/ecs/cmp/TransformComponent.h>
 #include <Core/src/ecs/cmp/InstancedModelChildComponent.h>
 #include <Core/src/ecs/cmp/InstancedModelParentComponent.h>
+#include <Core/src/ecs/cmp/BoneTransformsComponents.h>
 #include <Core/src/ecs/sys/TransformSystem.h>
+#include "AnimationSystem.h"
 
 namespace tryn::ecs::sys
 {
@@ -16,6 +18,7 @@ namespace tryn::ecs::sys
 		ZT_SYSTEM_UID;
 		RenderSystem()
 		{
+			AddDependency<sys::AnimationSystem>();
 			AddDependency<sys::TransformSystem>();
 		}
 		static void Execute();
@@ -31,5 +34,10 @@ namespace tryn::ecs::sys
 		static inline utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeParentArray;
 		static inline utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformParentArray;
 		static inline utl::MultiSpan<cmp::InstancedModelParentComponent::SubresourceData> parentModelArray;
+
+		ZT_NATIVE_ARRAY(ActiveComponent) activeSkinnedArray;
+		ZT_NATIVE_ARRAY(TransformComponent) transformSkinnedArray;
+		ZT_NATIVE_ARRAY(BoneTransformsComponent) boneTransformArray;
+		ZT_NATIVE_ARRAY(ModelComponent) skinnedModelArray;
 	};
 }

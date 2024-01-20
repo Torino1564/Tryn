@@ -30,10 +30,10 @@ namespace tryn::mem
 			return reinterpret_cast<void*>(&ref);
 		}
 		template <typename T, typename... Args>
-		T* MakeNew()
+		T* MakeNew(Args... args)
 		{
 			auto ptr = Allocate(sizeof(T));
-			return new(ptr) T(Args...);
+			return new(ptr) T(args...);
 		}
 		template <typename T, typename... Args>
 		std::span<T> MakeNewArray(std::size_t numElements, Args... args)

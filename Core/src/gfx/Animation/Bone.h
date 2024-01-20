@@ -6,6 +6,8 @@
 
 namespace tryn::gfx::ani
 {
+	class Animation;
+
 	struct BoneWeight
 	{
 		uint32_t vertexID;
@@ -32,5 +34,18 @@ namespace tryn::gfx::ani
 	public:
 		uint32_t NextID() const;
 		std::vector<Bone> bones;
+	};
+
+	struct AnimationSkeletonInterface
+	{
+		AnimationSkeletonInterface(Skeleton& skeleton, Animation& animation);
+
+		Skeleton* pSkeleton;
+		Animation* pAnimation;
+
+		using AnimationNodeIndex = uint32_t;
+		using BoneIndex = uint32_t;
+
+		std::vector<std::pair<AnimationNodeIndex, BoneIndex>> indexPairs;
 	};
 }
