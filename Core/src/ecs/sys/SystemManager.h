@@ -63,6 +63,7 @@ namespace tryn::ecs::sys
 	public:
 		virtual ~System() = default;
 		virtual void Execute() = 0;
+		virtual void Init() = 0;
 		template <typename S>
 		void AddDependency()
 		{
@@ -112,7 +113,11 @@ namespace tryn::ecs::sys
 		{
 			T::Execute();
 		}
-		static void 
+		virtual void Init() override
+		{
+			T::OnCreate();
+		}
+		static void OnCreate() {}
 	};
 
 	class SystemManager

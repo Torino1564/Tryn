@@ -18,7 +18,7 @@ namespace tryn::ecs::sys
 			AddDependency<TransformSystem>();
 		}
 		static void Execute();
-		static void Init();
+		static void OnCreate();
 	private:
 		// state
 		static inline std::chrono::high_resolution_clock::time_point previous;

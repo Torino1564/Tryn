@@ -67,6 +67,16 @@ namespace tryn::ecs::sys
 			}
 		}
 
+		// call init method on all systems
+
+		for (auto [levelIndex, level] : std::ranges::views::enumerate(levels))
+		{
+			for (auto systemIndex : level.systemIndices)
+			{
+				pSystems[systemIndex]->Init();
+			}
+		}
+
 		finalized = true;
 	}
 	void SystemGraph::Execute()

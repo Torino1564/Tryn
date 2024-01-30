@@ -72,14 +72,13 @@ namespace tryn::ecs::sys
 				const auto transformMatrix = transformsArray[i].transform;
 
 				glm::mat4 animationTransform = translationMatrix * rotationMatrix * scaleMatrix;
-				localTransforms[boneIndex] = localTransforms[skAnInterface.pSkeleton->bones[boneIndex].parentID] * animationTransform;
-
+				localTransforms[boneIndex] = animationTransform * localTransforms[skAnInterface.pSkeleton->bones[boneIndex].parentID];
 				transformArray[boneIndex] = transformMatrix * localTransforms[boneIndex] * skAnInterface.pSkeleton->bones[boneIndex].inverseBP * glm::inverse(transformMatrix);
 			}
 		}
 	}
-	void Init()
+	void AnimationSystem::OnCreate()
 	{
-
+		previous = std::chrono::high_resolution_clock::now();
 	}
 }

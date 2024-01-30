@@ -54,7 +54,7 @@ namespace tryn::gfx::ani
 	}
 	const glm::vec3& AnimationNode::GetPositionVectorKey( uint32_t& previousKey, const double timePoint)
 	{
-		uint32_t newKey = 0;
+		uint32_t newKey = previousKey;
 		uint32_t idx = previousKey;
 		do
 		{

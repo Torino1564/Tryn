@@ -17,8 +17,6 @@ void tryn::gfx::JITUpdateBuffer::Bind()
 
 void tryn::gfx::JITUpdateBuffer::Bind(IContext& ctx)
 {
-	pBuffer->GetCPUBuffer().Data();
 	memcpy(pBuffer->GetCPUBuffer().Data(), pData, numBytes);
-
 	pBuffer->Bind(ctx);
 }
