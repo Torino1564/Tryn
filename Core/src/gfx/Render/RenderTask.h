@@ -8,7 +8,7 @@ namespace tryn::gfx
 	class Step;
 	class IGraphics;
 	class IContext;
-	class Job;
+	class IJob;
 
 	class RenderTask
 	{
@@ -29,8 +29,8 @@ namespace tryn::gfx
 		void operator()();
 
 		struct Params {
-			std::vector<Job>::iterator begin;
-			std::vector<Job>::iterator end;
+			std::vector<IJob*>::iterator begin;
+			std::vector<IJob*>::iterator end;
 			IContext* pContext;
 			IGraphics* pGfx;
 		} params = {};

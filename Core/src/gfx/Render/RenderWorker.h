@@ -1,7 +1,7 @@
 #pragma once
 #include <Core/src/ccr/Master.h>
 #include <Core/src/ccr/Worker.h>
-#include <Core/src/gfx/RenderTask.h>
+#include <Core/src/gfx/Render/RenderTask.h>
 
 namespace tryn::gfx
 {

@@ -8,8 +8,8 @@
 #include <Core/third/glm/gtc/matrix_transform.hpp>
 #include <Core/src/gfx/Profiler.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>
-#include <core/src/gfx/RenderQueue/Technique.h>
-#include <Core/src/gfx/RenderQueue/Step.h>
+#include <core/src/gfx/Render/Technique.h>
+#include <Core/src/gfx/Render/Step.h>
 #include <Core/src/gfx/Assimp.h>
 #include <Core/src/ccr/Master.h>
 #include <Core/src/ecs/cmp/ActiveComponent.h>

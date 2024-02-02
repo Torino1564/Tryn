@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
-#include <Core/src/gfx/RenderWorker.h>
+#include <Core/src/gfx/Render/RenderWorker.h>
 #include <Core/src/gfx/dx11/Dx11Context.h>
 
 namespace tryn::gfx::dx11

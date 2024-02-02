@@ -13,9 +13,9 @@ namespace tryn::gfx
 
 	void BatchRenderTask::operator()()
 	{
-		for (std::vector<Job>::iterator it = params.begin; it != params.end; it++)
+		for (std::vector<IJob*>::iterator it = params.begin; it != params.end; it++)
 		{
-			auto& data = it->GetData();
+			auto& data = (*(*(it._Ptr))).Execute();
 			auto pDrawable = data.pDrawable;
 			auto pStep = data.pStep;
 

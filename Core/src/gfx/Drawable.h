@@ -1,5 +1,5 @@
 #pragma once
-#include "RenderQueue/Technique.h"
+#include "Render/Technique.h"
 #include <core/src/gfx/Bindables/TransformCBuf.h>
 
 struct aiMesh;

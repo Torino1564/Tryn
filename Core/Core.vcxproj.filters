@@ -129,9 +129,6 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11TransformCBuf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\RenderQueue\Step.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\Drawable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -186,10 +183,10 @@
     <ClCompile Include="src\gfx\IGraphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\RenderGraph.cpp">
+    <ClCompile Include="src\gfx\Render\RenderGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\RenderQueue.cpp">
+    <ClCompile Include="src\gfx\Render\RenderQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\dx11\Dx11Context.cpp">
@@ -198,7 +195,7 @@
     <ClCompile Include="src\ccr\Master.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\RenderTask.cpp">
+    <ClCompile Include="src\gfx\Render\RenderTask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ccr\Thread.cpp">
@@ -262,6 +259,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\Bindables\JITUpdateBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Render\Step.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1538,12 +1538,6 @@
     <ClInclude Include="src\gfx\PointLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\RenderQueue\Technique.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gfx\RenderQueue\Step.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\gfx\Bindables\TransformCBuf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1604,10 +1598,10 @@
     <ClInclude Include="src\ioc\Ioc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\RenderGraph.h">
+    <ClInclude Include="src\gfx\Render\RenderGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\RenderQueue.h">
+    <ClInclude Include="src\gfx\Render\RenderQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ccr\Master.h">
@@ -1616,7 +1610,7 @@
     <ClInclude Include="src\gfx\dx11\Dx11RenderWorker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\RenderWorker.h">
+    <ClInclude Include="src\gfx\Render\RenderWorker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\dx11\Dx11Context.h">
@@ -1628,7 +1622,7 @@
     <ClInclude Include="src\gfx\GraphicAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\RenderTask.h">
+    <ClInclude Include="src\gfx\Render\RenderTask.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ccr\GenericObjectPool.h">
@@ -1695,9 +1689,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utl\Probe.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gfx\RenderQueue\TechniqueProbe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utl\UUID.h">
@@ -2991,6 +2982,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Bindables\JITUpdateBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\Step.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\Technique.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\TechniqueProbe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\RenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\SinkAndSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utl\AnyVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

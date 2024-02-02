@@ -1,6 +1,6 @@
 #pragma once
 #include <core/src/gfx/IGraphics.h>
-#include <core/src/gfx/RenderQueue/Technique.h>
+#include <core/src/gfx/Render/Technique.h>
 #include <Core/src/gfx/Vertex.h>
 #include <filesystem>
 #include <format>

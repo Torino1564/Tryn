@@ -15,11 +15,12 @@ namespace tryn::gfx
 	{
 	public:
 		IRenderGraph() {}
-		virtual void ExecuteFrame(IGraphics& gfx);
+		virtual void ExecuteFrame(IGraphics& gfx) {};
 		virtual ~IRenderGraph() = default;
 		void AddCamera(Camera*);
 		void AddPointLight(PointLight*);
 		void AddRenderQueue(std::string renderQueueID);
+		virtual void RunQueues(IGraphics& gfx) {};
 		RenderQueue& GetRenderQueueByID(std::string_view ID);
 		void Reset();
 	protected:

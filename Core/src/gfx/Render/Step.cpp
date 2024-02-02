@@ -1,6 +1,6 @@
 #include "Step.h"
 #include <Core/src/gfx/Model/Mesh.h>
-#include <Core/src/gfx/RenderQueue/TechniqueProbe.h>
+#include <Core/src/gfx/Render/TechniqueProbe.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
 
 namespace tryn::gfx

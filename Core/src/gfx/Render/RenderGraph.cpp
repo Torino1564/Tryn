@@ -4,10 +4,6 @@
 
 namespace tryn::gfx
 {
-	void IRenderGraph::ExecuteFrame(IGraphics& gfx)
-	{
-
-	}
 	void IRenderGraph::AddCamera(Camera* cam)
 	{
 		pCameras.push_back(cam);

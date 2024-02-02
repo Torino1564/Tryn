@@ -1,8 +1,8 @@
 #include "RenderQueue.h"
-#include "Drawable.h"
-#include "RenderQueue/Step.h"
+#include <Core/src/gfx/Drawable.h>
+#include "Step.h"
 #include <Core/src/log/Log.h>
-#include <Core/src/gfx/RenderTask.h>
+#include <Core/src/gfx/Render/RenderTask.h>
 #include <Core/src/gfx/PointLight.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
 #include <Core/src/gfx/Bindables/IBuffer.h>
@@ -15,18 +15,28 @@ namespace tryn::gfx
 	{}
 	void RenderQueue::RunJobs(IGraphics& gfx)
 	{
-		for (int i = 0 ; i < jobs.size() ; i++)
+		for (int i = 0; i < anyVector.Size(); i++)
 		{
-			jobs[i].Execute(gfx);
+			pJobs.push_back(static_cast<IJob*>(anyVector[i]));
 		}
-		jobs.clear();
+		for (int i = 0 ; i < pJobs.size() ; i++)
+		{
+			pJobs[i]->Execute(gfx);
+		}
+		pJobs.clear();
+		anyVector.Clear();
 	}
 
 	void RenderQueue::RunJobsAsync(IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers, gfx::PointLight* pPointLight)
 	{
+		for (int i = 0; i < anyVector.Size(); i++)
+		{
+			pJobs.push_back(static_cast<IJob*>(anyVector[i]));
+		}
+
 		// Defer calls to
 		const auto workerCount = pMaster.GetWorkerCount();
-		const auto queueSize = jobs.size();
+		const auto queueSize = pJobs.size();
 		const auto perWorker = queueSize / workerCount;
 		const auto remaining = queueSize % workerCount;
 
@@ -41,7 +51,6 @@ namespace tryn::gfx
 				}
 			}
 		}
-
 
 		const auto originalSizePointLightBind = bindPointLightTaskPtrs.capacity();
 		if (originalSizePointLightBind < workerCount)
@@ -64,7 +73,7 @@ namespace tryn::gfx
 		bool first = true;
 		for (int i = 0, taskIndex = 0; i < workerCount; i++)
 		{
-			auto itFirst = jobs.begin() + (perWorker * i);
+			auto itFirst = pJobs.begin() + (perWorker * i);
 			auto itEnd = itFirst + perWorker;
 
 			if (first)
@@ -82,12 +91,18 @@ namespace tryn::gfx
 		{
 			worker->SubmitWork(gfx);
 		}
-		jobs.clear();
+		pJobs.clear();
+		anyVector.Clear();
 	}
 
-	void RenderQueue::Push(Job job)
+	void RenderQueue::Push(IJob* pJob)
 	{
-		jobs.push_back(job);
+		pJobs.push_back(pJob);
+	}
+
+	utl::AnyVector& RenderQueue::GetAnyVector()
+	{
+		return anyVector;
 	}
 
 	Job::Job(Drawable* parent, Step* step)
@@ -125,7 +140,7 @@ namespace tryn::gfx
 		worker->AddTask(std::move(renderTask));
 	}
 
-	void RenderQueue::ExecuteBatchAsync(IGraphics& gfx, RenderWorker* worker, std::vector<Job>::iterator beginIt, std::vector<Job>::iterator endIt, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr)
+	void RenderQueue::ExecuteBatchAsync(IGraphics& gfx, RenderWorker* worker, std::vector<IJob*>::iterator beginIt, std::vector<IJob*>::iterator endIt, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr)
 	{
 		auto batchRenderTask = taskPtr.value_or(std::make_shared<BatchRenderTask>());
 		batchRenderTask->params.begin = beginIt;
