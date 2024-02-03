@@ -19,6 +19,7 @@ namespace tryn::gfx::dx11
 		constexpr GraphicAPI GetApi() const override;
 		void Submit(IGraphics& gfx) override;
 		void DrawIndexed(int count) override;
+		void DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) override;
 	private:
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pView;

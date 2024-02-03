@@ -264,6 +264,12 @@
     <ClCompile Include="src\gfx\Render\Step.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gfx\Render\Jobs\BasicJob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Render\Jobs\InstancedJob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -3000,6 +3006,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utl\AnyVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\Jobs\IJob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\Jobs\BasicJob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\Jobs\InstancedJob.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

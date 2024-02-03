@@ -5,24 +5,14 @@ namespace tryn::gfx
 {
 	void RenderTask::operator()()
 	{
-		params.pDrawable->BindBase(*params.pContext);
-		params.pDrawable->BindTransformCBuf(*params.pContext);
-		params.pStep->Bind(*params.pGfx, *params.pContext);
-		params.pContext->DrawIndexed(params.pDrawable->GetIndexCount());
+		params.pJob->Execute(*params.pContext);
 	}
 
 	void BatchRenderTask::operator()()
 	{
 		for (std::vector<IJob*>::iterator it = params.begin; it != params.end; it++)
 		{
-			auto& data = (*(*(it._Ptr))).Execute();
-			auto pDrawable = data.pDrawable;
-			auto pStep = data.pStep;
-
-			pDrawable->BindBase(*params.pContext);
-			pDrawable->BindTransformCBuf(*params.pContext);
-			pStep->Bind(*params.pGfx, *params.pContext);
-			params.pContext->DrawIndexed(pDrawable->GetIndexCount());
+			(*(*(it._Ptr))).Execute(*params.pContext);
 		}
 	}
 

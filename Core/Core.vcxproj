@@ -59,6 +59,8 @@
     <ClCompile Include="src\gfx\Model\Node.cpp" />
     <ClCompile Include="src\gfx\Model\StaticMesh.cpp" />
     <ClCompile Include="src\gfx\PointLight.cpp" />
+    <ClCompile Include="src\gfx\Render\Jobs\BasicJob.cpp" />
+    <ClCompile Include="src\gfx\Render\Jobs\InstancedJob.cpp" />
     <ClCompile Include="src\gfx\Render\RenderGraph.cpp" />
     <ClCompile Include="src\gfx\Render\RenderQueue.cpp" />
     <ClCompile Include="src\gfx\Render\RenderTask.cpp" />
@@ -100,6 +102,7 @@
     <ClCompile Include="third\vcpkg\x64-windows-static\include\stb_vorbis.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\gfx\Render\Jobs\BasicJob.h" />
     <ClInclude Include="src\app\App.h" />
     <ClInclude Include="src\app\EntryPoint.h" />
     <ClInclude Include="src\app\Globals.h" />
@@ -174,6 +177,8 @@
     <ClInclude Include="src\gfx\GraphicAPI.h" />
     <ClInclude Include="src\gfx\IBufferFwd.h" />
     <ClInclude Include="src\gfx\Model\InstancedModel.h" />
+    <ClInclude Include="src\gfx\Render\Jobs\IJob.h" />
+    <ClInclude Include="src\gfx\Render\Jobs\InstancedJob.h" />
     <ClInclude Include="src\gfx\Render\RenderPass.h" />
     <ClInclude Include="src\gfx\Render\SinkAndSource.h" />
     <ClInclude Include="src\gfx\Render\Step.h" />

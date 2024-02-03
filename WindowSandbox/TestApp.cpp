@@ -133,7 +133,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	entities.resize(pow(entityCount1D, 3));
 	entChild.Instanciate({ entities });
 
-	auto mutant = ecs::Entity::CreateNew<
+	/*auto mutant = ecs::Entity::CreateNew<
 		ecs::cmp::ActiveComponent,
 		ecs::cmp::ModelComponent,
 		ecs::cmp::AnimatedComponent,
@@ -142,7 +142,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		ecs::cmp::PositionComponent,
 		ecs::cmp::ScaleComponent,
 		ecs::cmp::RotationComponent
-	>("Hands");
+	>("Mutant");
 
 	mutant.GetComponent<ecs::cmp::ActiveComponent>().active = true;
 	mutant.GetComponent<ecs::cmp::ScaleComponent>().scale = { 0.05f,0.05f,0.05f };
@@ -157,7 +157,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	mutantAnimatedCmp.previousKey = 0;
 	mutantAnimatedCmp.pAnimationSkeletonInterface = mainMesh->GetAnimationInterface("capoeira");
 	mutantAnimatedCmp.state = gfx::ani::AnimationState::Playing;
-	mutantAnimatedCmp.time = 0;
+	mutantAnimatedCmp.time = 0;*/
 
 	entParent.GetComponent<ecs::cmp::InstancedModelParentComponent>().parentModel = gfx::InstancedModelParent(Gfx(), "resources/models/gobber/GoblinX.obj");
 	entParent.GetComponent<ecs::cmp::ActiveComponent>().active = true;
@@ -175,8 +175,6 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		entity.GetComponent<ecs::cmp::VelocityComponent>().velocity = { .0f, 0.f, 0.f };
 		entity.GetComponent<ecs::cmp::AccelerationComponent>().acceleration = { .0f, 0.f, 0.f };
 	}
-
-	entities.push_back(std::move(mutant));
 
 	for (int i = 0; i < entityCount1D; i++)
 	{

@@ -54,6 +54,7 @@ namespace tryn::gfx::ani
 	}
 	const glm::vec3& AnimationNode::GetPositionVectorKey( uint32_t& previousKey, const double timePoint)
 	{
+		static constexpr glm::vec3 fallback = { 0.0f,0.0f,0.0f };
 		uint32_t newKey = previousKey;
 		uint32_t idx = previousKey;
 		do
@@ -75,6 +76,8 @@ namespace tryn::gfx::ani
 			idx++;
 
 		} while (previousKey == newKey);
+		
+		return fallback;
 	}
 
 	const glm::quat& AnimationNode::GetRotationVectorKey(uint32_t& previousKey, const double timePoint)

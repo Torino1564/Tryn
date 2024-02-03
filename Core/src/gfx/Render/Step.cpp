@@ -2,6 +2,8 @@
 #include <Core/src/gfx/Model/Mesh.h>
 #include <Core/src/gfx/Render/TechniqueProbe.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
+#include <Core/src/gfx/Render/Jobs/BasicJob.h>
+#include <Core/src/gfx/Render/Jobs/InstancedJob.h>
 
 namespace tryn::gfx
 {
@@ -14,14 +16,14 @@ namespace tryn::gfx
 	{
 		bindables.push_back(std::move(bindable));
 	}
-	void Step::Bind(IGraphics& gfx) const
+	void Step::Bind() const
 	{
 		for (auto& bind : bindables)
 		{
 			bind->Bind();
 		}
 	}
-	void Step::Bind(IGraphics& gfx, IContext& context) const
+	void Step::Bind(IContext& context) const
 	{
 		for (auto& bind : bindables)
 		{
@@ -35,12 +37,12 @@ namespace tryn::gfx
 	void Step::Submit(IGraphics& gfx, Drawable* parent)
 	{
 		auto& renderGraph = gfx.GetRenderGraph();
-		renderGraph.GetRenderQueueByID(renderQueueID).Push(Job(parent,this));
+		renderGraph.GetRenderQueueByID(renderQueueID).Push(BasicJob(parent,this));
 	}
 	void Step::Submit(IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instanceParent)
 	{
 		auto& renderGraph = gfx.GetRenderGraph();
-		renderGraph.GetRenderQueueByID(renderQueueID).Push(Job(parent, this, transforms, &instanceParent));
+		renderGraph.GetRenderQueueByID(renderQueueID).Push(InstancedJob(parent, this, transforms, &instanceParent));
 	}
 	void Step::Accept(TechniqueProbe& probe)
 	{

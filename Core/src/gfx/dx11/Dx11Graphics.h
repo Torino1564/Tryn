@@ -28,11 +28,11 @@ namespace tryn::gfx::dx11
 		void EndFrame() override;
 		void ClearBuffer(float r = 0, float g = 0, float b = 0) override;
 		void DrawIndexed(int count) override;
+		void DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) override;
 		constexpr GraphicAPI GetType() const override;
 		ID3D11DeviceContext& GetContext();
 		ID3D11Device& GetDevice();
 
-		void DrawInstancedIndexed(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) override;
 
 		static constexpr const char* APIString = "DX11";
 

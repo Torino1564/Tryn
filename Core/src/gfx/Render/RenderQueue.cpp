@@ -17,11 +17,8 @@ namespace tryn::gfx
 	{
 		for (int i = 0; i < anyVector.Size(); i++)
 		{
-			pJobs.push_back(static_cast<IJob*>(anyVector[i]));
-		}
-		for (int i = 0 ; i < pJobs.size() ; i++)
-		{
-			pJobs[i]->Execute(gfx);
+			auto pIJob = static_cast<IJob*>(anyVector[i]);
+			pIJob->Execute(gfx);
 		}
 		pJobs.clear();
 		anyVector.Clear();
@@ -105,41 +102,6 @@ namespace tryn::gfx
 		return anyVector;
 	}
 
-	Job::Job(Drawable* parent, Step* step)
-		:
-		data{ parent,step }
-	{}
-
-	Job::Job(Drawable * parent, Step * step, std::span<const glm::mat4> transforms, InstancedModelParent * pParentInstanced)
-		:
-		data{parent, step},
-		instanceData{transforms, pParentInstanced}
-	{
-	}
-
-	void Job::Execute(IGraphics& gfx)
-	{
-		if (instanceData.instanceParent == nullptr)
-		{
-			Execute_(gfx);
-		}
-		else
-		{
-			ExecuteInsanced_(gfx);
-		}
-	}
-
-	void Job::ExecuteAsync(IGraphics& gfx, RenderWorker* worker, std::optional<std::shared_ptr<RenderTask>> taskPtr)
-	{
-		auto renderTask = taskPtr.value_or(std::make_unique<RenderTask>());
-		renderTask->params.pContext = &worker->GetContext();
-		renderTask->params.pDrawable = this->data.pDrawable;
-		renderTask->params.pStep = this->data.pStep;
-		renderTask->params.pGfx = &gfx;
-
-		worker->AddTask(std::move(renderTask));
-	}
-
 	void RenderQueue::ExecuteBatchAsync(IGraphics& gfx, RenderWorker* worker, std::vector<IJob*>::iterator beginIt, std::vector<IJob*>::iterator endIt, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr)
 	{
 		auto batchRenderTask = taskPtr.value_or(std::make_shared<BatchRenderTask>());
@@ -158,30 +120,5 @@ namespace tryn::gfx
 		bindPointLightTask->params.pContext = &worker->GetContext();
 
 		worker->AddTask(std::move(bindPointLightTask));
-	}
-
-	Job::Data& Job::GetData()
-	{
-		return data;
-	}
-	Job::InstancedData & Job::GetInstanceData()
-	{
-		return instanceData;
-	}
-	void Job::Execute_(IGraphics& gfx)
-	{
-		data.pDrawable->BindBase();
-		data.pDrawable->BindExtraBinds();
-		data.pDrawable->BindTransformCBuf();
-		data.pStep->Bind(gfx);
-		gfx.DrawIndexed(data.pDrawable->GetIndexCount());
-	}
-	void Job::ExecuteInsanced_(IGraphics& gfx)
-	{
-		data.pDrawable->BindBase();
-		data.pDrawable->BindExtraBinds();
-		data.pDrawable->BindTransformCBuf();
-		data.pStep->Bind(gfx);
-		gfx.DrawInstancedIndexed(data.pDrawable->GetIndexCount(), instanceData.transforms.size(), 0u, 0u, 0u);
 	}
 }

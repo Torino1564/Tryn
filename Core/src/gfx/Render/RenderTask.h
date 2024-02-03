@@ -16,9 +16,7 @@ namespace tryn::gfx
 		void operator()();
 
 		struct {
-			Drawable* pDrawable;
-			Step* pStep;
-			IGraphics* pGfx;
+			IJob* pJob;
 			IContext* pContext;
 		} params = {};
 	};

@@ -2,9 +2,10 @@
 #include <vector>
 #include <tuple>
 #include <span>
-
+#include <Core/src/utl/Assert.h>
 namespace tryn::utl
 {
+	// WARNING: This container does not call the destructors of its contents. ONLY USE IF YOU KNOW WHAT YOU ARE DOING
 	class AnyVector
 	{
 	public:
@@ -12,9 +13,13 @@ namespace tryn::utl
 		void PushBack(T&& type)
 		{
 			const auto byteSizeOfT = sizeof(T);
+			const auto vectorEnd = buffer.size();
+			buffer.insert(buffer.end(), (const size_t) byteSizeOfT,(std::byte)0u);
+			auto pData = buffer.data();
+			new(pData + vectorEnd) T(std::move(type));
+			
+			offsetVector.push_back({ accumulatedOffset, byteSizeOfT });
 			accumulatedOffset += byteSizeOfT;
-			buffer.insert(buffer.end(), byteSizeOfT, 0u);
-			offsetVector.push_back(accumulatedOffset, byteSizeOfT);
 			elCount++;
 		}
 		std::span<std::byte> At(std::size_t i)

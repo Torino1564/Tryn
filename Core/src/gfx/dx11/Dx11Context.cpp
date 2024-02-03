@@ -48,5 +48,9 @@ namespace tryn::gfx::dx11
 	{
 		pContext->DrawIndexed(count, 0u, 0u);
 	}
+	void DX11Context::DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation)
+	{
+		pContext->DrawIndexedInstanced(indexCount, instanceCount, startIndexLocation, baseVertexLocation, startIndexLocation);
+	}
 }
 

@@ -5,6 +5,7 @@
 #include <Core/third/glm/mat4x4.hpp>
 #include <span>
 #include <Core/src/utl/AnyVector.h>
+#include <Core/src/gfx/Render/Jobs/IJob.h>
 
 namespace tryn::gfx
 {
@@ -12,42 +13,6 @@ namespace tryn::gfx
 	class Step;
 	class BindPointLightTask;
 	class PointLight;
-
-	class IJob
-	{
-		friend class RenderQueue;
-	public:
-		virtual ~IJob() = default;
-		virtual void Execute(IGraphics& gfx) = 0;
-		virtual void ExecuteAsync(IContext& gfx) = 0;
-
-		using SysType = IJob;
-	};
-
-	class Job : public IJob
-	{
-	friend class RenderQueue;
-	public:
-		Job(Drawable* parent, Step* step);
-		Job(Drawable* parent, Step* step, std::span<const glm::mat4> transforms, class InstancedModelParent* pParentInstanced);
-		void Execute(IGraphics& gfx) override;
-		void ExecuteAsync(IGraphics& gfx, RenderWorker* worker, std::optional<std::shared_ptr<RenderTask>> taskPtr = std::nullopt);
-	private:
-		void Execute_(IGraphics& gfx);
-		void ExecuteInsanced_(IGraphics& gfx);
-
-		struct Data {
-			Drawable* pDrawable = nullptr;
-			Step* pStep = nullptr;
-		} data;
-		struct InstancedData {
-			std::span<const glm::mat4> transforms = {};
-			class InstancedModelParent* instanceParent = nullptr;
-		} instanceData = {};
-	public:
-		Data& GetData();
-		InstancedData& GetInstanceData();
-	};
 
 	class RenderQueue
 	{

@@ -28,7 +28,7 @@ namespace tryn::gfx
 		{
 			for (auto& step : steps)
 			{
-				step.Bind(gfx);
+				step.Bind();
 				step.Draw(gfx, parent);
 			}
 		}
