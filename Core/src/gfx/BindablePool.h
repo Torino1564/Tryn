@@ -139,6 +139,14 @@ namespace tryn::gfx
 				return gfx.CreateSampler(std::forward<Args>(args)...);
 			}
 		};
+		template <> struct ResolveHelper<IRenderTargetView>
+		{
+			template <class... Args>
+			std::shared_ptr<IRenderTargetView> operator()(IGraphics& gfx, Args&&... args)
+			{
+				return gfx.CreateRenderTargetView(std::forward<Args>(args)...);
+			}
+		};
 
 	public:
 		template <class T, class... Args>

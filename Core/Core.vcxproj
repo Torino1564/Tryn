@@ -32,8 +32,10 @@
     <ClCompile Include="src\gfx\Animation\Bone.cpp" />
     <ClCompile Include="src\gfx\Animation\BonedMesh.cpp" />
     <ClCompile Include="src\gfx\Bindables\JITUpdateBuffer.cpp" />
+    <ClCompile Include="src\gfx\Bindables\RenderTargetView.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11RenderTargetView.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Texture.cpp" />
@@ -102,6 +104,8 @@
     <ClCompile Include="third\vcpkg\x64-windows-static\include\stb_vorbis.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\gfx\Bindables\RenderTargetView.h" />
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11RenderTargetView.h" />
     <ClInclude Include="src\gfx\Render\Jobs\BasicJob.h" />
     <ClInclude Include="src\app\App.h" />
     <ClInclude Include="src\app\EntryPoint.h" />
@@ -179,6 +183,7 @@
     <ClInclude Include="src\gfx\Model\InstancedModel.h" />
     <ClInclude Include="src\gfx\Render\Jobs\IJob.h" />
     <ClInclude Include="src\gfx\Render\Jobs\InstancedJob.h" />
+    <ClInclude Include="src\gfx\Render\Passes\ForwardLambertianPass.h" />
     <ClInclude Include="src\gfx\Render\RenderPass.h" />
     <ClInclude Include="src\gfx\Render\SinkAndSource.h" />
     <ClInclude Include="src\gfx\Render\Step.h" />

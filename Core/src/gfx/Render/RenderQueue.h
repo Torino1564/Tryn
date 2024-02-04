@@ -32,10 +32,12 @@ namespace tryn::gfx
 		void BindPointLight(RenderWorker* worker, PointLight* pPointLight, std::optional<std::shared_ptr<BindPointLightTask>> taskPtr = std::nullopt);
 
 	private:
+		// data
 		std::string id;
 		std::vector<IJob*> pJobs;
+		utl::AnyVector anyVector;
+		// multithreaded stuff (will go away)
 		std::vector<std::shared_ptr<BatchRenderTask>> batchRenderTaskPtrs;
 		std::vector<std::shared_ptr<BindPointLightTask>> bindPointLightTaskPtrs;
-		utl::AnyVector anyVector;
 	};
 }

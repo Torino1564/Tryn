@@ -12,6 +12,7 @@
 #include <Core/src/gfx/dx11/Bindables/DX11Sampler.h>
 #include <Core/src/gfx/dx11/Dx11RenderWorker.h>
 #include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11RenderTargetView.h>
 #include "imgui_impl_dx11.h"
 #include <Core/src/win/Window.h>
 
@@ -184,6 +185,10 @@ namespace tryn::gfx::dx11
 	ID3D11Device& Graphics::GetDevice()
 	{
 		return *pDevice.Get();
+	}
+	IDXGISwapChain& Graphics::GetSwapChain()
+	{
+		return *pSwap.Get();
 	}
 	void Graphics::DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation)
 	{
@@ -359,6 +364,13 @@ namespace tryn::gfx::dx11
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11Sampler>(*this, type, reflect, slot);
+			});
+		return future.get();
+	}
+	std::shared_ptr<IRenderTargetView> Graphics::CreateRenderTargetView(const spa::DimensionsI dimensions)
+	{
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11RenderTargetView>(*this, dimensions);
 			});
 		return future.get();
 	}

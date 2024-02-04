@@ -55,6 +55,7 @@ namespace tryn::gfx
 	class StaticMesh;
 	class VertexLayout;
 	class RenderWorker;
+	class IRenderTargetView;
 
 	class IGraphics
 	{
@@ -124,6 +125,7 @@ namespace tryn::gfx
 		virtual std::shared_ptr<ITexture>				CreateTexture(std::filesystem::path path, int slot = 0) = 0;
 		virtual std::shared_ptr<IRasterizer>			CreateRasterizer(const bool twoSided = true) = 0;
 		virtual std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) = 0;
+		virtual std::shared_ptr<IRenderTargetView>		CreateRenderTargetView(const spa::DimensionsI) = 0;
 		virtual std::unique_ptr<ITransformCBuf>			CreateTransformCBuf() = 0;
 		
 		// Worker Thread Creation

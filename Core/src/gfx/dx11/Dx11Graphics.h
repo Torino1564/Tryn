@@ -32,7 +32,7 @@ namespace tryn::gfx::dx11
 		constexpr GraphicAPI GetType() const override;
 		ID3D11DeviceContext& GetContext();
 		ID3D11Device& GetDevice();
-
+		IDXGISwapChain& GetSwapChain();
 
 		static constexpr const char* APIString = "DX11";
 
@@ -87,8 +87,8 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<ITexture>				CreateTexture(std::filesystem::path path, int slot = 0) override;
 		std::shared_ptr<IRasterizer>			CreateRasterizer(const bool twoSided = true) override;
 		std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) override;
+		std::shared_ptr<IRenderTargetView>		CreateRenderTargetView(const spa::DimensionsI) override;
 		std::unique_ptr<ITransformCBuf>			CreateTransformCBuf() override;
-
 		// Render Worker creation
 		std::unique_ptr<RenderWorker>			CreateRenderWorker(ccr::Master*) override;
 
