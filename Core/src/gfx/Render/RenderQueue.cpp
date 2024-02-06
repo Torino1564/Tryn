@@ -92,6 +92,12 @@ namespace tryn::gfx
 		anyVector.Clear();
 	}
 
+	void RenderQueue::Clear()
+	{
+		pJobs.clear();
+		anyVector.Clear();
+	}
+
 	void RenderQueue::Push(IJob* pJob)
 	{
 		pJobs.push_back(pJob);

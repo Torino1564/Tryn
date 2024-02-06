@@ -7,6 +7,7 @@
 #include "Macro.h"
 #include "Exception.h"
 #include "NoReturn.h"
+#include <Core/src/log/Level.h>
 
 namespace tryn::utl
 {
@@ -26,6 +27,7 @@ namespace tryn::utl
 		Assertion(std::wstring expression, const wchar_t* file, const wchar_t* function, int line, Consequence consequence = Consequence::Terminate, std::wstring msg = L"");
 		~Assertion();
 		Assertion& msg(const std::wstring& message);
+		Assertion& lvl(const log::Level level);
 		template<typename T>
 		Assertion& watch(T&& val, const wchar_t* name)
 		{
@@ -40,6 +42,7 @@ namespace tryn::utl
 		int line_ = -1;
 		int skip_depth_ = 0;
 		Consequence consequence_;
+		log::Level level = log::Level::Error;
 		std::wostringstream stream_;
 	};
 }

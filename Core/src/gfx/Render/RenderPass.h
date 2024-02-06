@@ -4,8 +4,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
-
-#define ZT_DEFINE_RENDER_PASS(x) class x : public tryn::gfx::BaseRenderPass<x>
+#include <string>
 
 namespace tryn::gfx
 {
@@ -15,7 +14,10 @@ namespace tryn::gfx
 	{
 	public:
 		virtual void Execute(IGraphics& gfx) = 0;
-
+		const std::string& GetName() const
+		{
+			return name;
+		}
 		struct RenderPassID
 		{
 			static uint16_t Resolve()
@@ -24,21 +26,25 @@ namespace tryn::gfx
 				return UIDcounter++;
 			}
 		};
-	};
-
-	template <typename T>
-	class BaseRenderPass : public IRenderPass
-	{
+		ISink& GetSink()
+		{
+			return *pSink;
+		}
+		ISource& GetSource()
+		{
+			return *pSource;
+		}
 	protected:
 		// resources
-		ISink* pSink;
-		ISource* pSource;
+		std::unique_ptr<ISink> pSink;
+		std::unique_ptr<ISource> pSource;
 
 		// queues
 		std::vector<RenderQueue*> pQueues;
 		std::vector<std::string> queueNames;
 
-		// id
+		// identification
+		std::string name;
 		static inline const uint16_t ID = RenderPassID::Resolve();
 	};
 }

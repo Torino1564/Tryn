@@ -6,6 +6,9 @@
 #include <concepts>
 #include <vector>
 #include <iostream>
+#include <Core/src/utl/Assert.h>
+#include <bitset>
+#include <Core/src/utl/String.h>
 
 #define ZT_DECLARE_EXPOSURES(x) decltype(Source(x)) source = Source(x)
 #define ZT_DECLARE_DEPENDENCIES(x) decltype(Sink(x)) sink = Sink(x)
@@ -27,9 +30,18 @@ namespace tryn::gfx
 		Policy PolicyType = P;
 	};
 
+	template <typename... Args>
+	class Source;
+
 	class ISink
 	{
-
+		template <typename... Args>
+		friend class Source;
+	public:
+		virtual bool IsBounded(const std::string& dependencyName) = 0;
+	protected:
+		virtual void Accept(const std::string& dependencyName, void* pDependency) = 0;
+		std::vector<std::pair<std::string, Policy>> namesAndPolicy;
 	};
 
 	template <typename... Dependencies>
@@ -41,7 +53,42 @@ namespace tryn::gfx
 		{
 			AddDependencies(std::move(std::forward_as_tuple(std::forward<Dependencies>(ins)...)));
 		}
+		void Accept(const std::string& dependencyName, void* pDependency) override
+		{
+			AcceptImpl_(dependencyName, pDependency);
+		}
+		bool IsBounded(const std::string& dependencyName) override
+		{
+			for (int i = 0; i < namesAndPolicy.size(); i++)
+			{
+				if (namesAndPolicy[i].first == dependencyName)
+				{
+					return bound[i];
+				}
+			}
+		}
 	private:
+		template <unsigned N = 0>
+		void AcceptImpl_(const std::string& dependencyName, void* pDependency)
+		{
+			// check if this is the correct dependency index
+			if (namesAndPolicy[N].first == dependencyName)
+			{
+				// assign void* to the shared_ptr of the dependency
+				using DependencyType = typename std::tuple_element_t<N, DependencyTuple>::element_type;
+				std::get<N>(dependencyTuple) = std::shared_ptr<DependencyType>(reinterpret_cast<DependencyType*>(pDependency));
+				// assert not bounded
+				trynass(!bound[N]).msg(utl::ToWide(std::format("The dependency [{}] already is bounded!", dependencyName))).ex();
+				// set as bound
+				bound.set(N, true);
+				return;
+			}
+			if constexpr (N < std::tuple_size_v<DependencyTuple> - 1)
+			{
+				AcceptImpl_<N + 1>(dependencyName, pDependency);
+			}
+			trynchk_fail.msg(utl::ToWide(std::format("Did not find the dependency [{}]!", dependencyName))).ex();;
+		}
 		template <int N = 0, typename... Dependencies>
 		void AddDependencies(std::tuple<Dependencies&&...>&& container)
 		{
@@ -60,7 +107,6 @@ namespace tryn::gfx
 			return GetImpl_(name);
 		}
 		using DependencyTuple = typename std::tuple<std::shared_ptr<typename Dependencies::SysType>...>;
-		std::vector<std::pair<std::string, Policy>> namesAndPolicy;
 	private:
 		template <unsigned N = 0, typename T>
 		std::shared_ptr<T> GetImpl_(const std::string& name)
@@ -78,12 +124,16 @@ namespace tryn::gfx
 				return GetImpl_<N + 1>(name);
 			}
 		}
+
 		DependencyTuple dependencyTuple;
+		std::bitset<sizeof...(Dependencies)> bound;
 	};
 
 	class ISource
 	{
-
+	public:
+		virtual bool IsBounded(const std::string& exposureName) = 0;
+		virtual void Bind(ISink& sink, const std::string& exposureName, const std::string& dependencyName) = 0;
 	};
 
 	template<typename T>
@@ -103,7 +153,45 @@ namespace tryn::gfx
 		{
 			AddExposures(std::move(std::forward_as_tuple(std::forward<Exposures>(outs)...)));
 		}
+		void Bind(ISink& sink, const std::string& exposureName, const std::string& dependencyName) override
+		{
+			// get the exposure ptr
+			auto [pExposure, index] = GetExposurePtrAndIndex(exposureName);
+			// assert not set
+			trynchk(!bound[index]).msg(utl::ToWide(std::format("The exposure [{}] already is bounded! Overriding binding", exposureName))).lvl(log::Level::Warn);
+			// set exposure as bounded
+			bound.set(index);
+			// send the ptr to the sink
+			sink.Accept(dependencyName, pExposure);
+		}
+		virtual bool IsBounded(const std::string& exposureName)
+		{
+			for (int i = 0; i < names.size(); i++)
+			{
+				if (names[i] == exposureName)
+				{
+					return bound[i];
+				}
+			}
+		}
 	private:
+		std::pair<void*, unsigned> GetExposurePtrAndIndex(const std::string& exposureName)
+		{
+			return GetExposurePtrAndIndexImpl_(exposureName);
+		}
+		template <unsigned N = 0>
+		std::pair<void*, unsigned> GetExposurePtrAndIndexImpl_(const std::string& exposureName)
+		{
+			if (exposureName == names[N])
+			{
+				return { reinterpret_cast<void*>(std::get<N>(exposureTuple).get()), N };
+			}
+			if constexpr (N < std::tuple_size_v<ExposureTuple> -1)
+			{
+				return GetExposurePtrAndIndexImpl_<N + 1>(exposureName);
+			}
+			return { nullptr, 0 };
+		}
 		template <int N = 0, typename... Exposures>
 		void AddExposures(std::tuple<Exposures&&...>&& container)
 		{
@@ -118,6 +206,8 @@ namespace tryn::gfx
 	public:
 		using ExposureTuple = typename std::tuple<std::shared_ptr<typename Exposures::SysType>...>;
 		ExposureTuple exposureTuple;
+		// 0 means unbounded, 1 is bounded
+		std::bitset<sizeof...(Exposures)> bound;
 		std::vector<std::string> names;
 	};
 }

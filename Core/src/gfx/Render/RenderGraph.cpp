@@ -39,6 +39,10 @@ namespace tryn::gfx
 	{
 		pCameras.clear();
 		pPointLights.clear();
+		for (auto& queue : queues)
+		{
+			queue.Clear();
+		}
 	}
 }
 

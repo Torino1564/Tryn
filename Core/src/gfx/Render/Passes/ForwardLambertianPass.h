@@ -5,21 +5,23 @@
 
 namespace tryn::gfx
 {
-	ZT_DEFINE_RENDER_PASS(ForwardLambertianPass)
+	class ForwardLambertianPass : public IRenderPass
 	{
 	public:
 		ForwardLambertianPass()
 		{
-			// Register source and sink
-			pSource = &source;
-			pSink = &sink;
+			// declare sink and source
+			pSink = std::make_unique<SinkType>(In<IRenderTargetView>("rtv"));
+			pSource = std::make_unique<SourceType>(Out<IRenderTargetView>("rtv"));
 
 			// declare queues to utilize
 			queueNames.push_back("Lambertian");
 		}
 		void Execute(IGraphics& gfx) override
 		{
-			auto pRTV = sink.Get<IRenderTargetView>("rtv");
+			// bind Render Target View
+			auto& concreteSink = *reinterpret_cast<SinkType*>(pSink.get());
+			auto pRTV = concreteSink.Get<IRenderTargetView>("rtv");
 			pRTV->Bind();
 			
 			// This queue pass knows that the first queue is the lambertian one (because it was declared that way on its constructor)
@@ -28,8 +30,7 @@ namespace tryn::gfx
 			// All this pass does is run the lambertian queue
 			lambertianQueue.RunJobs(gfx);
 		}
-	private:
-		ZT_DECLARE_EXPOSURES(Out<IRenderTargetView>("rtv"));
-		ZT_DECLARE_DEPENDENCIES(Out<IRenderTargetView>("rtv"));
+		using SinkType = Sink<In<IRenderTargetView>>;
+		using SourceType = Source<Out<IRenderTargetView>>;
 	};
 }

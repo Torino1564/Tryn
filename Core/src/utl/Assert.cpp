@@ -28,7 +28,7 @@ namespace tryn::utl
 		log::EntryBuilder{ file_, function_, line_ }
 		.trace_skip(skip_depth_)
 			.chan(log::GetDefaultChannel())
-			.level(consequence_ == Consequence::Terminate ? log::Level::Fatal : log::Level::Error)
+			.level(consequence_ == Consequence::Terminate ? log::Level::Fatal : level)
 			.note(stream_.str());
 		if (consequence_ == Consequence::Terminate) {
 			log::GetDefaultChannel()->Flush();
@@ -38,6 +38,11 @@ namespace tryn::utl
 	Assertion& Assertion::msg(const std::wstring& message)
 	{
 		stream_ << L"  Msg: " << message << L"\n";
+		return *this;
+	}
+	Assertion& Assertion::lvl(const log::Level level)
+	{
+		this->level = level;
 		return *this;
 	}
 	void Assertion::ex()

@@ -20,6 +20,7 @@ namespace tryn::gfx
 		RenderQueue(std::string id);
 		void RunJobs(IGraphics& gfx);
 		void RunJobsAsync(IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers, gfx::PointLight* pPointLight);
+		void Clear();
 		void Push(IJob* pJob);
 		template <typename Job>
 		void Push(Job&& job)
