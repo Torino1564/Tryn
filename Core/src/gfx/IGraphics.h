@@ -81,6 +81,7 @@ namespace tryn::gfx
 		void SetCamera(glm::mat4 camera);
 		glm::mat4& GetProjectionMatrix();
 		void SetProjection(glm::mat4 projection);
+		const spa::DimensionsI& GetDimensions() const;
 		virtual constexpr GraphicAPI GetType() const = 0;
 		static const std::vector<std::string>& GetApiArray()
 		{
@@ -131,8 +132,8 @@ namespace tryn::gfx
 		// Worker Thread Creation
 		virtual std::unique_ptr<RenderWorker>		CreateRenderWorker(ccr::Master*) = 0;
 
-		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
 	protected:
+		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
 		glm::mat4 camera = {};
 		glm::mat4 projection = {};
 		std::unique_ptr<IRenderGraph> renderGraph;

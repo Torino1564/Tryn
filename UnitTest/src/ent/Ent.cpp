@@ -10,15 +10,6 @@
 #include <Core/src/ecs/cmp/ComponentPack.h>
 #include <Core/src/utl/Timer.h>
 
-class ThunkRenderGraph : public tryn::gfx::IRenderGraph
-{
-public:
-	ThunkRenderGraph()
-	{
-		AddRenderQueue("Lambertian");
-	}
-};
-
 namespace tryn::ecs
 {
 	ZT_DEFINE_COMPONENT(TestComponent1)
@@ -97,7 +88,6 @@ namespace tryn::ecs
 			app::BootCore();
 			pWnd = std::make_unique<win::Window>(std::make_shared<win::WindowClass>(), L"Test window", spa::DimensionsI(300, 300));
 			pGfx = std::make_unique<gfx::dx11::Graphics>(pWnd->GetHandle(), pWnd->GetClientDimensions().width, pWnd->GetClientDimensions().height);
-			pGfx->SetRenderGraph(std::move(std::make_unique<ThunkRenderGraph>()));
 		}
 		TEST_METHOD(ECSTest)
 		{

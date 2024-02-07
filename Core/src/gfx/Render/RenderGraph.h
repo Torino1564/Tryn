@@ -4,6 +4,7 @@
 #include <Core/src/utl/Exception.h>
 #include <map>
 #include <vector>
+
 namespace tryn::gfx
 {
 	class IGraphics;
@@ -14,7 +15,7 @@ namespace tryn::gfx
 	class IRenderGraph
 	{
 	public:
-		IRenderGraph() {}
+		IRenderGraph(IGraphics& gfx);
 		virtual void ExecuteFrame(IGraphics& gfx) {};
 		virtual ~IRenderGraph() = default;
 		void AddCamera(Camera*);
@@ -23,15 +24,17 @@ namespace tryn::gfx
 		virtual void RunQueues(IGraphics& gfx) {};
 		RenderQueue& GetRenderQueueByID(std::string_view ID);
 		template <typename Pass>
-		void AddPass()
+		void AddPass(std::string name)
 		{
-			pPasses.emplace_back(std::make_unique<Pass>());
+			pPasses.emplace_back(std::make_unique<Pass>(std::move(name)));
 		}
 		struct LinkageParam
 		{
 			std::string passName;
 			std::string resourceName;
 		};
+		void Reset();
+	protected:
 		void AddLinkage(LinkageParam&& source_, LinkageParam&& destination_)
 		{
 			// find both passes
@@ -40,17 +43,33 @@ namespace tryn::gfx
 			IRenderPass* pSourcePass = nullptr;
 			IRenderPass* pDestinationPass = nullptr;
 
+			ISource* pSource = nullptr;
+			ISink* pSink = nullptr;
+
+			if (source_.passName == "global")
+			{
+				sourceFound = true;
+				pSource = pGlobalSource.get();
+			}
+			if (destination_.passName == "global")
+			{
+				destinationFound = true;
+				pSink = pGlobalSink.get();
+			}
+
 			// fill the pass pointers
 			for (int i = 0; i < pPasses.size(); i++)
 			{
 				if (!sourceFound && pPasses[i]->GetName() == source_.passName)
 				{
 					pSourcePass = pPasses[i].get();
+					pSource = &pSourcePass->GetSource();
 					sourceFound = true;
 				}
 				if (!destinationFound && pPasses[i]->GetName() == destination_.passName)
 				{
 					pDestinationPass = pPasses[i].get();
+					pSink = &pDestinationPass->GetSink();
 					destinationFound = true;
 				}
 				if (sourceFound && destinationFound)
@@ -59,15 +78,11 @@ namespace tryn::gfx
 				}
 			}
 
-			// bind sink to source
-			auto& source = pSourcePass->GetSource();
-			auto& sink = pDestinationPass->GetSink();
+			trynass(sourceFound && destinationFound).msg(L"Failed to add the linkage! Reason: could not find the required pair.").ex();
 
-			source.Bind(sink, source_.resourceName, destination_.resourceName);
+			pSource->Bind(*pSink, source_.resourceName, destination_.resourceName);
 		}
-		void Reset();
 		void Finalize();
-	protected:
 		std::vector<std::unique_ptr<IRenderPass>> pPasses;
 		struct Level
 		{
@@ -76,13 +91,14 @@ namespace tryn::gfx
 		std::vector<Level> levels;
 		std::map<std::string, uint16_t> queueKeys;
 		std::vector<RenderQueue> queues;
-		// Graph Resources
-		std::unique_ptr<ISink> pSink;
-		std::unique_ptr<ISource> pSource;
+		IGraphics& gfx;
+		// Global graph resources
+		std::shared_ptr<class IRenderTargetView> pRTV;
+		std::unique_ptr<ISink> pGlobalSink;
+		std::unique_ptr<ISource> pGlobalSource;
 
 		std::vector<PointLight*> pPointLights;
 		std::vector<Camera*> pCameras;
-		IGraphics* gfx = nullptr;
 		int selectedPointLight = 0;
 		int selectedCamera = 0;
 	};

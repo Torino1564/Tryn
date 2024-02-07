@@ -32,14 +32,13 @@
 class TestRenderGraph : public gfx::IRenderGraph
 {
 public:
-	TestRenderGraph(gfx::IGraphics& gfx_p)
+	TestRenderGraph(gfx::IGraphics& gfx)
 		:
-		master(gbl::configs.numRenderWorkers)
+		gfx::IRenderGraph(gfx), master(gbl::configs.numRenderWorkers)
 	{
-		gfx = &gfx_p;
 		for (int i = 0; i < gbl::configs.numRenderWorkers; i++)
 		{
-			workerPtrs.push_back(gfx->CreateRenderWorker(&master));
+			workerPtrs.push_back(gfx.CreateRenderWorker(&master));
 			workerPtrs[i]->StartWorking();
 		}
 	}
@@ -97,7 +96,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	this->gfx = std::move(gfx);
 
 	// Graphic Matrices
-	Gfx().SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(Gfx().dimensions.width), static_cast<float>(Gfx().dimensions.height), 0.1f, 10000000000.0f));
+	Gfx().SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(Gfx().GetDimensions().width), static_cast<float>(Gfx().GetDimensions().height), 0.1f, 10000000000.0f));
 	Gfx().SetRenderGraph(std::make_unique<TestRenderGraph>(Gfx()));
 
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};

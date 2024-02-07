@@ -8,7 +8,9 @@ namespace tryn::gfx
 	class ForwardLambertianPass : public IRenderPass
 	{
 	public:
-		ForwardLambertianPass()
+		ForwardLambertianPass(std::string name = std::string("lambertian"))
+			:
+			IRenderPass(std::move(name))
 		{
 			// declare sink and source
 			pSink = std::make_unique<SinkType>(In<IRenderTargetView>("rtv"));

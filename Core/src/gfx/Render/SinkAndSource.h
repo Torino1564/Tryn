@@ -104,7 +104,7 @@ namespace tryn::gfx
 		template <typename T>
 		std::shared_ptr<T> Get(const std::string& name)
 		{
-			return GetImpl_(name);
+			return GetImpl_<0,T>(name);
 		}
 		using DependencyTuple = typename std::tuple<std::shared_ptr<typename Dependencies::SysType>...>;
 	private:
@@ -121,8 +121,9 @@ namespace tryn::gfx
 			}
 			if constexpr (N < std::tuple_size_v<DependencyTuple> - 1)
 			{
-				return GetImpl_<N + 1>(name);
+				return GetImpl_<N + 1, T>(name);
 			}
+			trynchk_fail.msg(L"Did not find the required dependency!").ex();
 		}
 
 		DependencyTuple dependencyTuple;
@@ -164,6 +165,11 @@ namespace tryn::gfx
 			// send the ptr to the sink
 			sink.Accept(dependencyName, pExposure);
 		}
+		template <typename T>
+		void Set(T* pResource, const std::string& exposureName)
+		{
+			SetImpl_(pResource, exposureName);
+		}
 		virtual bool IsBounded(const std::string& exposureName)
 		{
 			for (int i = 0; i < names.size(); i++)
@@ -173,8 +179,27 @@ namespace tryn::gfx
 					return bound[i];
 				}
 			}
+			trynchk_fail.msg(L"Invalid exposure name!");
 		}
 	private:
+		template <unsigned N = 0, typename T>
+		void SetImpl_(T* pResource, const std::string& exposureName)
+		{
+			if constexpr (std::is_same_v<typename std::tuple_element_t<N, ExposureTuple>::element_type, T>)
+			{
+				if (names[N] == exposureName)
+				{
+					auto& pExposure = std::get<N>(exposureTuple);
+					pExposure = std::shared_ptr<T>(pResource);
+					return;
+				}
+			}
+			if constexpr (N < std::tuple_size_v<ExposureTuple> -1)
+			{
+				return SetImpl_<N + 1>(pResource, exposureName);
+			}
+			trynchk_fail.msg(L"No exposure was found for that type/name combination!").ex();
+		} 
 		std::pair<void*, unsigned> GetExposurePtrAndIndex(const std::string& exposureName)
 		{
 			return GetExposurePtrAndIndexImpl_(exposureName);

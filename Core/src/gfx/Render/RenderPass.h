@@ -13,6 +13,7 @@ namespace tryn::gfx
 	class IRenderPass
 	{
 	public:
+		IRenderPass(std::string name) : name(std::move(name)) {}
 		virtual void Execute(IGraphics& gfx) = 0;
 		const std::string& GetName() const
 		{

@@ -39,6 +39,11 @@ namespace tryn::gfx
 		this->projection = std::move(projection);
 	}
 
+	const spa::DimensionsI& IGraphics::GetDimensions() const
+	{
+		return dimensions;
+	}
+
 	void IGraphics::InitThread()
 	{
 		kernelThread_ = std::jthread(&IGraphics::KernelLoop_, this);
