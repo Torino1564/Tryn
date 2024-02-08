@@ -15,6 +15,8 @@
 
 namespace tryn::gfx
 {
+	class IBindable;
+
 	enum class Policy {
 		ReadOnly,
 		ReadWrite,
@@ -40,7 +42,7 @@ namespace tryn::gfx
 	public:
 		virtual bool IsBounded(const std::string& dependencyName) = 0;
 	protected:
-		virtual void Accept(const std::string& dependencyName, void* pDependency) = 0;
+		virtual void Accept(const std::string& dependencyName, std::shared_ptr<IBindable>& pDependency) = 0;
 		std::vector<std::pair<std::string, Policy>> namesAndPolicy;
 	};
 
@@ -53,7 +55,7 @@ namespace tryn::gfx
 		{
 			AddDependencies(std::move(std::forward_as_tuple(std::forward<Dependencies>(ins)...)));
 		}
-		void Accept(const std::string& dependencyName, void* pDependency) override
+		void Accept(const std::string& dependencyName, std::shared_ptr<IBindable>& pDependency) override
 		{
 			AcceptImpl_(dependencyName, pDependency);
 		}
@@ -69,14 +71,16 @@ namespace tryn::gfx
 		}
 	private:
 		template <unsigned N = 0>
-		void AcceptImpl_(const std::string& dependencyName, void* pDependency)
+		void AcceptImpl_(const std::string& dependencyName, std::shared_ptr<IBindable>& pDependency)
 		{
 			// check if this is the correct dependency index
 			if (namesAndPolicy[N].first == dependencyName)
 			{
-				// assign void* to the shared_ptr of the dependency
-				using DependencyType = typename std::tuple_element_t<N, DependencyTuple>::element_type;
-				std::get<N>(dependencyTuple) = std::shared_ptr<DependencyType>(reinterpret_cast<DependencyType*>(pDependency));
+				// down cast shared_ptr reference to concrete type
+				using DependencyType = typename std::remove_pointer_t<std::tuple_element_t<N, DependencyTuple>>::element_type;
+				auto ptr = reinterpret_cast<std::shared_ptr<DependencyType>*>(&pDependency);
+				trynass(ptr).msg(L"Invalid type passed to the Sink Accept function!").ex();
+				std::get<N>(dependencyTuple) = ptr;
 				// assert not bounded
 				trynass(!bound[N]).msg(utl::ToWide(std::format("The dependency [{}] already is bounded!", dependencyName))).ex();
 				// set as bound
@@ -102,14 +106,14 @@ namespace tryn::gfx
 
 	public:
 		template <typename T>
-		std::shared_ptr<T> Get(const std::string& name)
+		std::shared_ptr<T>& Get(const std::string& name)
 		{
 			return GetImpl_<0,T>(name);
 		}
-		using DependencyTuple = typename std::tuple<std::shared_ptr<typename Dependencies::SysType>...>;
+		using DependencyTuple = typename std::tuple<std::shared_ptr<typename Dependencies::SysType>*...>;
 	private:
 		template <unsigned N = 0, typename T>
-		std::shared_ptr<T> GetImpl_(const std::string& name)
+		std::shared_ptr<T>& GetImpl_(const std::string& name)
 		{
 			if constexpr (std::is_same_v<std::tuple_element_t<N, DependencyTuple>, T>)
 			{
@@ -117,7 +121,7 @@ namespace tryn::gfx
 				{
 					continue;
 				}
-				return std::get<N>(dependencyTuple);
+				return *std::get<N>(dependencyTuple);
 			}
 			if constexpr (N < std::tuple_size_v<DependencyTuple> - 1)
 			{
@@ -157,7 +161,8 @@ namespace tryn::gfx
 		void Bind(ISink& sink, const std::string& exposureName, const std::string& dependencyName) override
 		{
 			// get the exposure ptr
-			auto [pExposure, index] = GetExposurePtrAndIndex(exposureName);
+			auto [ppExposure, index] = GetExposurePtrAndIndex(exposureName);
+			auto& pExposure = *ppExposure;
 			// assert not set
 			trynchk(!bound[index]).msg(utl::ToWide(std::format("The exposure [{}] already is bounded! Overriding binding", exposureName))).lvl(log::Level::Warn);
 			// set exposure as bounded
@@ -166,7 +171,7 @@ namespace tryn::gfx
 			sink.Accept(dependencyName, pExposure);
 		}
 		template <typename T>
-		void Set(T* pResource, const std::string& exposureName)
+		void Set(std::shared_ptr<T>& pResource, const std::string& exposureName)
 		{
 			SetImpl_(pResource, exposureName);
 		}
@@ -183,14 +188,14 @@ namespace tryn::gfx
 		}
 	private:
 		template <unsigned N = 0, typename T>
-		void SetImpl_(T* pResource, const std::string& exposureName)
+		void SetImpl_(std::shared_ptr<T>& pResource, const std::string& exposureName)
 		{
-			if constexpr (std::is_same_v<typename std::tuple_element_t<N, ExposureTuple>::element_type, T>)
+			if constexpr (std::is_same_v<typename std::remove_pointer_t<std::tuple_element_t<N, ExposureTuple>>::element_type, T>)
 			{
 				if (names[N] == exposureName)
 				{
-					auto& pExposure = std::get<N>(exposureTuple);
-					pExposure = std::shared_ptr<T>(pResource);
+					auto pExposure = *std::get<N>(exposureTuple);
+					pExposure = &pResource;
 					return;
 				}
 			}
@@ -200,22 +205,23 @@ namespace tryn::gfx
 			}
 			trynchk_fail.msg(L"No exposure was found for that type/name combination!").ex();
 		} 
-		std::pair<void*, unsigned> GetExposurePtrAndIndex(const std::string& exposureName)
+		auto GetExposurePtrAndIndex(const std::string& exposureName)
 		{
 			return GetExposurePtrAndIndexImpl_(exposureName);
 		}
 		template <unsigned N = 0>
-		std::pair<void*, unsigned> GetExposurePtrAndIndexImpl_(const std::string& exposureName)
+		std::pair<std::shared_ptr<IBindable>*, unsigned> GetExposurePtrAndIndexImpl_(const std::string& exposureName)
 		{
 			if (exposureName == names[N])
 			{
-				return { reinterpret_cast<void*>(std::get<N>(exposureTuple).get()), N };
+				return { reinterpret_cast<std::shared_ptr<IBindable>*>(std::get<N>(exposureTuple)), N };
 			}
 			if constexpr (N < std::tuple_size_v<ExposureTuple> -1)
 			{
 				return GetExposurePtrAndIndexImpl_<N + 1>(exposureName);
 			}
-			return { nullptr, 0 };
+			static std::shared_ptr<IBindable> fallback = nullptr;
+			return { &fallback, 0u };
 		}
 		template <int N = 0, typename... Exposures>
 		void AddExposures(std::tuple<Exposures&&...>&& container)
@@ -229,7 +235,7 @@ namespace tryn::gfx
 		}
 
 	public:
-		using ExposureTuple = typename std::tuple<std::shared_ptr<typename Exposures::SysType>...>;
+		using ExposureTuple = typename std::tuple<std::shared_ptr<typename Exposures::SysType>*...>;
 		ExposureTuple exposureTuple;
 		// 0 means unbounded, 1 is bounded
 		std::bitset<sizeof...(Exposures)> bound;

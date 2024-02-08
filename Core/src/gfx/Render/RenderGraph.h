@@ -45,7 +45,7 @@ namespace tryn::gfx
 
 			ISource* pSource = nullptr;
 			ISink* pSink = nullptr;
-
+		
 			if (source_.passName == "global")
 			{
 				sourceFound = true;

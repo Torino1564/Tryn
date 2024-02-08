@@ -17,7 +17,7 @@ namespace tryn::gfx
 		// Init Source and create resources
 		auto pSource = std::make_unique<Source<Out<IRenderTargetView>>>(Out<IRenderTargetView>("rtv"));
 		pRTV = gfx.CreateRenderTargetView(gfx.GetDimensions());
-		pSource->Set(pRTV.get(), "rtv");
+		pSource->Set(pRTV, "rtv");
 
 		pGlobalSource = std::move(pSource);
 	}

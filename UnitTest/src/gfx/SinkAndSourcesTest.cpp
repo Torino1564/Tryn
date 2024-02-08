@@ -17,8 +17,8 @@ namespace Gfx
 			auto testSink = Sink(In<ITexture>("tex1"), In<JITUpdateBuffer>("buf1"));
 			decltype(testSink)::DependencyTuple testTuple;
 
-			static_assert(std::is_same<std::remove_reference_t<decltype(std::get<0>(testTuple))>, std::shared_ptr<ITexture>>::value);
-			static_assert(std::is_same<std::remove_reference_t<decltype(std::get<1>(testTuple))>, std::shared_ptr<JITUpdateBuffer>>::value);
+			static_assert(std::is_same<std::remove_pointer_t<std::remove_reference_t<decltype(std::get<0>(testTuple))>>, std::shared_ptr<ITexture>>::value);
+			static_assert(std::is_same<std::remove_pointer_t<std::remove_reference_t<decltype(std::get<1>(testTuple))>>, std::shared_ptr<JITUpdateBuffer>>::value);
 		}
 		TEST_METHOD(SourceCreation)
 		{
