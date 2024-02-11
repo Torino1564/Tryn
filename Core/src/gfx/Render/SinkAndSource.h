@@ -168,7 +168,7 @@ namespace tryn::gfx
 			// set exposure as bounded
 			bound.set(index);
 			// send the ptr to the sink
-			sink.Accept(dependencyName, ppExposure);
+			sink.Accept(dependencyName, *ppExposure);
 		}
 		template <typename T>
 		void Set(std::shared_ptr<T>& pResource, const std::string& exposureName)
@@ -210,18 +210,19 @@ namespace tryn::gfx
 			return GetExposurePtrAndIndexImpl_(exposureName);
 		}
 		template <unsigned N = 0>
-		std::pair<std::shared_ptr<IBindable>*, unsigned> GetExposurePtrAndIndexImpl_(const std::string& exposureName)
+		std::pair<std::shared_ptr<IBindable>**, unsigned> GetExposurePtrAndIndexImpl_(const std::string& exposureName)
 		{
 			if (exposureName == names[N])
 			{
-				return { reinterpret_cast<std::shared_ptr<IBindable>*>(std::get<N>(exposureTuple)), N };
+				return { reinterpret_cast<std::shared_ptr<IBindable>**>(&std::get<N>(exposureTuple)), N };
 			}
 			if constexpr (N < std::tuple_size_v<ExposureTuple> -1)
 			{
 				return GetExposurePtrAndIndexImpl_<N + 1>(exposureName);
 			}
 			static std::shared_ptr<IBindable> fallback = nullptr;
-			return { &fallback, 0u };
+			static auto pFallback = &fallback;
+			return { &pFallback, 0u };
 		}
 		template <int N = 0, typename... Exposures>
 		void AddExposures(std::tuple<Exposures&&...>&& container)

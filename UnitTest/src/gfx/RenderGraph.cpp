@@ -10,6 +10,35 @@ using namespace tryn::gfx;
 using namespace tryn;
 namespace Gfx
 {
+	class TestPass : public IRenderPass
+	{
+	public:
+		TestPass(const std::string& name)
+			:
+			IRenderPass(std::move(name))
+		{
+			// declare sink and source
+			pSink = std::make_unique<SinkType>(In<IRenderTargetView>("rtv"));
+			pSource = std::make_unique<SourceType>(Out<IRenderTargetView>("rtv"));
+
+			// declare queues to utilize
+			queueNames.push_back("TestQueue");
+		}
+		void Execute(IGraphics& gfx)
+		{
+			// bind Render Target View
+			auto& concreteSink = *reinterpret_cast<SinkType*>(pSink.get());
+			auto pRTV = concreteSink.Get<IRenderTargetView>("rtv");
+			pRTV->Bind();
+
+			auto& concreteSource = *reinterpret_cast<SourceType*>(pSource.get());
+			concreteSource.Set<IRenderTargetView>(pRTV, "rtv");
+		}
+	private:
+		using SinkType = Sink<In<IRenderTargetView>>;
+		using SourceType = Source<Out<IRenderTargetView>>;
+	};
+
 	class TestRenderGraph : public IRenderGraph
 	{
 	public:
