@@ -21,6 +21,13 @@ namespace tryn::gfx
 
 		pGlobalSource = std::move(pSource);
 	}
+	void IRenderGraph::ExecuteFrame(IGraphics& gfx)
+	{
+		for (auto& pass : pPasses)
+		{
+			pass->Execute(gfx);
+		}
+	}
 	void IRenderGraph::AddCamera(Camera* cam)
 	{
 		pCameras.push_back(cam);
@@ -60,6 +67,53 @@ namespace tryn::gfx
 		{
 			queue.Clear();
 		}
+	}
+	void IRenderGraph::AddLinkage(LinkageParam&& source_, LinkageParam&& destination_)
+	{
+		// find both passes
+		bool sourceFound = false, destinationFound = false;
+
+		IRenderPass* pSourcePass = nullptr;
+		IRenderPass* pDestinationPass = nullptr;
+
+		ISource* pSource = nullptr;
+		ISink* pSink = nullptr;
+
+		if (source_.passName == "global")
+		{
+			sourceFound = true;
+			pSource = pGlobalSource.get();
+		}
+		if (destination_.passName == "global")
+		{
+			destinationFound = true;
+			pSink = pGlobalSink.get();
+		}
+
+		// fill the pass pointers
+		for (int i = 0; i < pPasses.size(); i++)
+		{
+			if (!sourceFound && pPasses[i]->GetName() == source_.passName)
+			{
+				pSourcePass = pPasses[i].get();
+				pSource = &pSourcePass->GetSource();
+				sourceFound = true;
+			}
+			if (!destinationFound && pPasses[i]->GetName() == destination_.passName)
+			{
+				pDestinationPass = pPasses[i].get();
+				pSink = &pDestinationPass->GetSink();
+				destinationFound = true;
+			}
+			if (sourceFound && destinationFound)
+			{
+				break;
+			}
+		}
+
+		trynass(sourceFound && destinationFound).msg(L"Failed to add the linkage! Reason: could not find the required pair.").ex();
+
+		pSource->Bind(*pSink, source_.resourceName, destination_.resourceName);
 	}
 }
 

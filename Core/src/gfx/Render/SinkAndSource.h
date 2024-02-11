@@ -116,13 +116,12 @@ namespace tryn::gfx
 		template <unsigned N = 0, typename T>
 		std::shared_ptr<T>& GetImpl_(const std::string& name)
 		{
-			if constexpr (std::is_same_v<std::tuple_element_t<N, DependencyTuple>, T>)
+			if constexpr (std::is_same_v<std::tuple_element_t<N, DependencyTypeTuple>, T>)
 			{
-				if (namesAndPolicy[N] != name)
+				if (namesAndPolicy[N].first == name)
 				{
-					continue;
+					return **std::get<N>(dependencyTuple);
 				}
-				return **std::get<N>(dependencyTuple);
 			}
 			if constexpr (N < std::tuple_size_v<DependencyTuple> - 1)
 			{

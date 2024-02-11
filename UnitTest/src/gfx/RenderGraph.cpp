@@ -15,7 +15,7 @@ namespace Gfx
 	public:
 		TestPass(const std::string& name)
 			:
-			IRenderPass(std::move(name))
+			IRenderPass(name)
 		{
 			// declare sink and source
 			pSink = std::make_unique<SinkType>(In<IRenderTargetView>("rtv"));
@@ -24,11 +24,11 @@ namespace Gfx
 			// declare queues to utilize
 			queueNames.push_back("TestQueue");
 		}
-		void Execute(IGraphics& gfx)
+		void Execute(IGraphics& gfx) override
 		{
 			// bind Render Target View
 			auto& concreteSink = *reinterpret_cast<SinkType*>(pSink.get());
-			auto pRTV = concreteSink.Get<IRenderTargetView>("rtv");
+			auto& pRTV = concreteSink.Get<IRenderTargetView>("rtv");
 			pRTV->Bind();
 
 			auto& concreteSource = *reinterpret_cast<SourceType*>(pSource.get());
@@ -46,11 +46,11 @@ namespace Gfx
 			:
 			IRenderGraph(gfx)
 		{
-			AddPass<ForwardLambertianPass>("lambertian");
+			AddPass<TestPass>("testPass");
 			AddLinkage(LinkageParam{ .passName = "global", .resourceName = "rtv" },
-				LinkageParam{ .passName = "lambertian", .resourceName = "rtv" });
+				LinkageParam{ .passName = "testPass", .resourceName = "rtv" });
 			
-			AddLinkage(LinkageParam{ .passName = "lambertian", .resourceName = "rtv" },
+			AddLinkage(LinkageParam{ .passName = "testPass", .resourceName = "rtv" },
 				LinkageParam{ .passName = "global",.resourceName = "rtv" });
 		}
 	};
@@ -66,11 +66,13 @@ namespace Gfx
 		TEST_METHOD(RenderGraphTest)
 		{
 			TestRenderGraph renderGraph(*pGfx);
-
 			renderGraph.AddCamera(nullptr);
+
+			renderGraph.ExecuteFrame(*pGfx);
+			
 		}
 	private:
-		std::unique_ptr<gfx::dx11::Graphics> pGfx;
+		std::unique_ptr<gfx::IGraphics> pGfx;
 		std::unique_ptr<win::Window> pWnd;
 	};
 }

@@ -88,6 +88,7 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<IRasterizer>			CreateRasterizer(const bool twoSided = true) override;
 		std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) override;
 		std::shared_ptr<IRenderTargetView>		CreateRenderTargetView(const spa::DimensionsI) override;
+		std::shared_ptr<IDepthStencil>			CreateDepthStencil(const spa::DimensionsI, ComparissonMode mode = ComparissonMode::Less) override;
 		std::unique_ptr<ITransformCBuf>			CreateTransformCBuf() override;
 		// Render Worker creation
 		std::unique_ptr<RenderWorker>			CreateRenderWorker(ccr::Master*) override;

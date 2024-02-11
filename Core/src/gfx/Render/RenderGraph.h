@@ -16,7 +16,7 @@ namespace tryn::gfx
 	{
 	public:
 		IRenderGraph(IGraphics& gfx);
-		virtual void ExecuteFrame(IGraphics& gfx) {};
+		virtual void ExecuteFrame(IGraphics& gfx);
 		virtual ~IRenderGraph() = default;
 		void AddCamera(Camera*);
 		void AddPointLight(PointLight*);
@@ -35,53 +35,7 @@ namespace tryn::gfx
 		};
 		void Reset();
 	protected:
-		void AddLinkage(LinkageParam&& source_, LinkageParam&& destination_)
-		{
-			// find both passes
-			bool sourceFound = false, destinationFound = false;
-
-			IRenderPass* pSourcePass = nullptr;
-			IRenderPass* pDestinationPass = nullptr;
-
-			ISource* pSource = nullptr;
-			ISink* pSink = nullptr;
-		
-			if (source_.passName == "global")
-			{
-				sourceFound = true;
-				pSource = pGlobalSource.get();
-			}
-			if (destination_.passName == "global")
-			{
-				destinationFound = true;
-				pSink = pGlobalSink.get();
-			}
-
-			// fill the pass pointers
-			for (int i = 0; i < pPasses.size(); i++)
-			{
-				if (!sourceFound && pPasses[i]->GetName() == source_.passName)
-				{
-					pSourcePass = pPasses[i].get();
-					pSource = &pSourcePass->GetSource();
-					sourceFound = true;
-				}
-				if (!destinationFound && pPasses[i]->GetName() == destination_.passName)
-				{
-					pDestinationPass = pPasses[i].get();
-					pSink = &pDestinationPass->GetSink();
-					destinationFound = true;
-				}
-				if (sourceFound && destinationFound)
-				{
-					break;
-				}
-			}
-
-			trynass(sourceFound && destinationFound).msg(L"Failed to add the linkage! Reason: could not find the required pair.").ex();
-
-			pSource->Bind(*pSink, source_.resourceName, destination_.resourceName);
-		}
+		void AddLinkage(LinkageParam&& source_, LinkageParam&& destination_);
 		void Finalize();
 		std::vector<std::unique_ptr<IRenderPass>> pPasses;
 		struct Level

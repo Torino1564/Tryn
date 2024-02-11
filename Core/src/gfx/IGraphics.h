@@ -22,6 +22,7 @@
 #include <Core/src/utl/LocalGenericTaskQueue.h>
 #include <Core/src/gfx/IBufferFwd.h>
 #include <Core/src/gfx/ConstantBuffer.h>
+#include <Core/src/gfx/ComparissonMode.h>
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
@@ -56,6 +57,7 @@ namespace tryn::gfx
 	class VertexLayout;
 	class RenderWorker;
 	class IRenderTargetView;
+	class IDepthStencil;
 
 	class IGraphics
 	{
@@ -127,6 +129,7 @@ namespace tryn::gfx
 		virtual std::shared_ptr<IRasterizer>			CreateRasterizer(const bool twoSided = true) = 0;
 		virtual std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) = 0;
 		virtual std::shared_ptr<IRenderTargetView>		CreateRenderTargetView(const spa::DimensionsI) = 0;
+		virtual std::shared_ptr<IDepthStencil>		CreateDepthStencil(const spa::DimensionsI, ComparissonMode mode = ComparissonMode::Less) = 0;
 		virtual std::unique_ptr<ITransformCBuf>			CreateTransformCBuf() = 0;
 		
 		// Worker Thread Creation

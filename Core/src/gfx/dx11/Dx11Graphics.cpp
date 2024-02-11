@@ -374,4 +374,10 @@ namespace tryn::gfx::dx11
 			});
 		return future.get();
 	}
+	std::shared_ptr<IDepthStencil> Graphics::CreateDepthStencil(const spa::DimensionsI, ComparissonMode mode)
+	{
+		auto future = Dispatch_([&] {
+			return nullptr;
+			})
+	}
 }

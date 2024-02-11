@@ -4,7 +4,8 @@
 
 namespace tryn::gfx::dx11
 {
-	class DX11RenderTargetView : public IRenderTargetView
+	template <RTType Type>
+	class DX11RenderTargetView : public IRenderTargetView<Type>
 	{
 	public:
 		DX11RenderTargetView(Graphics& gfx, const spa::DimensionsI dimensions);
@@ -13,6 +14,5 @@ namespace tryn::gfx::dx11
 	private:
 		Graphics& gfx;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRTV;
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 	};
 }
