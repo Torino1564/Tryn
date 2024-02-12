@@ -16,7 +16,7 @@ namespace tryn::gfx
 	using IShaderResourceRenderTargetView = IRenderTargetView<RTType::ShaderResource>;
 	using IOutputOnlyRenderTargetView = IRenderTargetView<RTType::OutputOnly>;
 
-	template <RTType Type>
+	template <RTType Type = RTType::OutputOnly>
 	class IRenderTargetView : public IBindable
 	{
 	public:
