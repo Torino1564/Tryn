@@ -13,8 +13,8 @@ namespace tryn::gfx
 			IRenderPass(std::move(name))
 		{
 			// declare sink and source
-			pSink = std::make_unique<SinkType>(In<IRenderTargetView>("rtv"));
-			pSource = std::make_unique<SourceType>(Out<IRenderTargetView>("rtv"));
+			pSink = std::make_unique<SinkType>(In<IShaderResourceRenderTargetView>("rtv"));
+			pSource = std::make_unique<SourceType>(Out<IShaderResourceRenderTargetView>("rtv"));
 
 			// declare queues to utilize
 			queueNames.push_back("Lambertian");
@@ -23,7 +23,7 @@ namespace tryn::gfx
 		{
 			// bind Render Target View
 			auto& concreteSink = *reinterpret_cast<SinkType*>(pSink.get());
-			auto pRTV = concreteSink.Get<IRenderTargetView>("rtv");
+			auto& pRTV = concreteSink.Get<IShaderResourceRenderTargetView>("rtv");
 			pRTV->Bind();
 			
 			// This queue pass knows that the first queue is the lambertian one (because it was declared that way on its constructor)
@@ -32,7 +32,7 @@ namespace tryn::gfx
 			// All this pass does is run the lambertian queue
 			lambertianQueue.RunJobs(gfx);
 		}
-		using SinkType = Sink<In<IRenderTargetView>>;
-		using SourceType = Source<Out<IRenderTargetView>>;
+		using SinkType = Sink<In<IShaderResourceRenderTargetView>>;
+		using SourceType = Source<Out<IShaderResourceRenderTargetView>>;
 	};
 }

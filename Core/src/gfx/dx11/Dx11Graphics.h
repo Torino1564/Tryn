@@ -33,13 +33,7 @@ namespace tryn::gfx::dx11
 		ID3D11DeviceContext& GetContext();
 		ID3D11Device& GetDevice();
 		IDXGISwapChain& GetSwapChain();
-
-		static constexpr const char* APIString = "DX11";
-
-		constexpr const char* GetAPIString() const override
-		{
-			return APIString;
-		}
+		constexpr const char* GetAPIString() const override;
 
 		static constexpr DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
 		{
@@ -66,34 +60,35 @@ namespace tryn::gfx::dx11
 			}
 			return DXGI_FORMAT_UNKNOWN;
 		}
-
 		static std::vector<D3D11_INPUT_ELEMENT_DESC> GetSlottedLayout(const VertexLayout& vLayout, int slot);
 
 		// Resource Creation
-		std::shared_ptr<IVertexBuffer>			CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string) override;
-		//std::shared_ptr<IPolyVBuffer>			CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>& CpuVBs, std::string) override;
-		std::shared_ptr<IIndexBuffer>			CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string) override;
-		std::shared_ptr<IVertexShader>			CreateVertexShader(std::string path) override;
-		std::shared_ptr<IPixelShader>			CreatePixelShader(std::string path) override;
-		std::shared_ptr<IInputLayout>			CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) override;
-		//std::shared_ptr<IInputLayout>			CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) override;
-		std::shared_ptr<IInputLayout>			CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) override;
-		std::shared_ptr<IPrimitiveTopology>		CreatePrimitiveTopology() override;
-		std::shared_ptr<IVtxConstantBuffer>		CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
-		std::shared_ptr<IVtxConstantBufferNCach>CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
-		std::shared_ptr<IPxConstantBuffer>		CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
-		std::shared_ptr<IPxConstantBufferNCach>	CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
-		std::unique_ptr<IInstanceBuffer>		CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot = 2) override;
-		std::shared_ptr<ITexture>				CreateTexture(std::filesystem::path path, int slot = 0) override;
-		std::shared_ptr<IRasterizer>			CreateRasterizer(const bool twoSided = true) override;
-		std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) override;
-		std::shared_ptr<IRenderTargetView>		CreateRenderTargetView(const spa::DimensionsI) override;
-		std::shared_ptr<IDepthStencil>			CreateDepthStencil(const spa::DimensionsI, ComparissonMode mode = ComparissonMode::Less) override;
-		std::unique_ptr<ITransformCBuf>			CreateTransformCBuf() override;
-		// Render Worker creation
-		std::unique_ptr<RenderWorker>			CreateRenderWorker(ccr::Master*) override;
+		std::shared_ptr<IVertexBuffer>						CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string) override;
+		std::shared_ptr<IIndexBuffer>						CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string) override;
+		std::shared_ptr<IVertexShader>						CreateVertexShader(std::string path) override;
+		std::shared_ptr<IPixelShader>						CreatePixelShader(std::string path) override;
+		std::shared_ptr<IInputLayout>						CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) override;
+		std::shared_ptr<IInputLayout>						CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) override;
+		std::shared_ptr<IPrimitiveTopology>					CreatePrimitiveTopology() override;
+		std::shared_ptr<IVtxConstantBuffer>					CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IVtxConstantBufferNCach>			CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IPxConstantBuffer>					CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::shared_ptr<IPxConstantBufferNCach>				CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") override;
+		std::unique_ptr<IInstanceBuffer>					CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot = 2) override;
+		std::shared_ptr<ITexture>							CreateTexture(std::filesystem::path path, int slot = 0) override;
+		std::shared_ptr<IRasterizer>						CreateRasterizer(const bool twoSided = true) override;
+		std::shared_ptr<ISampler>							CreateSampler(SamplerType type, bool reflect, int slot) override;
+		std::shared_ptr<IOutputOnlyRenderTargetView>		CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions) override;
+		std::shared_ptr<IShaderResourceRenderTargetView>	CreateShaderResourceRenderTargetView(const spa::DimensionsI, const uint16_t slot) override;
+		std::shared_ptr<IOutputOnlyDepthStencil>			CreateOutputOnlyDepthStencil(const spa::DimensionsI, ComparissonMode mode = ComparissonMode::Less) override;
+		std::shared_ptr<IShaderResourceDepthStencil>		CreateShaderResourceDepthStencil(const spa::DimensionsI, const uint16_t slot, ComparissonMode mode) override;
+		std::unique_ptr<ITransformCBuf>						CreateTransformCBuf() override;
+		std::unique_ptr<RenderWorker>						CreateRenderWorker(ccr::Master*) override;
 
 	private:
+
+		static constexpr const char* APIString = "DX11";
+
 		Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;

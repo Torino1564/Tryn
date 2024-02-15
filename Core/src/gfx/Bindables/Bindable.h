@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/src/gfx/Gfx.h>
 #include <Core/src/utl/String.h>
+#include <Core/src/gfx/GraphicAPI.h>
 
 namespace tryn::gfx
 {

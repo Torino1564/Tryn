@@ -13,6 +13,7 @@
 #include <Core/src/gfx/dx11/Dx11RenderWorker.h>
 #include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11RenderTargetView.h>
+#include <Core/src/gfx/dx11/Bindables/DX11DepthStencil.h>
 #include "imgui_impl_dx11.h"
 #include <Core/src/win/Window.h>
 
@@ -189,6 +190,10 @@ namespace tryn::gfx::dx11
 	IDXGISwapChain& Graphics::GetSwapChain()
 	{
 		return *pSwap.Get();
+	}
+	constexpr const char* Graphics::GetAPIString() const
+	{
+		return APIString;
 	}
 	void Graphics::DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation)
 	{
@@ -367,17 +372,32 @@ namespace tryn::gfx::dx11
 			});
 		return future.get();
 	}
-	std::shared_ptr<IRenderTargetView> Graphics::CreateRenderTargetView(const spa::DimensionsI dimensions)
+	std::shared_ptr<IOutputOnlyRenderTargetView> Graphics::CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions)
 	{
 		auto future = Dispatch_([&] {
-			return std::make_shared<DX11RenderTargetView>(*this, dimensions);
+			return std::make_shared<DX11OutputOnlyRenderTargetView>(*this, dimensions);
 			});
 		return future.get();
 	}
-	std::shared_ptr<IDepthStencil> Graphics::CreateDepthStencil(const spa::DimensionsI, ComparissonMode mode)
+	std::shared_ptr<IShaderResourceRenderTargetView> Graphics::CreateShaderResourceRenderTargetView(const spa::DimensionsI dimensions, const uint16_t slot)
 	{
 		auto future = Dispatch_([&] {
-			return nullptr;
-			})
+			return std::make_shared<DX11ShaderResourceRenderTargetView>(*this, dimensions, slot);
+			});
+		return future.get();
+	}
+	std::shared_ptr<IOutputOnlyDepthStencil> Graphics::CreateOutputOnlyDepthStencil(const spa::DimensionsI, ComparissonMode mode)
+	{
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11OutputOnlyDepthStencil>(*this, dimensions, mode);
+			});
+		return future.get();
+	}
+	std::shared_ptr<IShaderResourceDepthStencil> Graphics::CreateShaderResourceDepthStencil(const spa::DimensionsI, const uint16_t slot, ComparissonMode mode)
+	{
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11ShaderResourceDepthStencil>(*this, dimensions, slot, mode);
+			});
+		return future.get();
 	}
 }

@@ -34,7 +34,6 @@
     <ClCompile Include="src\gfx\Bindables\DepthStencil.cpp" />
     <ClCompile Include="src\gfx\Bindables\JITUpdateBuffer.cpp" />
     <ClCompile Include="src\gfx\Bindables\RenderTargetView.cpp" />
-    <ClCompile Include="src\gfx\Bindables\ShaderResourceRenderTarget.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11DepthStencil.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
@@ -107,9 +106,9 @@
     <ClCompile Include="third\vcpkg\x64-windows-static\include\stb_vorbis.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\gfx\Bindables\BufferResourceType.h" />
     <ClInclude Include="src\gfx\Bindables\DepthStencil.h" />
     <ClInclude Include="src\gfx\Bindables\RenderTargetView.h" />
-    <ClInclude Include="src\gfx\Bindables\ShaderResourceRenderTarget.h" />
     <ClInclude Include="src\gfx\ComparissonMode.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11DepthStencil.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11RenderTargetView.h" />
@@ -196,6 +195,7 @@
     <ClInclude Include="src\gfx\Render\Step.h" />
     <ClInclude Include="src\gfx\Render\Technique.h" />
     <ClInclude Include="src\gfx\Render\TechniqueProbe.h" />
+    <ClInclude Include="src\gfx\RTVDSFwd.h" />
     <ClInclude Include="src\gfx\TexturePool.h" />
     <ClInclude Include="src\gfx\IContext.h" />
     <ClInclude Include="src\gfx\Material.h" />
@@ -251,6 +251,7 @@
     <ClInclude Include="src\utl\AnyVector.h" />
     <ClInclude Include="src\utl\Assert.h" />
     <ClInclude Include="src\utl\Bitset.h" />
+    <ClInclude Include="src\utl\EmptyType.h" />
     <ClInclude Include="src\utl\Exception.h" />
     <ClInclude Include="src\utl\LocalGenericTaskQueue.h" />
     <ClInclude Include="src\utl\Macro.h" />
@@ -258,6 +259,7 @@
     <ClInclude Include="src\utl\Probe.h" />
     <ClInclude Include="src\utl\Span.h" />
     <ClInclude Include="src\utl\StackTrace.h" />
+    <ClInclude Include="src\utl\StatefulMeta\CTC.h" />
     <ClInclude Include="src\utl\Stopwatch.h" />
     <ClInclude Include="src\utl\String.h" />
     <ClInclude Include="src\utl\Timer.h" />

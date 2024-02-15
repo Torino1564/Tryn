@@ -1536,12 +1536,12 @@ template <typename AssignTo,
                           !std::is_assignable<AssignTo &, ConvertTo>::value,
                       detail::enabler> = detail::dummy>
 bool lexical_conversion(const std::vector<std::string> &strings, AssignTo &output) {
-    using ConvertType = typename ConvertTo::value_type;
+    using ConveBufferResourceType = typename ConvertTo::value_type;
     if(strings.empty() || strings.front().empty()) {
-        output = ConvertType{};
+        output = ConveBufferResourceType{};
         return true;
     }
-    ConvertType val;
+    ConveBufferResourceType val;
     if(lexical_conversion<typename ConvertTo::value_type, typename ConvertTo::value_type>(strings, val)) {
         output = val;
         return true;

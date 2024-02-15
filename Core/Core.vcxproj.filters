@@ -282,9 +282,6 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11DepthStencil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\Bindables\ShaderResourceRenderTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -3050,7 +3047,16 @@
     <ClInclude Include="src\gfx\dx11\Bindables\DX11DepthStencil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\Bindables\ShaderResourceRenderTarget.h">
+    <ClInclude Include="src\utl\EmptyType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Bindables\BufferResourceType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utl\StatefulMeta\CTC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\RTVDSFwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

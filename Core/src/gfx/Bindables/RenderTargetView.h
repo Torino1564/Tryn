@@ -1,27 +1,20 @@
 #pragma once
 #include "Bindable.h"
 #include <concepts>
+#include <Core/src/utl/EmptyType.h>
+#include <Core/src/gfx/Bindables/BufferResourceType.h>
+#include <Core/src/gfx/IGraphics.h>
+#include <Core/src/gfx/BindablePool.h>
 
 namespace tryn::gfx
 {
-	enum class RTType
-	{
-		OutputOnly,
-		ShaderResource
-	};
-
-	template <RTType Type>
-	class IRenderTargetView;
-
-	using IShaderResourceRenderTargetView = IRenderTargetView<RTType::ShaderResource>;
-	using IOutputOnlyRenderTargetView = IRenderTargetView<RTType::OutputOnly>;
-
-	template <RTType Type = RTType::OutputOnly>
+	template <BufferResourceType Type = BufferResourceType::OutputOnly>
 	class IRenderTargetView : public IBindable
 	{
 	public:
+		template <BufferResourceType Type = Type>
 		static std::string GenerateID(IGraphics& gfx, const spa::DimensionsI dimensions, uint16_t slot)
-			requires (Type == RTType::ShaderResource)
+			requires (Type == BufferResourceType::ShaderResource)
 		{
 			static uint16_t rtvCounter = 0u;
 			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
@@ -40,8 +33,9 @@ namespace tryn::gfx
 
 			return UID;
 		}
+		template <BufferResourceType Type = Type>
 		static std::string GenerateID(IGraphics& gfx, const spa::DimensionsI dimensions)
-			requires (Type == RTType::OutputOnly)
+			requires (Type == BufferResourceType::OutputOnly)
 		{
 			static uint16_t rtvCounter = 0u;
 			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
@@ -57,16 +51,23 @@ namespace tryn::gfx
 
 			return UID;
 		}
+
+		template <BufferResourceType Type = Type>
 		static std::shared_ptr<IShaderResourceRenderTargetView> Resolve(IGraphics& gfx, const spa::DimensionsI dimensions, uint16_t slot)
-			requires (Type == RTType::ShaderResource)
+			requires (Type == BufferResourceType::ShaderResource)
 		{
 			return BindablePool::Resolve<IShaderResourceRenderTargetView>(gfx, dimensions, slot);
 		}
+
+		template <BufferResourceType Type = Type>
 		static std::shared_ptr<IOutputOnlyRenderTargetView> Resolve(IGraphics& gfx, const spa::DimensionsI dimensions)
-			requires (Type == RTType::OutputOnly)
+			requires (Type == BufferResourceType::OutputOnly)
 		{
 			return BindablePool::Resolve<IOutputOnlyRenderTargetView>(gfx, dimensions);
 		}
-		
+	protected:
+		std::conditional_t<Type == BufferResourceType::ShaderResource, uint16_t, utl::empty_t> slot;
 	};
+
+
 }

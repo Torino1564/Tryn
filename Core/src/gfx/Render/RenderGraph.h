@@ -4,6 +4,7 @@
 #include <Core/src/utl/Exception.h>
 #include <map>
 #include <vector>
+#include <Core/src/gfx/RTVDSFwd.h>
 
 namespace tryn::gfx
 {
@@ -46,8 +47,10 @@ namespace tryn::gfx
 		std::map<std::string, uint16_t> queueKeys;
 		std::vector<RenderQueue> queues;
 		IGraphics& gfx;
+
 		// Global graph resources
-		std::shared_ptr<class IRenderTargetView> pRTV;
+		std::shared_ptr<IShaderResourceRenderTargetView> pRTV;
+		std::shared_ptr<IShaderResourceDepthStencil> pDSV;
 		std::unique_ptr<ISink> pGlobalSink;
 		std::unique_ptr<ISource> pGlobalSource;
 

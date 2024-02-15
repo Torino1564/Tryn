@@ -182,37 +182,37 @@ class GeometryAttribute {
     }
     switch (data_type_) {
       case DT_INT8:
-        return ConvertTypedValue<int8_t, OutT>(att_id, out_num_components,
+        return ConveBufferResourceTypedValue<int8_t, OutT>(att_id, out_num_components,
                                                out_val);
       case DT_UINT8:
-        return ConvertTypedValue<uint8_t, OutT>(att_id, out_num_components,
+        return ConveBufferResourceTypedValue<uint8_t, OutT>(att_id, out_num_components,
                                                 out_val);
       case DT_INT16:
-        return ConvertTypedValue<int16_t, OutT>(att_id, out_num_components,
+        return ConveBufferResourceTypedValue<int16_t, OutT>(att_id, out_num_components,
                                                 out_val);
       case DT_UINT16:
-        return ConvertTypedValue<uint16_t, OutT>(att_id, out_num_components,
+        return ConveBufferResourceTypedValue<uint16_t, OutT>(att_id, out_num_components,
                                                  out_val);
       case DT_INT32:
-        return ConvertTypedValue<int32_t, OutT>(att_id, out_num_components,
+        return ConveBufferResourceTypedValue<int32_t, OutT>(att_id, out_num_components,
                                                 out_val);
       case DT_UINT32:
-        return ConvertTypedValue<uint32_t, OutT>(att_id, out_num_components,
+        return ConveBufferResourceTypedValue<uint32_t, OutT>(att_id, out_num_components,
                                                  out_val);
       case DT_INT64:
-        return ConvertTypedValue<int64_t, OutT>(att_id, out_num_components,
+        return ConveBufferResourceTypedValue<int64_t, OutT>(att_id, out_num_components,
                                                 out_val);
       case DT_UINT64:
-        return ConvertTypedValue<uint64_t, OutT>(att_id, out_num_components,
+        return ConveBufferResourceTypedValue<uint64_t, OutT>(att_id, out_num_components,
                                                  out_val);
       case DT_FLOAT32:
-        return ConvertTypedValue<float, OutT>(att_id, out_num_components,
+        return ConveBufferResourceTypedValue<float, OutT>(att_id, out_num_components,
                                               out_val);
       case DT_FLOAT64:
-        return ConvertTypedValue<double, OutT>(att_id, out_num_components,
+        return ConveBufferResourceTypedValue<double, OutT>(att_id, out_num_components,
                                                out_val);
       case DT_BOOL:
-        return ConvertTypedValue<bool, OutT>(att_id, out_num_components,
+        return ConveBufferResourceTypedValue<bool, OutT>(att_id, out_num_components,
                                              out_val);
       default:
         // Wrong attribute type.
@@ -288,7 +288,7 @@ class GeometryAttribute {
   // T is the stored attribute data type.
   // OutT is the desired data type of the attribute.
   template <typename T, typename OutT>
-  bool ConvertTypedValue(AttributeValueIndex att_id, uint8_t out_num_components,
+  bool ConveBufferResourceTypedValue(AttributeValueIndex att_id, uint8_t out_num_components,
                          OutT *out_value) const {
     const uint8_t *src_address = GetAddress(att_id);
 

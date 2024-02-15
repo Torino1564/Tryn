@@ -12,11 +12,11 @@ namespace tryn::gfx
 		gfx(gfx)
 	{
 		// Init Sink
-		pGlobalSink = std::make_unique<Sink<In<IRenderTargetView>>>(In<IRenderTargetView>("rtv"));
+		pGlobalSink = std::make_unique<Sink<In<IShaderResourceRenderTargetView>>>(In<IShaderResourceRenderTargetView>("rtv"));
 
 		// Init Source and create resources
-		auto pSource = std::make_unique<Source<Out<IRenderTargetView>>>(Out<IRenderTargetView>("rtv"));
-		pRTV = gfx.CreateRenderTargetView(gfx.GetDimensions());
+		auto pSource = std::make_unique<Source<Out<IShaderResourceRenderTargetView>>>(Out<IShaderResourceRenderTargetView>("rtv"));
+		pRTV = gfx.CreateShaderResourceRenderTargetView(gfx.GetDimensions(), 10);
 		pSource->Set(pRTV, "rtv");
 
 		pGlobalSource = std::move(pSource);

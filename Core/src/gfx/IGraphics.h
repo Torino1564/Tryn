@@ -23,6 +23,7 @@
 #include <Core/src/gfx/IBufferFwd.h>
 #include <Core/src/gfx/ConstantBuffer.h>
 #include <Core/src/gfx/ComparissonMode.h>
+#include <Core/src/gfx/RTVDSFwd.h>
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
@@ -56,8 +57,6 @@ namespace tryn::gfx
 	class StaticMesh;
 	class VertexLayout;
 	class RenderWorker;
-	class IRenderTargetView;
-	class IDepthStencil;
 
 	class IGraphics
 	{
@@ -111,29 +110,27 @@ namespace tryn::gfx
 		}
 
 		// Resource Creation
-		virtual std::shared_ptr<IVertexBuffer>			CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IIndexBuffer>			CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string tag = "?") = 0;
-		//virtual std::shared_ptr<IPolyVBuffer>			CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>&, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IVertexShader>			CreateVertexShader(std::string path) = 0;
-		virtual std::shared_ptr<IPixelShader>			CreatePixelShader(std::string path) = 0;
-		virtual std::shared_ptr<IInputLayout>			CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) = 0;
-		//virtual std::shared_ptr<IInputLayout>			CreateInputLayout(IPolyVBuffer& vb, IVertexShader& vs) = 0;
-		virtual std::shared_ptr<IInputLayout>			CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) = 0;
-		virtual std::shared_ptr<IPrimitiveTopology>		CreatePrimitiveTopology() = 0;
-		virtual std::shared_ptr<IVtxConstantBuffer>		CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IVtxConstantBufferNCach>CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IPxConstantBuffer>		CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
-		virtual std::shared_ptr<IPxConstantBufferNCach>	CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
-		virtual std::unique_ptr<IInstanceBuffer>		CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot = 2) = 0;
-		virtual std::shared_ptr<ITexture>				CreateTexture(std::filesystem::path path, int slot = 0) = 0;
-		virtual std::shared_ptr<IRasterizer>			CreateRasterizer(const bool twoSided = true) = 0;
-		virtual std::shared_ptr<ISampler>				CreateSampler(SamplerType type, bool reflect, int slot) = 0;
-		virtual std::shared_ptr<IRenderTargetView>		CreateRenderTargetView(const spa::DimensionsI) = 0;
-		virtual std::shared_ptr<IDepthStencil>		CreateDepthStencil(const spa::DimensionsI, ComparissonMode mode = ComparissonMode::Less) = 0;
-		virtual std::unique_ptr<ITransformCBuf>			CreateTransformCBuf() = 0;
-		
-		// Worker Thread Creation
-		virtual std::unique_ptr<RenderWorker>		CreateRenderWorker(ccr::Master*) = 0;
+		virtual std::shared_ptr<IVertexBuffer>						CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IIndexBuffer>						CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IVertexShader>						CreateVertexShader(std::string path) = 0;
+		virtual std::shared_ptr<IPixelShader>						CreatePixelShader(std::string path) = 0;
+		virtual std::shared_ptr<IInputLayout>						CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) = 0;
+		virtual std::shared_ptr<IInputLayout>						CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) = 0;
+		virtual std::shared_ptr<IPrimitiveTopology>					CreatePrimitiveTopology() = 0;
+		virtual std::shared_ptr<IVtxConstantBuffer>					CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IVtxConstantBufferNCach>			CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IPxConstantBuffer>					CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::shared_ptr<IPxConstantBufferNCach>				CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") = 0;
+		virtual std::unique_ptr<IInstanceBuffer>					CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot = 2) = 0;
+		virtual std::shared_ptr<ITexture>							CreateTexture(std::filesystem::path path, int slot = 0) = 0;
+		virtual std::shared_ptr<IRasterizer>						CreateRasterizer(const bool twoSided = true) = 0;
+		virtual std::shared_ptr<ISampler>							CreateSampler(SamplerType type, bool reflect, int slot) = 0;
+		virtual std::shared_ptr<IOutputOnlyRenderTargetView>		CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions) = 0;
+		virtual std::shared_ptr<IShaderResourceRenderTargetView>	CreateShaderResourceRenderTargetView(const spa::DimensionsI, const uint16_t slot) = 0;
+		virtual std::shared_ptr<IOutputOnlyDepthStencil>			CreateOutputOnlyDepthStencil(const spa::DimensionsI, ComparissonMode mode = ComparissonMode::Less) = 0;
+		virtual std::shared_ptr<IShaderResourceDepthStencil>		CreateShaderResourceDepthStencil(const spa::DimensionsI, const uint16_t slot, ComparissonMode mode = ComparissonMode::Less) = 0;
+		virtual std::unique_ptr<ITransformCBuf>						CreateTransformCBuf() = 0;
+		virtual std::unique_ptr<RenderWorker>						CreateRenderWorker(ccr::Master*) = 0;
 
 	protected:
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
