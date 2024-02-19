@@ -8,8 +8,6 @@
 
 namespace tryn::gfx
 {
-	class RenderQueue;
-
 	class IRenderPass
 	{
 	public:
@@ -40,10 +38,6 @@ namespace tryn::gfx
 		// resources
 		std::unique_ptr<ISink> pSink;
 		std::unique_ptr<ISource> pSource;
-
-		// queues
-		std::vector<RenderQueue*> pQueues;
-		std::vector<std::string> queueNames;
 
 		// identification
 		std::string name;

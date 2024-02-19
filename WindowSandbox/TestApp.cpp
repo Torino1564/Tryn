@@ -301,5 +301,4 @@ void TestApp::DoFrame()
 		}
 		camera.Update();
 	}
-	ecs::sys::SystemManager::Get().ExecuteSystems();
 }

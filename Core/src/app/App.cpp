@@ -2,6 +2,7 @@
 #include <Core/src/ecs/Entity.h>
 #include <chrono>
 #include <Core/src/gfx/Profiler.h>
+#include <Core/src/ecs/sys/SystemManager.h>
 
 namespace tryn::app
 {
@@ -41,6 +42,7 @@ namespace tryn::app
 
 	void App::PostFrame()
 	{
+		ecs::sys::SystemManager::Get().ExecuteSystems();
 		gfx->EndFrame();
 	}
 

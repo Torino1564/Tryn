@@ -27,10 +27,10 @@ namespace tryn::ecs
 			nextFree = booker.find_next(bookerPointer);
 		}
 		booker.flip(nextFree);
-		bookerPointer = nextFree;
+		bookerPointer = (uint32_t)nextFree;
 		if (bookerPointer > upperLimit)
 		{
-			upperLimit = nextFree;
+			upperLimit = (uint32_t)nextFree;
 		}
 
 		return {bookerPointer, UUID};

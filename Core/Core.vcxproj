@@ -63,6 +63,7 @@
     <ClCompile Include="src\gfx\Model\Node.cpp" />
     <ClCompile Include="src\gfx\Model\StaticMesh.cpp" />
     <ClCompile Include="src\gfx\PointLight.cpp" />
+    <ClCompile Include="src\gfx\Render\DefaultRenderGraphs\DefaultRenderGraph.cpp" />
     <ClCompile Include="src\gfx\Render\Jobs\BasicJob.cpp" />
     <ClCompile Include="src\gfx\Render\Jobs\InstancedJob.cpp" />
     <ClCompile Include="src\gfx\Render\RenderGraph.cpp" />
@@ -112,6 +113,8 @@
     <ClInclude Include="src\gfx\ComparissonMode.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11DepthStencil.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11RenderTargetView.h" />
+    <ClInclude Include="src\gfx\dx11\DX11RTVDSVFwd.h" />
+    <ClInclude Include="src\gfx\Render\DefaultRenderGraphs\DefaultRenderGraph.h" />
     <ClInclude Include="src\gfx\Render\Jobs\BasicJob.h" />
     <ClInclude Include="src\app\App.h" />
     <ClInclude Include="src\app\EntryPoint.h" />
@@ -190,6 +193,7 @@
     <ClInclude Include="src\gfx\Render\Jobs\IJob.h" />
     <ClInclude Include="src\gfx\Render\Jobs\InstancedJob.h" />
     <ClInclude Include="src\gfx\Render\Passes\ForwardLambertianPass.h" />
+    <ClInclude Include="src\gfx\Render\Passes\RenderQueuePass.h" />
     <ClInclude Include="src\gfx\Render\RenderPass.h" />
     <ClInclude Include="src\gfx\Render\SinkAndSource.h" />
     <ClInclude Include="src\gfx\Render\Step.h" />
@@ -221,6 +225,7 @@
     <ClInclude Include="src\gfx\Texture.h" />
     <ClInclude Include="src\gfx\Vertex.h" />
     <ClInclude Include="src\gfx\vulkan\Graphics.h" />
+    <ClInclude Include="src\gui\Element.h" />
     <ClInclude Include="src\ioc\Container.h" />
     <ClInclude Include="src\ioc\Exception.h" />
     <ClInclude Include="src\ioc\Ioc.h" />

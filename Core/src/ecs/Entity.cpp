@@ -7,12 +7,6 @@ namespace tryn::ecs
 	{
 		pArchetype->Free(UUID);
 	}
-	Entity::Entity(std::optional<std::string_view> newName)
-		:
-		name(newName.value_or(""))
-	{
-		
-	}
 	void Entity::SpawnControlWindow()
 	{
 

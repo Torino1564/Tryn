@@ -10,12 +10,12 @@ using namespace tryn::gfx;
 using namespace tryn;
 namespace Gfx
 {
-	class TestPass : public IRenderPass
+	class TestPass : public RenderQueuePass
 	{
 	public:
-		TestPass(const std::string& name)
+		TestPass(std::string name)
 			:
-			IRenderPass(name)
+			RenderQueuePass(std::move(name))
 		{
 			// declare sink and source
 			pSink = std::make_unique<SinkType>(In<IShaderResourceRenderTargetView>("rtv"));

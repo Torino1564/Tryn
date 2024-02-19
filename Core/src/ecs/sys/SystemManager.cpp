@@ -5,8 +5,23 @@
 #include <Core/src/utl/String.h>
 #include <Core/src/ecs/cmp/ComponentManager.h>
 
+#include <Core/src/ecs/sys/TransformSystem.h>
+#include <Core/src/ecs/sys/RenderSystem.h>
+#include <Core/src/ecs/sys/UpdatePositionSystem.h>
+#include <Core/src/ecs/sys/UpdateVelocitySystem.h>
+#include <Core/src/ecs/sys/AnimationSystem.h>
+
 namespace tryn::ecs::sys
 {
+	SystemManager::SystemManager()
+	{
+		// Register default systems
+		RegisterSystem<ecs::sys::TransformSystem>();
+		RegisterSystem<ecs::sys::RenderSystem>();
+		RegisterSystem<ecs::sys::UpdatePositionSystem>();
+		RegisterSystem<ecs::sys::UpdateVelocitySystem>();
+		RegisterSystem<ecs::sys::AnimationSystem>();
+	}
 	void SystemGraph::Finalize()
 	{
 		sul::dynamic_bitset<> systemsSet;
@@ -81,7 +96,10 @@ namespace tryn::ecs::sys
 	}
 	void SystemGraph::Execute()
 	{
-		trynass_msg(finalized, L"Can only execute a finalized System Graph!");
+		if (!finalized) [[unlikely]]
+		{
+			Finalize();
+		}
 
 		for (auto [levelIndex, level] : std::ranges::views::enumerate(levels))
 		{

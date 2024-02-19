@@ -44,7 +44,7 @@ namespace tryn::utl
 		}
 	private:
 		std::vector<std::byte> buffer;
-		using ElementSize = std::uint16_t;
+		using ElementSize = std::size_t;
 		using Offset = std::uint32_t;
 		std::vector<std::pair<Offset, ElementSize>> offsetVector;
 		std::uint32_t accumulatedOffset = 0;

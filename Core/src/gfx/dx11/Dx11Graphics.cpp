@@ -74,7 +74,8 @@ namespace tryn::gfx::dx11
 			//backbuffer
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
 			pSwap->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer) >> chk;
-			pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pTarget.ReleaseAndGetAddressOf());
+
+			pTarget = std::shared_ptr<DX11OutputOnlyRenderTargetView>{ new DX11OutputOnlyRenderTargetView(*this, pBackBuffer.Get()) };
 
 			dimensions.height = height;
 			dimensions.width = width;
@@ -107,8 +108,6 @@ namespace tryn::gfx::dx11
 			dsvd.Texture2D.MipSlice = 0u;
 			GetDevice().CreateDepthStencilView(pDepthStencil.Get(), &dsvd, &pDSV) >> chk;
 
-			tempContext->GetContext().OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
-
 			//viewport
 			viewport.Width = static_cast<float>(width);
 			viewport.Height = static_cast<float>(height);
@@ -122,11 +121,11 @@ namespace tryn::gfx::dx11
 			pSwap->SetFullscreenState((BOOL)false, nullptr) >> chk;
 
 			ImGui_ImplDX11_Init(pDevice.Get(), &GetContext());
-
 			});
 
 		startSignal_.release();
 		future.get();
+		InitDefaultRenderGraph();
 	}
 
 	Graphics::~Graphics()
@@ -143,7 +142,7 @@ namespace tryn::gfx::dx11
 			{
 				ImGui_ImplDX11_NewFrame();
 				ClearBuffer(0.0f,0.0f,0.2f);
-				renderGraph->Reset();
+				pRenderGraph->Reset();
 			});
 		future.get();
 	}
@@ -167,7 +166,7 @@ namespace tryn::gfx::dx11
 	void Graphics::ClearBuffer(float r, float g, float b)
 	{
 		const float color[]{ r, g, b, 1.0f };
-		GetContext().ClearRenderTargetView(pTarget.Get(), color);
+		GetContext().ClearRenderTargetView(pTarget->Get(), color);
 		GetContext().ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	}
 	void Graphics::DrawIndexed(int count)
@@ -194,6 +193,10 @@ namespace tryn::gfx::dx11
 	constexpr const char* Graphics::GetAPIString() const
 	{
 		return APIString;
+	}
+	std::shared_ptr<IGenericRenderTargetView> Graphics::GetRenderTargetView()
+	{
+		return pTarget;
 	}
 	void Graphics::DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation)
 	{

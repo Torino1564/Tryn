@@ -3,21 +3,25 @@
 #include <Core/src/gfx/IContext.h>
 #include <Core/src/gfx/Render/SinkAndSource.h>
 #include <Core/src/gfx/Bindables/RenderTargetView.h>
+#include <Core/src/gfx/Bindables/DepthStencil.h>
 #include <Core/src/gfx/BindablePool.h>
 
 namespace tryn::gfx
 {
 	IRenderGraph::IRenderGraph(IGraphics& gfx)
 		:
-		gfx(gfx)
+		gfx(gfx),
+		pRTV(gfx.GetRenderTargetView()),
+		pDSV(gfx.CreateOutputOnlyDepthStencil(gfx.GetDimensions()))
 	{
 		// Init Sink
-		pGlobalSink = std::make_unique<Sink<In<IShaderResourceRenderTargetView>>>(In<IShaderResourceRenderTargetView>("rtv"));
+		pGlobalSink = MakeUniqueSink(In<IShaderResourceRenderTargetView>("rtv"));
 
-		// Init Source and create resources
-		auto pSource = std::make_unique<Source<Out<IShaderResourceRenderTargetView>>>(Out<IShaderResourceRenderTargetView>("rtv"));
-		pRTV = gfx.CreateShaderResourceRenderTargetView(gfx.GetDimensions(), 10);
+		// Init Source
+		auto pSource = MakeUniqueSource(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"));
+
 		pSource->Set(pRTV, "rtv");
+		pSource->Set(pDSV, "depthStencil");
 
 		pGlobalSource = std::move(pSource);
 	}
@@ -45,7 +49,7 @@ namespace tryn::gfx
 		else
 		{
 			queues.emplace_back(renderQueueID);
-			queueKeys[renderQueueID] = queues.size() - 1;
+			queueKeys[renderQueueID] = (uint16_t)(queues.size() - 1);
 			return;
 		}
 	}

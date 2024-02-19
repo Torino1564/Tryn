@@ -33,7 +33,7 @@ namespace tryn::gfx::dx11
 			trynass_msg(!pCpuBuffer->Dirty(), L"Cant initialize a dirty Vertex Buffer!");
 
 			this->pCPUBuffer = pCpuBuffer;
-			stride = this->pCPUBuffer->Stride();
+			stride = (UINT)this->pCPUBuffer->Stride();
 
 			D3D11_BUFFER_DESC bd = {};
 			bd.Usage = D3D11_USAGE_DEFAULT;
@@ -148,7 +148,7 @@ namespace tryn::gfx::dx11
 
 			memcpy(msr.pData, this->pCPUBuffer->Data(), this->pCPUBuffer->ByteSize());
 
-			stride = this->pCPUBuffer->Stride();
+			stride = (UINT)this->pCPUBuffer->Stride();
 
 			context.Unmap(Data(), 0u);
 		}

@@ -237,11 +237,11 @@ namespace tryn::ecs
 		{
 			return upperLimit;
 		}
-		class EntityID ResolveEntityUUID();
-		void Free(class EntityID);
+		struct EntityID ResolveEntityUUID();
+		void Free(struct EntityID);
 		void Grow()
 		{
-			Resize(booker.size() * 1.5);
+			Resize((uint32_t)(booker.size() * 1.5f));
 		}
 		void Resize(std::uint32_t newSize)
 		{
@@ -271,7 +271,7 @@ namespace tryn::ecs
 		std::span<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> GetComponentGroups()
 		{
 			auto archetypeQuery = QueryArchetype<typename Cs::ComponentType...>();
-			mem::NativeArray<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> heterogeneusComponentSpanArray(archetypeQuery.size(), ECS::Get().allocator);
+			mem::NativeArray<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> heterogeneusComponentSpanArray((uint32_t)archetypeQuery.size(), ECS::Get().allocator);
 
 			for (auto i = 0 ; i < archetypeQuery.size() ; i++)
 			{

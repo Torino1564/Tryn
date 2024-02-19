@@ -68,6 +68,7 @@ namespace tryn::gfx
 					return bound[i];
 				}
 			}
+			return false;
 		}
 	private:
 		template <unsigned N = 0>
@@ -89,9 +90,9 @@ namespace tryn::gfx
 			}
 			if constexpr (N < std::tuple_size_v<DependencyTuple> - 1)
 			{
-				AcceptImpl_<N + 1>(dependencyName, pDependency);
+				return AcceptImpl_<N + 1>(dependencyName, pDependency);
 			}
-			trynchk_fail.msg(utl::ToWide(std::format("Did not find the dependency [{}]!", dependencyName))).ex();;
+			trynchk_fail.msg(utl::ToWide(std::format("Did not find the dependency [{}]!", dependencyName))).ex();
 		}
 		template <int N = 0, typename... Dependencies>
 		void AddDependencies(std::tuple<Dependencies&&...>&& container)
@@ -184,6 +185,7 @@ namespace tryn::gfx
 				}
 			}
 			trynchk_fail.msg(L"Invalid exposure name!");
+			return false;
 		}
 	private:
 		template <unsigned N = 0, typename T>
@@ -241,4 +243,16 @@ namespace tryn::gfx
 		std::bitset<sizeof...(Exposures)> bound;
 		std::vector<std::string> names;
 	};
+	
+	template <typename... Exposures>
+	std::unique_ptr<Source<Exposures...>> MakeUniqueSource(Exposures&&... outs)
+	{
+		return std::make_unique<Source<Exposures...>>(std::move(Source(std::forward<Exposures>(outs)...)));
+	}
+
+	template <typename... Dependencies>
+	std::unique_ptr<Sink<Dependencies...>> MakeUniqueSink(Dependencies&&... ins)
+	{
+		return std::make_unique<Sink<Dependencies...>>(std::move(Sink(std::forward<Dependencies>(ins)...)));
+	}
 }

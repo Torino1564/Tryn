@@ -3,6 +3,9 @@
 
 namespace tryn::gfx
 {
+	class IGenericRenderTargetView;
+	class IGenericDepthStencil;
+
 	template <BufferResourceType Type>
 	class IRenderTargetView;
 

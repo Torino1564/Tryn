@@ -5,6 +5,7 @@
 #include <d3d11_1.h>
 #include <Core/src/gfx/dx11/Dx11Context.h>
 #include <Core/third/stb_image/stb_image.h>
+#include "DX11RTVDSVFwd.h"
 
 namespace tryn::gfx
 {
@@ -34,6 +35,7 @@ namespace tryn::gfx::dx11
 		ID3D11Device& GetDevice();
 		IDXGISwapChain& GetSwapChain();
 		constexpr const char* GetAPIString() const override;
+		std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() override;
 
 		static constexpr DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
 		{
@@ -91,7 +93,7 @@ namespace tryn::gfx::dx11
 
 		Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
+		std::shared_ptr<DX11OutputOnlyRenderTargetView> pTarget;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 		D3D11_VIEWPORT viewport;
 	};

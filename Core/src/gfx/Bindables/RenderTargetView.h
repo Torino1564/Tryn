@@ -8,10 +8,23 @@
 
 namespace tryn::gfx
 {
-	template <BufferResourceType Type = BufferResourceType::OutputOnly>
-	class IRenderTargetView : public IBindable
+	class IGenericRenderTargetView : public IBindable
 	{
 	public:
+		virtual ~IGenericRenderTargetView() = default;
+		virtual void BindAsRTV(IGenericDepthStencil* pDSV)
+		{
+			trylog.warn(L"BindAsRTV no implementation found!");
+		}
+	protected:
+		spa::DimensionsI dimensions;
+	};
+
+	template <BufferResourceType Type = BufferResourceType::OutputOnly>
+	class IRenderTargetView : public IGenericRenderTargetView
+	{
+	public:
+		virtual ~IRenderTargetView() = default;
 		template <BufferResourceType Type = Type>
 		static std::string GenerateID(IGraphics& gfx, const spa::DimensionsI dimensions, uint16_t slot)
 			requires (Type == BufferResourceType::ShaderResource)

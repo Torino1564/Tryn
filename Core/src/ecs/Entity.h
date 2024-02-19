@@ -17,13 +17,18 @@ namespace tryn::ecs
 	class Entity
 	{
 	public:
+		Entity(std::string name = "?")
+			:
+			name(std::move(name))
+		{
+
+		}
 		virtual ~Entity();
-		Entity(std::optional<std::string_view> newName = std::nullopt);
 
 		template <ValidComponent... Cs>
-		static Entity CreateNew(std::optional<std::string_view> newName = std::nullopt)
+		static Entity CreateNew(std::string name = "?")
 		{
-			Entity ent(newName);
+			Entity ent(std::move(name));
 			ent.pArchetype = ArchetypeManager::Get().GetArchetype<Cs...>();
 			ent.UUID = ent.pArchetype->ResolveEntityUUID();
 			return ent;
@@ -52,7 +57,6 @@ namespace tryn::ecs
 		void SpawnControlWindow();
 
 	protected:
-
 		template <ValidComponent... Cs>
 		void AddComponent()
 		{

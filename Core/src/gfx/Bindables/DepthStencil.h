@@ -8,8 +8,14 @@
 
 namespace tryn::gfx
 {
+	class IGenericDepthStencil : public IBindable
+	{
+	public:
+		virtual ~IGenericDepthStencil() = default;
+	};
+
 	template <BufferResourceType Type>
-	class IDepthStencil : public IBindable
+	class IDepthStencil : public IGenericDepthStencil
 	{
 	public:
 		template <BufferResourceType Type = Type>

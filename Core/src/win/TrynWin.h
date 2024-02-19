@@ -1,12 +1,13 @@
 #pragma once
-
+#pragma 
 #ifndef ZC_FULL_WINTARD
-#define _WIN32_WINNT 0x0602
 #include <sdkddkver.h>
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
+#ifndef STRICT
 #define STRICT
+#endif
 #define NOGDICAPMASKS
 #define NOSYSMETRICS
 #define NOMENUS

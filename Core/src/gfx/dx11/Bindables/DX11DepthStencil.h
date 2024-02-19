@@ -9,13 +9,21 @@ namespace tryn::gfx::dx11
 	class DX11DepthStencil : public IDepthStencil<Type>
 	{
 	public:
+		ID3D11DepthStencilView* Get()
+		{
+			return pDSV.Get();
+		}
+		ID3D11DepthStencilView** GetAddressOf()
+		{
+			return pDSV.GetAddressOf();
+		}
 		template <BufferResourceType Type = Type>
 		DX11DepthStencil(Graphics& gfx, const spa::DimensionsI dimensions, ComparissonMode mode = ComparissonMode::Less)
 			requires (Type == BufferResourceType::OutputOnly)
 		:
 			gfx(gfx)
 		{
-			DSVCreation(gfx, dimensions, mode);
+			DSVCreation(gfx, dimensions, mode, (Type == BufferResourceType::ShaderResource));
 		}
 		template <BufferResourceType Type = Type>
 		DX11DepthStencil(Graphics& gfx, const spa::DimensionsI dimensions, const uint16_t slot, ComparissonMode mode = ComparissonMode::Less)
@@ -23,7 +31,7 @@ namespace tryn::gfx::dx11
 		:
 			gfx(gfx)
 		{
-			DSVCreation(gfx, dimensions, mode);
+			DSVCreation(gfx, dimensions, mode, (Type == BufferResourceType::ShaderResource));
 			SRVCreation(gfx, slot);
 		}
 		void Bind() override
@@ -52,7 +60,7 @@ namespace tryn::gfx::dx11
 			}
 		}
 	private:
-		void DSVCreation(Graphics& gfx, const spa::DimensionsI dimensions, ComparissonMode mode)
+		void DSVCreation(Graphics& gfx, const spa::DimensionsI dimensions, ComparissonMode mode, bool isShaderResource)
 		{
 			// DSV Creation
 			D3D11_DEPTH_STENCIL_DESC dsd = {};
@@ -73,7 +81,7 @@ namespace tryn::gfx::dx11
 			td.SampleDesc.Count = 1u;
 			td.SampleDesc.Quality = 0u;
 			td.Usage = D3D11_USAGE_DEFAULT;
-			td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+			td.BindFlags = D3D11_BIND_DEPTH_STENCIL | (isShaderResource ? D3D11_BIND_SHADER_RESOURCE : 0);
 			gfx.GetDevice().CreateTexture2D(&td, nullptr, &pDepthStencil) >> chk;
 
 			D3D11_DEPTH_STENCIL_VIEW_DESC dsvd = {};

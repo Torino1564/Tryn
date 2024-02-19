@@ -139,7 +139,7 @@ namespace tryn::ecs::sys
 			graph.Finalize();
 		}
 	private:
-		SystemManager() = default;
+		SystemManager();
 		SystemGraph graph;
 	};
 }

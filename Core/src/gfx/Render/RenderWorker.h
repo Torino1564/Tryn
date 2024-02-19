@@ -2,6 +2,7 @@
 #include <Core/src/ccr/Master.h>
 #include <Core/src/ccr/Worker.h>
 #include <Core/src/gfx/Render/RenderTask.h>
+#include <Core/src/gfx/IContext.h>
 
 namespace tryn::gfx
 {
@@ -9,7 +10,6 @@ namespace tryn::gfx
 	class Drawable;
 	class Step;
 	class IGraphics;
-	class IContext;
 
 	class RenderWorker : public ccr::Worker
 	{

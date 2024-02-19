@@ -57,6 +57,7 @@ namespace tryn::gfx
 	class StaticMesh;
 	class VertexLayout;
 	class RenderWorker;
+	class IGenericRenderTargetView;
 
 	class IGraphics
 	{
@@ -68,7 +69,6 @@ namespace tryn::gfx
 			std::optional<int> height;
 			HWND hWnd{};
 		};
-
 		virtual ~IGraphics() = default;
 		virtual void BeginFrame() = 0;
 		virtual void EndFrame() = 0;
@@ -84,6 +84,7 @@ namespace tryn::gfx
 		void SetProjection(glm::mat4 projection);
 		const spa::DimensionsI& GetDimensions() const;
 		virtual constexpr GraphicAPI GetType() const = 0;
+		virtual std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() = 0;
 		static const std::vector<std::string>& GetApiArray()
 		{
 			static std::vector<std::string> graphicApiString = {
@@ -132,11 +133,13 @@ namespace tryn::gfx
 		virtual std::unique_ptr<ITransformCBuf>						CreateTransformCBuf() = 0;
 		virtual std::unique_ptr<RenderWorker>						CreateRenderWorker(ccr::Master*) = 0;
 
+
 	protected:
+		void InitDefaultRenderGraph();
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
 		glm::mat4 camera = {};
 		glm::mat4 projection = {};
-		std::unique_ptr<IRenderGraph> renderGraph;
+		std::unique_ptr<IRenderGraph> pRenderGraph;
 
 		// Multithreading stuff
 		mutable std::mutex mtx;

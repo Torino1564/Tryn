@@ -1,22 +1,23 @@
 #include "IGraphics.h"
 #include <Core/src/log/Log.h>
+#include <Core/src/gfx/Render/DefaultRenderGraphs/DefaultRenderGraph.h>
 
 namespace tryn::gfx
 {
 	void IGraphics::SetRenderGraph(std::unique_ptr<IRenderGraph>&& renderGraph_p)
 	{
-		renderGraph = std::move(renderGraph_p);
+		pRenderGraph = std::move(renderGraph_p);
 	}
 
 	IRenderGraph& IGraphics::GetRenderGraph()
 	{
-		return *renderGraph;
+		return *pRenderGraph;
 	}
 
 	void IGraphics::ExecuteFrame()
 	{
-		trynass_msg(renderGraph != nullptr, L"Tried to execute frame with no render graph set!");
-		renderGraph->ExecuteFrame(*this);
+		trynass_msg(pRenderGraph != nullptr, L"Tried to execute frame with no render graph set!");
+		pRenderGraph->ExecuteFrame(*this);
 	}
 
 	glm::mat4& IGraphics::GetCameraMatrix()
@@ -61,5 +62,10 @@ namespace tryn::gfx
 				});
 			tasks_.PopExecute();
 		}
+	}
+	void IGraphics::InitDefaultRenderGraph()
+	{
+		// Default render graph creation
+		pRenderGraph = std::make_unique<DefaultRenderGraph>(*this);
 	}
 }

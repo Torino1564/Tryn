@@ -24,6 +24,8 @@ namespace tryn::gfx
 		void AddRenderQueue(std::string renderQueueID);
 		virtual void RunQueues(IGraphics& gfx) {};
 		RenderQueue& GetRenderQueueByID(std::string_view ID);
+		void Reset();
+	protected:
 		template <typename Pass>
 		void AddPass(std::string name)
 		{
@@ -34,8 +36,6 @@ namespace tryn::gfx
 			std::string passName;
 			std::string resourceName;
 		};
-		void Reset();
-	protected:
 		void AddLinkage(LinkageParam&& source_, LinkageParam&& destination_);
 		void Finalize();
 		std::vector<std::unique_ptr<IRenderPass>> pPasses;
@@ -49,8 +49,8 @@ namespace tryn::gfx
 		IGraphics& gfx;
 
 		// Global graph resources
-		std::shared_ptr<IShaderResourceRenderTargetView> pRTV;
-		std::shared_ptr<IShaderResourceDepthStencil> pDSV;
+		std::shared_ptr<IGenericRenderTargetView> pRTV;
+		std::shared_ptr<IGenericDepthStencil> pDSV;
 		std::unique_ptr<ISink> pGlobalSink;
 		std::unique_ptr<ISource> pGlobalSource;
 

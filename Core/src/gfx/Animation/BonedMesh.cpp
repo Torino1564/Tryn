@@ -34,7 +34,7 @@ namespace tryn::gfx::ani
 		}
 
 
-		for (int i = 0; i < mesh.mNumBones; i++)
+		for (unsigned int i = 0; i < mesh.mNumBones; i++)
 		{
 			auto& bone = *mesh.mBones[i];
 			if (bone.mNumWeights == 0)
@@ -50,7 +50,7 @@ namespace tryn::gfx::ani
 			
 			boneIt->boneWeights.reserve(bone.mNumWeights);
 
-			for (auto i = 0; i < bone.mNumWeights; i++)
+			for (unsigned int i = 0; i < bone.mNumWeights; i++)
 			{
 				boneIt->boneWeights.push_back({ bone.mWeights[i].mVertexId, bone.mWeights[i].mWeight });
 			}
@@ -101,7 +101,7 @@ namespace tryn::gfx::ani
 	}
 	void BonedMesh::AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string& name)
 	{
-		animationNameMapper[name] = pAnimations.size();
+		animationNameMapper[name] = (uint16_t)pAnimations.size();
 		pAnimations.push_back(pAnimation);
 		interfaces.emplace_back(skeleton, *pAnimation);
 	}

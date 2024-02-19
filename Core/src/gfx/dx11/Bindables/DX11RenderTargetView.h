@@ -2,6 +2,8 @@
 #include <Core/src/gfx/bindables/RenderTargetView.h>
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
 #include <Core/src/utl/EmptyType.h>
+#include <Core/src/gfx/dx11/DX11RTVDSVFwd.h>
+#include <Core/src/gfx/dx11/Bindables/DX11DepthStencil.h>
 
 namespace tryn::gfx::dx11
 {
@@ -15,6 +17,7 @@ namespace tryn::gfx::dx11
 		:
 			gfx(gfx)
 		{
+			this->dimensions = dimensions;
 			RTVCreation(gfx, dimensions);
 		}
 
@@ -24,8 +27,37 @@ namespace tryn::gfx::dx11
 		:
 			gfx(gfx)
 		{
+			this->dimensions = dimensions;
 			RTVCreation(gfx, dimensions);
 			SRVCreation(gfx, slot);
+		}
+		template <BufferResourceType Type = Type>
+		DX11RenderTargetView(Graphics& gfx, ID3D11Texture2D* pTexture)
+			requires (Type == BufferResourceType::OutputOnly)
+		:
+			gfx(gfx)
+		{
+			RTVCreation(pTexture);
+		}
+		void BindAsRTV(IGenericDepthStencil* pDSV) override
+		{
+			ID3D11DepthStencilView* pDepthStencilView = nullptr;
+
+			if (dynamic_cast<DX11OutputOnlyDepthStencil*>(pDSV))
+			{
+				pDepthStencilView = static_cast<DX11OutputOnlyDepthStencil*>(pDSV)->Get();
+			}
+			else if (dynamic_cast<DX11ShaderResourceDepthStencil*>(pDSV))
+			{
+				pDepthStencilView = static_cast<DX11ShaderResourceDepthStencil*>(pDSV)->Get();
+			}
+			else
+			{
+				trylog.error(L"Invalid Depth Stencil View passed to the BindAsRTV function (API type missmatch)");
+				return;
+			}
+			
+			gfx.GetContext().OMSetRenderTargets(1u, pRTV.GetAddressOf(), pDepthStencilView);
 		}
 		void Bind() override
 		{
@@ -52,13 +84,63 @@ namespace tryn::gfx::dx11
 				dx11ctxt.PSGetShaderResources(this->slot, 1, this->pSRV.GetAddressOf());
 			}
 		}
+		ID3D11RenderTargetView* Get()
+		{
+			return pRTV.Get();
+		}
+		auto GetAddressOf()
+		{
+			return pRTV.GetAddressOf();
+		}
 	private:
 		void RTVCreation(Graphics& gfx, const spa::DimensionsI dimensions)
 		{
 			// RTV Creation
-			Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
-			gfx.GetSwapChain().GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer) >> chk;
-			gfx.GetDevice().CreateRenderTargetView(pBackBuffer.Get(), nullptr, pRTV.ReleaseAndGetAddressOf());
+			D3D11_TEXTURE2D_DESC textureDesc = {};
+			textureDesc.Width = dimensions.width;
+			textureDesc.Height = dimensions.height;
+			textureDesc.MipLevels = 1;
+			textureDesc.ArraySize = 1;
+			textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			textureDesc.SampleDesc.Count = 1;
+			textureDesc.SampleDesc.Quality = 0;
+			textureDesc.Usage = D3D11_USAGE_DEFAULT;
+			textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE; // never do we not want to bind offscreen RTs as inputs
+			textureDesc.CPUAccessFlags = 0;
+			textureDesc.MiscFlags = 0;
+
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
+			gfx.GetDevice().CreateTexture2D(
+				&textureDesc, nullptr, &pTexture
+			) >> chk;
+
+			// create the target view on the texture
+			D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+			rtvDesc.Format = textureDesc.Format;
+			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+			rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
+			gfx.GetDevice().CreateRenderTargetView(
+				pTexture.Get(), &rtvDesc, &pRTV
+			) >> chk;
+		}
+		void RTVCreation(ID3D11Texture2D* pTexture)
+		{
+			// get information from texture about dimensions
+			D3D11_TEXTURE2D_DESC textureDesc;
+			pTexture->GetDesc(&textureDesc);
+			this->dimensions.width = textureDesc.Width;
+			this->dimensions.height = textureDesc.Height;
+
+			// create the target view on the texture
+			D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+			rtvDesc.Format = textureDesc.Format;
+
+			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+			rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
+
+			gfx.GetDevice().CreateRenderTargetView(
+				pTexture, &rtvDesc, &pRTV
+			) >> chk;
 		}
 		void SRVCreation(Graphics& gfx, uint16_t slot)
 		{
@@ -84,7 +166,4 @@ namespace tryn::gfx::dx11
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRTV;
 		[[no_unique_address]] std::conditional_t<Type == BufferResourceType::ShaderResource, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, utl::empty_t> pSRV;
 	};
-
-	using DX11OutputOnlyRenderTargetView = DX11RenderTargetView<BufferResourceType::OutputOnly>;
-	using DX11ShaderResourceRenderTargetView = DX11RenderTargetView<BufferResourceType::ShaderResource>;
 }

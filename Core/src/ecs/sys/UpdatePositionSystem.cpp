@@ -31,9 +31,9 @@ namespace tryn::ecs::sys
 
 		for (auto i = 0; i < positionArray.Size(); i++)
 		{
-			positionArray[i].position.x += velocityArray[i].velocity.x * dt;
-			positionArray[i].position.y += velocityArray[i].velocity.y * dt;
-			positionArray[i].position.z += velocityArray[i].velocity.z * dt;
+			positionArray[i].position.x += (float)velocityArray[i].velocity.x * (float)dt;
+			positionArray[i].position.y += (float)velocityArray[i].velocity.y * (float)dt;
+			positionArray[i].position.z += (float)velocityArray[i].velocity.z * (float)dt;
 		}
 	}
 }

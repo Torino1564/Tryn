@@ -20,8 +20,6 @@ namespace tryn::gfx
 			auto pIJob = static_cast<IJob*>(anyVector[i]);
 			pIJob->Execute(gfx);
 		}
-		pJobs.clear();
-		anyVector.Clear();
 	}
 
 	void RenderQueue::RunJobsAsync(IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers, gfx::PointLight* pPointLight)
@@ -88,8 +86,6 @@ namespace tryn::gfx
 		{
 			worker->SubmitWork(gfx);
 		}
-		pJobs.clear();
-		anyVector.Clear();
 	}
 
 	void RenderQueue::Clear()
