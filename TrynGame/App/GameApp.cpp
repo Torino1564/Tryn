@@ -43,7 +43,6 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 void TrynGameApp::DoFrame()
 {
 	// Process input
-
 	auto& playerVelocity = pPlayer->GetComponent<ecs::cmp::VelocityComponent>().velocity;
 
 	if (!wnd->IsCursorEnabled())
@@ -99,7 +98,21 @@ void TrynGameApp::DoFrame()
 		{
 			camera.Rotate(delta->x, delta->y);
 		}
-
-		
 	}
+
+	camera.ShowControls();
+
+	// Toggle 1st Person Camera
+	if (const auto event = wnd->keyboard.ReadKey(); event.IsTypePress() && event.GetCode() == VK_ESCAPE)
+	{
+		if (wnd->IsCursorEnabled())
+		{
+			wnd->DisableCursor();
+		}
+		else
+		{
+			wnd->EnableCursor();
+		}
+	}
+	camera.Update();
 }
