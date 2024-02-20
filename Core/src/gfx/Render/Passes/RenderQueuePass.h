@@ -15,7 +15,7 @@ namespace tryn::gfx
 		}
 	protected:
 		// queues
-		std::vector<RenderQueue*> pQueues;
+		std::vector<RenderQueue> queues;
 		std::vector<std::string> queueNames;
 	};
 }

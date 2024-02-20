@@ -18,19 +18,20 @@ namespace tryn::gfx
 			pSource = std::make_unique<SourceType>(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"));
 
 			// declare queues to utilize
-			queueNames.push_back("Lambertian");
+			queues.emplace_back("lambertian");
+			queueNames.push_back("lambertian");
 		}
 		void Execute(IGraphics& gfx) override
 		{
 			// bind Render Target View
 			auto& concreteSink = *reinterpret_cast<SinkType*>(pSink.get());
 			auto& pRTV = concreteSink.Get<IGenericRenderTargetView>("rtv");
-			auto& pDSV = concreteSink.Get<IGenericDepthStencil>("rtv");
+			auto& pDSV = concreteSink.Get<IGenericDepthStencil>("depthStencil");
 
 			pRTV->BindAsRTV(pDSV.get());
 			
 			// This queue pass knows that the first queue is the lambertian one (because it was declared that way on its constructor)
-			auto& lambertianQueue = *pQueues[0];
+			auto& lambertianQueue = queues[0];
 			
 			// All this pass does is run the lambertian queue
 			lambertianQueue.RunJobs(gfx);
