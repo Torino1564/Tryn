@@ -55,12 +55,28 @@ namespace tryn::gfx
 	}
 	RenderQueue& IRenderGraph::GetRenderQueueByID(std::string_view ID)
 	{
-		if (queueKeys.find(ID.data()) != queueKeys.end())
+		auto it = queueKeys.find(ID.data());
+		if (it != queueKeys.end())
 		{
-			return queues[queueKeys[ID.data()]];
+			return queues[(*it).second];
 		}
 
 		throw RenderGraphException{ std::format("Did not find a render queue with the ID: {}",ID.data()) };
+	}
+
+	RenderQueue& IRenderGraph::GetOrAddRenderQueue(const std::string& renderQueueName)
+	{
+		auto it = queueKeys.find(renderQueueName);
+		if (it != queueKeys.end())
+		{
+			return queues[(*it).second];
+		}
+		else
+		{
+			queues.emplace_back(renderQueueName);
+			queueKeys[renderQueueName] = (uint16_t)(queues.size() - 1);
+			return queues.back();
+		}
 	}
 
 	void IRenderGraph::Reset()

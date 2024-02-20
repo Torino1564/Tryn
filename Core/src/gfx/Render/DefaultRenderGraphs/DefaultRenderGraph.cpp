@@ -7,7 +7,7 @@ namespace tryn::gfx
 		:
 		IRenderGraph(gfx)
 	{
-		AddPass<ForwardLambertianPass>("lambertian");
+		AddPass(std::move(ForwardLambertianPass(*this)));
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "rtv" }, LinkageParam{ .passName = "lambertian", .resourceName = "rtv" });
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "depthStencil" }, LinkageParam{ .passName = "lambertian", .resourceName = "depthStencil" });
 

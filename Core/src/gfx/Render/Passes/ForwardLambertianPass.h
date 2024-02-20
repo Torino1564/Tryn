@@ -9,17 +9,13 @@ namespace tryn::gfx
 	class ForwardLambertianPass : public RenderQueuePass
 	{
 	public:
-		ForwardLambertianPass(std::string name = std::string("lambertian"))
+		ForwardLambertianPass(class IRenderGraph& graph, std::string name = std::string("lambertian"))
 			:
-			RenderQueuePass(std::move(name))
+			RenderQueuePass(std::move(name), graph, std::vector<std::string>{"Lambertian"})
 		{
 			// declare sink and source
 			pSink = std::make_unique<SinkType>(In<IGenericRenderTargetView>("rtv"), In<IGenericDepthStencil>("depthStencil"));
 			pSource = std::make_unique<SourceType>(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"));
-
-			// declare queues to utilize
-			queues.emplace_back("lambertian");
-			queueNames.push_back("lambertian");
 		}
 		void Execute(IGraphics& gfx) override
 		{
@@ -31,7 +27,7 @@ namespace tryn::gfx
 			pRTV->BindAsRTV(pDSV.get());
 			
 			// This queue pass knows that the first queue is the lambertian one (because it was declared that way on its constructor)
-			auto& lambertianQueue = queues[0];
+			auto& lambertianQueue = *pQueues[0];
 			
 			// All this pass does is run the lambertian queue
 			lambertianQueue.RunJobs(gfx);

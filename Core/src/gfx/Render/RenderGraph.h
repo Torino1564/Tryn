@@ -24,12 +24,13 @@ namespace tryn::gfx
 		void AddRenderQueue(std::string renderQueueID);
 		virtual void RunQueues(IGraphics& gfx) {};
 		RenderQueue& GetRenderQueueByID(std::string_view ID);
+		RenderQueue& GetOrAddRenderQueue(const std::string& renderQueueName);
 		void Reset();
 	protected:
 		template <typename Pass>
-		void AddPass(std::string name)
+		void AddPass(Pass&& pass)
 		{
-			pPasses.emplace_back(std::make_unique<Pass>(std::move(name)));
+			pPasses.emplace_back(std::unique_ptr<Pass>(new Pass(std::forward<Pass>(pass))));
 		}
 		struct LinkageParam
 		{

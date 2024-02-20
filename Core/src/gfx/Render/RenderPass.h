@@ -13,7 +13,13 @@ namespace tryn::gfx
 	public:
 		virtual ~IRenderPass() = default;
 		IRenderPass(std::string name) : name(std::move(name)) {}
-		virtual void Execute(IGraphics& gfx) = 0;
+		IRenderPass(IRenderPass&& rhs) noexcept
+		{
+			pSink = std::move(rhs.pSink);
+			pSource = std::move(rhs.pSource);
+			name = std::move(rhs.name);
+		}
+		virtual void Execute(class IGraphics& gfx) = 0;
 		const std::string& GetName() const
 		{
 			return name;

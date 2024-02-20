@@ -13,9 +13,9 @@ namespace Gfx
 	class TestPass : public RenderQueuePass
 	{
 	public:
-		TestPass(std::string name)
+		TestPass(IRenderGraph& graph, std::string name)
 			:
-			RenderQueuePass(std::move(name))
+			RenderQueuePass(std::move(name), graph, {"TestQueue"})
 		{
 			// declare sink and source
 			pSink = std::make_unique<SinkType>(In<IShaderResourceRenderTargetView>("rtv"));
@@ -46,7 +46,7 @@ namespace Gfx
 			:
 			IRenderGraph(gfx)
 		{
-			AddPass<TestPass>("testPass");
+			AddPass(TestPass(*this, "testPass"));
 			AddLinkage(LinkageParam{ .passName = "global", .resourceName = "rtv" },
 				LinkageParam{ .passName = "testPass", .resourceName = "rtv" });
 			
