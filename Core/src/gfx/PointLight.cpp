@@ -9,7 +9,7 @@ namespace tryn::gfx
 		gfx(gfx)
 	{
 		// Model
-		pModel = std::make_unique<Model>(gfx, "resources/models/sphere.obj", glm::vec3{0.1f,0.1f,0.1f}, Techniques::Flat);
+		pModel = std::make_unique<Model>(gfx, "Game/Resources/Models/sphere.obj", glm::vec3{0.1f,0.1f,0.1f}, Techniques::Flat);
 
 		parameters.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
 		parameters.viewLightPos = glm::vec3(0.0f, 3.0f, 0.0f);

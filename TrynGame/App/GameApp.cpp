@@ -1,5 +1,7 @@
 #include "GameApp.h"
 
+#include <Core/src/gfx/PointLight.h>
+
 #include <Core/src/app/EntryPoint.h>
 #include <Core/src/ecs/cmp/VelocityComponent.h>
 #include <Core/src/ecs/cmp/PositionComponent.h>
@@ -21,7 +23,7 @@ app::App* app::CreateApp(int argc, char** argv)
 #endif
 			);
 		});
-
+	
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{ window->GetClientDimensions().width, window->GetClientDimensions().height, window->GetHandle() });
 
 	auto pApp = new TrynGameApp(window, gfx);
@@ -34,37 +36,41 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 	this->wnd = pWindow;
 	this->gfx = pGraphics;
 
-	pPlayer = std::make_unique<Player>("player1", "C:/dev/Tryn/TrynGame/Game/Resources/Models/PlayerModels/redCube/redCube.fbx", Gfx());
+	pPlayer = std::make_unique<Player>("player1", "Game/Resources/Models/PlayerModels/gobber/GoblinX.obj", Gfx());
 
-	camera.GetPosition() = { 0.0f, 10.0f, 0.0f };
-	camera.GetDirection() = { 0.0f, -90.0f, 0.0f };
+	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
+
+	this->wnd->keyboard.DisableAutoRepeat();
+
+	camera.GetPosition() = { 0.0f, 0.0f, -3.0f };
 }
 
 void TrynGameApp::DoFrame()
 {
 	// Process input
 	auto& playerVelocity = pPlayer->GetComponent<ecs::cmp::VelocityComponent>().velocity;
-
+	camera.Submit(Gfx());
+	pPointLight->SubmitLight(Gfx());
 	if (!wnd->IsCursorEnabled())
 	{
 		if (wnd->keyboard.IsKeyPressed('A'))
 		{
-			playerVelocity = { -1.0f,0.0f,0.0f };
+			//playerVelocity = { -1.0f,0.0f,0.0f };
 			camera.Translate({ -dt,0.0f,0.0f });
 		}
 		if (wnd->keyboard.IsKeyPressed('S'))
 		{
-			playerVelocity = { 0.0f,0.0f,-1.0f };
+			//playerVelocity = { 0.0f,0.0f,-1.0f };
 			camera.Translate({ 0.0f,0.0f,-dt });
 		}
 		if (wnd->keyboard.IsKeyPressed('D'))
 		{
-			playerVelocity = { 1.0f,0.0f,0.0f };
+			//playerVelocity = { 1.0f,0.0f,0.0f };
 			camera.Translate({ dt,0.0f,0.0f });
 		}
 		if (wnd->keyboard.IsKeyPressed('W'))
 		{
-			playerVelocity = { 1.0f,0.0f,1.0f };
+			//playerVelocity = { 1.0f,0.0f,1.0f };
 			camera.Translate({ 0.0f,0.0f,dt });
 		}
 		if (wnd->keyboard.IsKeyPressed(VK_SPACE))
@@ -92,7 +98,7 @@ void TrynGameApp::DoFrame()
 			camera.Rotate(dt, 0.0f);
 		}
 
-		camera.GetPosition() = pPlayer->GetComponent<ecs::cmp::PositionComponent>().position;
+		//camera.GetPosition() = pPlayer->GetComponent<ecs::cmp::PositionComponent>().position;
 
 		while (const auto delta = wnd->mouse.ReadRawDelta())
 		{

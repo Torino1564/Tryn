@@ -1,6 +1,7 @@
 #include "IGraphics.h"
 #include <Core/src/log/Log.h>
 #include <Core/src/gfx/Render/DefaultRenderGraphs/DefaultRenderGraph.h>
+#include <Core/third/glm/ext/matrix_clip_space.hpp>
 
 namespace tryn::gfx
 {
@@ -62,6 +63,13 @@ namespace tryn::gfx
 				});
 			tasks_.PopExecute();
 		}
+	}
+	void IGraphics::InitDefaults()
+	{
+		// Init Projection Matrix
+		SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(dimensions.width), static_cast<float>(dimensions.height), 0.1f, 10000000000.0f));
+
+		InitDefaultRenderGraph();
 	}
 	void IGraphics::InitDefaultRenderGraph()
 	{

@@ -58,6 +58,16 @@ namespace tryn::gfx::dx11
 			}
 			
 			gfx.GetContext().OMSetRenderTargets(1u, pRTV.GetAddressOf(), pDepthStencilView);
+
+			// configure viewport
+			D3D11_VIEWPORT vp;
+			vp.Width = (float)this->dimensions.width;
+			vp.Height = (float)this->dimensions.height;
+			vp.MinDepth = 0.0f;
+			vp.MaxDepth = 1.0f;
+			vp.TopLeftX = 0.0f;
+			vp.TopLeftY = 0.0f;
+			gfx.GetContext().RSSetViewports(1u, &vp);
 		}
 		void Bind() override
 		{

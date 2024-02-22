@@ -11,6 +11,7 @@ public:
 	void DoFrame() override;
 
 private:
+	std::unique_ptr<gfx::PointLight> pPointLight;
 	std::unique_ptr<class Player> pPlayer;
 	gfx::Camera camera;
 };

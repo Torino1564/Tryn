@@ -125,7 +125,7 @@ namespace tryn::gfx::dx11
 
 		startSignal_.release();
 		future.get();
-		InitDefaultRenderGraph();
+		InitDefaults();
 	}
 
 	Graphics::~Graphics()

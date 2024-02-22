@@ -24,9 +24,7 @@ namespace tryn::app
 			auto duration = end - start;
 			const auto ticks = (end - start).count();
 			dt = static_cast<long double>(ticks / 1e6);
-//			trylog.debug(L"Finished Frame");
 		}
-	//	trylog.info(L"Closing window");
 	}
 
 	void App::PreFrame()

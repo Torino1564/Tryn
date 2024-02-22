@@ -135,7 +135,8 @@ namespace tryn::gfx
 
 
 	protected:
-		void InitDefaultRenderGraph();
+		void InitDefaults();
+		virtual void InitDefaultRenderGraph();
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
 		glm::mat4 camera = {};
 		glm::mat4 projection = {};
