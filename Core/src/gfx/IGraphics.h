@@ -85,6 +85,7 @@ namespace tryn::gfx
 		const spa::DimensionsI& GetDimensions() const;
 		virtual constexpr GraphicAPI GetType() const = 0;
 		virtual std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() = 0;
+		virtual std::shared_ptr<IGenericDepthStencil> GetDepthStencilView() = 0;
 		static const std::vector<std::string>& GetApiArray()
 		{
 			static std::vector<std::string> graphicApiString = {

@@ -80,34 +80,6 @@ namespace tryn::gfx::dx11
 			dimensions.height = height;
 			dimensions.width = width;
 
-			//Z Buffer
-			D3D11_DEPTH_STENCIL_DESC dsd = {};
-			dsd.DepthEnable = TRUE;
-			dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-			dsd.DepthFunc = D3D11_COMPARISON_LESS;
-			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSState;
-			GetDevice().CreateDepthStencilState(&dsd, &pDSState) >> chk;
-			tempContext->GetContext().OMSetDepthStencilState(pDSState.Get(), 1u);
-
-			Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthStencil;
-			D3D11_TEXTURE2D_DESC td = {};
-			td.Height = height;
-			td.Width = width;
-			td.MipLevels = 1u;
-			td.ArraySize = 1u;
-			td.Format = DXGI_FORMAT_D32_FLOAT;
-			td.SampleDesc.Count = 1u;
-			td.SampleDesc.Quality = 0u;
-			td.Usage = D3D11_USAGE_DEFAULT;
-			td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-			pDevice->CreateTexture2D(&td, nullptr, &pDepthStencil) >> chk;
-
-			D3D11_DEPTH_STENCIL_VIEW_DESC dsvd = {};
-			dsvd.Format = DXGI_FORMAT_UNKNOWN;
-			dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-			dsvd.Texture2D.MipSlice = 0u;
-			GetDevice().CreateDepthStencilView(pDepthStencil.Get(), &dsvd, &pDSV) >> chk;
-
 			//viewport
 			viewport.Width = static_cast<float>(width);
 			viewport.Height = static_cast<float>(height);
@@ -115,9 +87,14 @@ namespace tryn::gfx::dx11
 			viewport.MaxDepth = 1.0f;
 			viewport.TopLeftX = 0.0f;
 			viewport.TopLeftY = 0.0f;
+
 			tempContext->GetContext().RSSetViewports(1u, &viewport);
 
 			pContext = std::unique_ptr<IContext>(tempContext);
+
+			//Z Buffer
+			pDSV = std::make_shared<DX11OutputOnlyDepthStencil>(*this, dimensions);
+
 			pSwap->SetFullscreenState((BOOL)false, nullptr) >> chk;
 
 			ImGui_ImplDX11_Init(pDevice.Get(), &GetContext());
@@ -167,7 +144,7 @@ namespace tryn::gfx::dx11
 	{
 		const float color[]{ r, g, b, 1.0f };
 		GetContext().ClearRenderTargetView(pTarget->Get(), color);
-		GetContext().ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+		GetContext().ClearDepthStencilView(pDSV->Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	}
 	void Graphics::DrawIndexed(int count)
 	{
@@ -197,6 +174,10 @@ namespace tryn::gfx::dx11
 	std::shared_ptr<IGenericRenderTargetView> Graphics::GetRenderTargetView()
 	{
 		return pTarget;
+	}
+	std::shared_ptr<IGenericDepthStencil> Graphics::GetDepthStencilView()
+	{
+		return pDSV;
 	}
 	void Graphics::DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation)
 	{

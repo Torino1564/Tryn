@@ -36,6 +36,7 @@ namespace tryn::gfx::dx11
 		IDXGISwapChain& GetSwapChain();
 		constexpr const char* GetAPIString() const override;
 		std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() override;
+		std::shared_ptr<IGenericDepthStencil> GetDepthStencilView() override;
 
 		static constexpr DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
 		{
@@ -94,7 +95,7 @@ namespace tryn::gfx::dx11
 		Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 		std::shared_ptr<DX11OutputOnlyRenderTargetView> pTarget;
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
+		std::shared_ptr<DX11OutputOnlyDepthStencil> pDSV;
 		D3D11_VIEWPORT viewport;
 	};
 }

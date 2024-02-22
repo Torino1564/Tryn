@@ -5,6 +5,7 @@
 #include <Core/src/gfx/Bindables/RenderTargetView.h>
 #include <Core/src/gfx/Bindables/DepthStencil.h>
 #include <Core/src/gfx/BindablePool.h>
+#include <Core/src/gfx/PointLight.h>
 
 namespace tryn::gfx
 {
@@ -12,7 +13,7 @@ namespace tryn::gfx
 		:
 		gfx(gfx),
 		pRTV(gfx.GetRenderTargetView()),
-		pDSV(gfx.CreateOutputOnlyDepthStencil(gfx.GetDimensions()))
+		pDSV(gfx.GetDepthStencilView())
 	{
 		// Init Sink
 		pGlobalSink = MakeUniqueSink(In<IShaderResourceRenderTargetView>("rtv"));
@@ -27,6 +28,8 @@ namespace tryn::gfx
 	}
 	void IRenderGraph::ExecuteFrame(IGraphics& gfx)
 	{
+		pPointLights[0]->Bind();
+
 		for (auto& pass : pPasses)
 		{
 			pass->Execute(gfx);

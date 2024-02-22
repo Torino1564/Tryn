@@ -37,11 +37,11 @@ namespace tryn::gfx
 	}
 	int Texture::GetNumChannels() const noexcept
 	{
-		return numChannels;
+		return STBI_rgb_alpha;
 	}
 	int Texture::GetRowPitch() const noexcept
 	{
-		return width * numChannels;
+		return width * STBI_rgb_alpha;
 	}
 	bool Texture::HasAlpha() const noexcept
 	{

@@ -10,7 +10,7 @@ namespace tryn::gfx::dx11
 		gfx.GetDevice().CreateDeferredContext(0u, pContext.GetAddressOf());
 		deferred = true;
 		// Set Render Target
-		pContext->OMSetRenderTargets(1u, gfx.pTarget->GetAddressOf(), gfx.pDSV.Get());
+		pContext->OMSetRenderTargets(1u, gfx.pTarget->GetAddressOf(), gfx.pDSV->Get());
 		// Set Viewport
 		pContext->RSSetViewports(1u, &gfx.viewport);
 
