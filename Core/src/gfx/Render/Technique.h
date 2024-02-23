@@ -55,7 +55,7 @@ namespace tryn::gfx
 			}
 		}
 
-	private:
+	protected:
 		std::string name;
 		std::vector<Step> steps;
 	};

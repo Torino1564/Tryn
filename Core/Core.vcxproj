@@ -199,6 +199,7 @@
     <ClInclude Include="src\gfx\Render\Step.h" />
     <ClInclude Include="src\gfx\Render\Technique.h" />
     <ClInclude Include="src\gfx\Render\TechniqueProbe.h" />
+    <ClInclude Include="src\gfx\Render\Techniques\ForwardPhong.h" />
     <ClInclude Include="src\gfx\RTVDSFwd.h" />
     <ClInclude Include="src\gfx\TexturePool.h" />
     <ClInclude Include="src\gfx\IContext.h" />

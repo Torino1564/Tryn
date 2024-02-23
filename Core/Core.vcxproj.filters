@@ -1895,6 +1895,9 @@
     <ClInclude Include="src\gfx\Render\Passes\RenderQueuePass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\gfx\Render\Techniques\ForwardPhong.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">
