@@ -80,11 +80,47 @@ namespace tryn::gfx
 		// parse materials
 		std::vector<Material> materials;
 		materials.reserve(pScene->mNumMaterials);
-		for (size_t i = 0; i < pScene->mNumMaterials; i++)
+
+		int switchCase = 0;
+
+		if (instanced && skeleton.has_value())
 		{
-			materials.emplace_back(gfx, *pScene->mMaterials[i], path, defaultTechnique, instanced, skeleton.has_value());
+			switchCase = 0;
+		}
+		else
+		{
+			if (instanced)
+			{
+				switchCase = 1; 
+			}
+			else if (skeleton.has_value())
+			{
+				switchCase = 2;
+			}
+			else
+			{
+				switchCase = 3;
+			}
 		}
 
+		for (size_t i = 0; i < pScene->mNumMaterials; i++)
+		{
+			switch (switchCase)
+			{
+			case 0:
+				materials.emplace_back(Material::Make<ForwardPhongInstSkn>(gfx, *pScene->mMaterials[i], path));
+				break;
+			case 1:
+				materials.emplace_back(Material::Make<ForwardPhongInst>(gfx, *pScene->mMaterials[i], path));
+				break;
+			case 2:
+				materials.emplace_back(Material::Make<ForwardPhongSkn>(gfx, *pScene->mMaterials[i], path));
+				break;
+			case 3:
+				materials.emplace_back(Material::Make<ForwardPhong>(gfx, *pScene->mMaterials[i], path));
+				break;
+			}
+		}
 
 		if (skeleton.has_value())
 		{

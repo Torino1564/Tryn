@@ -71,6 +71,8 @@
     <ClCompile Include="src\gfx\Render\RenderQueue.cpp" />
     <ClCompile Include="src\gfx\Render\RenderTask.cpp" />
     <ClCompile Include="src\gfx\Render\Step.cpp" />
+    <ClCompile Include="src\gfx\Render\Technique.cpp" />
+    <ClCompile Include="src\gfx\Render\Techniques\ForwardPhong.cpp" />
     <ClCompile Include="src\gfx\Texture.cpp" />
     <ClCompile Include="src\gfx\Vertex.cpp" />
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp" />

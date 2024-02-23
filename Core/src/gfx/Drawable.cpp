@@ -33,7 +33,7 @@ namespace tryn::gfx
 			BindBase();
 			for (auto& technique : techniques)
 			{
-				technique.Draw(gfx, this);
+				technique->Draw(gfx, this);
 			}
 			});
 	}
@@ -45,7 +45,7 @@ namespace tryn::gfx
 
 		for (auto& technique : techniques)
 		{
-			technique.Submit(gfx, this);
+			technique->Submit(gfx, this);
 		}
 	}
 	void Drawable::Submit(IGraphics& gfx, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
@@ -75,7 +75,7 @@ namespace tryn::gfx
 
 		for (auto& technique : techniques)
 		{
-			technique.Submit(gfx, this, transforms, instancedParent);
+			technique->Submit(gfx, this, transforms, instancedParent);
 		}
 	}
 	void Drawable::BindBase() const
@@ -142,9 +142,9 @@ namespace tryn::gfx
 	{
 		return indexCount;
 	}
-	void Drawable::AddTechnique(Technique technique)
+	void Drawable::AddTechnique(std::shared_ptr<Technique> pTechnique)
 	{
-		techniques.push_back(std::move(technique));
+		techniques.push_back(std::move(pTechnique));
 	}
 	glm::mat4 Drawable::GetTransformMatrix() const
 	{

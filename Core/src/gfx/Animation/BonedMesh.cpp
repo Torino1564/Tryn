@@ -96,7 +96,7 @@ namespace tryn::gfx::ani
 
 		for (auto& technique : techniques)
 		{
-			technique.Submit(gfx, this);
+			technique->Submit(gfx, this);
 		}
 	}
 	void BonedMesh::AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string& name)

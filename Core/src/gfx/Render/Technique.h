@@ -16,46 +16,16 @@ namespace tryn::gfx
 	class Technique
 	{
 	public:
-		Technique(std::string name)
-		{
-			this->name = name;
-		}
-		void AddStep(Step step)
-		{
-			steps.push_back(std::move(step));
-		}
-		void Draw(IGraphics& gfx, Drawable* parent)
-		{
-			for (auto& step : steps)
-			{
-				step.Bind();
-				step.Draw(gfx, parent);
-			}
-		}
-		void Submit(IGraphics& gfx, Drawable* parent)
-		{
-			for (auto& step : steps)
-			{
-				step.Submit(gfx, parent);
-			}
-		}
-		void Submit(IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
-		{
-			for (auto& step : steps)
-			{
-				step.Submit(gfx, parent, transforms, instancedParent);
-			}
-		}
-		void Accept(TechniqueProbe& probe)
-		{
-			probe.SetTechnique(this);
-			for (auto& step : steps)
-			{
-				step.Accept(probe);
-			}
-		}
+		Technique(std::string name);
+		void AddStep(Step step);
+		void Draw(IGraphics& gfx, Drawable* parent);
+		void Submit(IGraphics& gfx, Drawable* parent);
+		void Submit(IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instancedParent);
+		void Accept(TechniqueProbe& probe);
 
 	protected:
+		class VertexLayout& ExtractLayoutFromMaterial(class Material& mat);
+		const std::string& GetShaderRootPath() const;
 		std::string name;
 		std::vector<Step> steps;
 	};
