@@ -22,20 +22,22 @@ namespace tryn::gfx
 	public:
 
 		template <TechniqueClass... T>
-		static Material Make(IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path)
+		static Material Make(IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path)
 		{
 			// TODO:
 			// assert uniqueness
-			
+
+			const auto rootPath = path.parent_path().string() + "\\";
+
 			Material mat;
 			// add techniques
 			if constexpr (sizeof...(T) == 0)
 			{
-				mat.AddTechnique<ForwardPhong>(std::forward<IGraphics>(gfx), std::forward<aiMaterial>(material), std::forward< std::filesystem::path>(path));
+				mat.AddTechnique<ForwardPhong>(gfx, material, rootPath);
 			}
 			else
 			{
-				mat.AddTechnique<0, T...>(std::forward<IGraphics>(gfx), std::forward<aiMaterial>(material), std::forward< std::filesystem::path>(path));
+				mat.AddTechnique<0, T...>(gfx, material, rootPath);
 			}
 
 			return mat;
@@ -45,13 +47,13 @@ namespace tryn::gfx
 		std::vector<std::shared_ptr<Technique>> GetTechniques() const noexcept;
 
 		template <unsigned N = 0, TechniqueClass... T>
-		void AddTechnique(IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path)
+		void AddTechnique(IGraphics& gfx, aiMaterial& material, const std::string& path)
 		{
 			if constexpr (N < sizeof...(T))
 			{
 				using TechniqueType = std::tuple_element_t<N, std::tuple<T...>>;
 				pTechniques.push_back(std::move(std::make_shared<TechniqueType>(*this, material, gfx, path)));
-				return AddTechnique<N + 1, T...>(std::forward<IGraphics>(gfx), std::forward<aiMaterial>(material), std::forward< std::filesystem::path>(path));
+				return AddTechnique<N + 1, T...>(gfx, material, path);
 			}
 			return;
 		}

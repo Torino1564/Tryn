@@ -171,7 +171,7 @@ namespace tryn::gfx
 			requires (T == BufferType::VtxConstant || T == BufferType::PxConstant)
 		ElementView operator[](std::string id)
 		{
-			return (*std::dynamic_pointer_cast<ConstantBuffer>(pCPUBuffer))[id];
+			return (*std::static_pointer_cast<ConstantBuffer>(pCPUBuffer))[id];
 		}
 
 		template <BufferType T = Type>

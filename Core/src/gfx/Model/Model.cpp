@@ -36,7 +36,7 @@ namespace tryn::gfx
 		return glmMatrix;
 	}
 
-	Model::Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale , Techniques defaultTechnique, bool instanced)
+	Model::Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, bool instanced)
 		:
 		name(path.data()), gfx(gfx)
 	{
