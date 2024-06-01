@@ -298,7 +298,8 @@ void TestApp::DoFrame()
 			}
 		}
 
-		camera.ShowControls();
+		//camera.ShowControls();
+		camera.ShowDebugInfo();
 
 		// Toggle 1st Person Camera
 		if (const auto event = wnd->keyboard.ReadKey(); event.IsTypePress() && event.GetCode() == VK_ESCAPE)

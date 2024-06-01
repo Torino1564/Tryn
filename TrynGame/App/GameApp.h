@@ -11,7 +11,24 @@ public:
 	void DoFrame() override;
 
 private:
+	void StateMachine();
+	void ShowStateInfo();
+
+private:
 	std::unique_ptr<gfx::PointLight> pPointLight;
 	std::unique_ptr<class Player> pPlayer;
 	gfx::Camera camera;
+
+	gfx::Camera player;
+
+	gfx::Camera* pActiveCamera = &camera;
+
+	enum class Mode
+	{
+		Ghost,
+		Player,
+		Mouse
+	};
+
+	Mode state = Mode::Mouse;
 };

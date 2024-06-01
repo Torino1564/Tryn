@@ -41,5 +41,5 @@ Player::Player(std::string name, const std::string& modelPath, gfx::IGraphics& g
 
 	velCmp.velocity = glm::vec3(0.0f);
 
-	modelCmp.pModel = std::make_unique<gfx::Model>(gfx, modelPath);
+	modelCmp.pModel = gfx::Model::Make<gfx::Flat>(gfx, modelPath);
 }

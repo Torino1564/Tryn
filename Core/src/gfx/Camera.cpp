@@ -79,6 +79,14 @@ namespace tryn::gfx
             ImGui::End();
         }
     }
+    void Camera::SetYaw(const float yaw)
+    {
+        this->yaw = yaw;
+    }
+    void Camera::SetPitch(const float pitch)
+    {
+        this->pitch = pitch;
+    }
     void Camera::Reset()
     {
         position = { 0.0f,0.0f,0.0f };

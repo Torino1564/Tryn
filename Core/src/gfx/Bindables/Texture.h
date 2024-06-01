@@ -26,9 +26,14 @@ namespace tryn::gfx
 		}
 		bool HasAlpha() const
 		{
-			return hasAlpha;
+			return pTextureResource->HasAlpha();
+		}
+		const Texture& GetTextureResource() const
+		{
+			return *pTextureResource;
 		}
 	protected:
+		std::shared_ptr<Texture> pTextureResource;
 		std::string path;
 		uint8_t slot = 0;
 		bool hasAlpha = false;

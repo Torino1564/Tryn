@@ -72,6 +72,7 @@
     <ClCompile Include="src\gfx\Render\RenderTask.cpp" />
     <ClCompile Include="src\gfx\Render\Step.cpp" />
     <ClCompile Include="src\gfx\Render\Technique.cpp" />
+    <ClCompile Include="src\gfx\Render\Techniques\Flat.cpp" />
     <ClCompile Include="src\gfx\Render\Techniques\ForwardPhong.cpp" />
     <ClCompile Include="src\gfx\Texture.cpp" />
     <ClCompile Include="src\gfx\Vertex.cpp" />
@@ -123,7 +124,6 @@
     <ClInclude Include="src\app\Globals.h" />
     <ClInclude Include="src\app\Initialization.h" />
     <ClInclude Include="src\ccr\CCRException.h" />
-    <ClInclude Include="src\ccr\GenericObjectPool.h" />
     <ClInclude Include="src\ccr\GenericTaskQueue.h" />
     <ClInclude Include="src\ccr\Master.h" />
     <ClInclude Include="src\ccr\Task.h" />
@@ -201,6 +201,7 @@
     <ClInclude Include="src\gfx\Render\Step.h" />
     <ClInclude Include="src\gfx\Render\Technique.h" />
     <ClInclude Include="src\gfx\Render\TechniqueProbe.h" />
+    <ClInclude Include="src\gfx\Render\Techniques\Flat.h" />
     <ClInclude Include="src\gfx\Render\Techniques\ForwardPhong.h" />
     <ClInclude Include="src\gfx\RTVDSFwd.h" />
     <ClInclude Include="src\gfx\TexturePool.h" />

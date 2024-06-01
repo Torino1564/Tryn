@@ -291,6 +291,9 @@
     <ClCompile Include="src\gfx\Render\Technique.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gfx\Render\Techniques\Flat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1652,9 +1655,6 @@
     <ClInclude Include="src\gfx\Render\RenderTask.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ccr\GenericObjectPool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="third\boost\DynamicBitset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1902,6 +1902,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Render\Techniques\ForwardPhong.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\Techniques\Flat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

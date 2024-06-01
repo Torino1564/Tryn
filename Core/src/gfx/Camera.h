@@ -18,6 +18,8 @@ namespace tryn::gfx
 		glm::mat4 GetViewMatrix() const;
 		void ShowDebugInfo() const;
 		void ShowControls();
+		void SetYaw(const float yaw);
+		void SetPitch(const float pitch);
 	private:
 		void Reset();
 		glm::vec3 position = {0.0f,0.0f,0.0f};

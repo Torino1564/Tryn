@@ -3,9 +3,9 @@
 
 namespace tryn::gfx
 {
-	InstancedModelParent::InstancedModelParent(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, Techniques defaultTechnique, std::optional<std::uint32_t> numInstances)
+	InstancedModelParent::InstancedModelParent(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, std::optional<std::uint32_t> numInstances)
 		:
-		pBase(std::make_unique<Model>(gfx, path, scale, defaultTechnique, true))
+		pBase(std::make_unique<Model>(gfx, path, scale, true))
 	{
 		instancedGroup = "InstaceGroup";
 		instancedGroup += path.data();

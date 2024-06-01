@@ -1,6 +1,4 @@
 #include "Model.h"
-#include <Core/src/gfx/Assimp.h>
-#include "ModelException.h"
 #include <Core/src/gfx/Material.h>
 #include <Core/third/glm/gtx/transform.hpp>
 #include <Core/third/glm/gtc/type_ptr.hpp>
@@ -10,7 +8,6 @@
 #include <Core/src/mem/ArenaAllocator.h>
 #include <queue>
 #include <Core/src/gfx/Animation/Bone.h>
-#include <Core/src/gfx/Animation/AnimationManager.h>
 
 namespace tryn::gfx
 {
@@ -199,6 +196,9 @@ namespace tryn::gfx
 	{
 		return meshCounter + 1;
 	}
+	Model::Model(std::string_view path, gfx::IGraphics& gfx)
+		:
+		name(path.data()), gfx(gfx) {}
 	Node Model::ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root)
 	{
 		auto skeletonNodeIndex = -1;
