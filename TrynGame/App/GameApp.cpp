@@ -56,15 +56,29 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 	sponza.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
 	sponza.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
 	sponza.GetComponent<ecs::cmp::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
-	sponza.GetComponent<ecs::cmp::ActiveComponent>().active = true;
+	sponza.GetComponent<ecs::cmp::ActiveComponent>().active = false;
+
+	auto plane = ecs::Entity::CreateNew<
+		ecs::cmp::ActiveComponent,
+		ecs::cmp::PositionComponent,
+		ecs::cmp::TransformComponent,
+		ecs::cmp::ModelComponent,
+		ecs::cmp::ScaleComponent,
+		ecs::cmp::RotationComponent>("TestPlane");
+
+	plane.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
+	plane.GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
+	plane.GetComponent<ecs::cmp::ScaleComponent>().scale = { 10.0f, 10.0f, 10.0f };
+	plane.GetComponent<ecs::cmp::ActiveComponent>().active = true;
 
 	this->wnd->keyboard.DisableAutoRepeat();
 
 	camera.GetPosition() = { 0.0f, 10.0f, 0.0f };
 	camera.GetDirection() = { 0.0f, 0.0f, 0.0f };
 
-	player.SetPitch(89.9f);
-	player.GetPosition() = { 0.0f, 20.0f, 0.0f };
+	player.SetPitch(75.0f);
+	player.SetYaw(45.0f);
+	player.GetPosition() = { 0.0f, 22.5f, 0.0f };
 }
 
 void TrynGameApp::DoFrame()

@@ -31,7 +31,7 @@ Player::Player(std::string name, const std::string& modelPath, gfx::IGraphics& g
 
 	activeCmp.active = true;
 
-	posCmp.position = glm::vec3(0.0f, 0.0f, 0.0f);
+	posCmp.position = glm::vec3(0.0f, 10.0f, 0.0f);
 
 	rotCmp.pitch = 0;
 	rotCmp.roll = 0;
