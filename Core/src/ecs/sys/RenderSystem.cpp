@@ -136,7 +136,7 @@ namespace tryn::ecs::sys
 			if (!pointLightActiveArray[i].active)
 				continue;
 
-			// TODO
+			
 		}
 	}
 }

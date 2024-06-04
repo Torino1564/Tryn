@@ -118,6 +118,7 @@ namespace tryn::ecs::sys
 			T::OnCreate();
 		}
 		static void OnCreate() {}
+	protected:
 	};
 
 	class SystemManager
