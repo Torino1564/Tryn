@@ -13,6 +13,7 @@ namespace tryn::gfx
 		void Rotate(float dx, float dy) noexcept;
 		void Submit(IGraphics& gfx);
 		void Translate(glm::vec3 translation) noexcept;
+		void AbsoluteTranslate(glm::vec3 translation) noexcept;
 		glm::vec3& GetPosition();
 		glm::vec3& GetDirection();
 		glm::mat4 GetViewMatrix() const;

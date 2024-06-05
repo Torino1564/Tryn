@@ -4,7 +4,7 @@
 #include <optional>
 #include <span>
 #include <Core/third/dynamic_bitset.hpp>
-
+#include <Core/src/gfx/Material.h>
 namespace tryn::gfx
 {
 	class InstancedModelChild;
@@ -13,12 +13,35 @@ namespace tryn::gfx
 	{
 		friend class InstancedModelChild;
 	public:
-		InstancedModelParent(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, Techniques defaultTechnique = Techniques::Phong, std::optional<std::uint32_t> numInstances = std::nullopt);
+		template <TechniqueClass... T>
+		static InstancedModelParent Make(gfx::IGraphics& gfx, const std::string& path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint32_t> numInstances = std::nullopt)
+		{
+			InstancedModelParent tempObject;
+
+			tempObject.pBase = std::unique_ptr<Model>(Model::MakeNew<T...>(gfx, path, scale, true));
+
+			tempObject.instancedGroup = "InstaceGroup";
+			tempObject.instancedGroup += path;
+
+			trynass_msg(numInstances.value_or(10) != 0, L"numInstances cannot be 0!");
+
+			tempObject.numInstanced = 0;
+			tempObject.upperLimit = numInstances.value_or(10);
+			ConstantBufferLayout::Node arrayElement_(ConstantBufferLayout::Type::Struct, "arrayStruct");
+			arrayElement_.Append(ConstantBufferLayout::Type::Matrix4, "transform");
+			tempObject.arrayElement = std::move(arrayElement_);
+			tempObject.pTransformationBuffers.reserve(tempObject.pBase->GetMeshAmount());
+
+			tempObject.Resize(tempObject.upperLimit);
+
+			return tempObject;
+		}
 		void Submit(const glm::mat4& entityTransform);
 		InstancedModelChild Instanciate();
 		void Instanciate(std::span<InstancedModelChild> childSpan);
 		IInstanceBuffer& RequestInstanceBuffer(std::uint16_t key);
 	private:
+		InstancedModelParent() = default;
 		std::uint32_t ResolveID();
 		void Resize(std::size_t newSize);
 		std::string instancedGroup;

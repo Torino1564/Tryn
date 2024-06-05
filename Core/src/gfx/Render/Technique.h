@@ -22,11 +22,19 @@ namespace tryn::gfx
 		void Submit(IGraphics& gfx, Drawable* parent);
 		void Submit(IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instancedParent);
 		void Accept(TechniqueProbe& probe);
-
+		void SetStepState(const std::string& name, bool state);
+		bool GetStepState(const std::string& name) const;
+		virtual bool IsSkinned() const;
+		virtual bool IsInstanced() const;
+		const std::string& GetName() const;
 	protected:
+
 		class VertexLayout& ExtractLayoutFromMaterial(class Material& mat);
 		const std::string& GetShaderRootPath() const;
 		std::string name;
+		bool skinned;
+		bool instanced;
 		std::vector<Step> steps;
+		std::vector<bool> stepActive;
 	};
 }

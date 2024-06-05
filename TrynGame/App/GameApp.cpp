@@ -54,14 +54,14 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		ecs::cmp::RotationComponent>("sponza");
 
 	sponza.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-	sponza.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
+	sponza.GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::MakeUnique(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
 	sponza.GetComponent<ecs::cmp::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
 	sponza.GetComponent<ecs::cmp::ActiveComponent>().active = true;
 
 	this->wnd->keyboard.DisableAutoRepeat();
 
 	camera.GetPosition() = { 0.0f, 10.0f, 0.0f };
-	camera.GetDirection() = { 0.0f, -90.0f, 0.0f };
+	camera.GetDirection() = { 0.0f, 0.0f, 0.0f };
 }
 
 void TrynGameApp::DoFrame()
@@ -93,16 +93,16 @@ void TrynGameApp::DoFrame()
 		}
 		if (wnd->keyboard.IsKeyPressed('W'))
 		{
-			playerVelocity = { 1.0f,0.0f,1.0f };
+			playerVelocity = { 0.0f,0.0f,1.0f };
 			camera.Translate({ 0.0f,0.0f,dt });
 		}
 		if (wnd->keyboard.IsKeyPressed(VK_SPACE))
 		{
-			camera.Translate({ 0.0f,dt,0.0f });
+			camera.AbsoluteTranslate({ 0.0f,dt , 0.0f });
 		}
 		if (wnd->keyboard.IsKeyPressed(VK_MENU))
 		{
-			camera.Translate({ 0.0f,-dt,0.0f });
+			camera.AbsoluteTranslate({ 0.0f,-dt ,0.0f});
 		}
 		if (wnd->keyboard.IsKeyPressed(VK_UP))
 		{
@@ -127,7 +127,16 @@ void TrynGameApp::DoFrame()
 		}
 	}
 
+	auto& camPos = camera.GetPosition();
+
+	auto& playerPos = pPlayer->GetComponent<ecs::cmp::PositionComponent>().position;
+
+	//camPos.x = playerPos.x;
+	//camPos.y = playerPos.y;
+
+
 	camera.ShowControls();
+	camera.ShowDebugInfo();
 
 	// Toggle 1st Person Camera
 	if (const auto event = wnd->keyboard.ReadKey(); event.IsTypePress() && event.GetCode() == VK_ESCAPE)

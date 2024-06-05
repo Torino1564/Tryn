@@ -277,7 +277,7 @@ namespace tryn::gfx
 		}
 		return { indices };
 	}
-	std::vector<std::shared_ptr<Technique>> Material::GetTechniques() const noexcept
+	std::vector<std::shared_ptr<Technique>>& Material::GetTechniques() noexcept
 	{
 		return pTechniques;
 	}

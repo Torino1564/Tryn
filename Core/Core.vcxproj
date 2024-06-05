@@ -72,6 +72,7 @@
     <ClCompile Include="src\gfx\Render\RenderTask.cpp" />
     <ClCompile Include="src\gfx\Render\Step.cpp" />
     <ClCompile Include="src\gfx\Render\Technique.cpp" />
+    <ClCompile Include="src\gfx\Render\Techniques\ForwardFlat.cpp" />
     <ClCompile Include="src\gfx\Render\Techniques\ForwardPhong.cpp" />
     <ClCompile Include="src\gfx\Texture.cpp" />
     <ClCompile Include="src\gfx\Vertex.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="src\gfx\Render\Step.h" />
     <ClInclude Include="src\gfx\Render\Technique.h" />
     <ClInclude Include="src\gfx\Render\TechniqueProbe.h" />
+    <ClInclude Include="src\gfx\Render\Techniques\ForwardFlat.h" />
     <ClInclude Include="src\gfx\Render\Techniques\ForwardPhong.h" />
     <ClInclude Include="src\gfx\RTVDSFwd.h" />
     <ClInclude Include="src\gfx\TexturePool.h" />

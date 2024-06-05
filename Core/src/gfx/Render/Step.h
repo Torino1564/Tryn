@@ -10,7 +10,7 @@ namespace tryn::gfx
 	class Step
 	{
 	public:
-		Step(std::string renderQueueID);
+		Step(std::string name, std::string renderQueueID = "?");
 		void AddBindable(std::shared_ptr<IBindable> bindable);
 		void Bind() const;
 		void Bind(IContext& context) const;
@@ -18,8 +18,10 @@ namespace tryn::gfx
 		void Submit(IGraphics& gfx, Drawable* parent);
 		void Submit(IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instanceParent);
 		void Accept(class TechniqueProbe& probe);
+		const std::string& GetName() const;
 		std::vector<std::shared_ptr<gfx::IBindable>> bindables;
 	private:
+		std::string name;
 		std::string renderQueueID;
 	};
 }

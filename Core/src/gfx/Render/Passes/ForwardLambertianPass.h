@@ -11,7 +11,7 @@ namespace tryn::gfx
 	public:
 		ForwardLambertianPass(class IRenderGraph& graph, std::string name = std::string("lambertian"))
 			:
-			RenderQueuePass(std::move(name), graph, std::vector<std::string>{"Lambertian"})
+			RenderQueuePass(std::move(name), graph, std::vector<std::string>{"Lambertian", "LambertianFlat"})
 		{
 			// declare sink and source
 			pSink = std::make_unique<SinkType>(In<IGenericRenderTargetView>("rtv"), In<IGenericDepthStencil>("depthStencil"));
@@ -27,11 +27,17 @@ namespace tryn::gfx
 			pRTV->BindAsRTV(pDSV.get());
 			
 			// This queue pass knows that the first queue is the lambertian one (because it was declared that way on its constructor)
-			auto& lambertianQueue = *pQueues[0];
+			auto& lambertianQueue = queueVector[queueIndeces[0]];
 			
-			// All this pass does is run the lambertian queue
+			// All this pass does is run the lambertian queues
 			lambertianQueue.RunJobs(gfx);
 			lambertianQueue.Clear();
+
+			// Flat lambertian
+			auto& flatLambertianQueue = queueVector[queueIndeces[1]];
+
+			flatLambertianQueue.RunJobs(gfx);
+			flatLambertianQueue.Clear();
 		}
 		using SinkType = Sink<In<IGenericRenderTargetView>, In<IGenericDepthStencil>>;
 		using SourceType = Source<Out<IGenericRenderTargetView>, Out<IGenericDepthStencil>>;

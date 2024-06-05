@@ -3,24 +3,6 @@
 
 namespace tryn::gfx
 {
-	InstancedModelParent::InstancedModelParent(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, Techniques defaultTechnique, std::optional<std::uint32_t> numInstances)
-		:
-		pBase(std::make_unique<Model>(gfx, path, scale, defaultTechnique, true))
-	{
-		instancedGroup = "InstaceGroup";
-		instancedGroup += path.data();
-
-		trynass_msg(numInstances.value_or(10) != 0, L"numInstances cannot be 0!");
-
-		numInstanced = 0;
-		upperLimit = numInstances.value_or(10);
-		ConstantBufferLayout::Node arrayElement_(ConstantBufferLayout::Type::Struct, "arrayStruct");
-		arrayElement_.Append(ConstantBufferLayout::Type::Matrix4, "transform");
-		this->arrayElement = std::move(arrayElement_);
-		pTransformationBuffers.reserve(pBase->GetMeshAmount());
-
-		Resize(upperLimit);
-	}
 	void InstancedModelParent::Submit(const glm::mat4& transformation)
 	{
 		auto& settings = pBase->settings;

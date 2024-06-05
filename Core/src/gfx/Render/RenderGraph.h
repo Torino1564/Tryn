@@ -25,6 +25,8 @@ namespace tryn::gfx
 		virtual void RunQueues(IGraphics& gfx) {};
 		RenderQueue& GetRenderQueueByID(std::string_view ID);
 		RenderQueue& GetOrAddRenderQueue(const std::string& renderQueueName);
+		uint16_t GetOrAddRenderQueueID(const std::string& renderQueueName);
+		std::vector<RenderQueue>& GetQueueVector();
 		void Reset();
 	protected:
 		template <typename Pass>

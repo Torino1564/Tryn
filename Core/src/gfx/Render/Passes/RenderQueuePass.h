@@ -12,15 +12,16 @@ namespace tryn::gfx
 		virtual ~RenderQueuePass() = default;
 		RenderQueuePass(RenderQueuePass&& rhs) noexcept
 			:
-			IRenderPass(std::move(rhs))
+			IRenderPass(std::move(rhs)), queueVector(rhs.queueVector)
 		{
-			pQueues = std::move(rhs.pQueues);
+			queueIndeces = std::move(rhs.queueIndeces);
 			queueNames = std::move(rhs.queueNames);
 		}
 		RenderQueuePass(std::string name, IRenderGraph& graph, std::vector<std::string> queueNames );
 	protected:
 		// queues
-		std::vector<RenderQueue*> pQueues;
+		std::vector<uint16_t> queueIndeces;
 		std::vector<std::string> queueNames;
+		std::vector<gfx::RenderQueue>& queueVector;
 	};
 }

@@ -291,6 +291,9 @@
     <ClCompile Include="src\gfx\Render\Technique.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gfx\Render\Techniques\ForwardFlat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1902,6 +1905,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Render\Techniques\ForwardPhong.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\Techniques\ForwardFlat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

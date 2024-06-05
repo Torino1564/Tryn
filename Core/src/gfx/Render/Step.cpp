@@ -7,9 +7,9 @@
 
 namespace tryn::gfx
 {
-	Step::Step(std::string renderQueueID)
+	Step::Step(std::string name, std::string renderQueueID)
 		:
-		renderQueueID(renderQueueID)
+		renderQueueID(renderQueueID == "?" ? "?" : std::move(renderQueueID)), name(std::move(name))
 	{
 	}
 	void Step::AddBindable(std::shared_ptr<IBindable> bindable)
@@ -51,5 +51,9 @@ namespace tryn::gfx
 		{
 			pBindable->Accept(probe);
 		}
+	}
+	const std::string& Step::GetName() const
+	{
+		return name;
 	}
 }

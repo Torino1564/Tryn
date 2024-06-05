@@ -6,6 +6,9 @@
 #include <Core/third/glm/gtx/euler_angles.hpp>
 #include <Core/src/gfx/Bindables/IBuffer.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
+#include <ranges>
+#include <format>
+#include <Core/src/utl/String.h>
 
 namespace tryn::gfx
 {
@@ -28,12 +31,16 @@ namespace tryn::gfx
 	void Drawable::Draw(IGraphics& gfx, glm::mat4 transform)
 	{
 		this->transform = transform;
+		auto& techniques = pMaterial->GetTechniques();
 
 		gfx.Dispatch([&] {
 			BindBase();
-			for (auto& technique : techniques)
+			for (auto i = 0; i < techniques.size(); i++)
 			{
-				technique->Draw(gfx, this);
+				if (techniqueState[i] == true)
+				{
+					techniques[i]->Draw(gfx, this);
+				}
 			}
 			});
 	}
@@ -42,10 +49,14 @@ namespace tryn::gfx
 		extraBindPtrs = {};
 		ExtraSubmitBehavior();
 		this->transform = transform;
+		auto& techniques = pMaterial->GetTechniques();
 
-		for (auto& technique : techniques)
+		for (auto i = 0 ; i < techniques.size() ; i++)
 		{
-			technique->Submit(gfx, this);
+			if (techniqueState[i] == true)
+			{
+				techniques[i]->Submit(gfx, this);
+			}
 		}
 	}
 	void Drawable::Submit(IGraphics& gfx, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
@@ -72,10 +83,13 @@ namespace tryn::gfx
 		}
 
 		AddExtraBind(&instanceBuffer);
-
-		for (auto& technique : techniques)
+		auto& techniques = pMaterial->GetTechniques();
+		for (auto i = 0; i < techniques.size(); i++)
 		{
-			technique->Submit(gfx, this, transforms, instancedParent);
+			if (techniqueState[i] == true)
+			{
+				techniques[i]->Submit(gfx, this, transforms, instancedParent);
+			}
 		}
 	}
 	void Drawable::BindBase() const
@@ -142,10 +156,6 @@ namespace tryn::gfx
 	{
 		return indexCount;
 	}
-	void Drawable::AddTechnique(std::shared_ptr<Technique> pTechnique)
-	{
-		techniques.push_back(std::move(pTechnique));
-	}
 	glm::mat4 Drawable::GetTransformMatrix() const
 	{
 		return transform;
@@ -153,5 +163,42 @@ namespace tryn::gfx
 	std::uint16_t Drawable::GetID() const
 	{
 		return ID;
+	}
+	void Drawable::SetMaterial(std::shared_ptr<class Material> pMat)
+	{
+		pMaterial = pMat;
+		techniqueState.resize(pMaterial->GetTechniques().size(), true);
+	}
+	Material& Drawable::GetMaterial()
+	{
+		return *pMaterial;
+	}
+	void Drawable::SetTechniqueState(const std::string& name, const bool state)
+	{
+		auto& techniques = pMaterial->GetTechniques();
+		// find specified technique state
+		for (auto [index, pTechnique] : std::ranges::enumerate_view(techniques))
+		{
+			if (pTechnique->GetName() == name)
+			{
+				techniqueState[index] = state;
+				return;
+			}
+		}
+		trylog.warn(utl::ToWide(std::format("Could not find technique [{}] when setting its state in drawable[ID:{}]", name, this->ID)));
+	}
+	bool Drawable::GetTechniqueState(const std::string& name) const
+	{
+		auto& techniques = pMaterial->GetTechniques();
+		// find specified technique state
+		for (auto [index, pTechnique] : std::ranges::enumerate_view(techniques))
+		{
+			if (pTechnique->GetName() == name)
+			{
+				return techniqueState[index];
+			}
+		}
+		trylog.warn(utl::ToWide(std::format("Could not find technique [{}] when getting its state in drawable[ID:{}]", name, this->ID)));
+		return false;
 	}
 }

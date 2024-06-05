@@ -5,12 +5,12 @@ namespace tryn::gfx
 {
 	RenderQueuePass::RenderQueuePass(std::string name, IRenderGraph& graph, std::vector<std::string> queueNames)
 		:
-		IRenderPass(std::move(name))
+		IRenderPass(std::move(name)), queueVector(graph.GetQueueVector())
 	{
 		for (auto& queueID : queueNames)
 		{
-			pQueues.emplace_back(&graph.GetOrAddRenderQueue(queueID));
-			queueNames.push_back(queueID);
+			queueIndeces.emplace_back(graph.GetOrAddRenderQueueID(queueID));
+			this->queueNames.push_back(queueID);
 		}
 	}
 }

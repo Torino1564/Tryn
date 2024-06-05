@@ -4,6 +4,22 @@
 
 namespace tryn::gfx
 {
+    static float RollOver(float value, float min, float max)
+    {
+        trynass(min < max);
+        if (value < min)
+        {
+            return max - (std::abs(value - min));
+        }
+        else if (value > max)
+        {
+            return min + (std::abs(max - value));
+        }
+        else
+        {
+            return value;
+        }
+    }
     void Camera::Bind(IGraphics& gfx)
     {
         auto future = gfx.Dispatch([&] {
@@ -19,7 +35,8 @@ namespace tryn::gfx
     }
     void Camera::Rotate(float dx, float dy) noexcept
     {
-        yaw += dx * rotationSpeed;
+        const auto tempYaw = yaw + (dx * rotationSpeed);
+        yaw = RollOver(tempYaw, -180.0f, 180.0f);
         pitch = std::clamp(pitch + dy * rotationSpeed, -89.0f, 89.0f);
     }
     void Camera::Submit(IGraphics& gfx)
@@ -34,6 +51,10 @@ namespace tryn::gfx
         position.x += finalTranslation.x;
         position.y += finalTranslation.y;
         position.z += finalTranslation.z;
+    }
+    void Camera::AbsoluteTranslate(glm::vec3 translation) noexcept
+    {
+        position += translation * travelSpeed;
     }
     glm::vec3& Camera::GetPosition()
     {
@@ -71,11 +92,13 @@ namespace tryn::gfx
     {
         if (ImGui::Begin("Camera parameters"))
         {
-            ImGui::SliderFloat("Travel Speed", &travelSpeed, 0.005f, 0.1f);
+            ImGui::SliderFloat("Travel Speed", &travelSpeed, 0.001f, 0.1f);
+            ImGui::SliderFloat("Rotation Speed", &rotationSpeed, 0.03f, 1.0f);
             if (ImGui::Button("Reset position"))
             {
                 Reset();
             }
+            
             ImGui::End();
         }
     }

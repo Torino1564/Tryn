@@ -14,11 +14,13 @@
 
 namespace tryn::gfx
 {
-	template<bool Instanced, bool Skinned>
-	ForwardPhongBase<Instanced, Skinned>::ForwardPhongBase(Material& material, aiMaterial& aiMat, IGraphics& gfx, const std::string& rootPath)
+	ForwardPhong::ForwardPhong(Material& material, aiMaterial& aiMat, IGraphics& gfx, const std::string& rootPath, bool instanced, bool skinned)
 		:
-		Technique(Skinned && Instanced ? "PhongInstSkn" : (Skinned ? "PhongSkn" : (Instanced ? "PhongInst" : "Phong")))
+		Technique("ForwardPhong")
 	{
+		this->skinned = skinned;
+		this->instanced = instanced;
+
 		auto& shaderRootPath = GetShaderRootPath();
 
 		std::string shaderCode = "Phong";
@@ -34,7 +36,7 @@ namespace tryn::gfx
 		bool usesGlossAlphaChannel = false;
 
 		// Lambertian
-		Step step("Lambertian");
+		Step step("Lambertian", "Lambertian");
 		gfx.GetRenderGraph().AddRenderQueue("Lambertian");
 
 		// Albedo
@@ -94,12 +96,12 @@ namespace tryn::gfx
 		}
 		// Common
 		{
-			if (Skinned)
+			if (skinned)
 			{
 				vLayout.AppendElement(VertexLayout::BoneIds);
 				vLayout.AppendElement(VertexLayout::BoneWeights);
 			}
-			auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (Instanced ? "Inst" : "") + (Skinned ? "Skn" : "") + "_VS.cso");
+			auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (instanced ? "Inst" : "") + (skinned ? "Skn" : "") + "_VS.cso");
 			step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 			step.AddBindable(std::move(pvs));
 			step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
@@ -161,12 +163,4 @@ namespace tryn::gfx
 
 		AddStep(std::move(step));
 	}
-
-
-
-	// explicit template specialization
-	template ForwardPhongBase<true, true>;
-	template ForwardPhongBase<true, false>;
-	template ForwardPhongBase<false, true>;
-	template ForwardPhongBase<false, false>;
 }

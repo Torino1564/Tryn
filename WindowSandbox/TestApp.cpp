@@ -167,11 +167,11 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		ecs::cmp::RotationComponent>("sponza");
 
 	sponza.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-	sponza.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/Sponza/sponza.obj");
+	sponza.GetComponent<ecs::cmp::ModelComponent>().pModel = std::unique_ptr<gfx::Model>(gfx::Model::MakeNew(Gfx(), "resources/models/Sponza/sponza.obj"));
 	sponza.GetComponent<ecs::cmp::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
 	sponza.GetComponent<ecs::cmp::ActiveComponent>().active = true;
 
-	entParent.GetComponent<ecs::cmp::InstancedModelParentComponent>().parentModel = gfx::InstancedModelParent(Gfx(), "resources/models/gobber/GoblinX.obj");
+	entParent.GetComponent<ecs::cmp::InstancedModelParentComponent>().parentModel = gfx::InstancedModelParent::Make(Gfx(), "resources/models/gobber/GoblinX.obj");
 	entParent.GetComponent<ecs::cmp::ActiveComponent>().active = true;
 	entParent.GetComponent<ecs::cmp::ScaleComponent>().scale = { .3f,.3f,.3f };
 	entParent.GetComponent<ecs::cmp::VelocityComponent>().velocity = { .0f, 0.f, 0.f };
@@ -211,7 +211,7 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 		ecs::cmp::RotationComponent>("testTerrain");
 
 	testTerrain.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-	testTerrain.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "resources/models/TestTerrain.obj");
+	testTerrain.GetComponent<ecs::cmp::ModelComponent>().pModel = std::unique_ptr<gfx::Model>(gfx::Model::MakeNew(Gfx(), "resources/models/TestTerrain.obj"));
 	testTerrain.GetComponent<ecs::cmp::ScaleComponent>().scale = { 1.0f, 1.0f, 1.0f };
 	testTerrain.GetComponent<ecs::cmp::ActiveComponent>().active = true;
 
