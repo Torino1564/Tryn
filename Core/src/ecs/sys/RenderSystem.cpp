@@ -97,6 +97,11 @@ namespace tryn::ecs::sys
 			pointLightActiveArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(pointLightData));
 		}
 
+		if (pGfx == nullptr)
+		{
+			pGfx = modelArray[0].pModel->GetGfx();
+		}
+
 		// Kernel
 
 		for (auto i = 0; i < modelArray.Size(); i++)
@@ -136,7 +141,7 @@ namespace tryn::ecs::sys
 			if (!pointLightActiveArray[i].active)
 				continue;
 
-			
+			pGfx->GetRenderGraph().GetRenderQueueByID("PointLights");
 		}
 	}
 }

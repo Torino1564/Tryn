@@ -23,6 +23,10 @@ namespace tryn::ecs::sys
 			AddDependency<sys::AnimationSystem>();
 			AddDependency<sys::TransformSystem>();
 		}
+		static void OnCreate()
+		{
+
+		}
 		static void Execute();
 	private:
 		static inline utl::MultiSpan<cmp::ModelComponent::SubresourceData> modelArray;
@@ -45,5 +49,7 @@ namespace tryn::ecs::sys
 		ZT_NATIVE_ARRAY(PointLightComponent)	pointLightArray;
 		ZT_NATIVE_ARRAY(PositionComponent)		pointLightPositionArray;
 		ZT_NATIVE_ARRAY(ActiveComponent)		pointLightActiveArray;
+
+		static inline gfx::IGraphics* pGfx;
 	};
 }

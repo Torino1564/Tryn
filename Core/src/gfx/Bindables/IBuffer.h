@@ -165,7 +165,10 @@ namespace tryn::gfx
 			return layout;
 		}
 
-		virtual void Resize(const std::size_t newSize) = 0;
+		virtual void Resize(const std::size_t newSize)
+		{
+			throw BufferMissmatchException{ "Unsupported Operation! Tried to resize a buffer that doesnt implement the resize operator!" };
+		}
 
 		template <BufferType T = Type>
 			requires (T == BufferType::VtxConstant || T == BufferType::PxConstant)

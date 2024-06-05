@@ -66,6 +66,7 @@
     <ClCompile Include="src\gfx\Render\DefaultRenderGraphs\DefaultRenderGraph.cpp" />
     <ClCompile Include="src\gfx\Render\Jobs\BasicJob.cpp" />
     <ClCompile Include="src\gfx\Render\Jobs\InstancedJob.cpp" />
+    <ClCompile Include="src\gfx\Render\Jobs\PointLightJob.cpp" />
     <ClCompile Include="src\gfx\Render\Passes\RenderQueuePass.cpp" />
     <ClCompile Include="src\gfx\Render\RenderGraph.cpp" />
     <ClCompile Include="src\gfx\Render\RenderQueue.cpp" />
@@ -195,7 +196,9 @@
     <ClInclude Include="src\gfx\Model\InstancedModel.h" />
     <ClInclude Include="src\gfx\Render\Jobs\IJob.h" />
     <ClInclude Include="src\gfx\Render\Jobs\InstancedJob.h" />
+    <ClInclude Include="src\gfx\Render\Jobs\PointLightJob.h" />
     <ClInclude Include="src\gfx\Render\Passes\ForwardLambertianPass.h" />
+    <ClInclude Include="src\gfx\Render\Passes\PointLightBindPass.h" />
     <ClInclude Include="src\gfx\Render\Passes\RenderQueuePass.h" />
     <ClInclude Include="src\gfx\Render\RenderPass.h" />
     <ClInclude Include="src\gfx\Render\SinkAndSource.h" />

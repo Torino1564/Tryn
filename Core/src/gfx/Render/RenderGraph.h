@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <Core/src/gfx/RTVDSFwd.h>
+#include <Core/src/gfx/ConstantBuffer.h>
 
 namespace tryn::gfx
 {
@@ -59,5 +60,11 @@ namespace tryn::gfx
 		std::vector<Camera*> pCameras;
 		int selectedPointLight = 0;
 		int selectedCamera = 0;
+
+		// Point Lights
+		std::uint16_t numPointLights = 0;
+		std::uint16_t maxPointLights = 10;
+		std::shared_ptr<gfx::IPxConstantBuffer> pPointLightCBuf;
+		gfx::ConstantBufferLayout::Node pointLightElement;
 	};
 }
