@@ -14,6 +14,8 @@
 #include <Core/src/mem/NativeArray.h>
 #include <Core/src/utl/Span.h>
 
+#include <Core/src/utl/StatefulMeta/CTC.h>
+
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ x }
 
@@ -131,6 +133,24 @@ namespace tryn::ecs
 		ComponentManager() = default;
 		std::uint16_t componentCounter = 0;
 		std::unordered_map<ComponentIndex, ComponentSize> map;
+
+	// stateful meta bs
+		template <typename T>
+		friend class Component;
+	private:
+		static constexpr std::uint16_t listID = 0;
+	public:
+		template <auto Tag = []{}>
+		using ComponentList = utl::ctc::get_list<listID>;
+
+		template <auto Tag = []{}>
+		static constexpr auto GetComponentCount()
+		{
+			return utl::ctc::element_count<listID>();
+		}
+
+		template <unsigned N, auto Tag = []{}>
+		using ComponentByIndex = typename std::remove_reference_t<decltype(std::get<N>(std::declval<ComponentManager::ComponentList<>>()))>;
 	};
 
 	template <typename T>
@@ -143,6 +163,7 @@ namespace tryn::ecs
 		using ComponentType = T;
 		static constexpr auto accessMode = AccessMode::ReadWrite;
 		const static inline int UUID = ComponentManager::Get().RegisterComponent<T>();
+		static constexpr auto ctcID = utl::ctc::counter<T, ComponentManager::listID>;
 	};
 
 	ZT_DEFINE_COMPONENT(ActivationComponent)

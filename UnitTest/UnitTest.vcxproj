@@ -126,6 +126,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ent\TMP BS.cpp" />
     <ClCompile Include="src\ent\Ent.cpp" />
     <ClCompile Include="src\gfx\D3d11Buffer.cpp" />
     <ClCompile Include="src\gfx\dcb.cpp" />

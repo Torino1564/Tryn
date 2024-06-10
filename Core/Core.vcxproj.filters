@@ -1919,6 +1919,9 @@
     <ClInclude Include="src\gfx\Render\Passes\PointLightBindPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ecs\cmp\Components.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">

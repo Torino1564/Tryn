@@ -111,6 +111,7 @@
     <ClCompile Include="third\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ecs\cmp\Components.h" />
     <ClInclude Include="src\ecs\cmp\PointLightComponent.h" />
     <ClInclude Include="src\gfx\Bindables\BufferResourceType.h" />
     <ClInclude Include="src\gfx\Bindables\DepthStencil.h" />
