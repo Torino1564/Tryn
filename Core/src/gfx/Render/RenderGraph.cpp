@@ -51,7 +51,7 @@ namespace tryn::gfx
 	}
 	void IRenderGraph::ExecuteFrame(IGraphics& gfx)
 	{
-		pPointLights[0]->Bind();
+		// pPointLights[0]->Bind();
 
 		for (auto& pass : pPasses)
 		{
@@ -113,6 +113,15 @@ namespace tryn::gfx
 		{
 			queue.Clear();
 		}
+	}
+	std::uint16_t IRenderGraph::GetMaxPointLights() const
+	{
+		return maxPointLights;
+	}
+	void IRenderGraph::ResizePointLightBuffer(const std::uint16_t newSize)
+	{
+		maxPointLights = newSize;
+		pPointLightCBuf->Resize(newSize);
 	}
 	void IRenderGraph::AddLinkage(LinkageParam&& source_, LinkageParam&& destination_)
 	{

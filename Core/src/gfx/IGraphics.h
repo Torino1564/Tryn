@@ -58,7 +58,6 @@ namespace tryn::gfx
 	class VertexLayout;
 	class RenderWorker;
 	class IGenericRenderTargetView;
-
 	class IGraphics
 	{
 		friend class app::App;

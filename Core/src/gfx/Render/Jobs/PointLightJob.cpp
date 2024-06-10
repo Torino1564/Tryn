@@ -1,17 +1,37 @@
 #include "PointLightJob.h"
+#include <Core/src/gfx/Render/RenderGraph.h>
+#include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Camera.h>
 
 namespace tryn::gfx
 {
-	PointLightJob::PointLightJob(const PointLight::Parameters& parameters)
+	PointLightJob::PointLightJob(const PointLight::Parameters& parameters, const glm::vec3& position, IRenderGraph& renderGraph, std::uint16_t jobID)
 		:
-		params{parameters} {}
+		IJob(jobID), pParams(&parameters), pRenderGraph(&renderGraph), pPosition(&position) {}
 
 	void PointLightJob::Execute(IGraphics& gfx)
 	{
-		
+		ExecuteImpl_();
 	}
+	void PointLightJob::Execute(IContext& ctx)
+	{
+		ExecuteImpl_();
+	}
+	void PointLightJob::ExecuteImpl_()
+	{
+		// Use JobID as the number in the buffer
+		auto& pCpuBuffer = pRenderGraph->pPointLightCBuf->GetCPUBuffer();
+		auto params = pCpuBuffer["pointLightArray"][jobID];
+		auto& viewMatrix = pRenderGraph->pCameras[pRenderGraph->selectedCamera]->GetViewOnViewMatrix();
 
-
+		params["position"].Get<glm::vec4>() = glm::vec4(*pPosition, 1.0f);
+		params["ambient"].Get<glm::vec3>() = pParams->ambient;
+		params["diffuseColor"].Get<glm::vec3>() = pParams->diffuseColor;
+		params["diffuseIntensity"].Get<float>() = pParams->diffuseIntensity;
+		params["constantAtt"].Get<float>() = pParams->constantAtt;
+		params["linearAtt"].Get<float>() = pParams->linearAtt;
+		params["quadraticAtt"].Get<float>() = pParams->quadraticAtt;
+	}
 }
 
 

@@ -16,6 +16,9 @@ namespace tryn::gfx
 	class PointLight;
 	class IRenderGraph
 	{
+		friend class PointLightJob;
+		friend class PointLightBindPass;
+
 	public:
 		IRenderGraph(IGraphics& gfx);
 		virtual void ExecuteFrame(IGraphics& gfx);
@@ -27,6 +30,8 @@ namespace tryn::gfx
 		RenderQueue& GetRenderQueueByID(std::string_view ID);
 		RenderQueue& GetOrAddRenderQueue(const std::string& renderQueueName);
 		void Reset();
+		std::uint16_t GetMaxPointLights() const;
+		void ResizePointLightBuffer(const std::uint16_t newSize);
 	protected:
 		template <typename Pass>
 		void AddPass(Pass&& pass)

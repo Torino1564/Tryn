@@ -14,10 +14,13 @@ namespace tryn::gfx
 	{
 		friend class RenderQueue;
 	public:
-		PointLightJob(const gfx::PointLight::Parameters& parameters);
+		PointLightJob(const PointLight::Parameters& parameters, const glm::vec3& position, IRenderGraph& renderGraph, std::uint16_t jobID = 0);
 		void Execute(IGraphics& gfx) override;
 		void Execute(IContext& ctx) override;
 	private:
-		PointLight::Parameters params = {};
+		void ExecuteImpl_();
+		PointLight::Parameters const* pParams = {};
+		glm::vec3 const* pPosition = nullptr;
+		IRenderGraph* pRenderGraph = nullptr;
 	};
 }
