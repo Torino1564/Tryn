@@ -15,7 +15,8 @@ namespace tryn::gfx
 		void Translate(glm::vec3 translation) noexcept;
 		glm::vec3& GetPosition();
 		glm::vec3& GetDirection();
-		glm::mat4 GetViewMatrix() const;
+		glm::mat4 GetViewMatrix();
+		const glm::mat4& GetViewOnViewMatrix();
 		void ShowDebugInfo() const;
 		void ShowControls();
 		void SetYaw(const float yaw);
@@ -28,5 +29,6 @@ namespace tryn::gfx
 		float pitch = 0;
 		float travelSpeed = 0.005f;
 		float rotationSpeed = 0.1f;
+		glm::mat4 viewMatrix = {};
 	};
 }

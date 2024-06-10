@@ -8,9 +8,9 @@ namespace tryn::gfx
 {
 	template <typename OriginalInstanciation, bool NewParam1, bool NewParam2> struct ReplaceTemplateParam;
 
-	template <template<bool, bool> class T, bool OldParam1, bool OldParam2, bool NewParam1, bool NewParam2>
-	struct ReplaceTemplateParam<T<OldParam1, OldParam2>, NewParam1, NewParam2> {
-		using type = T<NewParam1, NewParam2>;
+	template <template<bool, bool> class Tech, bool OldParam1, bool OldParam2, bool NewParam1, bool NewParam2>
+	struct ReplaceTemplateParam<Tech<OldParam1, OldParam2>, NewParam1, NewParam2> {
+		using type = Tech<NewParam1, NewParam2>;
 	};
 
 	enum class Techniques

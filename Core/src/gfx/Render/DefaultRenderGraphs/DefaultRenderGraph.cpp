@@ -1,5 +1,6 @@
 #include "DefaultRenderGraph.h"
 #include <Core/src/gfx/Render/Passes/ForwardLambertianPass.h>
+#include <Core/src/gfx/Render/Passes/PointLightBindPass.h>
 
 namespace tryn::gfx
 {
@@ -7,6 +8,9 @@ namespace tryn::gfx
 		:
 		IRenderGraph(gfx)
 	{
+		AddPass(std::move(PointLightBindPass(*this)));
+		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "pointLightBuffer" }, LinkageParam{ .passName = "PointLightBind", .resourceName = "pointLightBuffer" });
+
 		AddPass(std::move(ForwardLambertianPass(*this)));
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "rtv" }, LinkageParam{ .passName = "lambertian", .resourceName = "rtv" });
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "depthStencil" }, LinkageParam{ .passName = "lambertian", .resourceName = "depthStencil" });

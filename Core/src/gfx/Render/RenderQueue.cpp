@@ -94,6 +94,11 @@ namespace tryn::gfx
 		anyVector.Clear();
 	}
 
+	std::uint16_t RenderQueue::GetNumberOfJobs() const
+	{
+		return pJobs.size();
+	}
+
 	void RenderQueue::Push(IJob* pJob)
 	{
 		pJobs.push_back(pJob);

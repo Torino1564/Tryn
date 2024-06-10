@@ -26,9 +26,15 @@ namespace tryn::gfx
 			// This queue pass knows that the first queue is the PointLightBind one (because it was declared that way on its constructor)
 			auto& pointLightBindQueue = *pQueues[0];
 
-			// All this pass does is run the lambertian queue
+			if (pointLightBindQueue.GetNumberOfJobs() > graph.GetMaxPointLights())
+			{
+				graph.ResizePointLightBuffer(pointLightBindQueue.GetNumberOfJobs() * 1.0f);
+			}
+
 			pointLightBindQueue.RunJobs(gfx);
 			pointLightBindQueue.Clear();
+
+			graph.pPointLightCBuf->Bind();
 		}
 		using SinkType = Sink<In<IPxConstantBuffer>>;
 		using SourceType = Source<Out<IPxConstantBuffer>>;

@@ -21,11 +21,17 @@ namespace tryn::gfx
 		void RunJobs(IGraphics& gfx);
 		void RunJobsAsync(IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers, gfx::PointLight* pPointLight);
 		void Clear();
+		std::uint16_t GetNumberOfJobs() const;
 		void Push(IJob* pJob);
 		template <typename Job>
 		void Push(Job&& job)
 		{
 			anyVector.PushBack(std::forward<Job&&>(job));
+		}
+		template <typename Job, typename... Args>
+		void Push(Args&&...args)
+		{
+			anyVector.PushBack(std::move(Job(std::forward<Args>(args)..., anyVector.Size())));
 		}
 		utl::AnyVector& GetAnyVector();
 	private:

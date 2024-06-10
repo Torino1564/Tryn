@@ -1,5 +1,6 @@
 #include "RenderSystem.h"
 #include <Core/src/ecs/cmp/ComponentManager.h>
+#include <Core/src/gfx/Render/Jobs/PointLightJob.h>
 
 namespace tryn::ecs::sys
 {
@@ -136,12 +137,16 @@ namespace tryn::ecs::sys
 			skinnedModelArray[i].pModel->Submit(transformSkinnedArray[i].transform, boneTransformArray[i].transforms);
 		}
 
+		// Get handle to render graph
+
+		auto& renderGraph = pGfx->GetRenderGraph();
+
 		for (auto i = 0; i < activeSkinnedArray.Size(); i++)
 		{
 			if (!pointLightActiveArray[i].active)
 				continue;
 
-			pGfx->GetRenderGraph().GetRenderQueueByID("PointLights");
+			pGfx->GetRenderGraph().GetRenderQueueByID("PointLights").Push<gfx::PointLightJob>(pointLightArray[i].parameters, pointLightPositionArray[i].position, renderGraph);
 		}
 	}
 }

@@ -10,7 +10,10 @@
 #include <Core/src/ecs/cmp/ModelComponent.h>
 #include <Core/src/ecs/cmp/ScaleComponent.h>
 #include <Core/src/ecs/cmp/RotationComponent.h>
+#include <Core/src/ecs/cmp/PointLightComponent.h>
 
+#include <Core/src/gfx/Render/Techniques/Flat.h>
+#include <Core/src/gfx/Model/Model.h>
 #include <TrynGame/Game/Core/Player.h>
 
 app::App* app::CreateApp(int argc, char** argv)
@@ -44,6 +47,27 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 	pPlayer = std::make_unique<Player>("player1", "Game/Resources/Models/PlayerModels/sphere.obj", Gfx());
 
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
+
+	auto light = ecs::Entity::CreateNew<
+		ecs::cmp::ActiveComponent,
+		ecs::cmp::PositionComponent,
+		ecs::cmp::TransformComponent,
+		ecs::cmp::ModelComponent,
+		ecs::cmp::ScaleComponent,
+		ecs::cmp::RotationComponent,
+		ecs::cmp::PointLightComponent>("light");
+
+	light.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 10.0f, 0.0f };
+	light.GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat>(Gfx(), "Game/Resources/Models/sphere.obj");
+	light.GetComponent<ecs::cmp::ActiveComponent>().active = true;
+	light.GetComponent<ecs::cmp::PointLightComponent>().parameters = gfx::PointLight::Parameters{
+		.ambient = {0.1f, 0.1f, 0.1f},
+		.diffuseColor = glm::normalize(glm::vec3{1.0f, 1.0f, 1.0f}),
+		.diffuseIntensity = 1.0f,
+		.constantAtt = 1.0f,
+		.linearAtt = 0.045f,
+		.quadraticAtt = 0.0075f
+	};
 
 	auto sponza = ecs::Entity::CreateNew<
 		ecs::cmp::ActiveComponent,
@@ -87,9 +111,9 @@ void TrynGameApp::DoFrame()
 	auto& playerVelocity = pPlayer->GetComponent<ecs::cmp::VelocityComponent>().velocity;
 	playerVelocity = { 0.0f, 0.0f, 0.0f };
 	pActiveCamera->Submit(Gfx());
-	pPointLight->SubmitLight(Gfx());
-	pPointLight->Submit(Gfx(), pActiveCamera->GetViewMatrix());
-	pPointLight->ShowControls();
+	//pPointLight->SubmitLight(Gfx());
+	//pPointLight->Submit(Gfx(), pActiveCamera->GetViewMatrix());
+	//pPointLight->ShowControls();
 	
 	if (state == Mode::Player)
 	{

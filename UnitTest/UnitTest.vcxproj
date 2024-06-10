@@ -129,6 +129,7 @@
     <ClCompile Include="src\ent\Ent.cpp" />
     <ClCompile Include="src\gfx\D3d11Buffer.cpp" />
     <ClCompile Include="src\gfx\dcb.cpp" />
+    <ClCompile Include="src\gfx\PointLight.cpp" />
     <ClCompile Include="src\gfx\RenderGraph.cpp" />
     <ClCompile Include="src\gfx\SinkAndSourcesTest.cpp" />
     <ClCompile Include="src\ioc\Ioc.cpp" />

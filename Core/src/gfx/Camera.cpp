@@ -43,10 +43,16 @@ namespace tryn::gfx
     {
         return direction;
     }
-    glm::mat4 Camera::GetViewMatrix() const
+    glm::mat4 Camera::GetViewMatrix()
+    {
+        GetViewOnViewMatrix();
+        return glm::mat4(viewMatrix);
+    }
+    const glm::mat4& Camera::GetViewOnViewMatrix()
     {
         constexpr auto upDirection = glm::vec3(0, 1.0f, 0);
-        return glm::lookAtLH(position, position + direction, upDirection);
+        viewMatrix = glm::lookAtLH(position, position + direction, upDirection);
+        return viewMatrix;
     }
     void Camera::ShowDebugInfo() const
     {

@@ -8,9 +8,6 @@ namespace tryn::gfx
 		:
 		gfx(gfx)
 	{
-		// Model
-		// pModel = std::make_unique<Model>(gfx, "Game/Resources/Models/sphere.obj", glm::vec3{0.1f,0.1f,0.1f}, Techniques::Flat);
-
 		pModel = Model::Make<Flat>(gfx, "Game/Resources/Models/sphere.obj", glm::vec3{ 0.1f,0.1f,0.1f });
 
 		parameters.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
