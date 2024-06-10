@@ -57,8 +57,8 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		ecs::cmp::RotationComponent,
 		ecs::cmp::PointLightComponent>("light");
 
-	light.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 10.0f, 0.0f };
-	light.GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat>(Gfx(), "Game/Resources/Models/sphere.obj");
+	light.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
+	light.GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/sphere.obj");
 	light.GetComponent<ecs::cmp::ActiveComponent>().active = true;
 	light.GetComponent<ecs::cmp::PointLightComponent>().parameters = gfx::PointLight::Parameters{
 		.ambient = {0.1f, 0.1f, 0.1f},
@@ -78,7 +78,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		ecs::cmp::RotationComponent>("sponza");
 
 	sponza.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-	sponza.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
+	//sponza.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
 	sponza.GetComponent<ecs::cmp::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
 	sponza.GetComponent<ecs::cmp::ActiveComponent>().active = false;
 

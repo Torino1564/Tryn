@@ -88,7 +88,7 @@ namespace tryn::gfx
 			}
 		}
 
-		for (auto i = 0; i < pScene->mNumAnimations; i++)
+		for (unsigned int i = 0; i < pScene->mNumAnimations; i++)
 		{
 			ani::AnimationManager::Get().New(pModel->name, *pScene->mAnimations[i]);
 		}

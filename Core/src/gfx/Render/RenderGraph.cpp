@@ -48,6 +48,9 @@ namespace tryn::gfx
 		cblayout.Solidify();
 
 		pPointLightCBuf = gfx.CreatePxConstantBuffer(std::move(cblayout), 0, "PointLightBuffer");
+
+		// reserve queue space
+		queues.reserve(maxQueues);
 	}
 	void IRenderGraph::ExecuteFrame(IGraphics& gfx)
 	{
@@ -75,6 +78,7 @@ namespace tryn::gfx
 		else
 		{
 			queues.emplace_back(renderQueueID);
+			trynass(queues.capacity() < 50).msg(L"Maximum queue number exceeded").ex();
 			queueKeys[renderQueueID] = (uint16_t)(queues.size() - 1);
 			return;
 		}
@@ -100,6 +104,7 @@ namespace tryn::gfx
 		else
 		{
 			queues.emplace_back(renderQueueName);
+			trynass(queues.capacity() <= 50).msg(L"Maximum queue number exceeded").ex();
 			queueKeys[renderQueueName] = (uint16_t)(queues.size() - 1);
 			return queues.back();
 		}

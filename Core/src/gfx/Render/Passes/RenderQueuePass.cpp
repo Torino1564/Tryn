@@ -10,7 +10,7 @@ namespace tryn::gfx
 		for (auto& queueID : queueNames)
 		{
 			pQueues.emplace_back(&graph.GetOrAddRenderQueue(queueID));
-			queueNames.push_back(queueID);
+			this->queueNames.push_back(queueID);
 		}
 	}
 }

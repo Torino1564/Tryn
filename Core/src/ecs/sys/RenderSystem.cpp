@@ -141,12 +141,12 @@ namespace tryn::ecs::sys
 
 		auto& renderGraph = pGfx->GetRenderGraph();
 
-		for (auto i = 0; i < activeSkinnedArray.Size(); i++)
+		for (auto i = 0; i < pointLightActiveArray.Size(); i++)
 		{
 			if (!pointLightActiveArray[i].active)
 				continue;
 
-			pGfx->GetRenderGraph().GetRenderQueueByID("PointLights").Push<gfx::PointLightJob>(pointLightArray[i].parameters, pointLightPositionArray[i].position, renderGraph);
+			renderGraph.GetRenderQueueByID("PointLightBind").Push<gfx::PointLightJob>(pointLightArray[i].parameters, pointLightPositionArray[i].position, renderGraph);
 		}
 	}
 }

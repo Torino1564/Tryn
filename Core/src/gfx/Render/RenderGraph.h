@@ -52,6 +52,7 @@ namespace tryn::gfx
 		};
 		std::vector<Level> levels;
 		std::map<std::string, uint16_t> queueKeys;
+		static constexpr std::uint16_t maxQueues = 50;
 		std::vector<RenderQueue> queues;
 		IGraphics& gfx;
 
