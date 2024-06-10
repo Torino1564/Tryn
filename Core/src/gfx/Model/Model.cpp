@@ -1,4 +1,6 @@
 #include "Model.h"
+#include <Core/src/gfx/Assimp.h>
+#include "ModelException.h"
 #include <Core/src/gfx/Material.h>
 #include <Core/third/glm/gtx/transform.hpp>
 #include <Core/third/glm/gtc/type_ptr.hpp>
@@ -8,6 +10,7 @@
 #include <Core/src/mem/ArenaAllocator.h>
 #include <queue>
 #include <Core/src/gfx/Animation/Bone.h>
+#include <Core/src/gfx/Animation/AnimationManager.h>
 
 namespace tryn::gfx
 {
@@ -31,6 +34,127 @@ namespace tryn::gfx
 		glmMatrix[0][3] = aiMatrix.d1; glmMatrix[1][3] = aiMatrix.d2;
 		glmMatrix[2][3] = aiMatrix.d3; glmMatrix[3][3] = aiMatrix.d4;
 		return glmMatrix;
+	}
+
+	Model::Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, bool instanced)
+		:
+		name(path.data()), gfx(gfx)
+	{
+		auto& imp = AssimpManager::Get();
+		const auto pScene = imp.ReadFile(path.data(),
+			aiProcess_Triangulate |
+			aiProcess_JoinIdenticalVertices |
+			aiProcess_ConvertToLeftHanded |
+			aiProcess_GenNormals |
+			aiProcess_CalcTangentSpace
+		);
+
+		if (pScene == nullptr)
+		{
+			throw ModelException(imp.GetErrorString());
+		}
+
+		if (scale != glm::vec3{ 1.0f,1.0f,1.0f })
+		{
+			for (size_t i = 0; i < pScene->mNumMeshes; i++)
+			{
+				const auto& mesh = *pScene->mMeshes[i];
+				for (size_t j = 0; j < mesh.mNumVertices; j++)
+				{
+					auto& vertex = mesh.mVertices[j];
+					vertex.x *= scale.x;
+					vertex.y *= scale.y;
+					vertex.z *= scale.z;
+				}
+			}
+		}
+
+		for (auto i = 0; i < pScene->mNumAnimations; i++)
+		{
+			ani::AnimationManager::Get().New(name, *pScene->mAnimations[i]);
+		}
+
+		int nextId = 0;
+		root = std::make_unique<Node>(ParseNode(nextId, *pScene->mRootNode, scale, true));
+
+		// parse materials
+		std::vector<Material> materials;
+		materials.reserve(pScene->mNumMaterials);
+
+		int switchCase = 0;
+
+		if (instanced && skeleton.has_value())
+		{
+			switchCase = 0;
+		}
+		else
+		{
+			if (instanced)
+			{
+				switchCase = 1; 
+			}
+			else if (skeleton.has_value())
+			{
+				switchCase = 2;
+			}
+			else
+			{
+				switchCase = 3;
+			}
+		}
+
+		for (size_t i = 0; i < pScene->mNumMaterials; i++)
+		{
+			switch (switchCase)
+			{
+			case 0:
+				materials.emplace_back(Material::Make<ForwardPhongInstSkn>(gfx, *pScene->mMaterials[i], path));
+				break;
+			case 1:
+				materials.emplace_back(Material::Make<ForwardPhongInst>(gfx, *pScene->mMaterials[i], path));
+				break;
+			case 2:
+				materials.emplace_back(Material::Make<ForwardPhongSkn>(gfx, *pScene->mMaterials[i], path));
+				break;
+			case 3:
+				materials.emplace_back(Material::Make<ForwardPhong>(gfx, *pScene->mMaterials[i], path));
+				break;
+			}
+		}
+
+		if (skeleton.has_value())
+		{
+			for (size_t i = 0; i < pScene->mNumMeshes; i++)
+			{
+				const auto& mesh = *pScene->mMeshes[i];
+				pMeshes.push_back(std::make_unique<ani::BonedMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), skeleton.value(), scale, meshCounter++));
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i < pScene->mNumMeshes; i++)
+			{
+				const auto& mesh = *pScene->mMeshes[i];
+				pMeshes.push_back(std::make_unique<StaticMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), scale, meshCounter++));
+			}
+		}
+
+		// Set mesh Span
+		std::queue<Node*> q;
+		q.push(root.get());
+
+		while (!q.empty())
+		{
+			auto& current = *q.front();
+			q.pop();
+			
+			current.SetMeshSpan({ pMeshes });
+
+			for (auto& child : current.GetChildren())
+			{
+				q.push(&child);
+			}
+		}
 	}
 
 	void Model::Submit(const glm::mat4& entityTransform = glm::identity<glm::mat4>())
@@ -74,12 +198,6 @@ namespace tryn::gfx
 	std::uint16_t Model::GetMeshAmount() const
 	{
 		return meshCounter + 1;
-	}
-	Model::Model(IGraphics& gfx, const std::string& name)
-		:
-		name(name), gfx(gfx)
-	{
-
 	}
 	Node Model::ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root)
 	{

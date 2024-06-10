@@ -26,12 +26,10 @@ namespace tryn::gfx
 		void InitTransformCBuf(IGraphics& gfx);
 		[[nodiscard]] IVertexBuffer& GetVertexBuffer() const;
 		[[nodiscard]] uint32_t GetIndexCount() const;
+		void AddTechnique(std::shared_ptr<Technique> pTechnique);
 		[[nodiscard]] glm::mat4 GetTransformMatrix() const;
 		[[nodiscard]] std::uint16_t GetID() const;
-		void SetMaterial(std::shared_ptr<class Material> pMat);
-		class Material& GetMaterial();
-		void SetTechniqueState(const std::string& name, const bool state);
-		bool GetTechniqueState(const std::string& name) const;
+
 	protected:
 		virtual void inline ExtraSubmitBehavior() {}
 		std::array<IBindable*, 10> extraBindPtrs;
@@ -41,8 +39,7 @@ namespace tryn::gfx
 		std::unique_ptr<ITransformCBuf> pTransformCBuf;
 		uint32_t indexCount = 0;
 		std::uint16_t ID = 0;
-		std::shared_ptr<class Material> pMaterial;
-		std::vector<bool> techniqueState;
+		std::vector<std::shared_ptr<Technique>> techniques;
 		glm::mat4 transform;
 	};
 }

@@ -82,27 +82,6 @@ namespace tryn::gfx
 		}
 	}
 
-	uint16_t IRenderGraph::GetOrAddRenderQueueID(const std::string& renderQueueName)
-	{
-		auto it = queueKeys.find(renderQueueName);
-		if (it != queueKeys.end())
-		{
-			return (*it).second;
-		}
-		else
-		{
-			queues.emplace_back(renderQueueName);
-			auto newIndex = (uint16_t)(queues.size() - 1);
-			queueKeys[renderQueueName] = newIndex;
-			return newIndex;
-		}
-	}
-
-	std::vector<RenderQueue>& IRenderGraph::GetQueueVector()
-	{
-		return queues;
-	}
-
 	void IRenderGraph::Reset()
 	{
 		pCameras.clear();

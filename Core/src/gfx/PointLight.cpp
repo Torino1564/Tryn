@@ -1,7 +1,7 @@
 #include "PointLight.h"
 #include <Core/src/gfx/Model/StaticMeshPool.h>
 #include <Core/src/gfx/Bindables/IBuffer.h>
-#include <Core/src/gfx/Render/Techniques/ForwardFlat.h>
+
 namespace tryn::gfx
 {
 	PointLight::PointLight(IGraphics& gfx, float radius, glm::vec3 color)
@@ -9,7 +9,7 @@ namespace tryn::gfx
 		gfx(gfx)
 	{
 		// Model
-		pModel = Model::MakeUnique<ForwardFlat>(gfx, "Game/Resources/Models/sphere.obj", glm::vec3{0.1f,0.1f,0.1f});
+		pModel = std::make_unique<Model>(gfx, "Game/Resources/Models/sphere.obj", glm::vec3{0.1f,0.1f,0.1f}, Techniques::Flat);
 
 		parameters.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
 		parameters.viewLightPos = glm::vec3(0.0f, 3.0f, 0.0f);

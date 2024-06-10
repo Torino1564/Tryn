@@ -7,7 +7,7 @@
 
 namespace tryn::gfx
 {
-	StaticMesh::StaticMesh(IGraphics& gfx, std::shared_ptr<Material> pMaterial, const aiMesh& mesh, std::string_view tag, glm::vec3 scale, std::optional<std::uint16_t> meshID)
+	StaticMesh::StaticMesh(IGraphics& gfx, const Material& material, const aiMesh& mesh, std::string_view tag, glm::vec3 scale, std::optional<std::uint16_t> meshID)
 	{
 		if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f)
 		{
@@ -19,9 +19,9 @@ namespace tryn::gfx
 		}
 
 		ID = meshID.value_or(0);
-		auto vertexBuffer = pMaterial->ExtractVertices(mesh);
+		auto vertexBuffer = material.ExtractVertices(mesh);
 		vertexBuffer.SetClean();
-		const auto indices = pMaterial->ExtractIndices(mesh);
+		const auto indices = material.ExtractIndices(mesh);
 
 		indexCount = static_cast<uint32_t>(indices.Size());
 
@@ -29,7 +29,11 @@ namespace tryn::gfx
 		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<IndexBuffer>(indices));
 		pTopology = IPrimitiveTopology::Resolve(gfx);
 		InitTransformCBuf(gfx);
-		SetMaterial(pMaterial);
+
+		for (auto& technique : material.GetTechniques())
+		{
+			techniques.push_back(technique);
+		}
 	}
 
 	MeshType StaticMesh::Type() const

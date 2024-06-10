@@ -15,7 +15,7 @@ namespace tryn::gfx::ani
 		return glmMat;
 	}
 
-	BonedMesh::BonedMesh(IGraphics& gfx, std::shared_ptr<Material> pMaterial, const aiMesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale, std::optional<std::uint16_t> meshID)
+	BonedMesh::BonedMesh(IGraphics& gfx, const Material& material, const aiMesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale, std::optional<std::uint16_t> meshID)
 		:
 		skeleton(skeleton)
 	{
@@ -57,9 +57,9 @@ namespace tryn::gfx::ani
 		}
 
 		ID = meshID.value_or(0);
-		auto vertexBuffer = pMaterial->ExtractVertices(mesh, &skeleton);
+		auto vertexBuffer = material.ExtractVertices(mesh, &skeleton);
 		vertexBuffer.SetClean();
-		const auto indices = pMaterial->ExtractIndices(mesh);
+		const auto indices = material.ExtractIndices(mesh);
 
 		indexCount = static_cast<uint32_t>(indices.Size());
 
@@ -74,8 +74,11 @@ namespace tryn::gfx::ani
 		cblayout["boneArray"].Set(std::move(arrayElement), skeleton.bones.size());
 		cblayout.Solidify();
 		pSkeletonCBuffer = gfx.CreateVtxConstantBuffer(std::move(cblayout), 5);
-		
-		SetMaterial(pMaterial);
+
+		for (auto& technique : material.GetTechniques())
+		{
+			techniques.push_back(technique);
+		}
 	}
 	MeshType BonedMesh::Type() const
 	{
@@ -90,7 +93,6 @@ namespace tryn::gfx::ani
 		auto jitBuffer = mem::ArenaAllocator<>::GP().MakeNew<JITUpdateBuffer>(pSkeletonCBuffer.get(), (void*)boneTransforms.data(), boneTransforms.size_bytes());
 
 		AddExtraBind(jitBuffer);
-		auto& techniques = pMaterial->GetTechniques();
 
 		for (auto& technique : techniques)
 		{

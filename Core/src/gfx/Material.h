@@ -7,11 +7,11 @@
 #include <Core/src/gfx/IBufferFwd.h>
 #include <concepts>
 #include <Core/src/gfx/Render/Techniques/ForwardPhong.h>
-#include <assimp/material.h>
 
 template <typename T>
 concept TechniqueClass = std::derived_from<T, class tryn::gfx::Technique>;
 
+struct aiMaterial;
 struct aiMesh;
 
 namespace tryn::gfx
@@ -22,7 +22,7 @@ namespace tryn::gfx
 	public:
 
 		template <TechniqueClass... T>
-		static Material Make(IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path, bool instanced, bool skinned)
+		static Material Make(IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path)
 		{
 			// TODO:
 			// assert uniqueness
@@ -33,27 +33,27 @@ namespace tryn::gfx
 			// add techniques
 			if constexpr (sizeof...(T) == 0)
 			{
-				mat.AddTechnique<ForwardPhong>(gfx, material, rootPath, instanced, skinned);
+				mat.AddTechnique<ForwardPhong>(gfx, material, rootPath);
 			}
 			else
 			{
-				mat.AddTechnique<0, T...>(gfx, material, rootPath, instanced, skinned);
+				mat.AddTechnique<0, T...>(gfx, material, rootPath);
 			}
 
 			return mat;
 		}
 		VertexBuffer ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton = nullptr) const noexcept;
 		IndexBuffer ExtractIndices(const aiMesh& mesh) const noexcept;
-		std::vector<std::shared_ptr<Technique>>& GetTechniques() noexcept;
+		std::vector<std::shared_ptr<Technique>> GetTechniques() const noexcept;
 
 		template <unsigned N = 0, TechniqueClass... T>
-		void AddTechnique(IGraphics& gfx, aiMaterial& material, const std::string& path, bool instanced, bool skinned)
+		void AddTechnique(IGraphics& gfx, aiMaterial& material, const std::string& path)
 		{
 			if constexpr (N < sizeof...(T))
 			{
 				using TechniqueType = std::tuple_element_t<N, std::tuple<T...>>;
-				pTechniques.push_back(std::move(std::make_shared<TechniqueType>(*this, material, gfx, path, instanced, skinned)));
-				return AddTechnique<N + 1, T...>(gfx, material, path, instanced, skinned);
+				pTechniques.push_back(std::move(std::make_shared<TechniqueType>(*this, material, gfx, path)));
+				return AddTechnique<N + 1, T...>(gfx, material, path);
 			}
 			return;
 		}
