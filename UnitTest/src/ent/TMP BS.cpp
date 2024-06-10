@@ -30,6 +30,11 @@ namespace tryn::ecs
 		{
 			using ComponentList_t = typename ComponentManager::ComponentList<>;
 			ComponentList_t componentTuple = {};
+
+			static constexpr auto velocityID = cmp::VelocityComponent::ctcID;
+			using VelType = ComponentManager::ComponentByIndex<velocityID>;
+
+			VelType velCmp = {};
 		}
 	private:
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;
