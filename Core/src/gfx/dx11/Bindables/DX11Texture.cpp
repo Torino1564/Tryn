@@ -15,6 +15,7 @@ namespace tryn::gfx
 		this->slot = slot;
 
 		auto pTexture = TexturePool::Resolve(path);
+		this->pTextureResource = pTexture;
 
 		D3D11_TEXTURE2D_DESC td = {};
 		td.Width = pTexture->GetWidth();

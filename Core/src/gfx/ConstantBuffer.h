@@ -125,6 +125,7 @@ namespace tryn::gfx
 		class Node
 		{
 			friend class ConstantBufferLayout;
+			friend class ConstantBuffer;
 
 		public:
 			Node() = default;
@@ -227,7 +228,7 @@ namespace tryn::gfx
 		}
 		void Rebase()
 		{
-			buffer.resize(layout.Size());
+			buffer.resize(layout.Size(), (std::byte)(0u));
 		}
 		ElementView operator[](std::string_view id)
 		{
@@ -258,10 +259,7 @@ namespace tryn::gfx
 		{
 			return layout.Size();
 		}
-		void Resize(const std::size_t newSize) override
-		{
-			throw CPUBufferException("Cannot Resize a Constant Buffer!");
-		}
+		void Resize(const std::size_t newSize) override;
 	private:
 		ConstantBufferLayout layout;
 		std::vector<std::byte> buffer;

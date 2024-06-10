@@ -236,4 +236,35 @@ namespace tryn::gfx
 			return true;
 		}
 	}
+	void ConstantBuffer::Resize(const std::size_t newSize)
+	{
+		// Check if first node is of type array
+		auto& rootChildren = layout.GetRoot().children;
+		trynass_msg(rootChildren.size() == 1 && rootChildren.front().type == ConstantBufferLayout::Type::Array, L"Can only resize Array Type Constant Buffers!");
+
+		// Get the array vector
+		auto& arrayNodeChildren = rootChildren.front().children;
+		auto previousSize = arrayNodeChildren.size();
+
+		// warn if shrinking size
+		if (previousSize > newSize)
+		{
+			trylog.warn(L"Shrinking constant buffer. Some data might be lost");
+		}
+
+		// the resize copies the first element of the array. Asserts its not empty
+		trynass_msg(previousSize != 0, L"Cannot resize an array with dimension 0!");
+
+		// Resizes the array with the new size
+		arrayNodeChildren.resize(newSize, arrayNodeChildren.front());
+
+		// Re solidifies the layout
+		layout.Solidify();
+
+		// Copy the buffer to the new buffer
+		auto newBuffer = std::vector<std::byte>(layout.Size(), (std::byte)0u);
+		std::memcpy(newBuffer.data(), buffer.data(), buffer.size());
+
+		buffer = newBuffer;
+	}
 }

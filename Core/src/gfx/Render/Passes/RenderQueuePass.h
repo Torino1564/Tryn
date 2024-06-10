@@ -19,6 +19,7 @@ namespace tryn::gfx
 		}
 		RenderQueuePass(std::string name, IRenderGraph& graph, std::vector<std::string> queueNames );
 	protected:
+
 		// queues
 		std::vector<RenderQueue*> pQueues;
 		std::vector<std::string> queueNames;

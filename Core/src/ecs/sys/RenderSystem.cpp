@@ -31,6 +31,12 @@ namespace tryn::ecs::sys
 			ReadWrite<cmp::ModelComponent>
 		>();
 
+		auto dataPointLight = ECS::Get().archetypeManager.GetComponentGroups<
+			ReadOnly<cmp::ActiveComponent>,
+			ReadOnly<cmp::PositionComponent>,
+			ReadOnly<cmp::PointLightComponent>
+		>();
+
 		// Reset data arrays
 
 		transformArray.Clear();
@@ -48,6 +54,10 @@ namespace tryn::ecs::sys
 		activeSkinnedArray.Clear();
 		transformSkinnedArray.Clear();
 		boneTransformArray.Clear();
+
+		pointLightArray.Clear();
+		pointLightPositionArray.Clear();
+		pointLightActiveArray.Clear();
 
 		// Fill data arrays
 
@@ -78,6 +88,18 @@ namespace tryn::ecs::sys
 			boneTransformArray.PushBack(std::get<std::span<cmp::BoneTransformsComponent::SubresourceData>>(queriedData));
 			transformSkinnedArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
 			skinnedModelArray.PushBack(std::get<std::span<cmp::ModelComponent::SubresourceData>>(queriedData));
+		}
+
+		for (auto& pointLightData : dataPointLight)
+		{
+			pointLightArray.PushBack(std::get<std::span<cmp::PointLightComponent::SubresourceData>>(pointLightData));
+			pointLightPositionArray.PushBack(std::get<std::span<cmp::PositionComponent::SubresourceData>>(pointLightData));
+			pointLightActiveArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(pointLightData));
+		}
+
+		if (pGfx == nullptr)
+		{
+			pGfx = modelArray[0].pModel->GetGfx();
 		}
 
 		// Kernel
@@ -112,6 +134,14 @@ namespace tryn::ecs::sys
 				continue;
 
 			skinnedModelArray[i].pModel->Submit(transformSkinnedArray[i].transform, boneTransformArray[i].transforms);
+		}
+
+		for (auto i = 0; i < activeSkinnedArray.Size(); i++)
+		{
+			if (!pointLightActiveArray[i].active)
+				continue;
+
+			pGfx->GetRenderGraph().GetRenderQueueByID("PointLights");
 		}
 	}
 }

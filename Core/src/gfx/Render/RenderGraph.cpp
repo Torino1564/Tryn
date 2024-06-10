@@ -6,6 +6,7 @@
 #include <Core/src/gfx/Bindables/DepthStencil.h>
 #include <Core/src/gfx/BindablePool.h>
 #include <Core/src/gfx/PointLight.h>
+#include <Core/src/gfx/Bindables/IBuffer.h>
 
 namespace tryn::gfx
 {
@@ -19,12 +20,34 @@ namespace tryn::gfx
 		pGlobalSink = MakeUniqueSink(In<IShaderResourceRenderTargetView>("rtv"));
 
 		// Init Source
-		auto pSource = MakeUniqueSource(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"));
+		auto pSource = MakeUniqueSource(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"), Out<IPxConstantBuffer>("pointLightBuffer"));
 
 		pSource->Set(pRTV, "rtv");
 		pSource->Set(pDSV, "depthStencil");
+		pSource->Set(pPointLightCBuf, "pointLightBuffer");
 
 		pGlobalSource = std::move(pSource);
+
+		// Point Light buffer init
+		
+		gfx::ConstantBufferLayout cblayout;
+
+		gfx::ConstantBufferLayout::Node pointLightElement(ConstantBufferLayout::Type::Struct, "pointLightParams");
+		pointLightElement.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float4, "position"));
+		pointLightElement.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float3, "ambient"));
+		pointLightElement.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float3, "diffuseColor"));
+		pointLightElement.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float, "diffuseIntensity"));
+		pointLightElement.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float, "constantAtt"));
+		pointLightElement.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float, "linearAtt"));
+		pointLightElement.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float, "quadraticAtt"));
+
+		this->pointLightElement = pointLightElement;
+
+		cblayout.Append(ConstantBufferLayout::Type::Array, "pointLightArray");
+		cblayout["pointLightArray"].Set(pointLightElement, maxPointLights);
+		cblayout.Solidify();
+
+		pPointLightCBuf = gfx.CreatePxConstantBuffer(std::move(cblayout), 0, "PointLightBuffer");
 	}
 	void IRenderGraph::ExecuteFrame(IGraphics& gfx)
 	{

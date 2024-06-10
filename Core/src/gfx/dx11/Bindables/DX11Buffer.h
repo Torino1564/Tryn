@@ -85,17 +85,10 @@ namespace tryn::gfx::dx11
 		}
 
 		template <BufferType T = Type>
-		requires (T == BufferType::Instance)
 		void Resize_(const std::size_t newSize)
 		{
-			auto& cbuf = *std::dynamic_pointer_cast<ConstantBuffer>(this->pCPUBuffer);
-			cbuf["InstanceArray"].Resize(newSize);
+			this->pCPUBuffer->Resize(newSize);
 			InitDynamicCBufferOnGPU();
-		}
-
-		void Resize_(const std::size_t newSize)
-		{
-			throw BufferMissmatchException("Cannot resize a buffer thats not an instance buffer!");
 		}
 
 		void InitDynamicCBufferOnGPU()

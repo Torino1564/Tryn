@@ -7,6 +7,7 @@
 #include <Core/src/gfx/IBufferFwd.h>
 #include <concepts>
 #include <Core/src/gfx/Render/Techniques/ForwardPhong.h>
+#include <Core/src/gfx/Render/Techniques/Flat.h>
 
 template <typename T>
 concept TechniqueClass = std::derived_from<T, class tryn::gfx::Technique>;
@@ -20,8 +21,7 @@ namespace tryn::gfx
 	{
 		friend class Technique;
 	public:
-
-		template <TechniqueClass... T>
+		template <typename... T>
 		static Material Make(IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path)
 		{
 			// TODO:

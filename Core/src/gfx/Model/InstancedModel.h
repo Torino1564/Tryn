@@ -13,7 +13,7 @@ namespace tryn::gfx
 	{
 		friend class InstancedModelChild;
 	public:
-		InstancedModelParent(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, Techniques defaultTechnique = Techniques::Phong, std::optional<std::uint32_t> numInstances = std::nullopt);
+		InstancedModelParent(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint32_t> numInstances = std::nullopt);
 		void Submit(const glm::mat4& entityTransform);
 		InstancedModelChild Instanciate();
 		void Instanciate(std::span<InstancedModelChild> childSpan);

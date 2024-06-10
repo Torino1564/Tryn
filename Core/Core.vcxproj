@@ -66,12 +66,14 @@
     <ClCompile Include="src\gfx\Render\DefaultRenderGraphs\DefaultRenderGraph.cpp" />
     <ClCompile Include="src\gfx\Render\Jobs\BasicJob.cpp" />
     <ClCompile Include="src\gfx\Render\Jobs\InstancedJob.cpp" />
+    <ClCompile Include="src\gfx\Render\Jobs\PointLightJob.cpp" />
     <ClCompile Include="src\gfx\Render\Passes\RenderQueuePass.cpp" />
     <ClCompile Include="src\gfx\Render\RenderGraph.cpp" />
     <ClCompile Include="src\gfx\Render\RenderQueue.cpp" />
     <ClCompile Include="src\gfx\Render\RenderTask.cpp" />
     <ClCompile Include="src\gfx\Render\Step.cpp" />
     <ClCompile Include="src\gfx\Render\Technique.cpp" />
+    <ClCompile Include="src\gfx\Render\Techniques\Flat.cpp" />
     <ClCompile Include="src\gfx\Render\Techniques\ForwardPhong.cpp" />
     <ClCompile Include="src\gfx\Texture.cpp" />
     <ClCompile Include="src\gfx\Vertex.cpp" />
@@ -109,6 +111,7 @@
     <ClCompile Include="third\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ecs\cmp\PointLightComponent.h" />
     <ClInclude Include="src\gfx\Bindables\BufferResourceType.h" />
     <ClInclude Include="src\gfx\Bindables\DepthStencil.h" />
     <ClInclude Include="src\gfx\Bindables\RenderTargetView.h" />
@@ -123,7 +126,6 @@
     <ClInclude Include="src\app\Globals.h" />
     <ClInclude Include="src\app\Initialization.h" />
     <ClInclude Include="src\ccr\CCRException.h" />
-    <ClInclude Include="src\ccr\GenericObjectPool.h" />
     <ClInclude Include="src\ccr\GenericTaskQueue.h" />
     <ClInclude Include="src\ccr\Master.h" />
     <ClInclude Include="src\ccr\Task.h" />
@@ -194,13 +196,16 @@
     <ClInclude Include="src\gfx\Model\InstancedModel.h" />
     <ClInclude Include="src\gfx\Render\Jobs\IJob.h" />
     <ClInclude Include="src\gfx\Render\Jobs\InstancedJob.h" />
+    <ClInclude Include="src\gfx\Render\Jobs\PointLightJob.h" />
     <ClInclude Include="src\gfx\Render\Passes\ForwardLambertianPass.h" />
+    <ClInclude Include="src\gfx\Render\Passes\PointLightBindPass.h" />
     <ClInclude Include="src\gfx\Render\Passes\RenderQueuePass.h" />
     <ClInclude Include="src\gfx\Render\RenderPass.h" />
     <ClInclude Include="src\gfx\Render\SinkAndSource.h" />
     <ClInclude Include="src\gfx\Render\Step.h" />
     <ClInclude Include="src\gfx\Render\Technique.h" />
     <ClInclude Include="src\gfx\Render\TechniqueProbe.h" />
+    <ClInclude Include="src\gfx\Render\Techniques\Flat.h" />
     <ClInclude Include="src\gfx\Render\Techniques\ForwardPhong.h" />
     <ClInclude Include="src\gfx\RTVDSFwd.h" />
     <ClInclude Include="src\gfx\TexturePool.h" />

@@ -8,6 +8,8 @@
 #include <Core/src/ecs/cmp/InstancedModelParentComponent.h>
 #include <Core/src/ecs/cmp/BoneTransformsComponents.h>
 #include <Core/src/ecs/sys/TransformSystem.h>
+#include <Core/src/ecs/cmp/PointLightComponent.h>
+#include <Core/src/ecs/cmp/PositionComponent.h>
 #include "AnimationSystem.h"
 
 namespace tryn::ecs::sys
@@ -20,6 +22,10 @@ namespace tryn::ecs::sys
 		{
 			AddDependency<sys::AnimationSystem>();
 			AddDependency<sys::TransformSystem>();
+		}
+		static void OnCreate()
+		{
+
 		}
 		static void Execute();
 	private:
@@ -39,5 +45,11 @@ namespace tryn::ecs::sys
 		ZT_NATIVE_ARRAY(TransformComponent) transformSkinnedArray;
 		ZT_NATIVE_ARRAY(BoneTransformsComponent) boneTransformArray;
 		ZT_NATIVE_ARRAY(ModelComponent) skinnedModelArray;
+
+		ZT_NATIVE_ARRAY(PointLightComponent)	pointLightArray;
+		ZT_NATIVE_ARRAY(PositionComponent)		pointLightPositionArray;
+		ZT_NATIVE_ARRAY(ActiveComponent)		pointLightActiveArray;
+
+		static inline gfx::IGraphics* pGfx;
 	};
 }
