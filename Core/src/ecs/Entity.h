@@ -17,77 +17,77 @@ namespace tryn::ecs
 	class Entity
 	{
 	public:
-		Entity(std::string name = "?")
-			:
-			name(std::move(name))
-		{
-
-		}
+		Entity(std::string name = "?");
 		virtual ~Entity();
 
 		template <ValidComponent... Cs>
-		static Entity CreateNew(std::string name = "?")
-		{
-			Entity ent(std::move(name));
-			ent.pArchetype = ArchetypeManager::Get().GetArchetype<Cs...>();
-			ent.UUID = ent.pArchetype->ResolveEntityUUID();
-			return ent;
-		}
-		std::span<int> GetComponents()
-		{
-			return std::span<int>(pArchetype->components.begin(), pArchetype->components.size());
-		}
+		static Entity CreateNew(std::string name = "?");
+		std::span<int> GetComponents();
 
 		template <ValidComponent C>
-		C::SubresourceData& GetComponent()
-		{
-			auto data = pArchetype->GetComponentData<C>();
-			return data[UUID.ID - 1];
-		}
+		C::SubresourceData& GetComponent();
 
-		void Instanciate(std::span<Entity> destination)
-		{
-			for (auto [instanceNum, ent] : std::ranges::views::enumerate(destination))
-			{
-				ent.name = name + "_" + std::to_string(instanceNum);
-				ent.pArchetype = pArchetype;
-				ent.UUID = pArchetype->ResolveEntityUUID();
-			}
-		}
+		void Instanciate(std::span<Entity> destination);
 		void SpawnControlWindow();
 
 	protected:
 		template <ValidComponent... Cs>
-		void AddComponent()
-		{
-			auto& newComponentIDs = *ECS::Get().allocator.MakeNew<std::array<ComponentIndex,100>>();
-			int index = 0;
-			AddComponent<Cs...>(newComponentIDs, index);
-
-			for (auto componentID : pArchetype->components)
-			{
-				newComponentIDs[++index] = componentID;
-			}
-
-			// Request the new Archetype
-			auto newArchetype = ArchetypeManager::Get().GetArchetype(std::span<int>(newComponentIDs.begin(), newComponentIDs.size()));
-		}
+		void AddComponent();
 
 		template <ValidComponent First, ValidComponent Second, ValidComponent... Rest>
-		void AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int& index = 0)
-		{
-			AddComponent_<First>(newComponentIDs, index++);
-			AddComponent_<Second, Rest...>(newComponentIDs, index);
-		}
+		void AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int& index = 0);
 
 		template <ValidComponent C>
-		void AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int index = 0)
-		{
-			newComponentIDs[index] = C::UUID;
-		}
+		void AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int index = 0);
 
 		std::string name;
 		EntityID UUID = {};
 		Archetype* pArchetype = nullptr;
 	};
+
+
+	template<ValidComponent ...Cs>
+	inline Entity Entity::CreateNew(std::string name)
+	{
+		Entity ent(std::move(name));
+		ent.pArchetype = ArchetypeManager::Get().GetArchetype<Cs...>();
+		ent.UUID = ent.pArchetype->ResolveEntityUUID();
+		return ent;
+	}
+
+	template<ValidComponent C>
+	inline C::SubresourceData& Entity::GetComponent()
+	{
+		auto data = pArchetype->GetComponentData<C>();
+		return data[UUID.ID - 1];
+	}
+
+	template<ValidComponent ...Cs>
+	inline void Entity::AddComponent()
+	{
+		auto& newComponentIDs = *ECS::Get().allocator.MakeNew<std::array<ComponentIndex, 100>>();
+		int index = 0;
+		AddComponent<Cs...>(newComponentIDs, index);
+
+		for (auto componentID : pArchetype->components)
+		{
+			newComponentIDs[++index] = componentID;
+		}
+
+		// Request the new Archetype
+		auto newArchetype = ArchetypeManager::Get().GetArchetype(std::span<int>(newComponentIDs.begin(), newComponentIDs.size()));
+	}
+
+	template<ValidComponent First, ValidComponent Second, ValidComponent ...Rest>
+	inline void Entity::AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int& index)
+	{
+		AddComponent_<First>(newComponentIDs, index++);
+		AddComponent_<Second, Rest...>(newComponentIDs, index);
+	}
+
+	template<ValidComponent C>
+	inline void Entity::AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int index)
+	{
+		newComponentIDs[index] = C::UUID;
+	}
 }

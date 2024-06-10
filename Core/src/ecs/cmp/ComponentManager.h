@@ -139,6 +139,7 @@ namespace tryn::ecs
 	public:
 		ZT_COMPONENT_FIELDS();
 	public:
+		constexpr static inline const char* name = "Default Component";
 		using ComponentType = T;
 		static constexpr auto accessMode = AccessMode::ReadWrite;
 		const static inline int UUID = ComponentManager::Get().RegisterComponent<T>();

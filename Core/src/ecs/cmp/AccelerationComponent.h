@@ -9,5 +9,6 @@ namespace tryn::ecs::cmp
 		ZT_COMPONENT_FIELDS(
 			glm::vec3 acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 		);
+		inline static constexpr const char* name = "Acceleration";
 	};
 }
