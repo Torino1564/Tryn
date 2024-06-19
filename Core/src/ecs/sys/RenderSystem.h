@@ -1,15 +1,8 @@
 #pragma once
 #include "SystemManager.h"
 #include <Core/src/utl/Span.h>
-#include <Core/src/ecs/cmp/ActiveComponent.h>
-#include <Core/src/ecs/cmp/ModelComponent.h>
-#include <Core/src/ecs/cmp/TransformComponent.h>
-#include <Core/src/ecs/cmp/InstancedModelChildComponent.h>
-#include <Core/src/ecs/cmp/InstancedModelParentComponent.h>
-#include <Core/src/ecs/cmp/BoneTransformsComponents.h>
-#include <Core/src/ecs/sys/TransformSystem.h>
-#include <Core/src/ecs/cmp/PointLightComponent.h>
-#include <Core/src/ecs/cmp/PositionComponent.h>
+#include <Core/src/ecs/cmp/Components.h>
+
 #include "AnimationSystem.h"
 
 namespace tryn::ecs::sys

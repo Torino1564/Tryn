@@ -8,6 +8,7 @@
 #include <Core/src/ecs/cmp/ComponentManager.h>
 #include <Core/src/ecs/sys/SystemManager.h>
 #include <Core/src/ecs/cmp/ComponentPack.h>
+#include <Core/src/ecs/cmp/Components.h>
 #include <Core/src/utl/Timer.h>
 
 namespace tryn::ecs

@@ -1,9 +1,6 @@
 #pragma once
 #include "SystemManager.h"
-#include <Core/src/ecs/cmp/AnimatedComponent.h>
-#include <Core/src/ecs/cmp/BoneTransformsComponents.h>
-#include <Core/src/ecs/cmp/ActiveComponent.h>
-#include <Core/src/ecs/cmp/TransformComponent.h>
+#include <Core/src/ecs/cmp/Components.h>
 #include <Core/src/ecs/sys/TransformSystem.h>
 #include <chrono>
 

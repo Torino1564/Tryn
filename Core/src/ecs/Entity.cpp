@@ -35,15 +35,32 @@ namespace tryn::ecs
 			ImGui::Text("Components:");
 			if (ImGui::BeginCombo("Components", "Select a component"))
 			{
-				auto componentSpan = GetComponents();
+				auto& componentSpan = pArchetype->componentSMPID;
 				for (auto componentUUID : componentSpan)
 				{
-
+					
 				}
 				ImGui::EndCombo();
 			}
 
 			ImGui::End();
+		}
+	}
+
+	template <unsigned N = 0>
+	void PrintComponentData(const std::uint16_t componentSMPID)
+	{
+		if constexpr (N >= ComponentManager::GetComponentCount())
+		{
+			throw ComponentSMPException(L"Invalid componentSMPID. The requested component does not exist.");
+		}
+		if (N != componentSMPID)
+		{
+			PrintComponentData<N + 1>(componentSMPID);
+		}
+		else
+		{
+
 		}
 	}
 }

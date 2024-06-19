@@ -1,10 +1,8 @@
 #pragma once
 #include <Core/src/ecs/sys/SystemManager.h>
-#include <Core/src/ecs/cmp/PositionComponent.h>
-#include <Core/src/ecs/cmp/ScaleComponent.h>
-#include <Core/src/ecs/cmp/RotationComponent.h>
-#include <Core/src/ecs/cmp/TransformComponent.h>
-#include <Core/src/ecs/cmp/ActiveComponent.h>
+
+#include <Core/src/ecs/cmp/Components.h>
+
 
 namespace tryn::ecs::sys
 {

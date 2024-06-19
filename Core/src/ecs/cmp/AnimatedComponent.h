@@ -7,10 +7,10 @@ namespace tryn::ecs::cmp
 	ZT_DEFINE_COMPONENT(AnimatedComponent)
 	{
 		ZT_COMPONENT_FIELDS(
-			double time;
-			uint32_t previousKey;
-			gfx::ani::AnimationSkeletonInterface* pAnimationSkeletonInterface;
-			gfx::ani::AnimationState state;
+			ZT_DEFINE_COMPONENT_VAR(double, time);
+			ZT_DEFINE_COMPONENT_VAR(uint32_t, previousKey);
+			ZT_DEFINE_COMPONENT_VAR(gfx::ani::AnimationSkeletonInterface*, pAnimationSkeletonInterface);
+			ZT_DEFINE_COMPONENT_VAR(gfx::ani::AnimationState, state);
 		);
 	};
 }

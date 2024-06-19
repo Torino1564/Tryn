@@ -2,12 +2,13 @@
 #include <Core/src/ecs/cmp/AccelerationComponent.h>
 #include <Core/src/ecs/cmp/ActiveComponent.h>
 #include <Core/src/ecs/cmp/AnimatedComponent.h>
-#include <Core/src/ecs/cmp/BoneTransformsComponents.h>
+#include <Core/src/ecs/cmp/BoneTransformsComponent.h>
 #include <Core/src/ecs/cmp/InstancedModelChildComponent.h>
 #include <Core/src/ecs/cmp/InstancedModelParentComponent.h>
 #include <Core/src/ecs/cmp/ScaleComponent.h>
 #include <Core/src/ecs/cmp/RotationComponent.h>
 #include <Core/src/ecs/cmp/TransformComponent.h>
+#include <Core/src/ecs/cmp/ModelComponent.h>
 #include <Core/src/ecs/cmp/PositionComponent.h>
 #include <Core/src/ecs/cmp/VelocityComponent.h>
 #include <Core/src/ecs/cmp/PointLightComponent.h>

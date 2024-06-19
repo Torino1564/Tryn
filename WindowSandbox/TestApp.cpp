@@ -12,15 +12,7 @@
 #include <Core/src/gfx/Render/Step.h>
 #include <Core/src/gfx/Assimp.h>
 #include <Core/src/ccr/Master.h>
-#include <Core/src/ecs/cmp/ActiveComponent.h>
-#include <Core/src/ecs/cmp/ModelComponent.h>
-#include <Core/src/ecs/cmp/ScaleComponent.h>
-#include <Core/src/ecs/cmp/RotationComponent.h>
-#include <Core/src/ecs/cmp/PositionComponent.h>
-#include <Core/src/ecs/cmp/VelocityComponent.h>
-#include <Core/src/ecs/cmp/AccelerationComponent.h>
-#include <Core/src/ecs/cmp/AnimatedComponent.h>
-#include <Core/src/ecs/cmp/BoneTransformsComponents.h>
+#include <Core/src/ecs/cmp/Components.h>
 #include <Core/src/ecs/sys/SystemManager.h>
 #include <Core/src/ecs/sys/TransformSystem.h>
 #include <Core/src/ecs/sys/RenderSystem.h>

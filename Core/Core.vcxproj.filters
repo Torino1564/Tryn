@@ -1829,7 +1829,7 @@
     <ClInclude Include="src\ecs\sys\AnimationSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ecs\cmp\BoneTransformsComponents.h">
+    <ClInclude Include="src\ecs\cmp\BoneTransformsComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Bindables\JITUpdateBuffer.h">
@@ -1920,6 +1920,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ecs\cmp\Components.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utl\StatefulMeta\CTM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

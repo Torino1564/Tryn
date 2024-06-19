@@ -2,13 +2,8 @@
 #include <TrynGame/App/GameApp.h>
 
 //Components
-#include <Core/src/ecs/cmp/PositionComponent.h>
-#include <Core/src/ecs/cmp/RotationComponent.h>
-#include <Core/src/ecs/cmp/ScaleComponent.h>
-#include <Core/src/ecs/cmp/ModelComponent.h>
-#include <Core/src/ecs/cmp/VelocityComponent.h>
-#include <Core/src/ecs/cmp/TransformComponent.h>
-#include <Core/src/ecs/cmp/ActiveComponent.h>
+#include <Core/src/ecs/cmp/Components.h>
+
 
 using namespace tryn;
 

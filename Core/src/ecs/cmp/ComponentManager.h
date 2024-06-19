@@ -15,11 +15,30 @@
 #include <Core/src/utl/Span.h>
 
 #include <Core/src/utl/StatefulMeta/CTC.h>
+#include <Core/src/utl/StatefulMeta/CTM.h>
+#include <Core/src/utl/Exception.h>
 
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ x }
 
 #define ZT_DEFINE_COMPONENT(x) class x : public tryn::ecs::Component<x>
+
+
+#define ZT_DEFINE_COMPONENT_VARIABLE_2(type, var) \
+	type var; \
+	using ZT_CAT_C(var, _t) = tryn::utl::CTM::Map_t<type, #type, #var, sizeof(type), ctcID>
+
+
+#define ZT_DEFINE_COMPONENT_VARIABLE_3(type, var, initVal) \
+	type var = initVal; \
+	using ZT_CAT_C(var, _t) = tryn::utl::CTM::Map_t<type, #type, #var, sizeof(type), ctcID>
+
+
+#define GET_MACRO(_1,_2,_3,NAME,...) NAME
+#define ZT_DEFINE_COMPONENT_VAR(...) GET_MACRO(__VA_ARGS__, ZT_DEFINE_COMPONENT_VARIABLE_3, ZT_DEFINE_COMPONENT_VARIABLE_2)(__VA_ARGS__)
+
+
+ZT_EX_DEF(ComponentSMPException);
 
 namespace tryn::ecs
 {
@@ -163,12 +182,16 @@ namespace tryn::ecs
 		using ComponentType = T;
 		static constexpr auto accessMode = AccessMode::ReadWrite;
 		const static inline int UUID = ComponentManager::Get().RegisterComponent<T>();
-		static constexpr auto ctcID = utl::ctc::counter<T, ComponentManager::listID>;
+		static inline constexpr auto ctcID = utl::ctc::counter<T, ComponentManager::listID>;
+	private:
+		utl::CTM::setter<0, std::tuple<>, utl::CTM::tu_tag, ctcID> setter;
 	};
 
 	ZT_DEFINE_COMPONENT(ActivationComponent)
 	{
-		ZT_COMPONENT_FIELDS();
+		ZT_COMPONENT_FIELDS(
+			ZT_DEFINE_COMPONENT_VAR(bool, activation);
+		);
 	};
 	
 	template <ValidComponent... Cs>
@@ -245,6 +268,7 @@ namespace tryn::ecs
 		void AppendComponents()
 		{
 			components.push_back(C::UUID);
+			componentSMPID.push_back(C::ctcID);
 			bufferPtrs.push_back(std::make_unique<std::vector<std::byte>>());
 		}
 		const int GetUUID() const
@@ -276,6 +300,7 @@ namespace tryn::ecs
 	private:
 		void InitializeUUID();
 		std::uint16_t UUID = 0;
+		std::vector<std::uint16_t> componentSMPID;
 		std::vector<int> components;
 		std::uint32_t bookerPointer = 0;
 		std::uint32_t upperLimit = 0;

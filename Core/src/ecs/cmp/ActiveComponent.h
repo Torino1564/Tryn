@@ -6,7 +6,7 @@ namespace tryn::ecs::cmp
 	ZT_DEFINE_COMPONENT(ActiveComponent)
 	{
 		ZT_COMPONENT_FIELDS(
-			bool active = true;
+			ZT_DEFINE_COMPONENT_VAR(bool, active, true);
 		);
 	};
 }

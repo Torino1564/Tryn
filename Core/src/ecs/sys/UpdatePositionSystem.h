@@ -1,8 +1,7 @@
 #pragma once
 #include "SystemManager.h"
 #include <Core/src/utl/Span.h>
-#include <Core/src/ecs/cmp/PositionComponent.h>
-#include <Core/src/ecs/cmp/VelocityComponent.h>
+#include <Core/src/ecs/cmp/Components.h>
 #include <Core/src/utl/Stopwatch.h>
 
 namespace tryn::ecs::sys
