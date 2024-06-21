@@ -17,7 +17,7 @@ namespace tryn::ecs
 		ZT_COMPONENT_FIELDS(int testField = 0;);
 	};
 
-	template <typename T>
+	template <typename T, ValidComponent C>
 	struct LogMemberVariable
 	{
 		void operator()()

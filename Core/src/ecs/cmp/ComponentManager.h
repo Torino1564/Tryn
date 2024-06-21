@@ -21,7 +21,7 @@
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ x }
 
-#define ZT_DEFINE_COMPONENT(x) class x : public tryn::ecs::Component<x, #x>
+#define ZT_DEFINE_COMPONENT(x) class x; class x : public tryn::ecs::Component<x, #x>
 
 
 #define ZT_DEFINE_COMPONENT_VARIABLE_2(type, var) \
@@ -225,7 +225,7 @@ namespace tryn::ecs
 			return utl::ctc::element_count<listID>();
 		}
 
-		template <typename MapElement_t>
+		template <typename MapElement_t, ValidComponent C>
 		struct DoNothing
 		{
 			constexpr void operator()()
@@ -235,12 +235,13 @@ namespace tryn::ecs
 		};
 
 		template <
-			template <typename> typename Func = DoNothing,
+			template <typename, ValidComponent> typename Func = DoNothing,
 			unsigned ComponentN = 0,
 			bool FoundCmp = false,
 			typename Component = int, 
-			unsigned ElementN = 0>
-		static void IterateComponentMembers(unsigned int componentUUID)
+			unsigned ElementN = 0,
+			typename... FuncArgs>
+		static void IterateComponentMembers(unsigned int componentUUID, FuncArgs&&... funcArgs )
 		{
 			if constexpr (!FoundCmp)
 			{
@@ -251,13 +252,13 @@ namespace tryn::ecs
 				using CurrentComponent = std::tuple_element_t<ComponentN, utl::ctc::get_list<listID>>;
 				if (CurrentComponent::UUID == componentUUID)
 				{
-					IterateComponentMembers<Func, ComponentN, true, CurrentComponent>(componentUUID);
+					IterateComponentMembers<Func, ComponentN, true, CurrentComponent>(componentUUID, funcArgs...);
 					return;
 				}
 				else
 				{
 					if constexpr (ComponentN < utl::ctc::element_count<listID>() - 1)
-						return IterateComponentMembers<Func, ComponentN + 1, false>(componentUUID);
+						return IterateComponentMembers<Func, ComponentN + 1, false>(componentUUID, funcArgs...);
 				}
 			}
 			else
@@ -266,9 +267,9 @@ namespace tryn::ecs
 				if constexpr (ElementN < std::tuple_size_v<VarMap>)
 				{
 					using MapElement = std::tuple_element_t<ElementN, VarMap>;
-					Func<MapElement> func;
-					func();
-					IterateComponentMembers<Func, ComponentN, true, Component, ElementN + 1>(componentUUID);
+					Func<MapElement, Component> func;
+					func(funcArgs...);
+					IterateComponentMembers<Func, ComponentN, true, Component, ElementN + 1>(componentUUID, funcArgs...);
 				}
 				else
 				{
@@ -515,6 +516,12 @@ namespace tryn::ecs
 			ExtractComponentIDs<sizeof...(Cs), Cs...>(componentIDs);
 
 			return GetArchetype(std::span<int>(componentIDs.begin(), componentIDs.size()));
+		}
+
+		Archetype* GetArchetype(const int archetypeCounter)
+		{
+			trynass(archetypeCounter <= this->archetypeCounter);
+			return &archetypeBuffer[archetypeCounter];
 		}
 
 		static ArchetypeManager& Get()

@@ -4,7 +4,6 @@
 
 #include <Core/src/app/EntryPoint.h>
 #include <Core/src/ecs/cmp/Components.h>
-#include <Core/src/gfx/Render/Techniques/Flat.h>
 #include <Core/src/gfx/Model/Model.h>
 #include <TrynGame/Game/Core/Player.h>
 #include <Core/src/ecs/Entity.h>
@@ -41,14 +40,14 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
-	pLight = std::make_unique<ecs::Entity>(std::move(ecs::Entity::CreateNew<
+	pLight = std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
 		ecs::cmp::ActiveComponent,
 		ecs::cmp::PositionComponent,
 		ecs::cmp::TransformComponent,
 		ecs::cmp::ModelComponent,
 		ecs::cmp::ScaleComponent,
 		ecs::cmp::RotationComponent,
-		ecs::cmp::PointLightComponent>("light")));
+		ecs::cmp::PointLightComponent>("light"));
 	
 	pLight->GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
 	pLight->GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/sphere.obj");
