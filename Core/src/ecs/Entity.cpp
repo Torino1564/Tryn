@@ -1,6 +1,7 @@
 #include "Entity.h"
 #include <format>
 #include <Core/src/gfx/ImguiManager.h>
+#include <Core/src/ecs/cmp/Components.h>
 
 namespace tryn::ecs
 {
@@ -35,13 +36,18 @@ namespace tryn::ecs
 			ImGui::Text("Components:");
 			if (ImGui::BeginCombo("Components", "Select a component"))
 			{
-				auto& componentSpan = pArchetype->componentSMPID;
+				auto& componentSpan = pArchetype->components;
+				if (selectedComponents.size() != ComponentManager::GetComponentCount())
+				{
+					selectedComponents.resize(ComponentManager::GetComponentCount(), false);
+				}
 				for (auto componentUUID : componentSpan)
 				{
-					
+					ImGui::Selectable(ComponentManager::GetComponentName(componentUUID), reinterpret_cast<bool*>(&selectedComponents[componentUUID]));
 				}
 				ImGui::EndCombo();
 			}
+			
 
 			ImGui::End();
 		}

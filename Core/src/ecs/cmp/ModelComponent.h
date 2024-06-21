@@ -8,7 +8,7 @@ namespace tryn::ecs::cmp
 	ZT_DEFINE_COMPONENT(ModelComponent)
 	{
 		ZT_COMPONENT_FIELDS(
-			std::unique_ptr<gfx::Model> pModel;
+			ZT_DEFINE_COMPONENT_VAR(std::unique_ptr<gfx::Model>, pModel);
 		);
 	};
 }

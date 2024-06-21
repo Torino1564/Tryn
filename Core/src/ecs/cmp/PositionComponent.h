@@ -7,7 +7,7 @@ namespace tryn::ecs::cmp
 	ZT_DEFINE_COMPONENT(PositionComponent)
 	{
 		ZT_COMPONENT_FIELDS(
-			glm::vec3 position;
+			ZT_DEFINE_COMPONENT_VAR(glm::vec3, position);
 		);
 	};
 }

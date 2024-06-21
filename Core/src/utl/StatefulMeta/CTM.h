@@ -50,22 +50,21 @@ namespace tryn::utl::CTM
         };
 
 
-    template <typename T, StaticString TypeName, StaticString VarName, unsigned int VarSize>
+    template <typename T, StaticString TypeName, StaticString VarName, unsigned int VarSize, unsigned int ByteOffset, unsigned int ElementNumber>
     struct MapElement
     {
         using Type = T;
         using TypeName_t = decltype(TextType<TypeName>);
         using VarName_t = decltype(TextType<VarName>);
         using VarSize_t = decltype(IntType<VarSize>);
+        using ByteOffset_t = decltype(IntType<ByteOffset>);
+        using ElementNumber_t = decltype(IntType<ElementNumber>);
     };
 
 
     // E3
     template<unsigned N, typename List, unsigned int ID>
     struct state_t {
-        static inline const char* varName = nullptr;
-        static inline const char* typeName = nullptr;
-        static inline unsigned int varSize = 0u;
         static constexpr unsigned n = N;
         static constexpr unsigned id = ID;
         using list = List;
@@ -158,6 +157,8 @@ namespace tryn::utl::CTM
         auto State = get_state<TUTag, EvalTag, ID>()
     >
     using get_list = typename std::remove_cvref_t<decltype(State)>::list;
+
+
     template<
         unsigned int ID = 0,
         std::same_as<tu_tag> TUTag = tu_tag,
@@ -168,7 +169,24 @@ namespace tryn::utl::CTM
     {
         return State.n;
     }
-
+    
+    template<unsigned int ID, unsigned int N, auto Tag = [] {}>
+    consteval auto get_offset()
+    {
+        if constexpr (N == 1)
+        {
+            return 0;
+        }
+        else
+        {
+            using Previous = std::tuple_element_t<N - 2, get_list<ID>>;
+            using ByteOffsetFunc_t = typename Previous::ByteOffset_t;
+            using VarSizeFunc_t = typename Previous::VarSize_t;
+            ByteOffsetFunc_t offsetFunc;
+            VarSizeFunc_t varSizeFunc;
+            return offsetFunc() + varSizeFunc();
+        }
+    }
 
     // E9
     template<
@@ -184,7 +202,13 @@ namespace tryn::utl::CTM
     consteval auto append_impl() {
         using cur_state = decltype(get_state<TUTag, EvalTag, ID>());            // E9.1
         using cur_list = typename cur_state::list;
-        using new_list = tuple_append_t<cur_list, MapElement<T, TypeName, VarName, VarSize>>;      // E9.2
+        using new_list = tuple_append_t<cur_list,
+            MapElement<T,
+            TypeName,
+            VarName,
+            VarSize,
+            get_offset<ID, cur_state::n + 1>(),
+            cur_state::n>>;      // E9.2
         setter<cur_state::n + 1, new_list, TUTag, ID> s;                        // E9.3
         return s.state;                                                     // E9.4
     }

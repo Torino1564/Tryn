@@ -8,7 +8,7 @@ namespace tryn::ecs::cmp
 	ZT_DEFINE_COMPONENT(PointLightComponent)
 	{
 		ZT_COMPONENT_FIELDS(
-			gfx::PointLight::Parameters parameters;
+			ZT_DEFINE_COMPONENT_VAR(gfx::PointLight::Parameters, parameters);
 		);
 	};
 }

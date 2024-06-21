@@ -7,7 +7,7 @@ namespace tryn::ecs::cmp
 	ZT_DEFINE_COMPONENT(InstancedModelParentComponent)
 	{
 		ZT_COMPONENT_FIELDS(
-			gfx::InstancedModelParent parentModel;
+			ZT_DEFINE_COMPONENT_VAR(gfx::InstancedModelParent, parentModel);
 		);
 	};
 }

@@ -5,6 +5,7 @@
 #include <Core/src/ecs/cmp/ComponentManager.h>
 #include <bitset>
 #include <array>
+#include <concepts>
 
 namespace tryn::ecs
 {
@@ -40,9 +41,21 @@ namespace tryn::ecs
 		template <ValidComponent C>
 		void AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int index = 0);
 
+		template <typename Member>
+		struct PrintImGuiMemberVariable
+		{
+			void operator()()
+			{
+				return;
+			}
+		};
 		std::string name;
 		EntityID UUID = {};
 		Archetype* pArchetype = nullptr;
+
+	// Component selection stuff
+	private:
+		std::vector<std::uint8_t> selectedComponents;
 	};
 
 

@@ -17,6 +17,20 @@ namespace tryn::ecs
 		ZT_COMPONENT_FIELDS(int testField = 0;);
 	};
 
+	template <typename T>
+	struct LogMemberVariable
+	{
+		void operator()()
+		{
+			typename T::TypeName_t typeNameFunc;
+			typename T::VarName_t varNameFunc;
+			typename T::VarSize_t varSizeFunc;
+			typename T::ElementNumber_t elNumberFunc;
+			typename T::ByteOffset_t byteOffsetFunc;
+			trylog.info(utl::ToWide(std::format("Element Number: {}\n Type Name: {}\n Var Name: {}\n Var Size: {}\n Byte Offset: {}\n\n", elNumberFunc(), typeNameFunc(), varNameFunc(), varSizeFunc(), byteOffsetFunc())));
+		}
+	};
+
 	TEST_CLASS(EntitySystem)
 	{
 	public:
@@ -31,10 +45,13 @@ namespace tryn::ecs
 			using ComponentList_t = typename ComponentManager::ComponentList<>;
 			ComponentList_t componentTuple = {};
 
-			static constexpr auto velocityID = cmp::VelocityComponent::ctcID;
-			using VelType = ComponentManager::ComponentByIndex<velocityID>;
+			static constexpr auto animatedID = cmp::AnimatedComponent::UUID;
+			using AnimatedType = ComponentManager::ComponentByIndex<animatedID>;
 
-			VelType velCmp = {};
+			AnimatedType animatedCmp = {};
+
+			ComponentManager::IterateComponentMembers<LogMemberVariable>(AnimatedType::UUID);
+
 		}
 	private:
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;

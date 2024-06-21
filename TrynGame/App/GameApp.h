@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/src/app/App.h>
 #include <Core/src/gfx/Camera.h>
+#include <Core/src/ecs/Entity.h>
 
 using namespace tryn;
 
@@ -18,7 +19,7 @@ private:
 	std::unique_ptr<gfx::PointLight> pPointLight;
 	std::unique_ptr<class Player> pPlayer;
 	gfx::Camera camera;
-
+	std::unique_ptr<ecs::Entity> pLight;
 	gfx::Camera player;
 
 	gfx::Camera* pActiveCamera = &camera;

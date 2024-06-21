@@ -6,9 +6,9 @@ namespace tryn::ecs::cmp
 	ZT_DEFINE_COMPONENT(RotationComponent)
 	{
 		ZT_COMPONENT_FIELDS(
-			float yaw = 0;
-			float pitch = 0;
-			float roll = 0;
+			ZT_DEFINE_COMPONENT_VAR(float, yaw, 0);
+			ZT_DEFINE_COMPONENT_VAR(float, pitch, 0);
+			ZT_DEFINE_COMPONENT_VAR(float, roll, 0);
 		);
 	};
 }

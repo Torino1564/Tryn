@@ -13,7 +13,7 @@
 #include <ranges>
 #include <Core/src/mem/NativeArray.h>
 #include <Core/src/utl/Span.h>
-
+#include <iostream>
 #include <Core/src/utl/StatefulMeta/CTC.h>
 #include <Core/src/utl/StatefulMeta/CTM.h>
 #include <Core/src/utl/Exception.h>
@@ -21,17 +21,17 @@
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ x }
 
-#define ZT_DEFINE_COMPONENT(x) class x : public tryn::ecs::Component<x>
+#define ZT_DEFINE_COMPONENT(x) class x : public tryn::ecs::Component<x, #x>
 
 
 #define ZT_DEFINE_COMPONENT_VARIABLE_2(type, var) \
 	type var; \
-	using ZT_CAT_C(var, _t) = tryn::utl::CTM::Map_t<type, #type, #var, sizeof(type), ctcID>
+	using ZT_CAT_C(var, _t) = tryn::utl::CTM::Map_t<type, #type, #var, sizeof(type), UUID>
 
 
 #define ZT_DEFINE_COMPONENT_VARIABLE_3(type, var, initVal) \
 	type var = initVal; \
-	using ZT_CAT_C(var, _t) = tryn::utl::CTM::Map_t<type, #type, #var, sizeof(type), ctcID>
+	using ZT_CAT_C(var, _t) = tryn::utl::CTM::Map_t<type, #type, #var, sizeof(type), UUID>
 
 
 #define GET_MACRO(_1,_2,_3,NAME,...) NAME
@@ -44,7 +44,7 @@ namespace tryn::ecs
 {
 	class ComponentManager;
 
-	template <typename T>
+	template <typename T, utl::CTM::StaticString Name>
 	class Component;
 
 	template <typename T>
@@ -126,6 +126,19 @@ namespace tryn::ecs
 		ECS();
 	};
 
+	template <typename T>
+	struct PrintMemberVariable
+	{
+		void operator()()
+		{
+			typename T::TypeName_t typeNameFunc;
+			typename T::VarName_t varNameFunc;
+			typename T::VarSize_t varSizeFunc;
+			typename T::ElementNumber_t elNumberFunc;
+			std::cout << std::format("Element Number: {}\n Type Name: {}\n Var Name: {}\n Var Size: {}\n\n", elNumberFunc(), typeNameFunc(), varNameFunc(), varSizeFunc());
+		}
+	};
+
 	class ComponentManager
 	{
 	public:
@@ -133,6 +146,11 @@ namespace tryn::ecs
 		{
 			static ComponentManager singleton;
 			return singleton;
+		}
+
+		static constexpr auto GetComponentListID()
+		{
+			return listID;
 		}
 
 		template <typename C>
@@ -147,14 +165,53 @@ namespace tryn::ecs
 			return map;
 		}
 
-		void ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex);
+		void ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex);	
+
+		template <unsigned int N = 0>
+		static const char* GetComponentName(unsigned int componentUUID)
+		{
+			static constexpr const char* defaultName = "Default Component Name";
+
+			if constexpr (N < GetComponentCount())
+			{
+				using CurrentComponent = typename std::tuple_element_t<N, ComponentList<>>;
+				if (componentUUID == CurrentComponent::UUID)
+				{
+					return CurrentComponent::name;
+				}
+				else
+				{
+					return GetComponentName<N + 1>(componentUUID);
+				}
+			}
+			return defaultName;
+		}
+
 	private:
-		ComponentManager() = default;
+		ComponentManager()
+		{
+			RegisterComponents();
+		}
+
+		template <unsigned int N = 0>
+		void RegisterComponents()
+		{
+			if constexpr (N >= GetComponentCount())
+			{
+				return;
+			}
+			if constexpr (N < GetComponentCount())
+			{
+				RegisterComponent<std::tuple_element_t<N, ComponentList<>>>();
+				RegisterComponents<N + 1>();
+			}
+		}
+
 		std::uint16_t componentCounter = 0;
 		std::unordered_map<ComponentIndex, ComponentSize> map;
 
 	// stateful meta bs
-		template <typename T>
+		template <typename T, utl::CTM::StaticString Name>
 		friend class Component;
 	private:
 		static constexpr std::uint16_t listID = 0;
@@ -168,23 +225,78 @@ namespace tryn::ecs
 			return utl::ctc::element_count<listID>();
 		}
 
+		template <typename MapElement_t>
+		struct DoNothing
+		{
+			constexpr void operator()()
+			{
+				return;
+			}
+		};
+
+		template <
+			template <typename> typename Func = DoNothing,
+			unsigned ComponentN = 0,
+			bool FoundCmp = false,
+			typename Component = int, 
+			unsigned ElementN = 0>
+		static void IterateComponentMembers(unsigned int componentUUID)
+		{
+			if constexpr (!FoundCmp)
+			{
+				if constexpr (ComponentN >= utl::ctc::element_count<ComponentManager::GetComponentListID()>())
+				{
+					return;
+				}
+				using CurrentComponent = std::tuple_element_t<ComponentN, utl::ctc::get_list<listID>>;
+				if (CurrentComponent::UUID == componentUUID)
+				{
+					IterateComponentMembers<Func, ComponentN, true, CurrentComponent>(componentUUID);
+					return;
+				}
+				else
+				{
+					if constexpr (ComponentN < utl::ctc::element_count<listID>() - 1)
+						return IterateComponentMembers<Func, ComponentN + 1, false>(componentUUID);
+				}
+			}
+			else
+			{
+				using VarMap = utl::CTM::get_list<Component::UUID>;
+				if constexpr (ElementN < std::tuple_size_v<VarMap>)
+				{
+					using MapElement = std::tuple_element_t<ElementN, VarMap>;
+					Func<MapElement> func;
+					func();
+					IterateComponentMembers<Func, ComponentN, true, Component, ElementN + 1>(componentUUID);
+				}
+				else
+				{
+					return;
+				}
+			}
+		}
+
 		template <unsigned N, auto Tag = []{}>
 		using ComponentByIndex = typename std::remove_reference_t<decltype(std::get<N>(std::declval<ComponentManager::ComponentList<>>()))>;
 	};
 
-	template <typename T>
+	template <typename T, utl::CTM::StaticString Name>
 	class Component
 	{
 	public:
 		ZT_COMPONENT_FIELDS();
+	private:
+		using Name_t = decltype(utl::CTM::TextType<Name>);
+		static constexpr Name_t nameFunc;
 	public:
-		constexpr static inline const char* name = "Default Component";
+		constexpr static inline const char* name = nameFunc();
 		using ComponentType = T;
 		static constexpr auto accessMode = AccessMode::ReadWrite;
-		const static inline int UUID = ComponentManager::Get().RegisterComponent<T>();
-		static inline constexpr auto ctcID = utl::ctc::counter<T, ComponentManager::listID>;
+		//const static inline int UUID = ComponentManager::Get().RegisterComponent<T>();
+		static inline constexpr auto UUID = utl::ctc::counter<T, ComponentManager::listID>;
 	private:
-		utl::CTM::setter<0, std::tuple<>, utl::CTM::tu_tag, ctcID> setter;
+		utl::CTM::setter<0, std::tuple<>, utl::CTM::tu_tag, UUID> setter;
 	};
 
 	ZT_DEFINE_COMPONENT(ActivationComponent)
@@ -267,8 +379,8 @@ namespace tryn::ecs
 		template <ValidComponent C>
 		void AppendComponents()
 		{
+			// components.push_back(C::UUID);
 			components.push_back(C::UUID);
-			componentSMPID.push_back(C::ctcID);
 			bufferPtrs.push_back(std::make_unique<std::vector<std::byte>>());
 		}
 		const int GetUUID() const

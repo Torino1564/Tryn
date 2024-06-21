@@ -7,6 +7,7 @@
 #include <Core/src/gfx/Render/Techniques/Flat.h>
 #include <Core/src/gfx/Model/Model.h>
 #include <TrynGame/Game/Core/Player.h>
+#include <Core/src/ecs/Entity.h>
 
 app::App* app::CreateApp(int argc, char** argv)
 {
@@ -40,19 +41,19 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
-	auto light = ecs::Entity::CreateNew<
+	pLight = std::make_unique<ecs::Entity>(std::move(ecs::Entity::CreateNew<
 		ecs::cmp::ActiveComponent,
 		ecs::cmp::PositionComponent,
 		ecs::cmp::TransformComponent,
 		ecs::cmp::ModelComponent,
 		ecs::cmp::ScaleComponent,
 		ecs::cmp::RotationComponent,
-		ecs::cmp::PointLightComponent>("light");
-
-	light.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
-	light.GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/sphere.obj");
-	light.GetComponent<ecs::cmp::ActiveComponent>().active = true;
-	light.GetComponent<ecs::cmp::PointLightComponent>().parameters = gfx::PointLight::Parameters{
+		ecs::cmp::PointLightComponent>("light")));
+	
+	pLight->GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
+	pLight->GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/sphere.obj");
+	pLight->GetComponent<ecs::cmp::ActiveComponent>().active = true;
+	pLight->GetComponent<ecs::cmp::PointLightComponent>().parameters = gfx::PointLight::Parameters{
 		.ambient = {0.1f, 0.1f, 0.1f},
 		.diffuseColor = glm::normalize(glm::vec3{1.0f, 1.0f, 1.0f}),
 		.diffuseIntensity = 1.0f,
@@ -106,6 +107,8 @@ void TrynGameApp::DoFrame()
 	//pPointLight->SubmitLight(Gfx());
 	//pPointLight->Submit(Gfx(), pActiveCamera->GetViewMatrix());
 	//pPointLight->ShowControls();
+
+	pLight->SpawnControlWindow();
 	
 	if (state == Mode::Player)
 	{
