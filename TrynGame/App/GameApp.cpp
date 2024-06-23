@@ -6,7 +6,8 @@
 #include <Core/src/ecs/cmp/Components.h>
 #include <Core/src/gfx/Model/Model.h>
 #include <TrynGame/Game/Core/Player.h>
-#include <Core/src/ecs/Entity.h>
+
+#include <EngineConfigs/ImGuiPrintTypes.h>
 
 app::App* app::CreateApp(int argc, char** argv)
 {

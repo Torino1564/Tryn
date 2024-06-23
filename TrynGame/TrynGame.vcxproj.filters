@@ -29,5 +29,8 @@
     <ClInclude Include="Game\Core\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EngineConfigs\ImGuiPrintTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

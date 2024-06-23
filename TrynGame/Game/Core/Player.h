@@ -2,6 +2,7 @@
 #include <string>
 #include <Core/src/ecs/Entity.h>
 
+
 using namespace tryn;
 
 class Player : public ecs::Entity
