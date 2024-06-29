@@ -3,8 +3,8 @@
 #include <Core/src/app/Initialization.h>
 #include <Core/src/utl/Assert.h>
 #include <Core/src/utl/String.h>
-#include <CLI/CLI.hpp>
 #include <Core/src/app/Globals.h>
+#include <CLI/CLI.hpp>
 
 extern tryn::app::App* tryn::app::CreateApp(int argc, char** argv);
 

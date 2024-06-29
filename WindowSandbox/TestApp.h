@@ -1,8 +1,6 @@
 #pragma once
-#include <Core/src/app/App.h>
-#include <Core/src/ecs/Entity.h>
-#include <Core/src/gfx/PointLight.h>
-#include <Core/src/gfx/Camera.h>
+#include <Core/include/TrynCore.h>
+
 #include <vector>
 
 using namespace tryn;

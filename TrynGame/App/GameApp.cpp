@@ -1,12 +1,8 @@
 #include "GameApp.h"
 
-#include <Core/src/gfx/PointLight.h>
+#include <TrynGame/Game/Core/Player.h>
 
 #include <Core/src/app/EntryPoint.h>
-#include <Core/src/ecs/cmp/Components.h>
-#include <Core/src/gfx/Model/Model.h>
-#include <TrynGame/Game/Core/Player.h>
-#include <Core/src/ecs/Entity.h>
 
 app::App* app::CreateApp(int argc, char** argv)
 {

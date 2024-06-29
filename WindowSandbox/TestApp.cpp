@@ -1,25 +1,8 @@
 #include "TestApp.h"
 #include <utility>
 #include <ranges>
+
 #include <Core/src/app/EntryPoint.h>
-#include <Core/src/gfx/Bindables/BindableBase.h>
-#include <Core/src/gfx/dx11/Dx11Graphics.h>
-#include <Core/third/glm/glm.hpp>
-#include <Core/third/glm/gtc/matrix_transform.hpp>
-#include <Core/src/gfx/Profiler.h>
-#include <Core/src/gfx/Bindables/InputLayout.h>
-#include <core/src/gfx/Render/Technique.h>
-#include <Core/src/gfx/Render/Step.h>
-#include <Core/src/gfx/Assimp.h>
-#include <Core/src/ccr/Master.h>
-#include <Core/src/ecs/cmp/Components.h>
-#include <Core/src/ecs/sys/SystemManager.h>
-#include <Core/src/ecs/sys/TransformSystem.h>
-#include <Core/src/ecs/sys/RenderSystem.h>
-#include <Core/src/ecs/sys/UpdatePositionSystem.h>
-#include <Core/src/ecs/sys/UpdateVelocitySystem.h>
-#include <Core/src/ecs/sys/AnimationSystem.h>
-#include <Core/src/gfx/Animation/AnimationManager.h>
 
 class TestRenderGraph : public gfx::IRenderGraph
 {

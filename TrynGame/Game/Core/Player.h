@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <Core/src/ecs/Entity.h>
+#include <TrynGame/Engine/TrynGameEngine.h>
 
 using namespace tryn;
 

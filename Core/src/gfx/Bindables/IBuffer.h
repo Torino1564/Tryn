@@ -7,6 +7,7 @@
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/utl/EmptyType.h>
 #include <memory>
+#include "Bindable.h"
 
 ZT_EX_DEF(BufferMissmatchException);
 

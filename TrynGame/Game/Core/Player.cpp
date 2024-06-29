@@ -1,9 +1,4 @@
 #include "Player.h"
-#include <TrynGame/App/GameApp.h>
-
-//Components
-#include <Core/src/ecs/cmp/Components.h>
-
 
 using namespace tryn;
 

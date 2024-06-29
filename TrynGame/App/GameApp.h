@@ -1,7 +1,5 @@
 #pragma once
-#include <Core/src/app/App.h>
-#include <Core/src/gfx/Camera.h>
-#include <Core/src/ecs/Entity.h>
+#include <TrynGame/Engine/TrynGameEngine.h>
 
 using namespace tryn;
 
