@@ -38,24 +38,12 @@ namespace tryn::ecs
 				auto pArchetype = ECS::Get().archetypeManager.GetArchetype(entityUUID.archetype);
 				auto data = pArchetype->GetComponentData<C>();
 
-				using VarNameFunc_t = typename MapElement::VarName_t;
-				using TypeNameFunc_t = typename MapElement::TypeName_t;
 				using ByteOffsetFunc_t = typename MapElement::ByteOffset_t;
-
-				VarNameFunc_t varNameFunc;
-				TypeNameFunc_t typeNameFunc;
 				ByteOffsetFunc_t byteOffsetFunc;
+				
+				auto pData = reinterpret_cast<typename MapElement::Type*>(reinterpret_cast<std::byte*>(&data[entityUUID.ID - 1]) + byteOffsetFunc());
 
-				if constexpr (std::is_same_v<typename MapElement::Type, float>)
-				{
-					auto pData = reinterpret_cast<typename MapElement::Type*>(reinterpret_cast<std::byte*>(&data[entityUUID.ID - 1]) + byteOffsetFunc());
-
-					ImGui::DragFloat(std::format("{}: {}",typeNameFunc(), varNameFunc()).c_str(), pData);
-				}
-				else
-				{
-					ImGui::Text(std::format("{}: {}",typeNameFunc(), varNameFunc()).c_str());
-				}
+				cmp::ImGuiPrintElement<MapElement>::Print(pData);
 			}
 		};
 

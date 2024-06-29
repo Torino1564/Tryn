@@ -297,6 +297,9 @@
     <ClCompile Include="src\gfx\Render\Jobs\PointLightJob.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\cmp\PrintMemberBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1923,6 +1926,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utl\StatefulMeta\CTM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\cmp\PrintMemberBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\cmp\PrintMember.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\TrynCore.h">

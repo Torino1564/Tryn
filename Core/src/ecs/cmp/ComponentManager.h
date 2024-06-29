@@ -17,6 +17,7 @@
 #include <Core/src/utl/StatefulMeta/CTC.h>
 #include <Core/src/utl/StatefulMeta/CTM.h>
 #include <Core/src/utl/Exception.h>
+#include <Core/src/ecs/cmp/PrintMember.h>
 
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ x }
