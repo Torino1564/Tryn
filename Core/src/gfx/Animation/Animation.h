@@ -5,6 +5,7 @@
 #include <Core/third/glm/glm.hpp>
 #include <assimp/anim.h>
 #include <span>
+#include "Bone.h"
 
 namespace tryn::gfx::ani
 {

@@ -1,7 +1,6 @@
 #include "Animation.h"
 #include <Core/third/glm/ext/quaternion_common.hpp>
 #include <Core/third/glm/ext/quaternion_float.hpp>
-#include "Bone.h"
 namespace tryn::gfx::ani
 {
 	Animation::Animation(const std::string& path, const uint32_t id, aiAnimation& anim)

@@ -1,6 +1,7 @@
 #pragma once
 #include "Bindable.h"
 #include <Core/src/gfx/IBufferFwd.h>
+#include <Core/src/gfx/IGraphics.h>
 
 namespace tryn::gfx
 {

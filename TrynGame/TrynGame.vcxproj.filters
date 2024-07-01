@@ -29,7 +29,19 @@
     <ClInclude Include="Game\Core\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EngineConfigs\ImGuiPrintTypes.h">
+    <ClInclude Include="Engine\TrynGameEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CustomImGuiPrintTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CustomComponents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CustomSystems.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Core\TestComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

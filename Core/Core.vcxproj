@@ -116,8 +116,10 @@
     <ClCompile Include="third\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\TrynCore.h" />
     <ClInclude Include="src\ecs\cmp\Components.h" />
     <ClInclude Include="src\ecs\cmp\PointLightComponent.h" />
+    <ClInclude Include="src\ecs\Ecs.h" />
     <ClInclude Include="src\ecs\cmp\PrintMember.h" />
     <ClInclude Include="src\ecs\cmp\PrintMemberBase.h" />
     <ClInclude Include="src\gfx\Bindables\BufferResourceType.h" />
@@ -262,11 +264,13 @@
     <ClInclude Include="src\mem\BasicPoolAllocator.h" />
     <ClInclude Include="src\mem\debugMem.h" />
     <ClInclude Include="src\mem\IAllocator.h" />
+    <ClInclude Include="src\mem\Mem.h" />
     <ClInclude Include="src\mem\NativeArray.h" />
     <ClInclude Include="src\mem\SharedRef.h" />
     <ClInclude Include="src\mem\WeakRef.h" />
     <ClInclude Include="src\spa\Dimensions.h" />
     <ClInclude Include="src\spa\Rect.h" />
+    <ClInclude Include="src\spa\Spa.h" />
     <ClInclude Include="src\spa\Vec2.h" />
     <ClInclude Include="src\spa\Vec3.h" />
     <ClInclude Include="src\utl\AnyVector.h" />

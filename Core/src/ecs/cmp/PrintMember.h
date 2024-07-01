@@ -1,11 +1,6 @@
 #pragma once
 
-#if __has_include(<ImGuiPrintTypes.h>)
-	#pragma message("Using user ImGui Print Types")
-	#include <ImGuiPrintTypes.h>
-#else
-	#include "PrintMemberBase.h"
-#endif
+#include "PrintMemberBase.h"
 
 #include "Core/third/glm/vec3.hpp"
 

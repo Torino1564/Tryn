@@ -1,10 +1,10 @@
 #pragma once
 #include <Core/src/gfx/Bindables/Bindable.h>
-#include "Gfx.h"
 #include <unordered_map>
 #include <memory>
 #include <string>
 #include <Core/src/gfx/IBufferFwd.h>
+#include "IGraphics.h"
 
 #define BINDABLE_LIST \
 		X(VertexBuffer)\

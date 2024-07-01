@@ -1,13 +1,8 @@
 #include "GameApp.h"
 
-#include <Core/src/gfx/PointLight.h>
-
-#include <Core/src/app/EntryPoint.h>
-#include <Core/src/ecs/cmp/Components.h>
-#include <Core/src/gfx/Model/Model.h>
 #include <TrynGame/Game/Core/Player.h>
 
-#include <ImGuiPrintTypes.h>
+#include <Core/src/app/EntryPoint.h>
 
 app::App* app::CreateApp(int argc, char** argv)
 {
@@ -48,7 +43,8 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		ecs::cmp::ModelComponent,
 		ecs::cmp::ScaleComponent,
 		ecs::cmp::RotationComponent,
-		ecs::cmp::PointLightComponent>("light"));
+		ecs::cmp::PointLightComponent,
+		tgame::cmp::TestComponent>("light"));
 	
 	pLight->GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
 	pLight->GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/sphere.obj");
