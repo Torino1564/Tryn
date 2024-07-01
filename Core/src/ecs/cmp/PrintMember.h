@@ -1,8 +1,8 @@
 #pragma once
 
-#if __has_include(<EngineConfigs/ImGuiPrintTypes.h>)
+#if __has_include(<ImGuiPrintTypes.h>)
 	#pragma message("Using user ImGui Print Types")
-	#include <EngineConfigs/ImGuiPrintTypes.h>
+	#include <ImGuiPrintTypes.h>
 #else
 	#include "PrintMemberBase.h"
 #endif

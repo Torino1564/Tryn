@@ -7,7 +7,7 @@
 #include <Core/src/gfx/Model/Model.h>
 #include <TrynGame/Game/Core/Player.h>
 
-#include <EngineConfigs/ImGuiPrintTypes.h>
+#include <ImGuiPrintTypes.h>
 
 app::App* app::CreateApp(int argc, char** argv)
 {
