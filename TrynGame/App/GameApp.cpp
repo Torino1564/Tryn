@@ -43,7 +43,8 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		ecs::cmp::ModelComponent,
 		ecs::cmp::ScaleComponent,
 		ecs::cmp::RotationComponent,
-		ecs::cmp::PointLightComponent>("light"));
+		ecs::cmp::PointLightComponent,
+		tgame::cmp::TestComponent>("light"));
 	
 	pLight->GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
 	pLight->GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/sphere.obj");

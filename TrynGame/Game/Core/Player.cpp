@@ -4,32 +4,32 @@ using namespace tryn;
 
 Player::Player(std::string name, const std::string& modelPath, gfx::IGraphics& gfx)
 	:
-	Entity(std::move(ecs::Entity::CreateNew<ecs::cmp::PositionComponent,
+	Entity(ecs::Entity::CreateNew<ecs::cmp::PositionComponent,
 		ecs::cmp::ActiveComponent,
 		ecs::cmp::RotationComponent,
 		ecs::cmp::ScaleComponent,
 		ecs::cmp::VelocityComponent,
 		ecs::cmp::TransformComponent,
-		ecs::cmp::ModelComponent>(std::move(name))))
+		ecs::cmp::ModelComponent>(std::move(name)))
 {
-	auto& activeCmp = GetComponent<ecs::cmp::ActiveComponent>();
-	auto& posCmp = GetComponent<ecs::cmp::PositionComponent>();
-	auto& rotCmp = GetComponent<ecs::cmp::RotationComponent>();
-	auto& scaleCmp = GetComponent<ecs::cmp::ScaleComponent>();
-	auto& velCmp = GetComponent<ecs::cmp::VelocityComponent>();
-	auto& modelCmp = GetComponent<ecs::cmp::ModelComponent>();
+	auto& [active] = GetComponent<ecs::cmp::ActiveComponent>();
+	auto& [position] = GetComponent<ecs::cmp::PositionComponent>();
+	auto& [yaw, pitch, roll] = GetComponent<ecs::cmp::RotationComponent>();
+	auto& [scale] = GetComponent<ecs::cmp::ScaleComponent>();
+	auto& [velocity] = GetComponent<ecs::cmp::VelocityComponent>();
+	auto& [pModel] = GetComponent<ecs::cmp::ModelComponent>();
 
-	activeCmp.active = true;
+	active = true;
 
-	posCmp.position = glm::vec3(0.0f, 10.0f, 0.0f);
+	position = glm::vec3(0.0f, 10.0f, 0.0f);
 
-	rotCmp.pitch = 0;
-	rotCmp.roll = 0;
-	rotCmp.yaw = 0;
+	pitch = 0;
+	roll = 0;
+	yaw = 0;
 
-	scaleCmp.scale = glm::vec3(1.0f);
+	scale = glm::vec3(1.0f);
 
-	velCmp.velocity = glm::vec3(0.0f);
+	velocity = glm::vec3(0.0f);
 
-	modelCmp.pModel = gfx::Model::Make<gfx::Flat>(gfx, modelPath);
+	pModel = gfx::Model::Make<gfx::Flat>(gfx, modelPath);
 }

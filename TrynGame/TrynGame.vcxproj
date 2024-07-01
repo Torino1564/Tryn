@@ -116,9 +116,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\GameApp.h" />
-    <ClInclude Include="EngineConfigs\ImGuiPrintTypes.h" />
+    <ClInclude Include="Engine\CustomSystems.h" />
+    <ClInclude Include="Engine\CustomComponents.h" />
+    <ClInclude Include="Engine\CustomImGuiPrintTypes.h" />
     <ClInclude Include="Engine\TrynGameEngine.h" />
     <ClInclude Include="Game\Core\Player.h" />
+    <ClInclude Include="Game\Core\TestComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
