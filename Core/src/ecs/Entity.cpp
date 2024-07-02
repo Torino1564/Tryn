@@ -1,6 +1,4 @@
 #include "Entity.h"
-#include <format>
-#include <Core/src/gfx/ImguiManager.h>
 #include <Core/src/ecs/cmp/Components.h>
 #include <ranges>
 

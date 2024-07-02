@@ -21,7 +21,7 @@ namespace tryn::gfx
 	{
 		friend class Technique;
 	public:
-		template <typename... T>
+		template <TechniqueClass... T>
 		static Material Make(IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path)
 		{
 			// TODO:
@@ -33,7 +33,7 @@ namespace tryn::gfx
 			// add techniques
 			if constexpr (sizeof...(T) == 0)
 			{
-				mat.AddTechnique<ForwardPhong>(gfx, material, rootPath);
+				mat.AddTechnique<0, ForwardPhong>(gfx, material, rootPath);
 			}
 			else
 			{

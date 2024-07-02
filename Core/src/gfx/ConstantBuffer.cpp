@@ -119,6 +119,16 @@ namespace tryn::gfx
 		return Bridge<TrueTypeSizeLookup>(type);
 	}
 
+	constexpr void* ConstantBuffer::Data() const noexcept
+	{
+		return (void*)(buffer.data());
+	}
+
+	constexpr std::size_t ConstantBuffer::ByteSize() const noexcept
+	{
+		return buffer.size();
+	}
+
 	ConstantBufferLayout::ConstantBufferLayout()
 	{
 		root = std::make_unique<Node>(Type::Struct, "Root");
@@ -225,6 +235,31 @@ namespace tryn::gfx
 		pBytes(pBytes),
 		pBuffer(pBuffer)
 	{}
+
+	ElementView ElementView::operator[](std::string_view id)
+	{
+		trynass_msg(node.GetType() == ConstantBufferLayout::Type::Struct, L"Tried to index by name into a non struct ElementView!");
+		const auto finalOffset = node[id].GetOffset() - node.GetOffset();
+		return ElementView(node[id], pBytes + finalOffset, pBuffer);
+	}
+
+	ElementView ElementView::operator[](std::size_t key)
+	{
+		trynass_msg(node.GetType() == ConstantBufferLayout::Type::Array, L"Tried to index by key into a non array ElementView!");
+		auto finalOffset = node[key].GetOffset() - node.GetOffset();
+		return ElementView(node[key], pBytes + finalOffset, pBuffer);
+	}
+
+	void ElementView::Resize(std::size_t newSize)
+	{
+		node.Resize(newSize, *pBuffer);
+	}
+
+	ConstantBufferLayout::Node& ElementView::Node()
+	{
+		return node;
+	}
+
 	bool ElementView::Exists() const
 	{
 		if (node.GetType() == ConstantBufferLayout::Type::Empty)
@@ -236,6 +271,42 @@ namespace tryn::gfx
 			return true;
 		}
 	}
+
+	ConstantBuffer::ConstantBuffer(ConstantBufferLayout cbl)
+	{
+		layout = std::move(cbl);
+		Rebase();
+	}
+
+	void ConstantBuffer::Rebase()
+	{
+		buffer.resize(layout.Size(), (std::byte)(0u));
+	}
+
+	ElementView ConstantBuffer::operator[](std::string_view id)
+	{
+		SetDirty(); 
+		auto& indexTo = layout.GetRoot().IndexByName(id);
+		if (indexTo.GetType() == gfx::ConstantBufferLayout::Type::Empty)
+		{
+			return ElementView{ indexTo, nullptr, this};
+		}
+		else
+		{
+			return ElementView{ indexTo, (char*)(buffer.data() + indexTo.GetOffset()), this};
+		}
+	}
+
+	std::size_t ConstantBuffer::Stride() const noexcept
+	{
+		return 0u;
+	}
+
+	std::size_t ConstantBuffer::Size() const noexcept
+	{
+		return layout.Size();
+	}
+
 	void ConstantBuffer::Resize(const std::size_t newSize)
 	{
 		// Check if first node is of type array

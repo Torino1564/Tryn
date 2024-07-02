@@ -1,45 +1,8 @@
 #pragma once
-#include <Core/src/app/App.h>
-#include <Core/src/app/Initialization.h>
 #include <Core/src/utl/Assert.h>
 #include <Core/src/utl/String.h>
-#include <Core/src/app/Globals.h>
-#include <CLI/CLI.hpp>
+#include "EntryMain.h"
 
-extern tryn::app::App* tryn::app::CreateApp(int argc, char** argv);
-
-namespace tryn::app
-{
-	int Main(int argc, char** argv)
-	{
-		BootCore();
-		std::unique_ptr<App> app(tryn::app::CreateApp(argc, argv));
-
-		// Init command line params
-		CLI::App cliApp("A multi API game engine", "Tryn Core");
-
-		cliApp.add_flag("--singleThreadedRenderer, -s", gbl::configs.singleThreadedRendeder, "forces singlethreaded renderer");
-		cliApp.add_option("--numRenderWorkers, -r", gbl::configs.numRenderWorkers, "specify the number of render workers. Default value is 3");
-
-		CLI11_PARSE(cliApp, argc, argv);
-		
-		trynass_msg(app, L"Application is null. Failed to run the client CreateApp function");
-		try
-		{
-			app->Go();
-		}
-		catch (utl::BufferedException& e)
-		{
-			MessageBoxA(nullptr, e.what(), nullptr, MB_OK | MB_ICONEXCLAMATION);
-		}
-		catch (...)
-		{
-			MessageBoxA(nullptr, "Unknown error", nullptr, MB_OK | MB_ICONEXCLAMATION);
-		}
-
-		return 0;
-	}
-}
 #ifdef CONSOLE_ONLY
 int main(int argc, char** argv)
 {

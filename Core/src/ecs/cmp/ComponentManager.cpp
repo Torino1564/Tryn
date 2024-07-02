@@ -1,6 +1,8 @@
 #include "ComponentManager.h"
 #include <Core/src/ecs/Entity.h>
 
+#include "ActiveComponent.h"
+
 namespace tryn::ecs
 {
 	void tryn::ecs::ComponentManager::ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex)
@@ -27,6 +29,9 @@ namespace tryn::ecs
 			nextFree = booker.find_next(bookerPointer);
 		}
 		booker.flip(nextFree);
+
+		// Default initialize the subresource data structure
+
 		bookerPointer = (uint32_t)nextFree;
 		if (bookerPointer > upperLimit)
 		{
@@ -35,10 +40,21 @@ namespace tryn::ecs
 
 		return {bookerPointer, UUID};
 	}
-	void Archetype::Free(EntityID entityID)
+	void Archetype::Free(const EntityID entityID)
 	{
 		booker[entityID.ID].flip();
 		bookerPointer = entityID.ID - 1;
+		std::byte* pData = nullptr;
+
+		for (auto [index, componentUUID] : std::views::enumerate(components))
+		{
+			if ((uint16_t)componentUUID != cmp::ActiveComponent::UUID)
+				continue;
+
+			pData = bufferPtrs[index]->data();
+			break;
+		}
+		// TODO: Finish this
 	}
 }
 

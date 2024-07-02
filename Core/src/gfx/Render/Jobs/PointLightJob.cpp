@@ -5,7 +5,7 @@
 
 namespace tryn::gfx
 {
-	PointLightJob::PointLightJob(const PointLight::Parameters& parameters, const glm::vec3& position, IRenderGraph& renderGraph, std::uint16_t jobID)
+	PointLightJob::PointLightJob(const PointLightParameters& parameters, const glm::vec3& position, IRenderGraph& renderGraph, std::uint16_t jobID)
 		:
 		IJob(jobID), pParams(&parameters), pRenderGraph(&renderGraph), pPosition(&position) {}
 
@@ -24,7 +24,7 @@ namespace tryn::gfx
 		auto params = pCpuBuffer["pointLightArray"][jobID];
 		auto& viewMatrix = pRenderGraph->pCameras[pRenderGraph->selectedCamera]->GetViewOnViewMatrix();
 
-		params["position"].Get<glm::vec4>() = glm::vec4(*pPosition, 1.0f);
+		params["position"].Get<glm::vec4>() = viewMatrix * glm::vec4(*pPosition, 1.0f);
 		params["ambient"].Get<glm::vec3>() = pParams->ambient;
 		params["diffuseColor"].Get<glm::vec3>() = pParams->diffuseColor;
 		params["diffuseIntensity"].Get<float>() = pParams->diffuseIntensity;

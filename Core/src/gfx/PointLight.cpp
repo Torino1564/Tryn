@@ -8,7 +8,7 @@ namespace tryn::gfx
 		:
 		gfx(gfx)
 	{
-		pModel = Model::Make<Flat>(gfx, "Game/Resources/Models/sphere.obj", glm::vec3{ 0.1f,0.1f,0.1f });
+		pModel = Model::Make<FlatBase>(gfx, "Game/Resources/Models/sphere.obj", glm::vec3{ 0.1f,0.1f,0.1f });
 
 		parameters.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
 		parameters.viewLightPos = glm::vec3(0.0f, 3.0f, 0.0f);

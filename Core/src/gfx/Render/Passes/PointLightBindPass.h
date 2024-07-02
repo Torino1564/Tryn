@@ -28,7 +28,7 @@ namespace tryn::gfx
 
 			if (pointLightBindQueue.GetNumberOfJobs() > graph.GetMaxPointLights())
 			{
-				graph.ResizePointLightBuffer(pointLightBindQueue.GetNumberOfJobs() * 1.0f);
+				graph.ResizePointLightBuffer(static_cast<uint16_t>(1.2f * pointLightBindQueue.GetNumberOfJobs()));
 			}
 
 			pointLightBindQueue.RunJobs(gfx);

@@ -45,13 +45,13 @@ namespace tryn::ecs::sys
 		{
 			if (activeArray[i].active)
 			{
-				const auto& position = positionArray[i];
-				const auto& rotation = rotationArray[i];
-				const auto& scale = scaleArray[i];
+				const auto& [position] = positionArray[i];
+				const auto& [yaw, pitch, roll] = rotationArray[i];
+				const auto& [scale] = scaleArray[i];
 
-				const auto scalingMatrix = glm::scale(glm::identity<glm::mat4>(), scale.scale);
-				const auto translationMatrix = glm::translate(glm::identity<glm::mat4>(), position.position);
-				const auto rotationMatrix = glm::yawPitchRoll(rotation.yaw, rotation.pitch, rotation.roll);
+				const auto scalingMatrix = glm::scale(glm::identity<glm::mat4>(), scale);
+				const auto translationMatrix = glm::translate(glm::identity<glm::mat4>(), position);
+				const auto rotationMatrix = glm::yawPitchRoll(yaw, pitch, roll);
 				transformArray[i].transform = translationMatrix * scalingMatrix * rotationMatrix;
 			}
 		}

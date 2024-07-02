@@ -1,4 +1,6 @@
 #include "AnimationSystem.h"
+#include <Core/src/gfx/Animation/Animation.h>
+#include "Core/third/glm/gtc/quaternion.hpp"
 
 namespace tryn::ecs::sys
 {

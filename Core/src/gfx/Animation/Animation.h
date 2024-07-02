@@ -6,17 +6,11 @@
 #include <assimp/anim.h>
 #include <span>
 #include "Bone.h"
+#include "AnimationState.h"
 
 namespace tryn::gfx::ani
 {
 	struct AnimationSkeletonInterface;
-
-	enum class AnimationState
-	{
-		Playing,
-		Paused,
-		Stopped
-	};
 
 	struct AnimationNode;
 

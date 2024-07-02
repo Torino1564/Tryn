@@ -9,6 +9,8 @@
 #include <queue>
 #include <Core/src/gfx/Animation/Bone.h>
 
+#include "Core/third/glm/gtx/euler_angles.hpp"
+
 namespace tryn::gfx
 {
 	glm::mat4 ScaleTranslation(const glm::mat4& mat, const glm::vec3& scale)

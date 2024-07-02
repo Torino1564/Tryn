@@ -1,12 +1,13 @@
-#include "GameApp.h"
+#include "TrynGameEngine.h"
 
+#include "GameApp.h"
 #include <TrynGame/Game/Core/Player.h>
 
 #include <Core/src/app/EntryPoint.h>
 
 app::App* app::CreateApp(int argc, char** argv)
 {
-	auto window = ioc::Get().Resolve<win::IWindow>(win::IWindow::IocParams{ .size = spa::DimensionsI{.width = (1280), .height = (720) } });
+	auto window = ioc::Get().Resolve<win::IWindow>(win::IWindow::IocParams{ .size = spa::DimensionsI{.width = (1024), .height = (768) } });
 	window->SetTitle(L"TrynGame");
 
 	ioc::Get().Register<log::ISeverityLevelPolicy>([]
@@ -34,6 +35,8 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 	pPlayer = std::make_unique<Player>("player1", "Game/Resources/Models/PlayerModels/sphere.obj", Gfx());
 
+	pPlayer->GetComponent<ecs::cmp::PositionComponent>().position = {10.0f, 10.0f, 10.0f};
+
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
 	pLight = std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
@@ -43,13 +46,12 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		ecs::cmp::ModelComponent,
 		ecs::cmp::ScaleComponent,
 		ecs::cmp::RotationComponent,
-		ecs::cmp::PointLightComponent,
-		tgame::cmp::TestComponent>("light"));
+		ecs::cmp::PointLightComponent>("light"));
 	
 	pLight->GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
-	pLight->GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/sphere.obj");
+	pLight->GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make<gfx::FlatBase>(Gfx(), "Game/Resources/Models/sphere.obj");
 	pLight->GetComponent<ecs::cmp::ActiveComponent>().active = true;
-	pLight->GetComponent<ecs::cmp::PointLightComponent>().parameters = gfx::PointLight::Parameters{
+	pLight->GetComponent<ecs::cmp::PointLightComponent>().parameters = gfx::PointLightParameters{
 		.ambient = {0.1f, 0.1f, 0.1f},
 		.diffuseColor = glm::normalize(glm::vec3{1.0f, 1.0f, 1.0f}),
 		.diffuseIntensity = 1.0f,
@@ -57,6 +59,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		.linearAtt = 0.045f,
 		.quadraticAtt = 0.0075f
 	};
+	pLight->GetComponent<ecs::cmp::ScaleComponent>().scale = {1.0f, 1.0f, 1.0f};
 
 	auto sponza = ecs::Entity::CreateNew<
 		ecs::cmp::ActiveComponent,

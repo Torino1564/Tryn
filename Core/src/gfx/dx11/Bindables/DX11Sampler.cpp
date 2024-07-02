@@ -7,7 +7,7 @@ namespace tryn::gfx::dx11
 		:
 		gfx(gfx)
 	{
-		this->type = type;
+		this->samplerType = type;
 		this->reflect = reflect;
 		this->slot = slot;
 

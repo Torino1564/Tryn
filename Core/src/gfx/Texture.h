@@ -12,10 +12,8 @@ namespace tryn::gfx
 	{
 		struct STBI_Close
 		{
-			void operator()(std::byte* image)
-			{
-				stbi_image_free(image);
-			}
+			void operator()(std::byte* image);
+
 			static STBI_Close& Get()
 			{
 				static STBI_Close stbi_close;
@@ -35,10 +33,7 @@ namespace tryn::gfx
 			}
 			return id;
 		}
-		std::string GetID() const noexcept
-		{
-			return GenerateID(path, scale);
-		}
+		std::string GetID() const noexcept;
 		const std::byte* Data() const noexcept;
 		int GetHeight() const noexcept;
 		int GetWidth() const noexcept;

@@ -4,6 +4,11 @@
 
 namespace tryn::gfx
 {
+	void Texture::STBI_Close::operator()(std::byte* image)
+	{
+		stbi_image_free(image);
+	}
+
 	Texture::Texture(const std::filesystem::path& path, std::optional<glm::vec3> scale)
 	{
 		auto texture = stbi_load(path.string().c_str(), &width, &height, &numChannels, STBI_rgb_alpha);
@@ -23,6 +28,12 @@ namespace tryn::gfx
 
 		buffer = std::move(std::unique_ptr<std::byte,STBI_Close>(reinterpret_cast<std::byte*>(texture), STBI_Close::Get()));
 	}
+
+	std::string Texture::GetID() const noexcept
+	{
+		return GenerateID(path, scale);
+	}
+
 	const std::byte* Texture::Data() const noexcept
 	{
 		return buffer.get();

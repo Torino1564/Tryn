@@ -14,7 +14,6 @@ namespace tryn::gfx
 	class ISampler : public IBindable
 	{
 	public:
-	public:
 		static std::shared_ptr<ISampler> Resolve(IGraphics& gfx, SamplerType type = SamplerType::Anisotropic, bool reflect = false, int slot = 0u)
 		{
 			return BindablePool::Resolve<ISampler>(gfx, type, reflect, slot);
@@ -30,8 +29,8 @@ namespace tryn::gfx
 			return UID;
 		}
 	protected:
-		SamplerType type;
-		bool reflect;
-		int slot;
+		SamplerType samplerType = SamplerType::Anisotropic;
+		bool reflect = true;
+		int slot = 0;
 	};
 }

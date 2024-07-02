@@ -1,5 +1,9 @@
 #include "InstancedModel.h"
 #include <Core/src/mem/ArenaAllocator.h>
+#include <Core/src/gfx/Model/Model.h>
+#include "Core/third/glm/gtx/euler_angles.hpp"
+#include <Core/src/gfx/IGraphics.h>
+#include <Core/src/gfx/Bindables/IBuffer.h>
 
 namespace tryn::gfx
 {

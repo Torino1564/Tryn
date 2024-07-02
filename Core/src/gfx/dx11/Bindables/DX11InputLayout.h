@@ -14,7 +14,6 @@ namespace tryn::gfx::dx11
 	{
 	public:
 		DX11InputLayout(Graphics& gfx, IVertexBuffer& vb, IVertexShader& vs);
-		//DX11InputLayout(Graphics& gfx, IPolyVBuffer& pvb, IVertexShader& vs);
 		DX11InputLayout(Graphics& gfx, VertexLayout& layout, IVertexShader& vs);
 		void Bind() override;
 		void Bind(IContext& context) override;

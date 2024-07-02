@@ -4,6 +4,7 @@
 #include <Core/src/gfx/Bindables/IBuffer.h>
 #include <format>
 #include <utility>
+#include <Core/src/gfx/Material.h>
 
 namespace tryn::gfx
 {

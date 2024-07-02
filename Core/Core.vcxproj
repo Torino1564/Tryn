@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\app\EntryMain.cpp" />
     <ClCompile Include="src\app\Initialization.cpp" />
     <ClCompile Include="src\ccr\Master.cpp" />
     <ClCompile Include="src\ccr\Thread.cpp" />
@@ -36,6 +37,7 @@
     <ClCompile Include="src\gfx\Animation\AnimationManager.cpp" />
     <ClCompile Include="src\gfx\Animation\Bone.cpp" />
     <ClCompile Include="src\gfx\Animation\BonedMesh.cpp" />
+    <ClCompile Include="src\gfx\Bindables\Bindable.cpp" />
     <ClCompile Include="src\gfx\Bindables\DepthStencil.cpp" />
     <ClCompile Include="src\gfx\Bindables\JITUpdateBuffer.cpp" />
     <ClCompile Include="src\gfx\Bindables\RenderTargetView.cpp" />
@@ -117,11 +119,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\TrynCore.h" />
+    <ClInclude Include="src\app\EntryMain.h" />
     <ClInclude Include="src\ecs\cmp\Components.h" />
     <ClInclude Include="src\ecs\cmp\PointLightComponent.h" />
     <ClInclude Include="src\ecs\Ecs.h" />
     <ClInclude Include="src\ecs\cmp\PrintMember.h" />
     <ClInclude Include="src\ecs\cmp\PrintMemberBase.h" />
+    <ClInclude Include="src\gfx\Animation\AnimationState.h" />
     <ClInclude Include="src\gfx\Bindables\BufferResourceType.h" />
     <ClInclude Include="src\gfx\Bindables\DepthStencil.h" />
     <ClInclude Include="src\gfx\Bindables\RenderTargetView.h" />
@@ -129,6 +133,7 @@
     <ClInclude Include="src\gfx\dx11\Bindables\DX11DepthStencil.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11RenderTargetView.h" />
     <ClInclude Include="src\gfx\dx11\DX11RTVDSVFwd.h" />
+    <ClInclude Include="src\gfx\PointLightParameters.h" />
     <ClInclude Include="src\gfx\Render\DefaultRenderGraphs\DefaultRenderGraph.h" />
     <ClInclude Include="src\gfx\Render\Jobs\BasicJob.h" />
     <ClInclude Include="src\app\App.h" />

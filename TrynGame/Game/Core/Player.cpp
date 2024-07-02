@@ -1,3 +1,5 @@
+#include "TrynGameEngine.h"
+
 #include "Player.h"
 
 using namespace tryn;
@@ -31,5 +33,5 @@ Player::Player(std::string name, const std::string& modelPath, gfx::IGraphics& g
 
 	velocity = glm::vec3(0.0f);
 
-	pModel = gfx::Model::Make<gfx::Flat>(gfx, modelPath);
+	pModel = gfx::Model::Make<gfx::ForwardPhongBase>(gfx, modelPath);
 }

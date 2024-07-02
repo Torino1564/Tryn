@@ -4,6 +4,7 @@
 #include <Core/src/gfx/Model/InstancedModel.h>
 #include <Core/src/gfx/Render/Jobs/BasicJob.h>
 #include <Core/src/gfx/Render/Jobs/InstancedJob.h>
+#include <Core/src/gfx/IGraphics.h>
 
 namespace tryn::gfx
 {

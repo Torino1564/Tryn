@@ -1,6 +1,5 @@
 #pragma once
 #include <Core/src/utl/Probe.h>
-#include <Core/src/gfx/ConstantBuffer.h>
 
 namespace tryn::gfx
 {

@@ -2,6 +2,8 @@
 #include <ranges>
 #include <Core/src/mem/ArenaAllocator.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
+#include "Core/third/glm/ext/matrix_transform.hpp"
+#include <Core/src/gfx/Animation/BonedMesh.h>
 
 namespace tryn::gfx
 {

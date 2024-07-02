@@ -35,14 +35,6 @@ namespace tryn::gfx
 				return gfx.CreateVertexBuffer(std::forward<Args>(args)...);
 			}
 		};
-		//template <> struct ResolveHelper<IPolyVBuffer>
-		//{
-		//	template <class ... Args>
-		//	std::shared_ptr<IPolyVBuffer> operator()(IGraphics& gfx, Args&&...args)
-		//	{
-		//		return gfx.CreatePolyVertexBuffer(std::forward<Args>(args)...);
-		//	}
-		//};
 		template <> struct ResolveHelper<IVertexShader>
 		{
 			template <class ... Args>

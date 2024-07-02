@@ -300,6 +300,12 @@
     <ClCompile Include="src\ecs\cmp\PrintMemberBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gfx\Bindables\Bindable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\EntryMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1944,6 +1950,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\mem\Mem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\EntryMain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Animation\AnimationState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\PointLightParameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -46,6 +46,11 @@ namespace tryn::gfx
 		return dimensions;
 	}
 
+	IContext& IGraphics::GetContextInterface() const
+	{
+		return *pContext;
+	}
+
 	void IGraphics::InitThread()
 	{
 		kernelThread_ = std::jthread(&IGraphics::KernelLoop_, this);

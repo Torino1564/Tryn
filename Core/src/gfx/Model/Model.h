@@ -11,11 +11,18 @@
 #include <Core/src/gfx/Assimp.h>
 #include "ModelException.h"
 #include <Core/src/gfx/Animation/AnimationManager.h>
+#include "Core/src/gfx/Render/Techniques/ForwardPhong.h"
+#include <Core/src/gfx/Material.h>
 
 namespace tryn::gfx
 {
 	template <typename T>
-	concept DeriedFromTechnique = std::derived_from<T, Technique>;
+	concept DerivedFromTechnique = std::derived_from<T, Technique>;
+
+	template <template <bool, bool> typename T>
+	concept BaseTechniqueClass = DerivedFromTechnique<T<false, false>>;
+
+	
 
 	struct Settings
 	{
@@ -29,7 +36,8 @@ namespace tryn::gfx
 	public:
 		Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false );
 
-		template<DeriedFromTechnique FirstTechnique = ForwardPhong, DeriedFromTechnique... OtherTechniques>
+		template <template <bool, bool> typename FirstTechnique = ForwardPhongBase, template <bool, bool> typename... OtherTechniques>
+			requires BaseTechniqueClass<FirstTechnique> && (sizeof...(OtherTechniques) == 0 || BaseTechniqueClass<OtherTechniques...>)
 		static std::unique_ptr<Model> Make(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
 		void Submit(const glm::mat4& entityTransform);
 		void Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms);
@@ -54,10 +62,11 @@ namespace tryn::gfx
 		std::vector<std::shared_ptr<Mesh>> pMeshes;
 	};
 
-	template<DeriedFromTechnique FirstTechnique, DeriedFromTechnique... OtherTechniques>
-	static std::unique_ptr<Model> Model::Make(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, bool instanced)
+	template <template <bool, bool> typename FirstTechnique, template <bool, bool> typename... OtherTechniques>
+		requires BaseTechniqueClass<FirstTechnique> && (sizeof...(OtherTechniques) == 0 || BaseTechniqueClass<OtherTechniques...>)
+	std::unique_ptr<Model> Model::Make(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, bool instanced)
 	{
-		std::unique_ptr<Model> pModel = std::make_unique<Model>(std::move(Model{ path, gfx }));
+		auto pModel = std::make_unique<Model>(std::move(Model{ path, gfx }));
 
 		auto& imp = AssimpManager::Get();
 		const auto pScene = imp.ReadFile(path.data(),
@@ -128,27 +137,29 @@ namespace tryn::gfx
 			{
 			case 0:
 				if constexpr (sizeof...(OtherTechniques) != 0)
-					materials.emplace_back(Material::Make<ReplaceTemplateParam<FirstTechnique, true, true>::type, ReplaceTemplateParam<OtherTechniques..., true, true>::type>(gfx, *pScene->mMaterials[i], path));
+					materials.emplace_back(Material::Make<FirstTechnique<true, true>, OtherTechniques<true, true>...>(gfx, *pScene->mMaterials[i], path));
 				else
-					materials.emplace_back(Material::Make<ReplaceTemplateParam<FirstTechnique, true, true>::type>(gfx, *pScene->mMaterials[i], path));
+					materials.emplace_back(Material::Make<FirstTechnique<true, true>>(gfx, *pScene->mMaterials[i], path));
 				break;
 			case 1:
 				if constexpr (sizeof...(OtherTechniques) != 0)
-					materials.emplace_back(Material::Make<ReplaceTemplateParam<FirstTechnique, true, false>::type, ReplaceTemplateParam<OtherTechniques..., true, false>::type>(gfx, *pScene->mMaterials[i], path));
+					materials.emplace_back(Material::Make<FirstTechnique<true, false>, OtherTechniques<true, false>...>(gfx, *pScene->mMaterials[i], path));
 				else
-					materials.emplace_back(Material::Make<ReplaceTemplateParam<FirstTechnique, true, false>::type>(gfx, *pScene->mMaterials[i], path));
+					materials.emplace_back(Material::Make<FirstTechnique<true, false>>(gfx, *pScene->mMaterials[i], path));
 				break;
 			case 2:
 				if constexpr (sizeof...(OtherTechniques) != 0)
-					materials.emplace_back(Material::Make<ReplaceTemplateParam<FirstTechnique, false, true>::type, ReplaceTemplateParam<OtherTechniques..., false, true>::type>(gfx, *pScene->mMaterials[i], path));
+					materials.emplace_back(Material::Make<FirstTechnique<false, true>, OtherTechniques<false, true>...>(gfx, *pScene->mMaterials[i], path));
 				else
-					materials.emplace_back(Material::Make<ReplaceTemplateParam<FirstTechnique, false, true>::type>(gfx, *pScene->mMaterials[i], path));
+					materials.emplace_back(Material::Make<FirstTechnique<false, true>>(gfx, *pScene->mMaterials[i], path));
 				break;
 			case 3:
 				if constexpr (sizeof...(OtherTechniques) != 0)
-					materials.emplace_back(Material::Make<ReplaceTemplateParam<FirstTechnique, false, false>::type, ReplaceTemplateParam<OtherTechniques..., false, false>::type>(gfx, *pScene->mMaterials[i], path));
+					materials.emplace_back(Material::Make<FirstTechnique<false, false>, OtherTechniques<false, false>...>(gfx, *pScene->mMaterials[i], path));
 				else
-					materials.emplace_back(Material::Make<ReplaceTemplateParam<FirstTechnique, false, false>::type>(gfx, *pScene->mMaterials[i], path));
+					materials.emplace_back(Material::Make<FirstTechnique<false, false>>(gfx, *pScene->mMaterials[i], path));
+				break;
+			default:
 				break;
 			}
 		}

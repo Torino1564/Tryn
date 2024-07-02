@@ -131,7 +131,7 @@ namespace tryn::gfx
 			Node() = default;
 			Node(Type type, std::string id);
 			void Append(Node child);
-			void Append(ConstantBufferLayout::Type type, std::string name);
+			void Append(Type type, std::string name);
 			//bool IsRoot() const;
 			bool IsLeaf() const;
 			static Node& GetEmpty();
@@ -139,7 +139,7 @@ namespace tryn::gfx
 			Node& operator[](std::size_t index);
 			Node& IndexByName(std::string_view id);
 			Node& IndexByKey(std::size_t key);
-			void Resize(std::size_t newSize, class ConstantBuffer& layout);
+			void Resize(std::size_t newSize, ConstantBuffer& layout);
 			bool Validate() const;
 			Type GetType() const;
 			size_t GetOffset() const;
@@ -147,8 +147,7 @@ namespace tryn::gfx
 			std::size_t Size() const;
 		private:
 			std::vector<Node> children;
-			Type type = Type::Empty;
-			//std::optional<Node*> parent = std::nullopt;
+			Type type = Empty;
 			std::string id = "";
 			bool solid = false;
 			size_t offset = 0;
@@ -173,22 +172,12 @@ namespace tryn::gfx
 		friend class ConstantBufferLayout::Node;
 	public:
 		ElementView(ConstantBufferLayout::Node& node, char* pBytes, ConstantBuffer* pBuffer);
-		ElementView operator[](std::string_view id)
-		{
-			trynass_msg(node.GetType() == ConstantBufferLayout::Type::Struct, L"Tried to index by name into a non struct ElementView!");
-			const auto finalOffset = node[id].GetOffset() - node.GetOffset();
-			return ElementView(node[id], pBytes + finalOffset, pBuffer);
-		}
-		ElementView operator[](std::size_t key)
-		{
-			trynass_msg(node.GetType() == ConstantBufferLayout::Type::Array, L"Tried to index by key into a non array ElementView!");
-			auto finalOffset = node[key].GetOffset() - node.GetOffset();
-			return ElementView(node[key], pBytes + finalOffset, pBuffer);
-		}
-		void Resize(std::size_t newSize)
-		{
-			node.Resize(newSize, *pBuffer);
-		}
+		ElementView operator[](std::string_view id);
+
+		ElementView operator[](std::size_t key);
+
+		void Resize(std::size_t newSize);
+
 		template <typename T>
 		T& Get()
 		{
@@ -198,10 +187,7 @@ namespace tryn::gfx
 
 			return *reinterpret_cast<T*>(pBytes);
 		}
-		auto& Node()
-		{
-			return node;
-		}
+		ConstantBufferLayout::Node& Node();
 		bool Exists() const;
 
 		template<typename T>
@@ -221,44 +207,19 @@ namespace tryn::gfx
 	{
 		friend class ConstantBufferLayout::Node;
 	public:
-		ConstantBuffer(ConstantBufferLayout cbl)
-		{
-			layout = std::move(cbl);
-			Rebase();
-		}
-		void Rebase()
-		{
-			buffer.resize(layout.Size(), (std::byte)(0u));
-		}
-		ElementView operator[](std::string_view id)
-		{
-			SetDirty(); 
-			auto& indexTo = layout.GetRoot().IndexByName(id);
-			if (indexTo.GetType() == gfx::ConstantBufferLayout::Type::Empty)
-			{
-				return ElementView{ indexTo, nullptr, this};
-			}
-			else
-			{
-				return ElementView{ indexTo, (char*)(buffer.data() + indexTo.GetOffset()), this};
-			}
-		}
-		constexpr void* Data() const noexcept override
-		{
-			return (void*)(buffer.data());
-		}
-		std::size_t Stride() const noexcept override
-		{
-			return 0u;
-		}
-		constexpr std::size_t ByteSize() const noexcept override
-		{
-			return buffer.size();
-		}
-		std::size_t Size() const noexcept override
-		{
-			return layout.Size();
-		}
+		ConstantBuffer(ConstantBufferLayout cbl);
+
+		void Rebase();
+
+		ElementView operator[](std::string_view id);
+
+		constexpr void* Data() const noexcept override;
+
+		std::size_t Stride() const noexcept override;
+
+		constexpr std::size_t ByteSize() const noexcept override;
+
+		std::size_t Size() const noexcept override;
 		void Resize(const std::size_t newSize) override;
 	private:
 		ConstantBufferLayout layout;

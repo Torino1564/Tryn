@@ -1,6 +1,11 @@
 #pragma once
 #include "ComponentManager.h"
-#include <Core/src/gfx/Animation/BonedMesh.h>
+#include <Core/src/gfx/Animation/AnimationState.h>
+
+namespace tryn::gfx::ani
+{
+	struct AnimationSkeletonInterface;
+}
 
 namespace tryn::ecs::cmp
 {

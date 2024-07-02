@@ -1,11 +1,10 @@
 #pragma once
-#include "TrynWLR.h"
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/gfx/IGraphics.h>
 #include <d3d11_1.h>
-#include <Core/src/gfx/dx11/Dx11Context.h>
-#include <Core/third/stb_image/stb_image.h>
 #include "DX11RTVDSVFwd.h"
+#include "GraphicsError.h"
+#include "Dx11Context.h"
 
 namespace tryn::gfx
 {

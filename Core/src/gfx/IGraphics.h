@@ -4,26 +4,22 @@
 #include <typeinfo>
 #include <Core/src/utl/Assert.h>
 #include <Core/src/spa/Dimensions.h>
-#include <Core/src/utl/String.h>
 #include <vector>
 #include <concepts>
 #include <filesystem>
 #include <memory>
-#include <variant>
-#include "ImguiManager.h"
 #include <Core/third/glm/glm.hpp>
 #include <thread>
-#include <atomic>
 #include <semaphore>
 #include <Core/src/ccr/GenericTaskQueue.h>
 #include "Render/RenderGraph.h"
 #include <Core/src/gfx/IContext.h>
 #include <Core/src/gfx/GraphicAPI.h>
-#include <Core/src/utl/LocalGenericTaskQueue.h>
 #include <Core/src/gfx/IBufferFwd.h>
 #include <Core/src/gfx/ConstantBuffer.h>
 #include <Core/src/gfx/ComparissonMode.h>
 #include <Core/src/gfx/RTVDSFwd.h>
+#include <Core/src/gfx/IContext.h>
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
@@ -98,10 +94,7 @@ namespace tryn::gfx
 		{
 			trynass(context.GetApi() == GetType());
 		}
-		IContext& GetContextInterface()
-		{
-			return *pContext;
-		}
+		IContext& GetContextInterface() const;
 		constexpr virtual const char* GetAPIString() const = 0;
 
 		template<std::invocable F>
@@ -152,6 +145,7 @@ namespace tryn::gfx
 
 		void InitThread();
 		virtual void KernelLoop_();
+
 		template<std::invocable F>
 		auto Dispatch_(F&& f) const
 		{

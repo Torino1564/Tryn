@@ -1,11 +1,4 @@
 #pragma once
-#include <vector>
-#include <Core/third/glm/gtx/euler_angles.hpp>
-#include <Core/src/gfx/Bindables/Bindable.h>
-#include <Core/src/gfx/Vertex.h>
-#include <Core/src/gfx/IGraphics.h>
-#include <Core/src/gfx/Bindables/PolyVBuffer.h>
-#include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 #include <Core/src/gfx/Drawable.h>
 
 namespace tryn::gfx

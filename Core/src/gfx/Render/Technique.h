@@ -1,5 +1,4 @@
 #pragma once
-#include <Core/src/gfx/IGraphics.h>
 #include <string>
 #include "TechniqueProbe.h"
 #include "Step.h"
@@ -25,10 +24,10 @@ namespace tryn::gfx
 	public:
 		Technique(std::string name);
 		void AddStep(Step step);
-		void Draw(IGraphics& gfx, Drawable* parent);
-		void Submit(IGraphics& gfx, Drawable* parent);
-		void Submit(IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instancedParent);
-		void Accept(TechniqueProbe& probe);
+		void Draw(class IGraphics& gfx, Drawable* parent);
+		void Submit(class IGraphics& gfx, Drawable* parent);
+		void Submit(class IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instancedParent);
+		void Accept(class TechniqueProbe& probe);
 
 	protected:
 		class VertexLayout& ExtractLayoutFromMaterial(class Material& mat);

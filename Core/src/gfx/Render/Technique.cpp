@@ -1,6 +1,7 @@
 #include "Technique.h"
 #include <Core/src/gfx/Material.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
+#include <Core/src/gfx/IGraphics.h>
 
 namespace tryn::gfx
 {

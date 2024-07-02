@@ -1,5 +1,5 @@
 #pragma once
-#include <unordered_map>
+//#include <unordered_map>
 #include <string>
 #include <memory>
 #include <Core/src/utl/Assert.h>
@@ -157,14 +157,14 @@ namespace tryn::ecs
 		template <typename C>
 		int RegisterComponent()
 		{
-			map.insert({ componentCounter, sizeof(C::SubresourceData)});
+			//map.insert({ componentCounter, sizeof(C::SubresourceData)});
 			return componentCounter++;
 		}
 
-		auto& GetComponentMap()
+		/*auto& GetComponentMap()
 		{
 			return map;
-		}
+		}*/
 
 		void ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex);	
 
@@ -209,7 +209,7 @@ namespace tryn::ecs
 		}
 
 		std::uint16_t componentCounter = 0;
-		std::unordered_map<ComponentIndex, ComponentSize> map;
+		//std::unordered_map<ComponentIndex, ComponentSize> map;
 
 	// stateful meta bs
 		template <typename T, utl::CTM::StaticString Name>
@@ -242,7 +242,7 @@ namespace tryn::ecs
 			typename Component = int, 
 			unsigned ElementN = 0,
 			typename... FuncArgs>
-		static void IterateComponentMembers(unsigned int componentUUID, FuncArgs&&... funcArgs )
+		static void IterateComponentMembers(long long componentUUID, FuncArgs&&... funcArgs )
 		{
 			if constexpr (!FoundCmp)
 			{
@@ -408,7 +408,7 @@ namespace tryn::ecs
 			booker.resize(newSize, true);
 			for (auto [index, pBuffer]: std::ranges::views::enumerate(bufferPtrs) )
 			{
-				pBuffer->resize(newSize * ComponentManager::Get().GetComponentMap().at(components[index]));
+				//pBuffer->resize(newSize * ComponentManager::Get().GetComponentMap().at(components[index]));
 			}
 		}
 	private:
@@ -544,8 +544,8 @@ namespace tryn::ecs
 		}
 		Archetype* AddArchetype(std::span<int> componentIDs)
 		{
-			archetypeBuffer[archetypeCounter] = Archetype::Make(componentIDs);
-			auto& newlyAddedArchetype = archetypeBuffer[archetypeCounter];
+			archetypeBuffer.emplace_back(Archetype::Make(componentIDs));
+			auto& newlyAddedArchetype = archetypeBuffer.back();
 
 			for (auto componentIndex : newlyAddedArchetype.components)
 			{
@@ -571,7 +571,7 @@ namespace tryn::ecs
 		}
 		ArchetypeManager()
 		{
-			archetypeBuffer.resize(1000);
+			archetypeBuffer.reserve(1000);
 		}
 		int ResolveUUID()
 		{

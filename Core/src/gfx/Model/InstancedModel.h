@@ -1,14 +1,16 @@
 #pragma once
-#include "Model.h"
-#include <Core/src/gfx/Bindables/IBuffer.h>
 #include <optional>
 #include <span>
 #include <Core/third/dynamic_bitset.hpp>
+#include "Core/src/gfx/ConstantBuffer.h"
+#include "Core/third/glm/fwd.hpp"
 
 namespace tryn::gfx
 {
 	class InstancedModelChild;
-	
+	class Model;
+	class IGraphics;
+
 	class InstancedModelParent
 	{
 		friend class InstancedModelChild;

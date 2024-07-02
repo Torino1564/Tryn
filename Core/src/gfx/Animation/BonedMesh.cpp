@@ -2,6 +2,9 @@
 #include <Core/src/gfx/Bindables/IBuffer.h>
 #include <Core/src/mem/ArenaAllocator.h>
 #include <Core/src/gfx/Bindables/JITUpdateBuffer.h>
+#include <Core/src/gfx/Material.h>
+#include <Core/src/gfx/Bindables/PrimitiveTopology.h>
+
 namespace tryn::gfx::ani
 {
 	glm::mat4 convertAiToGlm(const aiMatrix4x4& aiMat) {

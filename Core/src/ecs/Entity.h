@@ -1,6 +1,5 @@
 #pragma once
 #include <memory>
-#include <Core/src/gfx/Model/Model.h>
 #include <Core/src/ecs/cmp/ComponentManager.h>
 #include <array>
 

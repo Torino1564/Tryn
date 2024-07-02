@@ -1,6 +1,7 @@
 #pragma once
 #include "IGraphics.h"
 #include "Model/Model.h"
+#include <Core/src/gfx/PointLightParameters.h>
 
 namespace tryn::gfx
 {
@@ -17,19 +18,10 @@ namespace tryn::gfx
 		void Submit(IGraphics& gfx, const glm::mat4 view);
 		Model& GetModel();
 	public:
-		struct Parameters
-		{
-			glm::vec3 viewLightPos;
-			glm::vec3 ambient;
-			glm::vec3 diffuseColor;
-			float diffuseIntensity;
-			float constantAtt;
-			float linearAtt;
-			float quadraticAtt;
-		};
+		
 	private:
 		IGraphics& gfx;
-		Parameters parameters = {};
+		PointLightParameters parameters = {};
 		glm::vec3 position = { 0.0f,0.0f,0.0f };
 		glm::mat4 transformation;
 		std::unique_ptr<Model> pModel;

@@ -8,14 +8,12 @@ namespace tryn::gfx
 	class IBindable
 	{
 	public:
-		virtual ~IBindable() {}
-		virtual void Bind(IContext&) { Bind(); };
+		virtual ~IBindable();
+		virtual void Bind(IContext&);
 		virtual void Bind() = 0;
-		virtual void Accept(class TechniqueProbe&) {}
-		GraphicAPI GetAPI() const
-		{
-			return type;
-		}
+		virtual void Accept(class TechniqueProbe&);
+		GraphicAPI GetAPI() const;
+
 	protected:
 		GraphicAPI type = GraphicAPI::Unknown;
 	};

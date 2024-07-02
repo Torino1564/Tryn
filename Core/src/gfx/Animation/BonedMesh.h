@@ -1,6 +1,5 @@
 #pragma once
 #include <Core/src/gfx/Model/Mesh.h>
-#include <Core/src/gfx/Material.h>
 #include "Bone.h"
 #include "Animation.h"
 
@@ -9,7 +8,7 @@ namespace tryn::gfx::ani
 	class BonedMesh : public Mesh
 	{
 	public:
-		BonedMesh(IGraphics& gfx, const Material& material, const aiMesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint16_t> meshID = std::nullopt);
+		BonedMesh(IGraphics& gfx, const class Material& material, const aiMesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint16_t> meshID = std::nullopt);
 		[[nodiscard]] MeshType Type() const override;
 		void Submit(IGraphics& gfx, const glm::mat4 finalTransform, std::span<const glm::mat4> boneTransforms);
 		void AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string& name);
