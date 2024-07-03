@@ -1961,6 +1961,9 @@
     <ClInclude Include="src\gfx\PointLightParameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ser\Serializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">

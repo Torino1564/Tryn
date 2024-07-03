@@ -54,6 +54,9 @@
     <ClCompile Include="src\ent\TMP BS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ser\Ser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TrynCppUnitTest.h">

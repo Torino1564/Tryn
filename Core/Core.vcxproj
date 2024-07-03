@@ -273,6 +273,7 @@
     <ClInclude Include="src\mem\NativeArray.h" />
     <ClInclude Include="src\mem\SharedRef.h" />
     <ClInclude Include="src\mem\WeakRef.h" />
+    <ClInclude Include="src\ser\Serializer.h" />
     <ClInclude Include="src\spa\Dimensions.h" />
     <ClInclude Include="src\spa\Rect.h" />
     <ClInclude Include="src\spa\Spa.h" />
