@@ -10,7 +10,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 	Gfx().SetRenderGraph(std::make_unique<TrynGameRenderGraph>(Gfx()));
 
-	pPlayer = std::make_unique<Player>("player1", "Game/Resources/Models/PlayerModels/sphere.obj", Gfx());
+	pPlayer = std::make_unique<Player>("player1", "Game/Resources/Models/PlayerModels/ShinySphere/ShinySphere.obj", Gfx());
 
 	pPlayer->GetComponent<ecs::cmp::PositionComponent>().position = {10.0f, 10.0f, 10.0f};
 
