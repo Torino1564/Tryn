@@ -20,7 +20,7 @@ namespace tryn::gfx
 		friend class PointLightBindPass;
 
 	public:
-		IRenderGraph(IGraphics& gfx);
+		IRenderGraph(IGraphics& gfx, const bool initDefaultSourceAndSinks = true);
 		virtual void ExecuteFrame(IGraphics& gfx);
 		virtual ~IRenderGraph() = default;
 		void AddCamera(Camera*);
@@ -32,6 +32,7 @@ namespace tryn::gfx
 		void Reset();
 		std::uint16_t GetMaxPointLights() const;
 		void ResizePointLightBuffer(const std::uint16_t newSize);
+		IGraphics& Gfx() const;
 	protected:
 		template <typename Pass>
 		void AddPass(Pass&& pass)

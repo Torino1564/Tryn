@@ -51,6 +51,26 @@ namespace tryn::gfx
 		return *pContext;
 	}
 
+	const char* IGraphics::GetShaderRootPath()
+	{
+		static bool isInitialized = false;
+		static std::string shaderRootPath;
+		if (!isInitialized)
+		{
+			shaderRootPath += __FILE__;
+			size_t trynPos = shaderRootPath.rfind("Tryn");
+			if (trynPos != std::string::npos)
+			{
+				shaderRootPath.erase(trynPos + 4);
+			}
+
+			shaderRootPath += "\\bin\\Shaders\\";
+			isInitialized = true;
+		}
+
+		return shaderRootPath.data();
+	}
+
 	void IGraphics::InitThread()
 	{
 		kernelThread_ = std::jthread(&IGraphics::KernelLoop_, this);

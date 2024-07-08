@@ -74,6 +74,8 @@
     <ClCompile Include="src\gfx\Render\Jobs\BasicJob.cpp" />
     <ClCompile Include="src\gfx\Render\Jobs\InstancedJob.cpp" />
     <ClCompile Include="src\gfx\Render\Jobs\PointLightJob.cpp" />
+    <ClCompile Include="src\gfx\Render\Passes\ClearTargetPass.cpp" />
+    <ClCompile Include="src\gfx\Render\Passes\FullScreenRenderPass.cpp" />
     <ClCompile Include="src\gfx\Render\Passes\RenderQueuePass.cpp" />
     <ClCompile Include="src\gfx\Render\RenderGraph.cpp" />
     <ClCompile Include="src\gfx\Render\RenderQueue.cpp" />
@@ -102,6 +104,7 @@
     <ClCompile Include="src\log\SimpleFileDriver.cpp" />
     <ClCompile Include="src\log\TextFormatter.cpp" />
     <ClCompile Include="src\mem\BasicPoolAllocator.cpp" />
+    <ClCompile Include="src\ser\DefaultTypeSerializers.cpp" />
     <ClCompile Include="src\utl\Assert.cpp" />
     <ClCompile Include="src\utl\Exception.cpp" />
     <ClCompile Include="src\utl\StackTrace.cpp" />
@@ -212,7 +215,9 @@
     <ClInclude Include="src\gfx\Render\Jobs\IJob.h" />
     <ClInclude Include="src\gfx\Render\Jobs\InstancedJob.h" />
     <ClInclude Include="src\gfx\Render\Jobs\PointLightJob.h" />
+    <ClInclude Include="src\gfx\Render\Passes\ClearTargetPass.h" />
     <ClInclude Include="src\gfx\Render\Passes\ForwardLambertianPass.h" />
+    <ClInclude Include="src\gfx\Render\Passes\FullScreenRenderPass.h" />
     <ClInclude Include="src\gfx\Render\Passes\PointLightBindPass.h" />
     <ClInclude Include="src\gfx\Render\Passes\RenderQueuePass.h" />
     <ClInclude Include="src\gfx\Render\RenderPass.h" />
@@ -273,7 +278,9 @@
     <ClInclude Include="src\mem\NativeArray.h" />
     <ClInclude Include="src\mem\SharedRef.h" />
     <ClInclude Include="src\mem\WeakRef.h" />
+    <ClInclude Include="src\ser\DefaultTypeSerializers.h" />
     <ClInclude Include="src\ser\Serializer.h" />
+    <ClInclude Include="src\ser\StreamIO.h" />
     <ClInclude Include="src\spa\Dimensions.h" />
     <ClInclude Include="src\spa\Rect.h" />
     <ClInclude Include="src\spa\Spa.h" />
@@ -292,8 +299,11 @@
     <ClInclude Include="src\utl\StackTrace.h" />
     <ClInclude Include="src\utl\StatefulMeta\CTC.h" />
     <ClInclude Include="src\utl\StatefulMeta\CTM.h" />
+    <ClInclude Include="src\utl\StatefulMeta\CTV.h" />
+    <ClInclude Include="src\utl\StatefulMeta\TemplateData.h" />
     <ClInclude Include="src\utl\Stopwatch.h" />
     <ClInclude Include="src\utl\String.h" />
+    <ClInclude Include="src\utl\StringHasher.h" />
     <ClInclude Include="src\utl\Timer.h" />
     <ClInclude Include="src\utl\UUID.h" />
     <ClInclude Include="src\win\imgui_impl_win32.h" />
@@ -826,6 +836,18 @@
     <None Include="third\glm\gtx\wrap.inl" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="src\gfx\dx11\PS\DefaultFullscreen_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_Test|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="src\gfx\dx11\VS\Fullscreen_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_Test|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="src\gfx\dx11\PS\PhongTexMskNrm_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_Test|x64'">Pixel</ShaderType>

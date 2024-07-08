@@ -6,7 +6,7 @@ using namespace tryn;
 
 Player::Player(std::string name, const std::string& modelPath, gfx::IGraphics& gfx)
 	:
-	Entity(ecs::Entity::CreateNew<ecs::cmp::PositionComponent,
+	Entity(CreateNew<ecs::cmp::PositionComponent,
 		ecs::cmp::ActiveComponent,
 		ecs::cmp::RotationComponent,
 		ecs::cmp::ScaleComponent,

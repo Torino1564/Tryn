@@ -10,23 +10,26 @@
 
 namespace tryn::gfx
 {
-	IRenderGraph::IRenderGraph(IGraphics& gfx)
+	IRenderGraph::IRenderGraph(IGraphics& gfx, const bool initDefaultSourceAndSinks)
 		:
 		gfx(gfx),
 		pRTV(gfx.GetRenderTargetView()),
 		pDSV(gfx.GetDepthStencilView())
 	{
-		// Init Sink
-		pGlobalSink = MakeUniqueSink(In<IShaderResourceRenderTargetView>("rtv"));
+		if (initDefaultSourceAndSinks)
+		{
+			// Init Sink
+			pGlobalSink = MakeUniqueSink(In<IShaderResourceRenderTargetView>("rtv"));
 
-		// Init Source
-		auto pSource = MakeUniqueSource(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"), Out<IPxConstantBuffer>("pointLightBuffer"));
+			// Init Source
+			auto pSource = MakeUniqueSource(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"), Out<IPxConstantBuffer>("pointLightBuffer"));
 
-		pSource->Set(pRTV, "rtv");
-		pSource->Set(pDSV, "depthStencil");
-		pSource->Set(pPointLightCBuf, "pointLightBuffer");
+			pSource->Set(pRTV, "rtv");
+			pSource->Set(pDSV, "depthStencil");
+			pSource->Set(pPointLightCBuf, "pointLightBuffer");
 
-		pGlobalSource = std::move(pSource);
+			pGlobalSource = std::move(pSource);
+		}
 
 		// Point Light buffer init
 		
@@ -128,6 +131,12 @@ namespace tryn::gfx
 		maxPointLights = newSize;
 		pPointLightCBuf->Resize(newSize);
 	}
+
+	IGraphics& IRenderGraph::Gfx() const
+	{
+		return gfx;
+	}
+
 	void IRenderGraph::AddLinkage(LinkageParam&& source_, LinkageParam&& destination_)
 	{
 		// find both passes

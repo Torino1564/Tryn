@@ -1,5 +1,6 @@
 #pragma once
 
+
 // Define engine configs
 
 
@@ -12,3 +13,4 @@
 
 // Game Engine Include
 #include <Core/include/TrynCore.h>
+using namespace tryn;

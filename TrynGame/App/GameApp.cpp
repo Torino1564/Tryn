@@ -1,37 +1,14 @@
 #include "TrynGameEngine.h"
-
+#include <Engine/Render/RenderGraph.h>
 #include "GameApp.h"
 #include <TrynGame/Game/Core/Player.h>
-
-#include <Core/src/app/EntryPoint.h>
-
-app::App* app::CreateApp(int argc, char** argv)
-{
-	auto window = ioc::Get().Resolve<win::IWindow>(win::IWindow::IocParams{ .size = spa::DimensionsI{.width = (1024), .height = (768) } });
-	window->SetTitle(L"TrynGame");
-
-	ioc::Get().Register<log::ISeverityLevelPolicy>([]
-		{
-			return std::make_shared<log::SeverityLevelPolicy>(
-#ifdef _DEBUG
-				log::Level::Warn
-#else
-				log::Level::Info
-#endif
-			);
-		});
-	
-	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{ window->GetClientDimensions().width, window->GetClientDimensions().height, window->GetHandle() });
-
-	auto pApp = new TrynGameApp(window, gfx);
-
-	return pApp;
-}
 
 TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::shared_ptr<tryn::gfx::IGraphics> pGraphics)
 {
 	this->wnd = pWindow;
 	this->gfx = pGraphics;
+
+	Gfx().SetRenderGraph(std::make_unique<TrynGameRenderGraph>(Gfx()));
 
 	pPlayer = std::make_unique<Player>("player1", "Game/Resources/Models/PlayerModels/sphere.obj", Gfx());
 

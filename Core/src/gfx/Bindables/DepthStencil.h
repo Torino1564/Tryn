@@ -12,6 +12,7 @@ namespace tryn::gfx
 	{
 	public:
 		virtual ~IGenericDepthStencil() = default;
+		virtual void Clear() const = 0;
 	};
 
 	template <BufferResourceType Type>

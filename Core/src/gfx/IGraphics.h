@@ -97,6 +97,18 @@ namespace tryn::gfx
 		IContext& GetContextInterface() const;
 		constexpr virtual const char* GetAPIString() const = 0;
 
+		static const char* GetShaderRootPath();
+		const float* GetBackgroundColor() const
+		{
+			return bgcolor;
+		}
+		void SetBackgroundColor(const float r, const float g, const float b, const float a)
+		{
+			bgcolor[0] = r;
+			bgcolor[1] = g;
+			bgcolor[2] = b;
+			bgcolor[3] = a;
+		}
 		template<std::invocable F>
 		auto Dispatch(F&& f) const
 		{
@@ -134,6 +146,9 @@ namespace tryn::gfx
 		glm::mat4 camera = {};
 		glm::mat4 projection = {};
 		std::unique_ptr<IRenderGraph> pRenderGraph;
+
+		// Bg color
+		float bgcolor[4] = {0.0f, 0.0f, 0.0f, 1.0f};
 
 		// Multithreading stuff
 		mutable std::mutex mtx;

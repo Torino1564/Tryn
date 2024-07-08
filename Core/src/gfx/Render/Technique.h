@@ -31,7 +31,6 @@ namespace tryn::gfx
 
 	protected:
 		class VertexLayout& ExtractLayoutFromMaterial(class Material& mat);
-		const std::string& GetShaderRootPath() const;
 		std::string name;
 		std::vector<Step> steps;
 	};

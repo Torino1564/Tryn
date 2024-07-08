@@ -76,9 +76,10 @@ namespace tryn::gfx
 
 	VertexBuffer::VertexBuffer(VertexLayout layout_, size_t size)
 	{
-		trynass_msg(layout_.GetElementCount() != 0, L"Attempted to create a VertexBuffer with an empty layout");
+		trynass_msg(layout_.GetElementCount() != 0 && layout_.Size() != 0, L"Attempted to create a VertexBuffer with an empty layout");
 		this->layout = std::move(layout_);
 		Resize(layout.Size() * size);
+		dirty = false;
 	}
 
 	VertexBuffer::VertexBuffer(VertexLayout layout, const aiMesh& mesh, ani::Skeleton* skeleton)
@@ -89,8 +90,8 @@ namespace tryn::gfx
 		for (unsigned int i = 0; i < this->layout.GetElementCount(); i++)
 		{
 			VertexLayout::Bridge<VertexLayout::Element::AttributeAiMeshFill>(this->layout.ResolveByIndex(i).GetType(), *this, mesh, skeleton);
-			
 		}
+		dirty = false;
 	}
 	void VertexBuffer::Resize(size_t newSize)
 	{

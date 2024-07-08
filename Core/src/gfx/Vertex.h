@@ -310,6 +310,7 @@ namespace tryn::gfx
 				offset = Elements.back().first.GetOffset() + Elements.back().first.Size();
 			}
 			Elements.emplace_back(VertexLayout::Element(element, offset), elCounter[static_cast<int>(element)]++);
+			size = Size();
 		}
 		std::string GetCode() const;
 	private:
@@ -417,9 +418,9 @@ namespace tryn::gfx
 		template<typename ... Args>
 		void EmplaceBack(Args&& ... args)
 		{
-			dirty = true;
+			//dirty = true;
 			trynass_msg(sizeof...(args) == layout.GetElementCount(), L"Different number of parameters where passed to the EmplaceBack function for a VertexLayout");
-			Resize(buffer.size() + layout.Size());
+			Resize(NumElements() + 1);
 			Back().SetAttributeByIndex(0u, std::forward<Args>(args)...);
 		}
 

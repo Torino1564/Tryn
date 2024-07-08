@@ -3,98 +3,96 @@
 #include <fstream>
 #include <iomanip>
 #include <memory>
+#include <vector>
+#include <format>
+#include <Core/src/utl/StatefulMeta/CTV.h>
+#include "Serializer.h"
+#include <Core/src/utl/StringHasher.h>
+
+#include "Core/src/app/App.h"
+
+#define ZT_DEFINE_SERIALIZER(x) struct Serializer : public tryn::ser::Serializer<x, #x>
 
 namespace tryn::ser
 {
-	// Base serializer class. Every Serializer implementation derives from this
-	class SerializerBase
-	{
-		// Put here base class serializer stuff
-	};
+	// Init serializer compile time map
+	static constexpr auto SerializerListID = ZT_STRING_HASH("Serializer");
+	ZT_INIT_CTV(SerializerListID);
 
-	// Actual serializer base class
-	template <typename T>
-	class Serializer : SerializerBase
+	template <auto Tag = []{}>
+	using SerializerList = typename utl::CTV::get_list<SerializerListID>;
+
+	template <unsigned int UUID, unsigned N = 0>
+	constexpr auto SerializerByUUID()
 	{
-	public:
-		static void Write(class StreamWriter& streamWriter, const T& data)
+		if constexpr (N < std::tuple_size_v<SerializerList<>>)
 		{
-			T::Write(streamWriter, data);
+			using NthSerializer = typename std::tuple_element_t<N, SerializerList<>>::Type;
+			
+			if constexpr (UUID == NthSerializer::UUID)
+			{
+				return NthSerializer{};
+			}
+			else
+			{
+				return SerializerByUUID<UUID, N + 1>();
+			}
 		}
+	}
+
+	template <unsigned int UUID>
+	using ResolveSerializer = decltype(SerializerByUUID<UUID>());
+
+
+	// Serializer base class
+	template <typename T, utl::CTV::StaticString Name = "?">
+	struct Serializer
+	{
+		static void Write(const class StreamWriter& streamWriter, const T& data, const bool binary = true, const std::string& name = "")
+		{
+			T::Write(streamWriter, data, binary, name);
+		}
+		static T Read(const class StreamReader& streamReader, const bool binary = false)
+		{
+			return T::Read(streamReader, binary);
+		}
+	private:
+		using Name_t = decltype(utl::CTV::TextType<Name>);
+		static constexpr Name_t nameFunc;
+	public:
+		using Type = T;
+		static constexpr auto UUID = ZT_STRING_HASH(nameFunc());
+	private:
+		using Register_t = utl::CTV::UUIDMap_t<typename T::Serializer, Name, UUID, SerializerListID>;
 	};
 
 	template <typename T>
 	struct TypeSerializer;
 
 	template <typename T>
-	concept HasSerializer = requires { std::derived_from<typename T::Serializer, Serializer<T>>; };
-
-	template<class First, std::size_t = sizeof(First)>
-	using first_t = First;
-
-	template<class T>
-	struct is_complete_type : std::false_type {};
-
-	template<class T>
-	struct is_complete_type<first_t<T>> : std::true_type {};
-
-	template <typename T>
-	concept HasTypeSerialized = is_complete_type<TypeSerializer<T>>::value;
-
-	class StreamWriter
+	concept HasSerializer = requires (const ser::StreamWriter& sw, const class StreamReader& sr, const T& data, const bool binary, const std::string& name)
 	{
-	public:
-		explicit StreamWriter(std::ostringstream& oss)
-			: oss(oss) {}
-
-		template <typename T>
-		requires HasSerializer<T> || std::is_trivially_copyable_v<T> || HasTypeSerialized<T>
-		void Serialize(const T& data, const bool binary = true, const std::string_view name = "")
-		{
-			if constexpr (std::is_trivially_copyable_v<T>)
-			{
-				if (binary)
-				{
-					const auto pData = (char*)(&data);
-					oss.write(pData, sizeof(T));
-				}
-				return;
-			}
-			else if constexpr (HasTypeSerialized<T>)
-			{
-				return TypeSerializer<T>::Write(*this, data);
-			}
-			else
-			{
-				return T::Serializer::Write(*this, data);
-			}
-		}
-
-		auto& GetStringStream() const
-		{
-			return oss;
-		}
-	private:
-		std::ostringstream& oss;
-	};
-
-	class Dummy
-	{
-		
+		std::derived_from<typename T::Serializer, Serializer<T>>;
+		{ T::Serializer::Write(sw, data, binary, name) } -> std::same_as<void>;
+		{ T::Serializer::Read(sr, binary) } -> std::same_as<T>;
 	};
 
 	template <typename T>
-	concept UniquePtr = requires
+	concept HasRefReader = requires (const StreamReader& sr, T& data, const bool binary)
 	{
-		std::is_same_v<std::unique_ptr<typename T::element_type>, T>;
+		{T::Serializer::Read(data, sr, binary)} -> std::same_as<void>;
 	};
 
-	template <>
-	struct TypeSerializer<int>
+	template <typename T>
+	concept HasTypeRefReader = requires (const StreamReader& sr, T& data, const bool binary)
 	{
-		static void Write(const StreamWriter& streamWriter, const int& data)
-		{
-			streamWriter.GetStringStream().write((char*)data, sizeof(int));
-		}
+		{TypeSerializer<T>::Read(data, sr, binary)} -> std::same_as<void>;
+	};
+
+	template <typename T>
+	concept HasTypeSerializer = requires (const class StreamWriter& sw, const class StreamReader& sr, const T& data, const bool binary, const std::string& name)
+	{
+		{ TypeSerializer<T>::Write(sw, data, binary, name) } -> std::same_as<void>;
+		{ TypeSerializer<T>::Read(sr, binary) } -> std::same_as<T>;
 	};
 }

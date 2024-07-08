@@ -16,6 +16,7 @@ namespace tryn::gfx
 		{
 			trylog.warn(L"BindAsRTV no implementation found!");
 		}
+		virtual void Clear() const = 0;
 	protected:
 		spa::DimensionsI dimensions;
 	};

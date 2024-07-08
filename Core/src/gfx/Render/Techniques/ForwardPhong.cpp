@@ -19,7 +19,7 @@ namespace tryn::gfx
 		:
 		Technique(Skinned && Instanced ? "PhongInstSkn" : (Skinned ? "PhongSkn" : (Instanced ? "PhongInst" : "Phong")))
 	{
-		auto& shaderRootPath = GetShaderRootPath();
+		auto shaderRootPath = gfx.GetShaderRootPath();
 
 		std::string shaderCode = "Phong";
 		aiString tempFileName;

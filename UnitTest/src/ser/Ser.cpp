@@ -1,5 +1,5 @@
 #include <TrynCppUnitTest.h>
-#include <Core/src/ser/Serializer.h>
+#include <Core/src/ser/StreamIO.h>
 #include <vector>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -12,21 +12,51 @@ namespace Ser
 	{
 		int var1 = 69;
 		float var2 = 420.0f;
+		std::vector<float> floatArray = {420.0f, 69.9f, 1337.7f};
+
 		void DoSomething() {}
+
+		ZT_DEFINE_SERIALIZER(TrivialClass)
+		{
+			static void Write(const ser::StreamWriter& streamWriter, const TrivialClass& data, const bool binary = true, const std::string& name = "")
+			{
+				streamWriter.Serialize(data.var1, binary, name);
+				streamWriter.Serialize(data.var2, binary, name);
+				streamWriter.Serialize(data.floatArray, binary, name);
+			}
+			static TrivialClass Read(const ser::StreamReader& streamReader, const bool binary = true)
+			{
+				TrivialClass newClass;
+				newClass.var1 = streamReader.ReadSerialized<int>(binary);
+				newClass.var2 = streamReader.ReadSerialized<float>(binary);
+				newClass.floatArray = streamReader.ReadSerialized<std::vector<float>>(binary);
+				return std::move(newClass);
+			}
+		};
 	};
 
 	struct NonTrivialClass
 	{
+		int var1;
+		float var2;
 		std::unique_ptr<int> pInt = std::make_unique<int>(69);
 
-		class Serializer : public ser::Serializer<NonTrivialClass>
+		ZT_DEFINE_SERIALIZER(NonTrivialClass)
 		{
-		public:
-			static void Write(ser::StreamWriter& streamWriter, const NonTrivialClass& data)
+			static void Write(const ser::StreamWriter& streamWriter, const NonTrivialClass& data, const bool binary = true, const std::string& name = "")
 			{
-			/*	streamWriter.Serialize(data.var1);
-				streamWriter.Serialize(data.var2);*/
-				streamWriter.Serialize(data.pInt);
+				streamWriter.Serialize(data.var1, binary, name);
+				streamWriter.Serialize(data.var2, binary, name);
+				streamWriter.Serialize(data.pInt, binary, name);
+			}
+			static NonTrivialClass Read(const ser::StreamReader& streamReader, const bool binary = true)
+			{
+				NonTrivialClass newClass;
+				newClass.var1 = streamReader.ReadSerialized<int>(binary);
+				newClass.var2 = streamReader.ReadSerialized<float>(binary);
+				streamReader.ReadSerialized<std::unique_ptr<int>>(newClass.pInt, binary);
+
+				return std::move(newClass);
 			}
 		};
 	};
@@ -40,20 +70,38 @@ namespace Ser
 		}
 		TEST_METHOD(SerializeTest)
 		{
-			static_assert(std::is_trivially_copyable_v<TrivialClass>);
-			static_assert(!std::is_trivially_copyable_v<NonTrivialClass>);
-
 			TrivialClass tc;
+			tc.var1 = 420;
+			tc.var2 = 6.9f;
 			NonTrivialClass ntc;
-			//ntc.var1 = 1337;
-			//ntc.var2 = 1337.7777f;
+			ntc.var1 = 1337;
+			ntc.var2 = 1337.7777f;
 
+			static_assert(ser::HasTypeSerializer<std::vector<int>>);
 
 			pStreamWriter->Serialize(tc);
 			pStreamWriter->Serialize(ntc);
 
-			auto file = std::ofstream("SerializeTestOutput.txt", std::ios::binary);
-			file << oss.str();
+
+			auto fileWrite = std::ofstream("SerializeTestOutput.txt", std::ios::binary);
+			fileWrite << oss.str();
+			fileWrite.close();
+
+			auto fileRead = std::ifstream("SerializeTestOutput.txt", std::ios::binary);
+
+			std::stringstream buffer;
+			buffer << fileRead.rdbuf();
+
+			fileRead.close();
+
+			std::string fileContent = buffer.str();
+
+			std::istringstream iss(fileContent);
+
+			ser::StreamReader streamReader(iss);
+
+			auto tc1 = streamReader.ReadSerialized<TrivialClass>();
+			auto tc2 = streamReader.ReadSerialized<NonTrivialClass>();
 		}
 	public:
 		std::ostringstream oss;

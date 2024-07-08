@@ -19,7 +19,7 @@ namespace tryn::gfx
 		:
 		Technique(Skinned&& Instanced ? "FlatInstSkn" : (Skinned ? "FlatSkn" : (Instanced ? "FlatInst" : "Flat")))
 	{
-		auto& shaderRootPath = GetShaderRootPath();
+		auto shaderRootPath = gfx.GetShaderRootPath();
 
 		std::string shaderCode = "Flat";
 		aiString tempFileName;

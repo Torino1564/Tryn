@@ -14,7 +14,7 @@ namespace tryn::gfx
 			RenderQueuePass(std::move(name), graph, std::vector<std::string>{"Lambertian"})
 		{
 			// declare sink and source
-			pSink = std::make_unique<SinkType>(In<IGenericRenderTargetView>("rtv"), In<IGenericDepthStencil>("depthStencil"));
+			pSink = std::make_unique<SinkType>(In<IGenericRenderTargetView>("rtv"), In<IGenericDepthStencil>("depthStencil"), In<IPxConstantBuffer, Policy::Barrier>("pointLightBuffer"));
 			pSource = std::make_unique<SourceType>(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"));
 		}
 		void Execute(IGraphics& gfx) override
@@ -32,8 +32,12 @@ namespace tryn::gfx
 			// All this pass does is run the lambertian queue
 			lambertianQueue.RunJobs(gfx);
 			lambertianQueue.Clear();
+
+			auto& concreteSource = *reinterpret_cast<SourceType*>(pSource.get());
+			concreteSource.Set(pRTV, "rtv");
+			concreteSource.Set(pDSV, "depthStencil");
 		}
-		using SinkType = Sink<In<IGenericRenderTargetView>, In<IGenericDepthStencil>>;
+		using SinkType = Sink<In<IGenericRenderTargetView>, In<IGenericDepthStencil>, In<IPxConstantBuffer, Policy::Barrier>>;
 		using SourceType = Source<Out<IGenericRenderTargetView>, Out<IGenericDepthStencil>>;
 	};
 }

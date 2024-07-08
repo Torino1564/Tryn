@@ -3,11 +3,11 @@
 #include <concepts>
 #include <type_traits>
 #include <string>
-#include <Core/src/utl/StatefulMeta/TemplateData.h>
+
 #define ZT_CAT_C(x, y) x##y
 
 
-namespace tryn::utl::CTM
+namespace tryn::utl::CTV
 {
     // E1
     template<typename...>
@@ -28,15 +28,34 @@ namespace tryn::utl::CTM
         using type = type_list<Ts..., T>;
     };
 
-    template <typename T, StaticString TypeName, StaticString VarName, unsigned int VarSize, unsigned int ByteOffset, unsigned int ElementNumber>
+    template <unsigned int N>
+    struct StaticString
+    {
+        constexpr StaticString(const char(&str)[N])
+        {
+            std::copy_n(str, N, v);
+        }
+
+        char v[N];
+    };
+
+    template <StaticString TypeName, auto Tag = [] {} >
+    constexpr auto TextType = [] {
+        return TypeName.v;
+        };
+
+    template <unsigned int N, auto Tag = [] {} >
+    constexpr auto IntType = [] {
+        return N;
+        };
+
+
+    template <typename T, StaticString TypeName, unsigned int UUID>
     struct MapElement
     {
         using Type = T;
-        using TypeName_t = decltype(TextType<TypeName>);
-        using VarName_t = decltype(TextType<VarName>);
-        using VarSize_t = decltype(IntType<VarSize>);
-        using ByteOffset_t = decltype(IntType<ByteOffset>);
-        using ElementNumber_t = decltype(IntType<ElementNumber>);
+        using Name_t = decltype(TextType<TypeName>);
+        using UUID_t = decltype(IntType<UUID>);
     };
 
 
@@ -78,6 +97,7 @@ namespace tryn::utl::CTM
         static constexpr state_t<N, List, ID> state{};
     };
 
+#define ZT_INIT_CTV(ID) template struct tryn::utl::CTV::setter<0, std::tuple<>, tryn::utl::CTV::tu_tag, ID>
     // TODO: AUTOMATE THIS
     // template struct setter<0, std::tuple<>, tu_tag, 0>;     // E6
     // template struct setter<0, std::tuple<>, tu_tag, 1>;
@@ -147,31 +167,12 @@ namespace tryn::utl::CTM
     {
         return State.n;
     }
-    
-    template<unsigned int ID, unsigned int N, auto Tag = [] {}>
-    consteval auto get_offset()
-    {
-        if constexpr (N == 1)
-        {
-            return 0;
-        }
-        else
-        {
-            using Previous = std::tuple_element_t<N - 2, get_list<ID>>;
-            using ByteOffsetFunc_t = typename Previous::ByteOffset_t;
-            using VarSizeFunc_t = typename Previous::VarSize_t;
-            ByteOffsetFunc_t offsetFunc;
-            VarSizeFunc_t varSizeFunc;
-            return offsetFunc() + varSizeFunc();
-        }
-    }
 
     // E9
     template<
         typename T,
-        StaticString TypeName,
-        StaticString VarName,
-        unsigned int VarSize,
+		StaticString TypeName,
+		unsigned int UUID,
         std::same_as<tu_tag> TUTag,
         auto EvalTag,
         unsigned int ID
@@ -183,10 +184,7 @@ namespace tryn::utl::CTM
         using new_list = tuple_append_t<cur_list,
             MapElement<T,
             TypeName,
-            VarName,
-            VarSize,
-            get_offset<ID, cur_state::n + 1>(),
-            cur_state::n>>;      // E9.2
+            UUID>>;      // E9.2
         setter<cur_state::n + 1, new_list, TUTag, ID> s;                        // E9.3
         return s.state;                                                     // E9.4
     }
@@ -194,14 +192,11 @@ namespace tryn::utl::CTM
 
     // E10
     template<
-        typename T,
-        StaticString TypeName,
-        StaticString VarName,
-        unsigned int VarSize,
+        typename T, StaticString TypeName, unsigned int UUID,
         unsigned int ID,
         std::same_as<tu_tag> TUTag = tu_tag,
         auto EvalTag = [] {},
-        auto State = append_impl<T, TypeName, VarName, VarSize, TUTag, EvalTag, ID>()
+        auto State = append_impl<T, TypeName, UUID, TUTag, EvalTag, ID>()
     >
     constexpr auto append = [] { return State; };           // E10.1
 
@@ -217,20 +212,20 @@ namespace tryn::utl::CTM
         static constexpr unsigned n = N;
     };
 
-    template<auto Tag, typename T, StaticString TypeName, StaticString VarName, unsigned int VarSize, unsigned int ID, unsigned NextVal = 0>
+    template<auto Tag, typename T, StaticString TypeName, unsigned int UUID, unsigned int ID, unsigned NextVal = 0>
     [[nodiscard]]
-    consteval auto Map_Impl()
+    consteval auto UUIDMap_Impl()
     {
         constexpr bool counted_past_value = requires(readerC<NextVal, ID> r) {
             counted_flag(r);
         };
 
         if constexpr (counted_past_value) {
-            return Map_Impl<Tag, T, TypeName, VarName, VarSize, ID, NextVal + 1>();
+            return UUIDMap_Impl<Tag, T, TypeName, UUID, ID, NextVal + 1>();
         }
         else
         {
-            append<T, TypeName, VarName, VarSize, ID>;
+            append<T, TypeName, UUID, ID>;
             setterC<NextVal, ID> s;
             return s.n;
         }
@@ -238,21 +233,20 @@ namespace tryn::utl::CTM
 
     template <typename T,
         StaticString TypeName,
-        StaticString VarName,
-        unsigned int VarSize,
+        unsigned int UUID,
         unsigned int ID = 0,
         auto Tag = [] {},
-        auto Val = Map_Impl<Tag, T, TypeName, VarName, VarSize, ID>() >
-    constexpr auto Map = Val;
+        auto Val = UUIDMap_Impl<Tag, T, TypeName, UUID, ID>() >
+    constexpr auto UUIDMap = Val;
 
     template <typename T,
         StaticString TypeName,
-        StaticString VarName,
-        unsigned int VarSize,
+        unsigned int UUID,
         unsigned int ID = 0,
         auto Tag = [] {},
-        auto Val = Map_Impl<Tag, T, TypeName, VarName, VarSize, ID>() >
-    struct Map_t
+        auto Val = UUIDMap_Impl<Tag, T, TypeName, UUID, ID>() >
+
+    struct UUIDMap_t
     {
         static constexpr auto Run()
         {

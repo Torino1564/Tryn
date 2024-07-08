@@ -119,7 +119,7 @@ namespace tryn::gfx::dx11
 		auto future = Dispatch_([this]
 			{
 				ImGui_ImplDX11_NewFrame();
-				ClearBuffer(0.0f,0.0f,0.2f);
+				//ClearBuffer(0.0f,0.0f,0.2f);
 				pRenderGraph->Reset();
 			});
 		future.get();

@@ -18,6 +18,7 @@
 #include <Core/src/utl/StatefulMeta/CTM.h>
 #include <Core/src/utl/Exception.h>
 #include <Core/src/ecs/cmp/PrintMember.h>
+#include <Core/src/utl/StringHasher.h>
 
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ x }
@@ -45,7 +46,7 @@ namespace tryn::ecs
 {
 	class ComponentManager;
 
-	template <typename T, utl::CTM::StaticString Name>
+	template <typename T, utl::StaticString Name>
 	class Component;
 
 	template <typename T>
@@ -188,6 +189,24 @@ namespace tryn::ecs
 			return defaultName;
 		}
 
+		template <unsigned int N = 0>
+		static std::size_t GetComponentSize(unsigned int componentUUID)
+		{
+			if constexpr (N < GetComponentCount())
+			{
+				using CurrentComponent = typename std::tuple_element_t<N, ComponentList<>>;
+				if (componentUUID == CurrentComponent::UUID)
+				{
+					return sizeof(typename CurrentComponent::SubresourceData);
+				}
+				else
+				{
+					return GetComponentSize<N + 1>(componentUUID);
+				}
+			}
+			return 0u;
+		}
+
 	private:
 		ComponentManager()
 		{
@@ -212,7 +231,7 @@ namespace tryn::ecs
 		//std::unordered_map<ComponentIndex, ComponentSize> map;
 
 	// stateful meta bs
-		template <typename T, utl::CTM::StaticString Name>
+		template <typename T, utl::StaticString Name>
 		friend class Component;
 	private:
 		static constexpr std::uint16_t listID = 0;
@@ -280,23 +299,23 @@ namespace tryn::ecs
 		}
 
 		template <unsigned N, auto Tag = []{}>
-		using ComponentByIndex = typename std::remove_reference_t<decltype(std::get<N>(std::declval<ComponentManager::ComponentList<>>()))>;
+		using ComponentByIndex = typename std::remove_reference_t<decltype(std::get<N>(std::declval<ComponentList<>>()))>;
 	};
 
-	template <typename T, utl::CTM::StaticString Name>
+	template <typename T, utl::StaticString Name>
 	class Component
 	{
 	public:
 		ZT_COMPONENT_FIELDS();
 	private:
-		using Name_t = decltype(utl::CTM::TextType<Name>);
+		using Name_t = decltype(utl::TextType<Name>);
 		static constexpr Name_t nameFunc;
 	public:
 		constexpr static inline const char* name = nameFunc();
 		using ComponentType = T;
 		static constexpr auto accessMode = AccessMode::ReadWrite;
-		//const static inline int UUID = ComponentManager::Get().RegisterComponent<T>();
 		static inline constexpr auto UUID = utl::ctc::counter<T, ComponentManager::listID>;
+		//static inline constexpr auto UUID = ZT_STRING_HASH(nameFunc());
 	private:
 		utl::CTM::setter<0, std::tuple<>, utl::CTM::tu_tag, UUID> setter;
 	};
@@ -408,7 +427,7 @@ namespace tryn::ecs
 			booker.resize(newSize, true);
 			for (auto [index, pBuffer]: std::ranges::views::enumerate(bufferPtrs) )
 			{
-				//pBuffer->resize(newSize * ComponentManager::Get().GetComponentMap().at(components[index]));
+				pBuffer->resize(newSize * ComponentManager::Get().GetComponentSize(components[index]));
 			}
 		}
 	private:

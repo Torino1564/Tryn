@@ -20,7 +20,8 @@ namespace tryn::gfx
 	enum class Policy {
 		ReadOnly,
 		ReadWrite,
-		WriteOnly
+		WriteOnly,
+		Barrier,
 	};
 
 	template<typename T, Policy P = Policy::ReadWrite>
@@ -113,6 +114,7 @@ namespace tryn::gfx
 		}
 		using DependencyTuple = typename std::tuple<std::shared_ptr<typename Dependencies::SysType>**...>;
 		using DependencyTypeTuple = typename std::tuple<typename Dependencies::SysType...>;
+
 	private:
 		template <unsigned N = 0, typename T>
 		std::shared_ptr<T>& GetImpl_(const std::string& name)
@@ -131,8 +133,17 @@ namespace tryn::gfx
 			trynchk_fail.msg(L"Did not find the required dependency!").ex();
 		}
 
+	public:
+		DependencyTuple& GetDependencyTuple()
+		{
+			return dependencyTuple;
+		}
+
+	private:
+
 		DependencyTuple dependencyTuple;
 		std::bitset<sizeof...(Dependencies)> bound;
+
 	};
 
 	class ISource

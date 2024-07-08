@@ -13,6 +13,8 @@
 #include "Render/Jobs/IJob.h"
 #include "Render/Passes/PointLightBindPass.h"
 #include "Render/Passes/ForwardLambertianPass.h"
+#include "Core/src/gfx/Render/Passes/ClearTargetPass.h"
+#include "Core/src/gfx/Render/Passes/FullScreenRenderPass.h"
 #include "Render/Technique.h"
 #include "Render/RenderGraph.h"
 #include "Render/DefaultRenderGraphs/DefaultRenderGraph.h"

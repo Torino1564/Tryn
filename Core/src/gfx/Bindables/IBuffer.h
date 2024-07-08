@@ -13,6 +13,15 @@ ZT_EX_DEF(BufferMissmatchException);
 
 namespace tryn::gfx
 {
+	template <typename T>
+	struct IsBufferType_t : std::false_type{};
+
+	template <BufferType Type, CachingPolicy Policy>
+	struct IsBufferType_t<IBuffer<Type, Policy>> : std::true_type{};
+
+	template <typename T>
+	concept Buffer_T = IsBufferType_t<T>::value;
+
 	template <BufferType Type>
 	constexpr const char* GetTypeString() {}
 
@@ -194,6 +203,10 @@ namespace tryn::gfx
 		{
 			return reinterpret_cast<ConstantBuffer&>(*pCPUBuffer.get());
 		}
+
+		static constexpr BufferType bufferType = Type;
+		static constexpr CachingPolicy policy = Policy;
+
 	protected:
 		std::string path;
 		std::string tag;
@@ -203,4 +216,6 @@ namespace tryn::gfx
 		[[no_unique_address]] Layout_Ty layout;
 		[[no_unique_address]] std::conditional_t<Type == BufferType::Instance, size_t, utl::empty_t> gpuSize;
 	};
+
+	
 }

@@ -91,7 +91,7 @@ namespace tryn::gfx::dx11
 				gfx.AssertContextCoherence(ctx);
 				auto& dx11ctxt = static_cast<DX11Context&>(ctx).GetContext();
 
-				dx11ctxt.PSGetShaderResources(this->slot, 1, this->pSRV.GetAddressOf());
+				dx11ctxt.PSSetShaderResources(this->slot, 1, this->pSRV.GetAddressOf());
 			}
 		}
 		ID3D11RenderTargetView* Get()
@@ -101,6 +101,10 @@ namespace tryn::gfx::dx11
 		auto GetAddressOf()
 		{
 			return pRTV.GetAddressOf();
+		}
+		void Clear() const override
+		{
+			gfx.GetContext().ClearRenderTargetView(pRTV.Get(), gfx.GetBackgroundColor());
 		}
 	private:
 		void RTVCreation(Graphics& gfx, const spa::DimensionsI dimensions)
@@ -119,7 +123,6 @@ namespace tryn::gfx::dx11
 			textureDesc.CPUAccessFlags = 0;
 			textureDesc.MiscFlags = 0;
 
-			Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
 			gfx.GetDevice().CreateTexture2D(
 				&textureDesc, nullptr, &pTexture
 			) >> chk;
@@ -133,8 +136,9 @@ namespace tryn::gfx::dx11
 				pTexture.Get(), &rtvDesc, &pRTV
 			) >> chk;
 		}
-		void RTVCreation(ID3D11Texture2D* pTexture)
+		void RTVCreation(ID3D11Texture2D* pTexture_in)
 		{
+			this->pTexture = {pTexture_in};
 			// get information from texture about dimensions
 			D3D11_TEXTURE2D_DESC textureDesc;
 			pTexture->GetDesc(&textureDesc);
@@ -149,7 +153,7 @@ namespace tryn::gfx::dx11
 			rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
 
 			gfx.GetDevice().CreateRenderTargetView(
-				pTexture, &rtvDesc, &pRTV
+				pTexture.Get(), &rtvDesc, &pRTV
 			) >> chk;
 		}
 		void SRVCreation(Graphics& gfx, uint16_t slot)
@@ -160,9 +164,12 @@ namespace tryn::gfx::dx11
 			Microsoft::WRL::ComPtr<ID3D11Resource> pRes;
 			pRTV->GetResource(&pRes);
 
+			D3D11_TEXTURE2D_DESC textureDesc;
+			pTexture->GetDesc(&textureDesc);
+
 			// create the resource view on the texture
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-			srvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			srvDesc.Format = textureDesc.Format;
 			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			srvDesc.Texture2D.MostDetailedMip = 0;
 			srvDesc.Texture2D.MipLevels = 1;
@@ -173,6 +180,7 @@ namespace tryn::gfx::dx11
 			this->slot = slot;
 		}
 		Graphics& gfx;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRTV;
 		[[no_unique_address]] std::conditional_t<Type == BufferResourceType::ShaderResource, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, utl::empty_t> pSRV;
 	};

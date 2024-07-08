@@ -60,6 +60,10 @@ namespace tryn::gfx::dx11
 				dx11ctxt.PSGetShaderResources(this->slot, 1, this->pSRV.GetAddressOf());
 			}
 		}
+		void Clear() const override
+		{
+			gfx.GetContext().ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+		}
 	private:
 		void DSVCreation(Graphics& gfx, const spa::DimensionsI dimensions, ComparissonMode mode, bool isShaderResource)
 		{

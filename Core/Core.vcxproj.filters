@@ -306,6 +306,15 @@
     <ClCompile Include="src\app\EntryMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ser\DefaultTypeSerializers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Render\Passes\FullScreenRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Render\Passes\ClearTargetPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1964,6 +1973,27 @@
     <ClInclude Include="src\ser\Serializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\utl\StringHasher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ser\StreamIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ser\DefaultTypeSerializers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utl\StatefulMeta\CTV.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\Passes\FullScreenRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\Passes\ClearTargetPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utl\StatefulMeta\TemplateData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">
@@ -2459,5 +2489,7 @@
     <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcNrmInstSkn_VS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcNrmSkn_VS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcSkn_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\VS\Fullscreen_VS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\DefaultFullscreen_PS.hlsl" />
   </ItemGroup>
 </Project>
