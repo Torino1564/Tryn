@@ -17,7 +17,7 @@ private:
 	std::unique_ptr<gfx::PointLight> pPointLight;
 	std::unique_ptr<class Player> pPlayer;
 	gfx::Camera camera;
-	std::unique_ptr<ecs::Entity> pLight;
+	std::vector<std::unique_ptr<ecs::Entity>> entities;
 	gfx::Camera player;
 
 	gfx::Camera* pActiveCamera = &camera;

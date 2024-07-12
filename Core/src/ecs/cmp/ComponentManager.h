@@ -19,6 +19,8 @@
 #include <Core/src/utl/Exception.h>
 #include <Core/src/ecs/cmp/PrintMember.h>
 #include <Core/src/utl/StringHasher.h>
+#include "variant"
+#include <Core/src/ecs/EntityID.h>
 
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ x }
@@ -306,6 +308,7 @@ namespace tryn::ecs
 	class Component
 	{
 	public:
+		virtual ~Component() = default;
 		ZT_COMPONENT_FIELDS();
 	private:
 		using Name_t = decltype(utl::TextType<Name>);
@@ -404,15 +407,15 @@ namespace tryn::ecs
 			components.push_back(C::UUID);
 			bufferPtrs.push_back(std::make_unique<std::vector<std::byte>>());
 		}
-		const int GetUUID() const
+		int GetUUID() const
 		{
 			return this->UUID;
 		}
-		const auto ComponentCount() const
+		auto ComponentCount() const
 		{
 			return components.size();
 		}
-		const auto ComponentArraySize() const
+		auto ComponentArraySize() const
 		{
 			return upperLimit;
 		}
@@ -601,4 +604,171 @@ namespace tryn::ecs
 		std::vector<std::vector<Archetype*>> archetypeTable;
 		std::vector<Archetype> archetypeBuffer = {};
 	};
+
+	template<std::size_t I, class...Ts>
+    auto to_variant(std::tuple<Ts...> const& tt) -> std::variant<std::reference_wrapper<const Ts>...>
+    {
+        return std::ref(get<I>(tt));
+    };
+
+	template <class... Ts>
+	auto get (std::size_t i, std::tuple<Ts...> const& t)
+	{
+		static constexpr auto table = [&]<std::size_t...Is>(std::index_sequence<Is...>)
+		{
+			return std::array<std::variant<std::reference_wrapper<const Ts>...>(*)(std::tuple<Ts...> const&), sizeof...(Is)>{
+				to_variant<Is>...
+			};
+		}(std::make_index_sequence<sizeof...(Ts)>());
+
+		return table[i](t);
+	}
+
+	template <typename T>
+	void FillData(std::byte* pData)
+	{
+		auto pDataCasted = reinterpret_cast<typename T::SubresourceData*>(pData);
+		if constexpr (std::is_trivially_copyable_v<typename T::SubresourceData>)
+		{
+			new(pDataCasted) typename T::SubresourceData {};
+		}
+		else
+		{
+			std::memset(pData, 0u, sizeof(typename T::SubresourceData));
+		}
+	}
+
+	template <typename T>
+	void DeleteData(std::byte* pData)
+	{
+		auto pDataCasted = reinterpret_cast<typename T::SubresourceData*>(pData);
+		pDataCasted->~SubresourceData();
+
+		std::memset(pDataCasted, 0u, sizeof(typename T::SubresourceData));
+	}
+
+	enum class Action
+	{
+		Fill, Delete
+	};
+
+	template <Action Action, auto Tag = []{}>
+	void ComponentData(std::byte* pData, const unsigned int componentUUID)
+	{
+		using Tuple = utl::ctc::get_list<ComponentManager::GetComponentListID()>;
+		using DataFiller = void(*)(std::byte*);
+		using DataDeleter = void(*)(std::byte*);
+
+		static constexpr auto table = [&]<std::size_t...Is>(std::index_sequence<Is...>)
+		{
+			return std::array<std::pair<DataFiller, DataDeleter>, sizeof...(Is)>{
+				std::pair<DataFiller, DataDeleter>(&FillData<std::tuple_element_t<Is, Tuple>>, &DeleteData<std::tuple_element_t<Is, Tuple>>)...
+			};
+		}(std::make_index_sequence<std::tuple_size_v<Tuple>>());
+
+		auto [pFiller, pDeleter] = table[componentUUID];
+		switch (Action)
+		{
+			case Action::Fill:
+				pFiller(pData);
+				break;
+			case Action::Delete:
+				pDeleter(pData);
+				break;
+		}
+	}
+
+	enum class ComponentInfo
+	{
+		Name, Size
+	};
+
+	template <ValidComponent C>
+	static constexpr const char* ComponentName_()
+	{
+		return C::name;
+	}
+
+	template <ValidComponent C>
+	static constexpr std::size_t ComponentSize_()
+	{
+		return sizeof(typename C::SubresourceData);
+	}
+
+	template <ComponentInfo Info>
+	struct ReturnType
+	{
+		using T = std::size_t;
+	};
+
+	template <> struct ReturnType<ComponentInfo::Name>
+	{
+		using T = const char*;
+	};
+
+	template <ComponentInfo Info, auto Tag = []{}>
+	typename ReturnType<Info>::T GetComponentInfo(const unsigned int componentUUID)
+	{
+		using Tuple = utl::ctc::get_list<ComponentManager::GetComponentListID()>;
+		using NameInfo = const char*(*)();
+		using SizeInfo = std::size_t(*)();
+
+		Tuple t;
+
+		static constexpr auto table = [&]<std::size_t...Is>(std::index_sequence<Is...>)
+		{
+			return std::array<std::pair<NameInfo, SizeInfo>, sizeof...(Is)>{
+				std::pair<NameInfo, SizeInfo>(
+					&ComponentName_<std::tuple_element_t<Is, Tuple>>,
+					&ComponentSize_<std::tuple_element_t<Is, Tuple>>)...
+			};
+		}(std::make_index_sequence<std::tuple_size_v<Tuple>>());
+
+		auto [pNameInfo, pSizeInfo] = table[componentUUID];
+
+		if constexpr (Info == ComponentInfo::Name)
+		{
+			return pNameInfo();
+		}
+		else
+		{
+			return pSizeInfo();
+		}
+	}
+
+	inline EntityID Archetype::ResolveEntityUUID()
+	{
+		auto nextFree = booker.find_next(bookerPointer);
+		while (nextFree == booker.npos)
+		{
+			Grow();
+			nextFree = booker.find_next(bookerPointer);
+		}
+		booker.flip(nextFree);
+
+		// Default initialize the subresource data structure
+		for (auto [index, componentUUID] : std::ranges::views::enumerate(components) )
+		{
+			ComponentData<Action::Fill>(&(*bufferPtrs[index])[nextFree], componentUUID);
+		}
+
+		bookerPointer = (uint32_t)nextFree;
+		if (bookerPointer > upperLimit)
+		{
+			upperLimit = (uint32_t)nextFree;
+		}
+
+		return {bookerPointer, UUID};
+	}
+
+	inline void Archetype::Free(const EntityID entityID)
+	{
+		booker[entityID.ID].flip();
+		bookerPointer = entityID.ID - 1;
+
+		for (auto [index, componentUUID] : std::views::enumerate(components))
+		{
+			ComponentData<Action::Delete>(&(*bufferPtrs[index])[(entityID.ID - 1) * GetComponentInfo<ComponentInfo::Size>(componentUUID)], componentUUID);
+		}
+	}
 }

@@ -2,19 +2,15 @@
 #include <memory>
 #include <Core/src/ecs/cmp/ComponentManager.h>
 #include <array>
+#include "EntityID.h"
 
 namespace tryn::ecs
 {
-	struct EntityID
-	{
-		std::uint32_t ID = 0;
-		std::uint16_t archetype = 0;
-	};
-
 	class Entity
 	{
 	public:
 		Entity(std::string name = "?");
+
 		virtual ~Entity();
 
 		template <ValidComponent... Cs>
@@ -29,6 +25,11 @@ namespace tryn::ecs
 		void SpawnControlWindow();
 
 	protected:
+		template <auto Tag = []{}>
+		void DeleteImpl_() const
+		{
+			pArchetype->Free(UUID);
+		}
 		template <ValidComponent... Cs>
 		void AddComponent();
 

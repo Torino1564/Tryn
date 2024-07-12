@@ -10,10 +10,12 @@ namespace tryn::ecs
 	{
 
 	}
+
 	Entity::~Entity()
 	{
 		pArchetype->Free(UUID);
 	}
+
 	std::span<int> Entity::GetComponents()
 	{
 		return std::span<int>(pArchetype->components.begin(), pArchetype->components.size());

@@ -4,11 +4,11 @@
 #include <Core/third/dynamic_bitset.hpp>
 #include "Core/src/gfx/ConstantBuffer.h"
 #include "Core/third/glm/fwd.hpp"
+#include <Core/src/gfx/Model/Model.h>
 
 namespace tryn::gfx
 {
 	class InstancedModelChild;
-	class Model;
 	class IGraphics;
 
 	class InstancedModelParent
@@ -16,6 +16,8 @@ namespace tryn::gfx
 		friend class InstancedModelChild;
 	public:
 		InstancedModelParent(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint32_t> numInstances = std::nullopt);
+		InstancedModelParent();
+		~InstancedModelParent();
 		void Submit(const glm::mat4& entityTransform);
 		InstancedModelChild Instanciate();
 		void Instanciate(std::span<InstancedModelChild> childSpan);

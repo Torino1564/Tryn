@@ -315,6 +315,12 @@
     <ClCompile Include="src\gfx\Render\Passes\ClearTargetPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\cmp\ModelComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\cmp\InstancedModelParentComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1992,6 +1998,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utl\StatefulMeta\TemplateData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\EntityID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scn\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

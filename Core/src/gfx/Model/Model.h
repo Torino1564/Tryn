@@ -35,7 +35,6 @@ namespace tryn::gfx
 		friend class InstancedModelParent;
 	public:
 		Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false );
-
 		template <template <bool, bool> typename FirstTechnique = ForwardPhongBase, template <bool, bool> typename... OtherTechniques>
 			requires BaseTechniqueClass<FirstTechnique> && (sizeof...(OtherTechniques) == 0 || BaseTechniqueClass<OtherTechniques...>)
 		static std::unique_ptr<Model> Make(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);

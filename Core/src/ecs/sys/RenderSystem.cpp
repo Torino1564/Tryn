@@ -1,6 +1,8 @@
 #include "RenderSystem.h"
 #include <Core/src/ecs/cmp/ComponentManager.h>
 #include <Core/src/gfx/Render/Jobs/PointLightJob.h>
+#include <Core/src/gfx/Model/InstancedModel.h>
+#include <Core/src/gfx/Bindables/IBuffer.h>
 
 namespace tryn::ecs::sys
 {
@@ -125,7 +127,7 @@ namespace tryn::ecs::sys
 		{
 			if (activeParentArray[i].active)
 			{
-				parentModelArray[i].parentModel.Submit(transformParentArray[i].transform);
+				parentModelArray[i].pParentModel->Submit(transformParentArray[i].transform);
 			}
 		}
 
