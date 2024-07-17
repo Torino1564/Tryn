@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <Core/src/ecs/cmp/ComponentManager.h>
+#include <Core/src/ecs/Archetype.h>
 #include <array>
 #include "EntityID.h"
 

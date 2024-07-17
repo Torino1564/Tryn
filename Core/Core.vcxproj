@@ -123,13 +123,18 @@
     <ClCompile Include="third\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ecs\Archetype.h" />
+    <ClInclude Include="src\ecs\Archetype_impl.h" />
     <ClInclude Include="include\TrynCore.h" />
     <ClInclude Include="src\app\EntryMain.h" />
+    <ClInclude Include="src\ecs\cmp\ComponentManager.h" />
+    <ClInclude Include="src\ecs\cmp\ComponentManager_impl.h" />
     <ClInclude Include="src\ecs\cmp\Components.h" />
     <ClInclude Include="src\ecs\cmp\PointLightComponent.h" />
     <ClInclude Include="src\ecs\Ecs.h" />
     <ClInclude Include="src\ecs\cmp\PrintMember.h" />
     <ClInclude Include="src\ecs\cmp\PrintMemberBase.h" />
+    <ClInclude Include="src\ecs\EcsClass.h" />
     <ClInclude Include="src\ecs\EntityID.h" />
     <ClInclude Include="src\gfx\Animation\AnimationState.h" />
     <ClInclude Include="src\gfx\Bindables\BufferResourceType.h" />
@@ -156,9 +161,9 @@
     <ClInclude Include="src\ecs\cmp\AccelerationComponent.h" />
     <ClInclude Include="src\ecs\cmp\ActiveComponent.h" />
     <ClInclude Include="src\ecs\cmp\AnimatedComponent.h" />
-    <ClInclude Include="src\ecs\cmp\Archetype.h" />
+    <ClInclude Include="src\ecs\Archetype_def.h" />
     <ClInclude Include="src\ecs\cmp\BoneTransformsComponent.h" />
-    <ClInclude Include="src\ecs\cmp\ComponentManager.h" />
+    <ClInclude Include="src\ecs\cmp\ComponentManager_def.h" />
     <ClInclude Include="src\ecs\cmp\ComponentPack.h" />
     <ClInclude Include="src\ecs\cmp\InstancedModelChildComponent.h" />
     <ClInclude Include="src\ecs\cmp\InstancedModelParentComponent.h" />

@@ -1748,7 +1748,7 @@
     <ClInclude Include="src\utl\UUID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ecs\cmp\ComponentManager.h">
+    <ClInclude Include="src\ecs\cmp\ComponentManager_def.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ecs\cmp\ModelComponent.h">
@@ -1766,7 +1766,7 @@
     <ClInclude Include="src\ecs\cmp\ComponentPack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ecs\cmp\Archetype.h">
+    <ClInclude Include="src\ecs\Archetype_def.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\mem\ArenaAllocator.h">
@@ -2004,6 +2004,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\scn\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\EcsClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\Archetype_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\cmp\ComponentManager_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\cmp\ComponentManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\Archetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

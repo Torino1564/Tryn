@@ -10,6 +10,6 @@ namespace tryn::scn
 	{
 	private:
 
-		std::vector<ecs::Entity> entities;
+		std::vector<std::unique_ptr<ecs::Entity>> entities;
 	};
 }
