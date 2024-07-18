@@ -13,6 +13,21 @@
 
 #define ZT_DEFINE_SERIALIZER(x) struct Serializer : public tryn::ser::Serializer<x, #x>
 
+#define ZT_SERIALIZER_HELPER(x) struct Serializer : public tryn::ser::Serializer<x, #x> {\
+	static void Write(const tryn::ser::StreamWriter& streamWriter, const x& data, const bool binary = true, const std::string& name = "")\
+	{\
+		\
+	}\
+	static x Read(const tryn::ser::StreamReader& streamReader, const bool binary = true)\
+	{\
+		\
+	}\
+	static void Read(x& data, const tryn::ser::StreamReader& streamReader, const bool binary = true)\
+	{\
+		\
+	}\
+};
+
 namespace tryn::ser
 {
 	// Init serializer compile time map

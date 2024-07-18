@@ -72,4 +72,6 @@ namespace tryn::utl
           return prev_crc^ 0xFFFFFFFF;
       }
     };
+
+    using UUID_t = unsigned int;
 }

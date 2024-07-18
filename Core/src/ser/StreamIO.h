@@ -6,7 +6,7 @@
 namespace tryn::ser
 {
 	ZT_EX_DEF(StreamIOException);
-
+	
 	class StreamWriter
 	{
 	public:
@@ -121,6 +121,10 @@ namespace tryn::ser
 			}
 		}
 
+		auto& GetStringStream() const
+		{
+			return iss;
+		}
 	private:
 		std::istringstream& iss;
 	};

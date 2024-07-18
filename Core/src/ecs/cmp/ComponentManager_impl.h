@@ -3,14 +3,14 @@
 
 namespace tryn::ecs
 {
-		template <typename C>
+	template <typename C>
 	int ComponentManager::RegisterComponent()
 	{
 		//map.insert({ componentCounter, sizeof(C::SubresourceData)});
 		return componentCounter++;
 	}
 
-	template <unsigned int N>
+	template <unsigned int N, bool Index>
 	const char* ComponentManager::GetComponentName(unsigned int componentUUID)
 	{
 		static constexpr const char* defaultName = "Default Component Name";
@@ -18,7 +18,7 @@ namespace tryn::ecs
 		if constexpr (N < GetComponentCount())
 		{
 			using CurrentComponent = typename std::tuple_element_t<N, ComponentList<>>;
-			if (componentUUID == CurrentComponent::UUID)
+			if (componentUUID == (Index ? CurrentComponent::index : CurrentComponent::UUID))
 			{
 				return CurrentComponent::name;
 			}
@@ -30,13 +30,13 @@ namespace tryn::ecs
 		return defaultName;
 	}
 
-	template <unsigned int N>
+	template <unsigned int N, bool Index>
 	std::size_t ComponentManager::GetComponentSize(unsigned int componentUUID)
 	{
 		if constexpr (N < GetComponentCount())
 		{
 			using CurrentComponent = typename std::tuple_element_t<N, ComponentList<>>;
-			if (componentUUID == CurrentComponent::UUID)
+			if (componentUUID == (Index ? CurrentComponent::index : CurrentComponent::UUID))
 			{
 				return sizeof(typename CurrentComponent::SubresourceData);
 			}
@@ -101,6 +101,24 @@ namespace tryn::ecs
 		}
 	}
 
+	template <unsigned N, auto Tag>
+	constexpr unsigned int GetComponentIndex(const utl::UUID_t componentUUID)
+	{
+		if constexpr (N < ComponentManager::GetComponentCount())
+		{
+			using CurrentComponent = typename std::tuple_element_t<N, ComponentManager::ComponentList<>>;
+			if (componentUUID == CurrentComponent::UUID)
+			{
+				return CurrentComponent::index;
+			}
+			else
+			{
+				return GetComponentIndex<N + 1>(componentUUID);
+			}
+		}
+		return 0u;
+	}
+
 	template <typename T>
 	void FillData(std::byte* pData)
 	{
@@ -125,8 +143,11 @@ namespace tryn::ecs
 	}
 
 	template <Action Action, auto Tag>
-	void ComponentData(std::byte* pData, const unsigned int componentUUID)
+	void ComponentData(std::byte* pData, const utl::UUID_t componentUUID)
 	{
+		// Get Component Index
+		const auto componentIndex = GetComponentIndex(componentUUID);
+
 		using Tuple = utl::ctc::get_list<ComponentManager::GetComponentListID()>;
 		using DataFiller = void(*)(std::byte*);
 		using DataDeleter = void(*)(std::byte*);
@@ -138,7 +159,7 @@ namespace tryn::ecs
 			};
 		}(std::make_index_sequence<std::tuple_size_v<Tuple>>());
 
-		auto [pFiller, pDeleter] = table[componentUUID];
+		auto [pFiller, pDeleter] = table[componentIndex];
 		switch (Action)
 		{
 		case Action::Fill:
@@ -151,8 +172,11 @@ namespace tryn::ecs
 	}
 
 	template <ComponentInfo Info, auto Tag>
-	typename ReturnType<Info>::T GetComponentInfo(const unsigned int componentUUID)
+	typename ReturnType<Info>::T GetComponentInfo(const utl::UUID_t componentUUID)
 	{
+		// Get Component Index
+		const auto componentIndex = GetComponentIndex(componentUUID);
+
 		using Tuple = utl::ctc::get_list<ComponentManager::GetComponentListID()>;
 		using NameInfo = const char*(*)();
 		using SizeInfo = std::size_t(*)();
@@ -161,20 +185,20 @@ namespace tryn::ecs
 
 		static constexpr auto table = [&]<std::size_t...Is>(std::index_sequence<Is...>)
 		{
-			return std::array<std::pair<NameInfo, SizeInfo>, sizeof...(Is)>{
-				std::pair<NameInfo, SizeInfo>(
+			return std::array<std::tuple<NameInfo, SizeInfo>, sizeof...(Is)>{
+				std::tuple<NameInfo, SizeInfo>(
 					&ComponentName_<std::tuple_element_t<Is, Tuple>>,
 					&ComponentSize_<std::tuple_element_t<Is, Tuple>>)...
 			};
 		}(std::make_index_sequence<std::tuple_size_v<Tuple>>());
 
-		auto [pNameInfo, pSizeInfo] = table[componentUUID];
+		auto [pNameInfo, pSizeInfo] = table[componentIndex];
 
 		if constexpr (Info == ComponentInfo::Name)
 		{
 			return pNameInfo();
 		}
-		else
+		else if constexpr (Info == ComponentInfo::Size)
 		{
 			return pSizeInfo();
 		}

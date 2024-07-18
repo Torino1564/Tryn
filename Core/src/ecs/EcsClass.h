@@ -71,7 +71,6 @@ namespace tryn::ecs
 	class ComponentManager;
 	class ArchetypeManager;
 
-	using ComponentIndex = typename int;
 	using ComponentSize = typename std::size_t;
 
 	class ECS

@@ -59,4 +59,27 @@ namespace tryn::ser
 			return newVector;
 		}
 	};
+
+	template <>
+	struct TypeSerializer<std::string>
+	{
+		static void Write(const StreamWriter& streamWriter, const std::string& data, const bool binary = true, const std::string& name = "")
+		{
+			streamWriter.Serialize(std::format("STR:{:0>16}", data.size()), binary, name);
+			streamWriter.Serialize(std::string_view{data}, binary, name);
+		}
+
+		static std::string Read(const StreamReader& streamReader, const bool binary = true)
+		{
+			static std::vector<char> charBuffer {sizeof(uint16_t) * 8};
+			streamReader.ExtractExpression("STR:", charBuffer);
+
+			auto numChars = std::stoi(charBuffer.data(), nullptr, 10);
+
+			std::span<char> stringView {(char*)nullptr, (std::size_t)numChars};
+			streamReader.ExtractExpression("", stringView);
+
+			return std::string{stringView.data(), stringView.size()};
+		}
+	};
 }

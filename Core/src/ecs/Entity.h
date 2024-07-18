@@ -4,6 +4,7 @@
 #include <Core/src/ecs/Archetype.h>
 #include <array>
 #include "EntityID.h"
+#include <Core/src/ser/StreamIO.h>
 
 namespace tryn::ecs
 {
@@ -19,11 +20,34 @@ namespace tryn::ecs
 		std::span<int> GetComponents();
 
 		template <ValidComponent C>
-		C::SubresourceData& GetComponent();
+		typename C::SubresourceData& GetComponent();
 
 		void Instanciate(std::span<Entity> destination);
 
 		void SpawnControlWindow();
+
+	public:
+		// Serializer 
+		struct Serializer : public tryn::ser::Serializer<Entity, "Entity">
+		{
+			static void Write(const tryn::ser::StreamWriter& streamWriter, const Entity& data, const bool binary = true, const std::string& name = "")
+			{
+				// Name
+				streamWriter.Serialize(data.name, binary, name);
+				// Archetype
+				streamWriter.Serialize(*data.pArchetype, binary, name);
+			}
+
+			static Entity Read(const tryn::ser::StreamReader& streamReader, const bool binary = true)
+			{
+				
+			}
+
+			static void Read(Entity& data, const tryn::ser::StreamReader& streamReader, const bool binary = true)
+			{
+				
+			}
+		};
 
 	protected:
 		template <auto Tag = []{}>
@@ -35,10 +59,10 @@ namespace tryn::ecs
 		void AddComponent();
 
 		template <ValidComponent First, ValidComponent Second, ValidComponent... Rest>
-		void AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int& index = 0);
+		void AddComponent_(std::array<utl::UUID_t, 100>& newComponentIDs, int& index = 0);
 
 		template <ValidComponent C>
-		void AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int index = 0);
+		void AddComponent_(std::array<utl::UUID_t, 100>& newComponentIDs, int index = 0);
 
 		std::string name;
 		EntityID UUID = {};
@@ -85,7 +109,7 @@ namespace tryn::ecs
 	template<ValidComponent ...Cs>
 	inline void Entity::AddComponent()
 	{
-		auto& newComponentIDs = *ECS::Get().allocator.MakeNew<std::array<ComponentIndex, 100>>();
+		auto& newComponentIDs = *ECS::Get().allocator.MakeNew<std::array<utl::UUID_t, 100>>();
 		int index = 0;
 		AddComponent<Cs...>(newComponentIDs, index);
 
@@ -95,18 +119,18 @@ namespace tryn::ecs
 		}
 
 		// Request the new Archetype
-		auto newArchetype = ArchetypeManager::Get().GetArchetype(std::span<int>(newComponentIDs.begin(), newComponentIDs.size()));
+		auto newArchetype = ArchetypeManager::Get().GetArchetype(std::span<utl::UUID_t>(newComponentIDs.begin(), newComponentIDs.size()));
 	}
 
 	template<ValidComponent First, ValidComponent Second, ValidComponent ...Rest>
-	inline void Entity::AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int& index)
+	inline void Entity::AddComponent_(std::array<utl::UUID_t, 100>& newComponentIDs, int& index)
 	{
 		AddComponent_<First>(newComponentIDs, index++);
 		AddComponent_<Second, Rest...>(newComponentIDs, index);
 	}
 
 	template<ValidComponent C>
-	inline void Entity::AddComponent_(std::array<ComponentIndex, 100>& newComponentIDs, int index)
+	inline void Entity::AddComponent_(std::array<utl::UUID_t, 100>& newComponentIDs, int index)
 	{
 		newComponentIDs[index] = C::UUID;
 	}

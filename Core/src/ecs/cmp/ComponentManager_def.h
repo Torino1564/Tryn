@@ -81,10 +81,10 @@ namespace tryn::ecs
 
 		void ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex);	
 
-		template <unsigned int N = 0>
+		template <unsigned int N = 0, bool Index = true>
 		static const char* GetComponentName(unsigned int componentUUID);
 
-		template <unsigned int N = 0>
+		template <unsigned int N = 0, bool Index = true>
 		static std::size_t GetComponentSize(unsigned int componentUUID);
 
 	private:
@@ -143,8 +143,8 @@ namespace tryn::ecs
 		constexpr static inline const char* name = nameFunc();
 		using ComponentType = T;
 		static constexpr auto accessMode = AccessMode::ReadWrite;
-		static inline constexpr auto UUID = utl::ctc::counter<T, ComponentManager::listID>;
-		//static inline constexpr auto UUID = ZT_STRING_HASH(nameFunc());
+		static constexpr auto inline index = utl::ctc::counter<T, ComponentManager::listID>;
+		static constexpr auto UUID = ZT_STRING_HASH(nameFunc());
 	private:
 		utl::CTM::setter<0, std::tuple<>, utl::CTM::tu_tag, UUID> setter;
 	};
@@ -155,6 +155,9 @@ namespace tryn::ecs
 			ZT_DEFINE_COMPONENT_VAR(bool, activation);
 		);
 	};
+
+	template <unsigned N = 0, auto Tag = []{}>
+	static constexpr unsigned int GetComponentIndex(const utl::UUID_t componentUUID);
 
 	template <typename T>
 	void FillData(std::byte* pData);
@@ -168,11 +171,11 @@ namespace tryn::ecs
 	};
 
 	template <Action Action, auto Tag = []{}>
-	void ComponentData(std::byte* pData, const unsigned int componentUUID);
+	void ComponentData(std::byte* pData, const utl::UUID_t componentUUID);
 
 	enum class ComponentInfo
 	{
-		Name, Size
+		Name, Size, Index
 	};
 
 	template <ValidComponent C>
@@ -187,6 +190,12 @@ namespace tryn::ecs
 		return sizeof(typename C::SubresourceData);
 	}
 
+	template <ValidComponent C>
+	static constexpr unsigned int ComponentIndex_()
+	{
+		return C::index;
+	}
+
 	template <ComponentInfo Info>
 	struct ReturnType
 	{
@@ -199,5 +208,5 @@ namespace tryn::ecs
 	};
 
 	template <ComponentInfo Info, auto Tag = []{}>
-	typename ReturnType<Info>::T GetComponentInfo(const unsigned int componentUUID);
+	typename ReturnType<Info>::T GetComponentInfo(const utl::UUID_t componentUUID);
 }

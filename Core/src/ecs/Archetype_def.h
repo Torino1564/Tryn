@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "EcsClass.h"
+#include "Core/src/ser/Serializer.h"
 
 namespace tryn::ecs
 {
@@ -23,13 +24,13 @@ namespace tryn::ecs
 		template <int N = 0, ValidComponent... Cs>
 		void FillComponentPointerTupleImpl(std::tuple<std::span<typename Cs::SubresourceData>...>& container);
 
-		template <ValidComponent C>
+		template <ValidComponent C, bool Index = true>
 		std::span<typename C::SubresourceData> GetComponentData();
 
 		template <ValidComponent... Cs>
 		static Archetype Make();
 
-		static Archetype Make(std::span<int> componentIDs);
+		static Archetype Make(std::span<utl::UUID_t> componentIDs);
 
 		template <ValidComponent First, ValidComponent Second, ValidComponent... Rest>
 		void AppendComponents();
@@ -44,6 +45,25 @@ namespace tryn::ecs
 		void Free(struct EntityID);
 		void Grow();
 		void Resize(std::uint32_t newSize);
+
+		struct Serializer : public tryn::ser::Serializer<Archetype, "Archetype">
+		{
+			static void Write(const tryn::ser::StreamWriter& streamWriter, const Archetype& data, const bool binary = true,
+			                  const std::string& name = "")
+			{
+				
+			}
+
+			static Archetype Read(const tryn::ser::StreamReader& streamReader, const bool binary = true)
+			{
+
+			}
+
+			static void Read(Archetype& data, const tryn::ser::StreamReader& streamReader, const bool binary = true)
+			{
+
+			}
+		};
 
 	private:
 		void InitializeUUID();
@@ -65,12 +85,12 @@ namespace tryn::ecs
 		template <ValidComponentWithAccessMode... Cs>
 		std::span<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> GetComponentGroups();
 
-		std::span<Archetype*> QueryArchetype(std::span<ComponentIndex> componentIDs);
+		std::span<Archetype*> QueryArchetype(std::span<utl::UUID_t> componentIDs) const;
 
 		template <ValidComponent... Cs>
 		std::span<Archetype*> QueryArchetype();
 
-		Archetype* GetArchetype(std::span<ComponentIndex> components);
+		Archetype* GetArchetype(std::span<utl::UUID_t> components);
 
 
 		template <ValidComponent... Cs>
@@ -85,14 +105,19 @@ namespace tryn::ecs
 		}
 		template <ValidComponent... Cs>
 		Archetype* AddArchetype();
-		Archetype* AddArchetype(std::span<int> componentIDs);
+		Archetype* AddArchetype(std::span<utl::UUID_t> componentIDs);
 
 	private:
-		template <int arraySize, ValidComponent First, ValidComponent Second, ValidComponent... Rest>
-		void ExtractComponentIDs(std::array<int, arraySize>& componentIDs, int index = 0);
+		enum ComponentIdentifier
+		{
+			Index,
+			UUID
+		};
+		template <int arraySize, ComponentIdentifier Type, ValidComponent First, ValidComponent Second, ValidComponent... Rest>
+		void ExtractComponentIDs(std::array<utl::UUID_t, arraySize>& componentIDs, int index = 0);
 
-		template <int arraySize, ValidComponent C>
-		void ExtractComponentIDs(std::array<int, arraySize>& componentIDs, int index = 0);
+		template <int arraySize, ComponentIdentifier Type, ValidComponent C>
+		void ExtractComponentIDs(std::array<utl::UUID_t, arraySize>& componentIDs, int index = 0);
 
 		ArchetypeManager();
 

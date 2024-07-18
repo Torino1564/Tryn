@@ -21,12 +21,12 @@ namespace tryn::ecs
 		}
 	}
 
-	template <ValidComponent C>
+	template <ValidComponent C, bool Index>
 	std::span<typename C::SubresourceData> Archetype::GetComponentData()
 	{
 		for (auto [index, componentUUID] : std::ranges::views::enumerate(components))
 		{
-			if (componentUUID == C::UUID)
+			if (componentUUID == (Index ? C::index : C::UUID))
 			{
 				return std::span<typename C::SubresourceData>(
 					reinterpret_cast<typename C::SubresourceData*>(bufferPtrs[index]->data()), upperLimit);
@@ -45,14 +45,14 @@ namespace tryn::ecs
 		return archetype;
 	}
 
-	inline Archetype Archetype::Make(std::span<int> componentIDs)
+	inline Archetype Archetype::Make(std::span<utl::UUID_t> componentIDs)
 	{
 		Archetype archetype;
 		archetype.InitializeUUID();
 		archetype.components.reserve(componentIDs.size());
 		for (auto i = 0 ; i < componentIDs.size() ; i++)
 		{
-			archetype.components.push_back(componentIDs[i]);
+			archetype.components.push_back(GetComponentIndex(componentIDs[i]));
 			archetype.bufferPtrs.push_back(std::make_unique<std::vector<std::byte>>());
 		}
 		archetype.Resize(100);
@@ -101,7 +101,7 @@ namespace tryn::ecs
 		return &archetypeBuffer[archetypeCounter];
 	}
 
-	inline Archetype* ArchetypeManager::AddArchetype(std::span<int> componentIDs)
+	inline Archetype* ArchetypeManager::AddArchetype(std::span<utl::UUID_t> componentIDs)
 	{
 		archetypeBuffer.emplace_back(Archetype::Make(componentIDs));
 		auto& newlyAddedArchetype = archetypeBuffer.back();
@@ -184,17 +184,17 @@ namespace tryn::ecs
 		}
 	}
 
-	template <int arraySize, ValidComponent C>
-	void ArchetypeManager::ExtractComponentIDs(std::array<int, arraySize>& componentIDs, int index)
+	template <int arraySize, ArchetypeManager::ComponentIdentifier Type, ValidComponent C>
+	void ArchetypeManager::ExtractComponentIDs(std::array<utl::UUID_t, arraySize>& componentIDs, int index)
 	{
-		componentIDs[index] = C::UUID;
+		componentIDs[index] = (Type == Index ? C::index : C::UUID);
 	}
 
-	template <int arraySize, ValidComponent First, ValidComponent Second, ValidComponent... Rest>
-	void ArchetypeManager::ExtractComponentIDs(std::array<int, arraySize>& componentIDs, int index)
+	template <int arraySize, ArchetypeManager::ComponentIdentifier Type, ValidComponent First, ValidComponent Second, ValidComponent... Rest>
+	void ArchetypeManager::ExtractComponentIDs(std::array<utl::UUID_t, arraySize>& componentIDs, int index)
 	{
-		ExtractComponentIDs<arraySize, First>(componentIDs, index++);
-		ExtractComponentIDs<arraySize, Second, Rest...>(componentIDs, index);
+		ExtractComponentIDs<arraySize, Type, First>(componentIDs, index++);
+		ExtractComponentIDs<arraySize, Type, Second, Rest...>(componentIDs, index);
 	}
 
 		template <ValidComponent... Cs>
@@ -213,24 +213,24 @@ namespace tryn::ecs
 	template <ValidComponent... Cs>
 	Archetype* ArchetypeManager::GetArchetype()
 	{
-		auto pComponentIDs = ECS::Get().allocator.MakeNew<std::array<int, sizeof...(Cs)>>();
+		auto pComponentIDs = ECS::Get().allocator.MakeNew<std::array<utl::UUID_t, sizeof...(Cs)>>();
 		auto& componentIDs = *pComponentIDs;
-		ExtractComponentIDs<sizeof...(Cs), Cs...>(componentIDs);
+		ExtractComponentIDs<sizeof...(Cs), UUID, Cs...>(componentIDs);
 
-		return GetArchetype(std::span<int>(componentIDs.begin(), componentIDs.size()));
+		return GetArchetype(std::span<utl::UUID_t>(componentIDs.begin(), componentIDs.size()));
 	}
 
 	template <ValidComponent... Cs>
 	std::span<Archetype*> ArchetypeManager::QueryArchetype()
 	{
-		auto pComponentIDs = ECS::Get().allocator.MakeNew<std::array<int, sizeof...(Cs)>>();
+		auto pComponentIDs = ECS::Get().allocator.MakeNew<std::array<utl::UUID_t, sizeof...(Cs)>>();
 		auto& componentIDs = *pComponentIDs;
-		ExtractComponentIDs<sizeof...(Cs), Cs...>(componentIDs);
+		ExtractComponentIDs<sizeof...(Cs), Index, Cs...>(componentIDs);
 
-		return QueryArchetype(std::span<int>(componentIDs.begin(), componentIDs.size()));
+		return QueryArchetype(std::span<utl::UUID_t>(componentIDs.begin(), componentIDs.size()));
 	}
 
-	inline std::span<Archetype*> ArchetypeManager::QueryArchetype(std::span<ComponentIndex> componentIDs)
+	inline std::span<Archetype*> ArchetypeManager::QueryArchetype(std::span<utl::UUID_t> componentIDs) const
 	{
 		static std::vector<std::pair<Archetype*, int> > archetypeMap;
 		static bool initialized = false;
@@ -240,7 +240,7 @@ namespace tryn::ecs
 			archetypeMap.resize(1000);
 		}
 
-		std::fill(archetypeMap.begin(), archetypeMap.end(), std::pair<Archetype*, int>{nullptr, 0});
+		std::ranges::fill(archetypeMap.begin(), archetypeMap.end(), std::pair<Archetype*, int>{nullptr, 0});
 
 		auto pResult = ECS::Get().allocator.MakeNew<std::array<Archetype*, 100>>();
 		auto& result = *pResult;
@@ -270,7 +270,7 @@ namespace tryn::ecs
 		return std::span<Archetype*>(result.begin(), resultCounter);
 	}
 
-	inline Archetype* ArchetypeManager::GetArchetype(std::span<ComponentIndex> components)
+	inline Archetype* ArchetypeManager::GetArchetype(std::span<utl::UUID_t> components)
 	{
 		auto queriedArchetypes = QueryArchetype(components);
 
