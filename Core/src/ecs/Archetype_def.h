@@ -121,9 +121,9 @@ namespace tryn::ecs
 namespace tryn::ser
 {
 	template <>
-	struct ser::TypeSerializer<ecs::Archetype*>
+	struct ser::TypeSerializer<ecs::Archetype *>
 	{
-		static void Write(const ser::StreamWriter& streamWriter, const ecs::Archetype*& data, const bool binary = true, const std::string& name = "")
+		static void Write(const StreamWriter& streamWriter, ecs::Archetype* const& data, const bool binary = true, const std::string& name = "")
 		{
 			std::vector<utl::UUID_t> sortedComponents = data->componentUUIDs;
 			std::ranges::sort(sortedComponents);

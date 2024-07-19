@@ -109,13 +109,6 @@ namespace Ser
 			std::ostringstream oss2;
 			ser::StreamWriter streamWriter2(oss2);
 
-			ecs::Archetype* pArch = nullptr;
-
-
-			// TODO: fix this
-			ser::TypeSerializer<ecs::Archetype*>::Write(streamWriter2, pArch);
-
-
 			streamWriter2.Serialize(ent1);
 
 			auto fileWrite = std::ofstream("SerializeTestOutput2.txt", std::ios::binary);
