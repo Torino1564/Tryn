@@ -109,8 +109,12 @@ namespace Ser
 			std::ostringstream oss2;
 			ser::StreamWriter streamWriter2(oss2);
 
-			const ecs::Archetype* pArch = nullptr;
+			ecs::Archetype* pArch = nullptr;
+
+
+			// TODO: fix this
 			ser::TypeSerializer<ecs::Archetype*>::Write(streamWriter2, pArch);
+
 
 			streamWriter2.Serialize(ent1);
 
