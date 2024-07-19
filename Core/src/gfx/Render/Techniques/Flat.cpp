@@ -17,7 +17,7 @@ namespace tryn::gfx
 	template <bool Instanced, bool Skinned>
 	FlatBase<Instanced, Skinned>::FlatBase(Material& material, aiMaterial& aiMat, IGraphics& gfx, const std::string& path)
 		:
-		Technique(Skinned&& Instanced ? "FlatInstSkn" : (Skinned ? "FlatSkn" : (Instanced ? "FlatInst" : "Flat")))
+		TechniqueBase(Skinned&& Instanced ? "FlatInstSkn" : (Skinned ? "FlatSkn" : (Instanced ? "FlatInst" : "Flat")))
 	{
 		auto shaderRootPath = gfx.GetShaderRootPath();
 

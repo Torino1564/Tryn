@@ -156,6 +156,95 @@ namespace tryn::gfx
 		}
 	}
 
+	std::unique_ptr<Model> Model::Make(gfx::IGraphics& gfx, std::string_view path,
+		const std::span<utl::UUID_t> techniqueUUIDs, glm::vec3 scale, bool instanced)
+	{
+		auto pModel = std::make_unique<Model>(std::move(Model{ path, gfx }));
+
+		auto& imp = AssimpManager::Get();
+		const auto pScene = imp.ReadFile(path.data(),
+		                                 aiProcess_Triangulate |
+		                                 aiProcess_JoinIdenticalVertices |
+		                                 aiProcess_ConvertToLeftHanded |
+		                                 aiProcess_GenNormals |
+		                                 aiProcess_CalcTangentSpace
+		);
+
+		if (pScene == nullptr)
+		{
+			throw ModelException(imp.GetErrorString());
+		}
+
+		if (scale != glm::vec3{ 1.0f,1.0f,1.0f })
+		{
+			for (size_t i = 0; i < pScene->mNumMeshes; i++)
+			{
+				const auto& mesh = *pScene->mMeshes[i];
+				for (size_t j = 0; j < mesh.mNumVertices; j++)
+				{
+					auto& vertex = mesh.mVertices[j];
+					vertex.x *= scale.x;
+					vertex.y *= scale.y;
+					vertex.z *= scale.z;
+				}
+			}
+		}
+
+		for (unsigned int i = 0; i < pScene->mNumAnimations; i++)
+		{
+			ani::AnimationManager::Get().New(pModel->name, *pScene->mAnimations[i]);
+		}
+
+		int nextId = 0;
+		pModel->root = std::make_unique<Node>(pModel->ParseNode(nextId, *pScene->mRootNode, scale, true));
+
+		// parse materials
+		std::vector<Material> materials;
+		materials.reserve(pScene->mNumMaterials);
+
+		for (size_t i = 0; i < pScene->mNumMaterials; i++)
+		{
+			materials.emplace_back(Material::Make(gfx, *pScene->mMaterials[i], path, techniqueUUIDs, instanced, pModel->skeleton.has_value()));
+		}
+
+		if (pModel->skeleton.has_value())
+		{
+			for (size_t i = 0; i < pScene->mNumMeshes; i++)
+			{
+				const auto& mesh = *pScene->mMeshes[i];
+				pModel->pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), pModel->skeleton.value(), scale, pModel->meshCounter++));
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i < pScene->mNumMeshes; i++)
+			{
+				const auto& mesh = *pScene->mMeshes[i];
+				auto pMesh = std::make_shared<StaticMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), scale, pModel->meshCounter++);
+				pModel->pMeshes.push_back(std::move(pMesh));
+			}
+		}
+
+		// Set mesh Span
+		std::queue<Node*> q;
+		q.push(pModel->root.get());
+
+		while (!q.empty())
+		{
+			auto& current = *q.front();
+			q.pop();
+
+			current.SetMeshSpan({ pModel->pMeshes });
+
+			for (auto& child : current.GetChildren())
+			{
+				q.push(&child);
+			}
+		}
+
+		return pModel;
+	}
+
 	void Model::Submit(const glm::mat4& entityTransform = glm::identity<glm::mat4>())
 	{
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);

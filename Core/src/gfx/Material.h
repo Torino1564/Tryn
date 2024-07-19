@@ -10,7 +10,7 @@
 #include <Core/src/gfx/Render/Techniques/Flat.h>
 
 template <typename T>
-concept TechniqueClass = std::derived_from<T, class tryn::gfx::Technique>;
+concept TechniqueClass = std::derived_from<T, class tryn::gfx::TechniqueBase>;
 
 struct aiMaterial;
 struct aiMesh;
@@ -42,9 +42,12 @@ namespace tryn::gfx
 
 			return mat;
 		}
+		static Material Make(IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path, std::span<utl::UUID_t> techniqueUUIDs, const bool instanced = false,const bool skinned = false);
 		VertexBuffer ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton = nullptr) const noexcept;
 		IndexBuffer ExtractIndices(const aiMesh& mesh) const noexcept;
-		std::vector<std::shared_ptr<Technique>> GetTechniques() const noexcept;
+		std::vector<std::shared_ptr<TechniqueBase>> GetTechniques() const noexcept;
+
+		void AddTechnique(utl::UUID_t techniqueUUID, IGraphics& gfx, aiMaterial& material, const std::string& path, bool instanced, bool skinned);
 
 		template <unsigned N = 0, TechniqueClass... T>
 		void AddTechnique(IGraphics& gfx, aiMaterial& material, const std::string& path)
@@ -59,7 +62,7 @@ namespace tryn::gfx
 		}
 	private:
 		VertexLayout vLayout;
-		std::vector<std::shared_ptr<Technique>> pTechniques;
+		std::vector<std::shared_ptr<TechniqueBase>> pTechniques;
 		std::string name;
 	};
 }

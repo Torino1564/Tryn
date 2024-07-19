@@ -5,7 +5,7 @@ struct aiMaterial;
 namespace tryn::gfx
 {
 	template <bool Instanced = false, bool Skinned = false>
-	class FlatBase : public Technique
+	class FlatBase : public TechniqueBase
 	{
 	public:
 		FlatBase(class Material& material, aiMaterial& aiMaterial, class IGraphics& gfx, const std::string& path);

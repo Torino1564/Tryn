@@ -17,7 +17,7 @@ namespace tryn::gfx
 	template<bool Instanced, bool Skinned>
 	ForwardPhongBase<Instanced, Skinned>::ForwardPhongBase(Material& material, aiMaterial& aiMat, IGraphics& gfx, const std::string& rootPath)
 		:
-		Technique(Skinned && Instanced ? "PhongInstSkn" : (Skinned ? "PhongSkn" : (Instanced ? "PhongInst" : "Phong")))
+		TechniqueBase(Skinned && Instanced ? "PhongInstSkn" : (Skinned ? "PhongSkn" : (Instanced ? "PhongInst" : "Phong")))
 	{
 		auto shaderRootPath = gfx.GetShaderRootPath();
 

@@ -102,7 +102,38 @@ namespace Ser
 			auto tc1 = streamReader.ReadSerialized<TrivialClass>();
 			auto tc2 = streamReader.ReadSerialized<NonTrivialClass>();
 		}
-		TEST_METHOD(SerliazeTest2)
+		TEST_METHOD(SerializeString)
+		{
+			std::ostringstream oss;
+			ser::StreamWriter streamWriter(oss);
+
+			std::string str1 = "Hello World";
+			std::string str2 = "TrynEngine Coming in";
+
+			streamWriter.Serialize(str1, true);
+			streamWriter.Serialize(str2, true);
+
+			auto fileWrite = std::ofstream("SerializeStringTestOutput.txt", std::ios::binary);
+			fileWrite << oss.str();
+			fileWrite.close();
+
+			auto fileRead = std::ifstream("SerializeStringTestOutput.txt", std::ios::binary);
+
+			std::stringstream buffer;
+			buffer << fileRead.rdbuf();
+
+			fileRead.close();
+
+			std::string fileContent = buffer.str();
+
+			std::istringstream iss(fileContent);
+
+			ser::StreamReader streamReader(iss);
+
+			auto str1FromFile = streamReader.ReadSerialized<std::string>(true);
+			auto str2FromFile = streamReader.ReadSerialized<std::string>(true);
+		}
+		TEST_METHOD(SerliazeEntity)
 		{
 			auto ent1 = ecs::Entity::CreateNew<ecs::cmp::ActiveComponent, ecs::cmp::PositionComponent>("ent1");
 
@@ -111,11 +142,11 @@ namespace Ser
 
 			streamWriter2.Serialize(ent1);
 
-			auto fileWrite = std::ofstream("SerializeTestOutput2.txt", std::ios::binary);
+			auto fileWrite = std::ofstream("SerializeEntityOutput.txt", std::ios::binary);
 			fileWrite << oss2.str();
 			fileWrite.close();
 
-			auto fileRead = std::ifstream("SerializeTestOutput.txt", std::ios::binary);
+			auto fileRead = std::ifstream("SerializeEntityOutput.txt", std::ios::binary);
 
 			std::stringstream buffer;
 			buffer << fileRead.rdbuf();
@@ -130,7 +161,6 @@ namespace Ser
 
 			auto ent2 = streamReader.ReadSerialized<ecs::Entity>();
 			auto componentSpan = ent2.GetComponents();
-	
 		}
 	public:
 		std::ostringstream oss;

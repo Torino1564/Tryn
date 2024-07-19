@@ -12,253 +12,19 @@
 
 namespace tryn::gfx
 {
-	//Material::Material(IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path)
-	//{
-	//	const auto rootPath = path.parent_path().string() + "\\";
-	//	static bool isInitialized = false;
-	//	static std::string shaderRootPath;
-	//	if (!isInitialized)
-	//	{
-	//		shaderRootPath += __FILE__;
-	//		size_t trynPos = shaderRootPath.rfind("Tryn");
-	//		if (trynPos != std::string::npos)
-	//		{
-	//			shaderRootPath.erase(trynPos + 4);
-	//		}
+	Material Material::Make(IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path,
+		std::span<utl::UUID_t> techniqueUUIDs, const bool instanced, const bool skinned)
+	{
+		const auto rootPath = path.parent_path().string() + "\\";
 
-	//		shaderRootPath += "\\bin\\Shaders\\";
-	//		isInitialized = true;
-	//	}
+		Material mat;
+		for (auto techniqueUUID : techniqueUUIDs)
+		{
+			mat.AddTechnique(techniqueUUID, gfx, material, rootPath, instanced, skinned);
+		}
 
-	//	{
-	//		aiString tempName;
-	//		material.Get(AI_MATKEY_NAME, tempName);
-	//		name = tempName.C_Str();
-	//	}
-
-	//	switch (defaultTechnique)
-	//	{
-	//	case Techniques::Phong:
-	//	{
-	//		//Phong
-	//		{
-	//			Technique Phong("Phong");
-	//			std::string shaderCode = "Phong";
-	//			aiString tempFileName;
-
-	//			// Common
-	//			vLayout.AppendElement(VertexLayout::Position3D);
-	//			vLayout.AppendElement(VertexLayout::Normal);
-	//			ConstantBufferLayout cbLayout;
-	//			bool isTextured = false;
-	//			bool usesGlossAlphaChannel = false;
-
-	//			// Lambertian
-	//			Step step("Lambertian");
-	//			gfx.GetRenderGraph().AddRenderQueue("Lambertian");
-
-	//			// Albedo
-	//			{
-	//				bool hasAlpha = false;
-	//				if (material.GetTexture(aiTextureType_DIFFUSE, 0, &tempFileName) == aiReturn_SUCCESS)
-	//				{
-	//					isTextured = true;
-	//					shaderCode += "Tex";
-	//					vLayout.AppendElement(VertexLayout::UV);
-	//					auto tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 0);
-	//					if (tex->HasAlpha())
-	//					{
-	//						hasAlpha = true;
-	//						shaderCode += "Msk";
-	//					}
-	//					step.AddBindable(std::move(tex));
-	//				}
-	//				else
-	//				{
-	//					shaderCode += "Flat";
-	//					cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float3, "materialColor"));
-	//				}
-	//				step.AddBindable(std::move(IRasterizer::Resolve(gfx, hasAlpha)));
-	//			}
-	//			// Specular
-	//			{
-	//				if (material.GetTexture(aiTextureType_SPECULAR, 0, &tempFileName) == aiReturn_SUCCESS)
-	//				{
-	//					isTextured = true;
-	//					shaderCode += "Spc";
-	//					vLayout.AppendElement(VertexLayout::UV);
-	//					auto tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 1);
-	//					usesGlossAlphaChannel = tex->HasAlpha();
-	//					step.AddBindable(std::move(tex));
-
-	//					cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Bool, "useGlossAlpha"));
-	//					cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Bool, "useSpecularMap"));
-	//				}
-	//				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float3, "specularColor"));
-	//				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "specularWeight"));
-	//				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "specularGloss"));
-	//			}
-	//			// Normal
-	//			{
-	//				if (material.GetTexture(aiTextureType_NORMALS, 0, &tempFileName) == aiReturn_SUCCESS)
-	//				{
-	//					isTextured = true;
-	//					shaderCode += "Nrm";
-	//					vLayout.AppendElement(VertexLayout::UV);
-	//					vLayout.AppendElement(VertexLayout::Tangent);
-	//					vLayout.AppendElement(VertexLayout::Bitangent);
-	//					step.AddBindable(ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 2));
-	//					cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Bool, "useNormalMap"));
-	//					cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "normalMapWeight"));
-	//				}
-	//			}
-	//			// Common
-	//			{
-	//				if (skinned)
-	//				{
-	//					vLayout.AppendElement(VertexLayout::BoneIds);
-	//					vLayout.AppendElement(VertexLayout::BoneWeights);
-	//				}
-	//				auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (instanced ? "Inst" : "") + (skinned ? "Skn" : "") + "_VS.cso");
-	//				step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
-	//				step.AddBindable(std::move(pvs));
-	//				step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
-	//				if (isTextured)
-	//				{
-	//					step.AddBindable(ISampler::Resolve(gfx));
-	//				}
-	//				cbLayout.Solidify();
-	//				auto buf = IPxConstantBuffer::Resolve(gfx, std::move(cbLayout), 1);
-	//				if ((*buf)["materialColor"].Exists())
-	//				{
-	//					auto& param = (*buf)["materialColor"].Get<glm::vec3>();
-	//					aiColor3D color = { 0.45f,0.45f,0.85f };
-	//					material.Get(AI_MATKEY_COLOR_DIFFUSE, color);
-	//					param = reinterpret_cast<glm::vec3&>(color);
-	//				}
-	//				if ((*buf)["useGlossAlpha"].Exists())
-	//				{
-	//					auto& param = (*buf)["useGlossAlpha"].Get<bool>();
-	//					param = usesGlossAlphaChannel;
-	//				}
-	//				if ((*buf)["useSpecularMap"].Exists())
-	//				{
-	//					auto& param = (*buf)["useSpecularMap"].Get<bool>();
-	//					param = true;
-	//				}
-	//				if ((*buf)["specularColor"].Exists())
-	//				{
-	//					auto& param = (*buf)["specularColor"].Get<glm::vec3>();
-	//					aiColor3D color = { 0.18f,0.18f,0.18f };
-	//					material.Get(AI_MATKEY_COLOR_SPECULAR, color);
-	//					param = reinterpret_cast<glm::vec3&>(color);
-	//				}
-	//				if ((*buf)["specularWeight"].Exists())
-	//				{
-	//					auto& param = (*buf)["specularWeight"].Get<float>();
-	//					param = 1.0f;
-	//				}
-	//				if ((*buf)["specularGloss"].Exists())
-	//				{
-	//					auto& param = (*buf)["specularGloss"].Get<float>();
-	//					float gloss = 8.0f;
-	//					material.Get(AI_MATKEY_SHININESS, gloss);
-	//					param = gloss;
-	//				}
-	//				if ((*buf)["useNormalMap"].Exists())
-	//				{
-	//					auto& param = (*buf)["useNormalMap"].Get<bool>();
-	//					param = true;
-	//				}
-	//				if ((*buf)["normalMapWeight"].Exists())
-	//				{
-	//					auto& param = (*buf)["normalMapWeight"].Get<float>();
-	//					param = 1.0f;
-	//				}
-
-	//				step.AddBindable(std::move(buf));
-	//			}
-
-	//			Phong.AddStep(std::move(step));
-
-	//			techniques.push_back(std::move(Phong));
-	//		}
-	//		break;
-	//	}
-	//	case Techniques::Flat:
-	//	{
-	//		//Flat
-	//		{
-	//			Technique Flat("Flat");
-	//			std::string shaderCode = "Flat";
-	//			aiString tempFileName;
-
-	//			// Common
-	//			vLayout.AppendElement(VertexLayout::Position3D);
-	//			vLayout.AppendElement(VertexLayout::Normal);
-	//			ConstantBufferLayout cbLayout;
-
-	//			Step step("Lambertian");
-
-	//			// Albedo
-	//			{
-	//				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float3, "materialColor"));
-	//				step.AddBindable(std::move(IRasterizer::Resolve(gfx)));
-	//			}
-	//			// Specular
-	//			{
-	//				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float3, "specularColor"));
-	//				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "specularWeight"));
-	//				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "specularGloss"));
-	//			}
-
-	//			{
-	//				auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + "_VS.cso");
-	//				step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
-	//				step.AddBindable(std::move(pvs));
-	//				step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
-	//				cbLayout.Solidify();
-	//				auto buf = IPxConstantBuffer::Resolve(gfx, std::move(cbLayout), 1);
-
-	//				if ((*buf)["materialColor"].Exists())
-	//				{
-	//					auto& param = (*buf)["materialColor"].Get<glm::vec3>();
-	//					aiColor3D color = { 0.45f,0.45f,0.85f };
-	//					material.Get(AI_MATKEY_COLOR_DIFFUSE, color);
-	//					param = reinterpret_cast<glm::vec3&>(color);
-	//				}
-	//				if ((*buf)["specularColor"].Exists())
-	//				{
-	//					auto& param = (*buf)["specularColor"].Get<glm::vec3>();
-	//					aiColor3D color = { 0.18f,0.18f,0.18f };
-	//					material.Get(AI_MATKEY_COLOR_SPECULAR, color);
-	//					param = reinterpret_cast<glm::vec3&>(color);
-	//				}
-	//				if ((*buf)["specularWeight"].Exists())
-	//				{
-	//					auto& param = (*buf)["specularWeight"].Get<float>();
-	//					param = 1.0f;
-	//				}
-	//				if ((*buf)["specularGloss"].Exists())
-	//				{
-	//					auto& param = (*buf)["specularGloss"].Get<float>();
-	//					float gloss = 8.0f;
-	//					material.Get(AI_MATKEY_SHININESS, gloss);
-	//					param = gloss;
-	//				}
-
-	//				step.AddBindable(std::move(buf));
-	//			}
-
-	//			Flat.AddStep(std::move(step));
-
-	//			techniques.push_back(std::move(Flat));
-	//		}
-	//		break;
-	//	}
-	//	}
-	//}
-	//
+		return mat;
+	}
 	VertexBuffer Material::ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton) const noexcept
 	{
 		return { vLayout, mesh, skeleton};
@@ -277,8 +43,14 @@ namespace tryn::gfx
 		}
 		return { indices };
 	}
-	std::vector<std::shared_ptr<Technique>> Material::GetTechniques() const noexcept
+	std::vector<std::shared_ptr<TechniqueBase>> Material::GetTechniques() const noexcept
 	{
 		return pTechniques;
+	}
+
+	void Material::AddTechnique(utl::UUID_t techniqueUUID, IGraphics& gfx, aiMaterial& material,
+		const std::string& path, bool instanced, bool skinned)
+	{
+		pTechniques.push_back(TechniquePool::Get().ConstructTechnique(techniqueUUID, *this, material, gfx, path,  instanced, skinned));
 	}
 }

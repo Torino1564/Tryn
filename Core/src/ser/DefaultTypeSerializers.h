@@ -79,24 +79,8 @@ namespace tryn::ser
 	template <>
 	struct TypeSerializer<std::string>
 	{
-		static void Write(const StreamWriter& streamWriter, const std::string& data, const bool binary = true, const std::string& name = "")
-		{
-			auto stringOut = std::format("STR:{:0>16}", data.size());
-			streamWriter.GetStringStream().write(stringOut.data(), stringOut.size());
-			streamWriter.GetStringStream().write(data.data(), data.size());
-		}
+		static void Write(const StreamWriter& streamWriter, const std::string& data, const bool binary = true, const std::string& name = "");
 
-		static std::string Read(const StreamReader& streamReader, const bool binary = true)
-		{
-			static std::vector<char> charBuffer {sizeof(uint16_t) * 8};
-			streamReader.ExtractExpression("STR:", charBuffer);
-
-			auto numChars = std::stoi(charBuffer.data(), nullptr, 10);
-
-			std::span<char> stringView {(char*)nullptr, (std::size_t)numChars};
-			streamReader.ExtractExpression("", stringView);
-
-			return std::string{stringView.data(), stringView.size()};
-		}
+		static std::string Read(const StreamReader& streamReader, const bool binary = true);
 	};
 }

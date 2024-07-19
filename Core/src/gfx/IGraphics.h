@@ -170,5 +170,9 @@ namespace tryn::gfx
 			return future;
 		}
 		std::unique_ptr<IContext> pContext;
+
+	protected:
+		// Rogue parent instanced:
+		std::unordered_map<std::string, std::shared_ptr<class InstancedModelParent>> rogueInstancedModelParentMap;
 	};
 }

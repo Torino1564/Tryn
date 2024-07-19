@@ -1,4 +1,4 @@
-#include <Core/src/app/App.h>
+#include "TrynCppUnitTest.h"
 
 
 tryn::app::App* tryn::app::CreateApp(int argc, char** argv)

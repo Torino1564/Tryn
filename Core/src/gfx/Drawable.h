@@ -26,7 +26,7 @@ namespace tryn::gfx
 		void InitTransformCBuf(IGraphics& gfx);
 		[[nodiscard]] IVertexBuffer& GetVertexBuffer() const;
 		[[nodiscard]] uint32_t GetIndexCount() const;
-		void AddTechnique(std::shared_ptr<Technique> pTechnique);
+		void AddTechnique(std::shared_ptr<TechniqueBase> pTechnique);
 		[[nodiscard]] glm::mat4 GetTransformMatrix() const;
 		[[nodiscard]] std::uint16_t GetID() const;
 
@@ -39,7 +39,7 @@ namespace tryn::gfx
 		std::unique_ptr<ITransformCBuf> pTransformCBuf;
 		uint32_t indexCount = 0;
 		std::uint16_t ID = 0;
-		std::vector<std::shared_ptr<Technique>> techniques;
+		std::vector<std::shared_ptr<TechniqueBase>> techniques;
 		glm::mat4 transform;
 	};
 }

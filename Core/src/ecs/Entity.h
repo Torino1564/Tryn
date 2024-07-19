@@ -42,7 +42,7 @@ namespace tryn::ecs
 
 					auto pData = reinterpret_cast<typename MapElement::Type*>(reinterpret_cast<std::byte*>(&data[entityID.ID - 1]) + byteOffsetFunc());
 
-					streamWriter.Serialize(pData, binary, name);
+					streamWriter.Serialize(*pData, binary, name);
 				}
 			};
 
@@ -139,8 +139,6 @@ namespace tryn::ecs
 
 			using ByteOffsetFunc_t = typename MapElement::ByteOffset_t;
 			ByteOffsetFunc_t byteOffsetFunc;
-
-			typename MapElement::Type test;
 
 			auto pData = reinterpret_cast<typename MapElement::Type*>(reinterpret_cast<std::byte*>(&data[entityUUID.ID - 1]) + byteOffsetFunc());
 

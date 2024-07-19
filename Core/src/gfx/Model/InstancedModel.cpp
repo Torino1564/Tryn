@@ -112,4 +112,25 @@ namespace tryn::gfx
 	{
 		pParentModel->transforms[instanceID] = transformation;
 	}
+
+	void InstancedModelChild::Serializer::Write(const tryn::ser::StreamWriter& streamWriter,
+		const InstancedModelChild& data, const bool binary, const std::string& name)
+	{
+		streamWriter.Serialize(data.pParentModel, binary, name);
+	}
+
+	InstancedModelChild InstancedModelChild::Serializer::Read(const tryn::ser::StreamReader& streamReader,
+		const bool binary)
+	{
+		auto pParentModel = streamReader.ReadSerialized<InstancedModelParent*>(binary);
+				
+		return pParentModel->Instanciate();
+	}
+
+	void InstancedModelChild::Serializer::Read(InstancedModelChild& data, const tryn::ser::StreamReader& streamReader,
+		const bool binary)
+	{
+		auto pParentModel = streamReader.ReadSerialized<InstancedModelParent*>(binary);
+		data = pParentModel->Instanciate();
+	}
 }

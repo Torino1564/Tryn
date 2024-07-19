@@ -142,7 +142,7 @@ namespace tryn::gfx
 	{
 		return indexCount;
 	}
-	void Drawable::AddTechnique(std::shared_ptr<Technique> pTechnique)
+	void Drawable::AddTechnique(std::shared_ptr<TechniqueBase> pTechnique)
 	{
 		techniques.push_back(std::move(pTechnique));
 	}

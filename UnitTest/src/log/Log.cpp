@@ -3,8 +3,6 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace tryn;
 using namespace std::string_literals;
 
-#define trylog log::EntryBuilder{ __FILEW__ , __FUNCTIONW__, __LINE__ }
-
 class MockDriver : public log::IDriver
 {
 public:

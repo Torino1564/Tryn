@@ -13,11 +13,12 @@
 #include <Core/src/gfx/Animation/AnimationManager.h>
 #include "Core/src/gfx/Render/Techniques/ForwardPhong.h"
 #include <Core/src/gfx/Material.h>
+#include <Core/src/ser/StreamIO.h>
 
 namespace tryn::gfx
 {
 	template <typename T>
-	concept DerivedFromTechnique = std::derived_from<T, Technique>;
+	concept DerivedFromTechnique = std::derived_from<T, TechniqueBase>;
 
 	template <template <bool, bool> typename T>
 	concept BaseTechniqueClass = DerivedFromTechnique<T<false, false>>;
@@ -38,6 +39,8 @@ namespace tryn::gfx
 		template <template <bool, bool> typename FirstTechnique = ForwardPhongBase, template <bool, bool> typename... OtherTechniques>
 			requires BaseTechniqueClass<FirstTechnique> && (sizeof...(OtherTechniques) == 0 || BaseTechniqueClass<OtherTechniques...>)
 		static std::unique_ptr<Model> Make(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
+		static std::unique_ptr<Model> Make(gfx::IGraphics& gfx, std::string_view path, const std::span<utl::UUID_t> techniqueUUIDs, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
+
 		void Submit(const glm::mat4& entityTransform);
 		void Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms);
 		void SpawnControlWindow();
@@ -59,6 +62,25 @@ namespace tryn::gfx
 		std::string name;
 		std::unique_ptr<Node> root;
 		std::vector<std::shared_ptr<Mesh>> pMeshes;
+
+	public:
+		struct Serializer : public tryn::ser::Serializer<Model, "Model">
+		{
+			static void Write(const tryn::ser::StreamWriter& streamWriter, const Model& data, const bool binary = true,
+			                  const std::string& name = "")
+			{
+				streamWriter.Serialize(data.name, binary, name);
+
+			}
+
+			static Model Read(const tryn::ser::StreamReader& streamReader, const bool binary = true)
+			{
+			}
+
+			static void Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary = true)
+			{
+			}
+		};
 	};
 
 	template <template <bool, bool> typename FirstTechnique, template <bool, bool> typename... OtherTechniques>
