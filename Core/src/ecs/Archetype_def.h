@@ -4,6 +4,7 @@
 
 #include "EcsClass.h"
 #include "Core/src/ser/Serializer.h"
+#include "Core/src/ser/StreamIO.h"
 
 namespace tryn::ecs
 {
@@ -14,6 +15,7 @@ namespace tryn::ecs
 	{
 		friend class Entity;
 		friend class ArchetypeManager;
+		template <typename T> friend struct ser::TypeSerializer;
 
 	public:
 		template <ValidComponent... Cs>
@@ -46,30 +48,17 @@ namespace tryn::ecs
 		void Grow();
 		void Resize(std::uint32_t newSize);
 
-		struct Serializer : public tryn::ser::Serializer<Archetype, "Archetype">
-		{
-			static void Write(const tryn::ser::StreamWriter& streamWriter, const Archetype& data, const bool binary = true,
-			                  const std::string& name = "")
-			{
-				
-			}
-
-			static Archetype Read(const tryn::ser::StreamReader& streamReader, const bool binary = true)
-			{
-
-			}
-
-			static void Read(Archetype& data, const tryn::ser::StreamReader& streamReader, const bool binary = true)
-			{
-
-			}
-		};
-
 	private:
+		template <auto Tag = []{}>
+		void InitSortedComponentUUIDs();
+
 		void InitializeUUID();
 		std::uint16_t UUID = 0;
-		std::vector<std::uint16_t> componentSMPID;
-		std::vector<int> components;
+		std::vector<utl::UUID_t> componentUUIDs;
+		std::vector<unsigned int> components;
+
+		std::vector<utl::UUID_t> sortedComponentUUIDs;
+
 		std::uint32_t bookerPointer = 0;
 		std::uint32_t upperLimit = 0;
 		sul::dynamic_bitset<> booker;
@@ -126,5 +115,35 @@ namespace tryn::ecs
 		// Indexed by componentUUID
 		std::vector<std::vector<Archetype*>> archetypeTable;
 		std::vector<Archetype> archetypeBuffer = {};
+	};
+}
+
+namespace tryn::ser
+{
+	template <>
+	struct ser::TypeSerializer<ecs::Archetype*>
+	{
+		static void Write(const ser::StreamWriter& streamWriter, const ecs::Archetype*& data, const bool binary = true, const std::string& name = "")
+		{
+			std::vector<utl::UUID_t> sortedComponents = data->componentUUIDs;
+			std::ranges::sort(sortedComponents);
+			streamWriter.Serialize(sortedComponents, binary, name);
+		}
+
+		static ecs::Archetype* Read(const tryn::ser::StreamReader& streamReader, const bool binary = true)
+		{
+			std::vector<utl::UUID_t> componentUUIDs;
+
+			streamReader.ReadSerialized(componentUUIDs, binary);
+
+			return ecs::ECS::Get().archetypeManager.GetArchetype(componentUUIDs);
+		}
+
+		static void Read(ecs::Archetype*& data, const tryn::ser::StreamReader& streamReader, const bool binary = true)
+		{
+			std::vector<utl::UUID_t> componentUUIDs;
+			streamReader.ReadSerialized(componentUUIDs, binary);
+			data = ecs::ECS::Get().archetypeManager.GetArchetype(componentUUIDs);
+		}
 	};
 }

@@ -24,3 +24,5 @@
 // Logging
 #include <Core/src/log/Log.h>
 
+// Initialization
+#include <Core/src/app/Initialization.h>

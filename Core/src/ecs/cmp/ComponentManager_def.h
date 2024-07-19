@@ -124,7 +124,7 @@ namespace tryn::ecs
 			typename Component = int, 
 			unsigned ElementN = 0,
 			typename... FuncArgs>
-		static void IterateComponentMembers(long long componentUUID, FuncArgs&&... funcArgs );
+		static void IterateComponentMembers(const utl::UUID_t componentUUID, FuncArgs&&... funcArgs );
 
 		template <unsigned N, auto Tag = []{}>
 		using ComponentByIndex = typename std::remove_reference_t<decltype(std::get<N>(std::declval<ComponentList<>>()))>;

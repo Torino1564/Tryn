@@ -1,10 +1,4 @@
 #include <TrynCppUnitTest.h>
-#include <Core/src/log/Channel.h>
-#include <Core/src/log/EntryBuilder.h>
-#include <Core/src/log/Driver.h>
-#include <Core/src/log/Policy.h>
-#include <Core/src/log/SeverityLevelPolicy.h>
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace tryn;
 using namespace std::string_literals;

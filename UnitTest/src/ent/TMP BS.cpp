@@ -1,14 +1,4 @@
 #include <TrynCppUnitTest.h>
-#include <memory>
-#include <Core/src/app/Initialization.h>
-#include <Core/src/win/Window.h>
-#include <Core/src/gfx/dx11/Dx11Graphics.h>
-#include <Core/src/ecs/Entity.h>
-#include <Core/src/gfx/Render/RenderGraph.h>
-#include <Core/src/ecs/cmp/ComponentManager.h>
-#include <Core/src/ecs/sys/SystemManager.h>
-#include <Core/src/utl/Timer.h>
-#include <Core/src/ecs/cmp/Components.h>
 
 namespace tryn::ecs
 {
@@ -45,7 +35,7 @@ namespace tryn::ecs
 			using ComponentList_t = typename ComponentManager::ComponentList<>;
 			ComponentList_t componentTuple = {};
 
-			static constexpr auto animatedID = cmp::AnimatedComponent::UUID;
+			static constexpr auto animatedID = cmp::AnimatedComponent::index;
 			using AnimatedType = ComponentManager::ComponentByIndex<animatedID>;
 
 			AnimatedType animatedCmp = {};

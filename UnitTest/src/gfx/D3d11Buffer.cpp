@@ -1,11 +1,5 @@
 #include <TrynCppUnitTest.h>
-#include <Core/src/gfx/dx11/Dx11Graphics.h>
-#include <Core/src/win/Window.h>
-#include <Core/src/gfx/Vertex.h>
-#include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
-#include <Core/src/app/Initialization.h>
-#include <Core/src/gfx/ConstantBuffer.h>
-#include <imgui.h>
+#include "Core/src/gfx/dx11/Bindables/DX11Buffer.h"
 
 using namespace tryn;
 

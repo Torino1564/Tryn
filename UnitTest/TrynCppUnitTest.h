@@ -3,3 +3,5 @@
 #pragma warning (disable : 26433)
 #include <CppUnitTest.h>
 #pragma warning (pop)
+
+#include <Core/include/TrynCore.h>

@@ -1,7 +1,4 @@
 #include <TrynCppUnitTest.h>
-#include <Core/src/gfx/Render/SinkAndSource.h>
-#include <Core/src/gfx/Bindables/Texture.h>
-#include <Core/src/gfx/Bindables/JITUpdateBuffer.h>
 #include <type_traits>
 #include <memory>
 

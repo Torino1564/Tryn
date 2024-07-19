@@ -64,7 +64,7 @@ namespace tryn::ecs
 
 	template <template <typename, ValidComponent> class Func, unsigned ComponentN, bool FoundCmp, typename Component,
 		unsigned ElementN, typename ... FuncArgs>
-	void ComponentManager::IterateComponentMembers(long long componentUUID, FuncArgs&&... funcArgs)
+	void ComponentManager::IterateComponentMembers(const utl::UUID_t componentUUID, FuncArgs&&... funcArgs)
 	{
 		if constexpr (!FoundCmp)
 		{

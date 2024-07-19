@@ -1,5 +1,4 @@
 #include <TrynCppUnitTest.h>
-#include <Core/src/ioc/Container.h>
 #include <memory>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

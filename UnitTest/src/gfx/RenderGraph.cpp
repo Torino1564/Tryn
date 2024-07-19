@@ -1,10 +1,4 @@
 #include "TrynCppUnitTest.h"
-#include <Core/src/gfx/Render/RenderGraph.h>
-#include <Core/src/gfx/Render/Passes/ForwardLambertianPass.h>
-#include <Core/src/app/App.h>
-#include <Core/src/app/Initialization.h>
-#include <Core/src/win/Window.h>
-#include <Core/src/gfx/dx11/Dx11Graphics.h>
 
 using namespace tryn::gfx;
 using namespace tryn;

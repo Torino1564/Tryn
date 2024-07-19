@@ -1,10 +1,4 @@
 #include <TrynCppUnitTest.h>
-#include <Core/src/gfx/dx11/Dx11Graphics.h>
-#include <Core/src/win/Window.h>
-#include <Core/src/app/Initialization.h>
-#include <Core/src/gfx/Model/Model.h>
-
-#include <Core/src/gfx/Render/Techniques/Flat.h>
 
 using namespace tryn;
 

@@ -52,10 +52,14 @@ namespace tryn::ecs
 		archetype.components.reserve(componentIDs.size());
 		for (auto i = 0 ; i < componentIDs.size() ; i++)
 		{
+			archetype.componentUUIDs.push_back(componentIDs[i]);
 			archetype.components.push_back(GetComponentIndex(componentIDs[i]));
 			archetype.bufferPtrs.push_back(std::make_unique<std::vector<std::byte>>());
 		}
 		archetype.Resize(100);
+
+		archetype.InitSortedComponentUUIDs();
+
 		return archetype;
 	}
 	template <ValidComponent C>
@@ -92,6 +96,16 @@ namespace tryn::ecs
 		for (auto [index, pBuffer]: std::ranges::views::enumerate(bufferPtrs) )
 		{
 			pBuffer->resize(newSize * ComponentManager::Get().GetComponentSize(components[index]));
+		}
+	}
+
+	template <auto Tag>
+	inline void Archetype::InitSortedComponentUUIDs()
+	{
+		sortedComponentUUIDs.resize(ComponentManager::GetComponentCount());
+		for (auto [index, componentIndex] : std::ranges::views::enumerate(components))
+		{
+			sortedComponentUUIDs[componentIndex] = componentUUIDs[index];
 		}
 	}
 

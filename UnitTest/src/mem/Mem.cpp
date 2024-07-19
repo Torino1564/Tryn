@@ -1,5 +1,4 @@
 #include <TrynCppUnitTest.h>
-#include <Core/src/mem/ArenaAllocator.h>
 #include <array>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

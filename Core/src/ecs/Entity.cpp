@@ -16,10 +16,11 @@ namespace tryn::ecs
 		pArchetype->Free(UUID);
 	}
 
-	std::span<int> Entity::GetComponents()
+	std::span<unsigned int> Entity::GetComponents()
 	{
-		return std::span<int>(pArchetype->components.begin(), pArchetype->components.size());
+		return std::span(pArchetype->components.begin(), pArchetype->components.size());
 	}
+
 	void Entity::Instanciate(std::span<Entity> destination)
 	{
 		for (auto [instanceNum, ent] : std::ranges::views::enumerate(destination))

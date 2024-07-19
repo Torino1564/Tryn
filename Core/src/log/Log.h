@@ -2,6 +2,7 @@
 #include "Channel.h"
 #include "EntryBuilder.h"
 #include <Core/src/log/SeverityLevelPolicy.h>
+#include <Core/src/log/Driver.h>
 
 namespace tryn::log
 {

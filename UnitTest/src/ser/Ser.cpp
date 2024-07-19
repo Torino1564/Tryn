@@ -1,5 +1,4 @@
 #include <TrynCppUnitTest.h>
-#include <Core/src/ser/StreamIO.h>
 #include <vector>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -68,7 +67,7 @@ namespace Ser
 		{
 			pStreamWriter = std::make_unique<ser::StreamWriter>(oss);
 		}
-		TEST_METHOD(SerializeTest)
+		TEST_METHOD(SerializeTest1)
 		{
 			TrivialClass tc;
 			tc.var1 = 420;
@@ -102,6 +101,39 @@ namespace Ser
 
 			auto tc1 = streamReader.ReadSerialized<TrivialClass>();
 			auto tc2 = streamReader.ReadSerialized<NonTrivialClass>();
+		}
+		TEST_METHOD(SerliazeTest2)
+		{
+			auto ent1 = ecs::Entity::CreateNew<ecs::cmp::ActiveComponent, ecs::cmp::PositionComponent>("ent1");
+
+			std::ostringstream oss2;
+			ser::StreamWriter streamWriter2(oss2);
+
+			const ecs::Archetype* pArch = nullptr;
+			ser::TypeSerializer<ecs::Archetype*>::Write(streamWriter2, pArch);
+
+			streamWriter2.Serialize(ent1);
+
+			auto fileWrite = std::ofstream("SerializeTestOutput2.txt", std::ios::binary);
+			fileWrite << oss2.str();
+			fileWrite.close();
+
+			auto fileRead = std::ifstream("SerializeTestOutput.txt", std::ios::binary);
+
+			std::stringstream buffer;
+			buffer << fileRead.rdbuf();
+
+			fileRead.close();
+
+			std::string fileContent = buffer.str();
+
+			std::istringstream iss(fileContent);
+
+			ser::StreamReader streamReader(iss);
+
+			auto ent2 = streamReader.ReadSerialized<ecs::Entity>();
+			auto componentSpan = ent2.GetComponents();
+	
 		}
 	public:
 		std::ostringstream oss;

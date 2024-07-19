@@ -1,4 +1,3 @@
-#include <Core/src/gfx/ConstantBuffer.h>
 #include "TrynCppUnitTest.h"
 
 using namespace tryn::gfx;

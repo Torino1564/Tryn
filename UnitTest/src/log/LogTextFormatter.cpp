@@ -1,6 +1,4 @@
 #include <TrynCppUnitTest.h>
-#include <Core/src/log/Entry.h>
-#include <Core/src/log/TextFormatter.h>
 #include <chrono>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

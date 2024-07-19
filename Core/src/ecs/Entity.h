@@ -17,7 +17,7 @@ namespace tryn::ecs
 
 		template <ValidComponent... Cs>
 		static Entity CreateNew(std::string name = "?");
-		std::span<int> GetComponents();
+		std::span<unsigned int> GetComponents();
 
 		template <ValidComponent C>
 		typename C::SubresourceData& GetComponent();
@@ -30,22 +30,78 @@ namespace tryn::ecs
 		// Serializer 
 		struct Serializer : public tryn::ser::Serializer<Entity, "Entity">
 		{
+			template <typename MapElement, ValidComponent C>
+			struct SerializeWriteComponentField
+			{
+				void operator()(const tryn::ser::StreamWriter& streamWriter, const EntityID entityID, const bool binary = true, const std::string& name = "")
+				{
+					auto data = ECS::Get().archetypeManager.GetArchetype(entityID.archetype)->GetComponentData<C>();
+					
+					using ByteOffsetFunc_t = typename MapElement::ByteOffset_t;
+					ByteOffsetFunc_t byteOffsetFunc;
+
+					auto pData = reinterpret_cast<typename MapElement::Type*>(reinterpret_cast<std::byte*>(&data[entityID.ID - 1]) + byteOffsetFunc());
+
+					streamWriter.Serialize(pData, binary, name);
+				}
+			};
+
+			template <typename MapElement, ValidComponent C>
+			struct SerializeReadComponentField
+			{
+				void operator()(const tryn::ser::StreamReader& streamReader, const EntityID entityID, const bool binary = true)
+				{
+					auto data = ECS::Get().archetypeManager.GetArchetype(entityID.archetype)->GetComponentData<C>();
+					
+					using ByteOffsetFunc_t = typename MapElement::ByteOffset_t;
+					ByteOffsetFunc_t byteOffsetFunc;
+
+					auto pData = reinterpret_cast<typename MapElement::Type*>(reinterpret_cast<std::byte*>(&data[entityID.ID - 1]) + byteOffsetFunc());
+
+					streamReader.ReadSerialized(pData, binary);
+				}
+			};
+
 			static void Write(const tryn::ser::StreamWriter& streamWriter, const Entity& data, const bool binary = true, const std::string& name = "")
 			{
 				// Name
 				streamWriter.Serialize(data.name, binary, name);
+
 				// Archetype
-				streamWriter.Serialize(*data.pArchetype, binary, name);
+				streamWriter.Serialize(data.pArchetype, binary, name);
+
+				// Component Data. By default, components are serialized in ascending order by their UUID
+				auto sortedVec = data.pArchetype->componentUUIDs;
+				std::ranges::sort(sortedVec);
+				for (auto componentUUID : sortedVec)
+				{
+					ComponentManager::IterateComponentMembers<SerializeWriteComponentField>(componentUUID, streamWriter, data.UUID, binary, name);
+				}
+
 			}
 
 			static Entity Read(const tryn::ser::StreamReader& streamReader, const bool binary = true)
 			{
-				
-			}
+				Entity newEntity;
 
-			static void Read(Entity& data, const tryn::ser::StreamReader& streamReader, const bool binary = true)
-			{
-				
+				// Name
+				newEntity.name = streamReader.ReadSerialized<std::string>(binary);
+
+				// Archetype & UUID
+				newEntity.pArchetype = streamReader.ReadSerialized<Archetype*>(binary);
+				newEntity.UUID = newEntity.pArchetype->ResolveEntityUUID();
+
+				auto sortedVec = newEntity.pArchetype->componentUUIDs;
+				std::ranges::sort(sortedVec);
+
+				// Component Data. Again, sorted in ascending order
+
+				for (auto componentUUID : sortedVec)
+				{
+					ComponentManager::IterateComponentMembers<SerializeReadComponentField>(componentUUID, streamReader, newEntity.UUID, binary);
+				}
+
+				return newEntity;
 			}
 		};
 
@@ -83,6 +139,8 @@ namespace tryn::ecs
 
 			using ByteOffsetFunc_t = typename MapElement::ByteOffset_t;
 			ByteOffsetFunc_t byteOffsetFunc;
+
+			typename MapElement::Type test;
 
 			auto pData = reinterpret_cast<typename MapElement::Type*>(reinterpret_cast<std::byte*>(&data[entityUUID.ID - 1]) + byteOffsetFunc());
 
@@ -141,26 +199,27 @@ namespace tryn::ecs
 		{
 			ImGui::Text(std::format("Entity UUID: {}:{}", UUID.archetype, UUID.ID).c_str());
 			ImGui::Text("Components:");
-			auto& componentSpan = pArchetype->components;
+			auto& componentIndices = pArchetype->components;
+			auto& sortedComponentUUIDs = pArchetype->sortedComponentUUIDs;
 			if (ImGui::BeginCombo("Components", "Select a component"))
 			{
 				if (selectedComponents.size() != ComponentManager::GetComponentCount())
 				{
 					selectedComponents.resize(ComponentManager::GetComponentCount(), false);
 				}
-				for (auto componentUUID : componentSpan)
+				for (auto componentIndex : componentIndices)
 				{
-					ImGui::Selectable(ComponentManager::GetComponentName(componentUUID), reinterpret_cast<bool*>(&selectedComponents[componentUUID]));
+					ImGui::Selectable(ComponentManager::GetComponentName(componentIndex), reinterpret_cast<bool*>(&selectedComponents[componentIndex]));
 				}
 				ImGui::EndCombo();
 			}
-			for (auto [UUID, selected] : std::ranges::enumerate_view(selectedComponents))
+			for (auto [index, selected] : std::ranges::enumerate_view(selectedComponents))
 			{
 				if (!selected)
 				{
 					continue;
 				}
-				ComponentManager::IterateComponentMembers<PrintImGuiMemberVariable>(UUID, this->UUID);
+				ComponentManager::IterateComponentMembers<PrintImGuiMemberVariable>(sortedComponentUUIDs[index], this->UUID);
 			}
 			ImGui::End();
 		}

@@ -58,6 +58,22 @@ namespace tryn::ser
 
 			return newVector;
 		}
+
+		static void Read(std::vector<T>& data, const StreamReader& streamReader, const bool binary = true)
+		{
+			static std::vector<char> charBuffer;
+			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
+			streamReader.ExtractExpression("VEC:", charBuffer);
+
+			auto numElements = std::stoi(charBuffer.data(), nullptr, 10);
+
+			data.reserve(numElements);
+
+			for (int i = 0; i < numElements; i++)
+			{
+				data.emplace_back(streamReader.ReadSerialized<T>(binary));
+			}
+		}
 	};
 
 	template <>
@@ -65,8 +81,9 @@ namespace tryn::ser
 	{
 		static void Write(const StreamWriter& streamWriter, const std::string& data, const bool binary = true, const std::string& name = "")
 		{
-			streamWriter.Serialize(std::format("STR:{:0>16}", data.size()), binary, name);
-			streamWriter.Serialize(std::string_view{data}, binary, name);
+			auto stringOut = std::format("STR:{:0>16}", data.size());
+			streamWriter.GetStringStream().write(stringOut.data(), stringOut.size());
+			streamWriter.GetStringStream().write(data.data(), data.size());
 		}
 
 		static std::string Read(const StreamReader& streamReader, const bool binary = true)
