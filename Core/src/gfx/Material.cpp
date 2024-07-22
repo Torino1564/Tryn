@@ -51,6 +51,6 @@ namespace tryn::gfx
 	void Material::AddTechnique(utl::UUID_t techniqueUUID, IGraphics& gfx, aiMaterial& material,
 		const std::string& path, bool instanced, bool skinned)
 	{
-		pTechniques.push_back(TechniquePool::Get().ConstructTechnique(techniqueUUID, *this, material, gfx, path,  instanced, skinned));
+		pTechniques.push_back(TechniquePool::ConstructTechnique(techniqueUUID, *this, material, gfx, path,  instanced, skinned));
 	}
 }

@@ -88,7 +88,11 @@ namespace tryn::ser
 		static std::string Read(const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
 		{
 			std::size_t numChars = 0;
-			streamReader.GetStringStream() >> std::hex >> numChars;
+
+			char sizeStr[(sizeof(std::size_t) * 2) + 1] = {0};
+			streamReader.GetStringStream().read(sizeStr, sizeof(std::size_t) * 2);
+
+			numChars = std::strtoul(sizeStr, nullptr, 16);
 
 			std::string newString;
 			newString.resize(numChars);

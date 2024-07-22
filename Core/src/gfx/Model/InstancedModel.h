@@ -79,11 +79,15 @@ namespace tryn::ser
 			std::same_as<decltype(t.pGfx), gfx::IGraphics*>;
 		};
 
+	template <typename Ptr>
+	concept PointerLike = std::is_pointer_v<Ptr> || requires (Ptr p) {
+    { *p };
+    { static_cast<bool>(p) };
+    { p.operator->() } -> std::convertible_to<decltype( &*p )>;
+};
+
 	template <typename T>
-	concept InstancedModelParentPointer = requires (T t)
-	{
-		std::is_same_v<decltype(*t), gfx::InstancedModelParent>;
-	};
+	concept InstancedModelParentPointer = PointerLike<T> && std::is_same_v<std::remove_pointer_t<T>, gfx::InstancedModelParent> || std::is_same_v<std::remove_reference_t<decltype(*std::declval<T>())>, gfx::InstancedModelParent>;
 
 	template <InstancedModelParentPointer T>
 	struct TypeSerializer<T>

@@ -140,6 +140,9 @@ namespace Ser
 			std::ostringstream oss2;
 			ser::StreamWriter streamWriter2(oss2);
 
+			ent1.GetComponent<ecs::cmp::ActiveComponent>().active = true;
+			ent1.GetComponent<ecs::cmp::PositionComponent>().position = {69.0f, 420.0f, 1337.7f};
+
 			streamWriter2.Serialize(ent1);
 
 			auto fileWrite = std::ofstream("SerializeEntityOutput.txt", std::ios::binary);
@@ -160,6 +163,9 @@ namespace Ser
 			ser::StreamReader streamReader(iss);
 
 			auto ent2 = streamReader.ReadSerialized<ecs::Entity>();
+
+			auto [activeComp] = ent2.GetComponent<ecs::cmp::ActiveComponent>();
+			auto [positionComp] = ent2.GetComponent<ecs::cmp::PositionComponent>();
 			auto componentSpan = ent2.GetComponents();
 		}
 	public:

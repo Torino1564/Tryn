@@ -112,7 +112,7 @@ namespace tryn::ser
 
 			iss.read(charBuffer.data(), expression.size());
 
-			if ((expression == charBuffer) != 0)
+			if (expression != charBuffer)
 				throw StreamIOException{"Failed to parse the requested expression from file"};
 
 			if (pExtraChars.data() != nullptr)

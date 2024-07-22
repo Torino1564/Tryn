@@ -56,7 +56,7 @@ namespace tryn::ecs
 				template <typename Data = void>
 				void operator()(const tryn::ser::StreamReader& streamReader, const EntityID entityID, const bool binary = true, const Data* pExtraData = nullptr)
 				{
-					static_assert(HasGfxPointer<Data> && pExtraData != nullptr, "The SerializeReadComponentField functor requires extra data of type tryn::gfx::IGraphics*!");
+					//static_assert(HasGfxPointer<Data> && pExtraData != nullptr, "The SerializeReadComponentField functor requires extra data of type tryn::gfx::IGraphics*!");
 
 					auto data = ECS::Get().archetypeManager.GetArchetype(entityID.archetype)->GetComponentData<C>();
 					

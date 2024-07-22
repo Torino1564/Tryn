@@ -7,6 +7,8 @@
 
 #include <unordered_map>
 
+#include "Core/src/utl/String.h"
+
 struct aiMaterial;
 
 namespace tryn::gfx
@@ -30,9 +32,13 @@ namespace tryn::gfx
 	{
 	public:
 
-		static bool RegisterTechnique(utl::UUID_t UUID);
+		static bool RegisterTechnique(utl::UUID_t UUID)
+		{
+			return true;
+		}
 
 		static std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, class Material& material, aiMaterial& aiMaterial, class IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skeleton = false);
+
 	private:
 		static TechniquePool& Get()
 		{
@@ -98,4 +104,13 @@ namespace tryn::gfx
 		using TechType = T<false, false>;
 		static inline bool registered = TechniquePool::RegisterTechnique(UUID);
 	};
+
+	inline std::shared_ptr<class TechniqueBase> TechniquePool::ConstructTechnique(utl::UUID_t techniqueUUID,
+		Material& material, aiMaterial& aiMaterial, IGraphics& gfx, const std::string& path, const bool instanced,
+		const bool skeleton)
+	{
+		auto it = Get().techniqueMap.find(techniqueUUID);
+		trynass(it != Get().techniqueMap.end()).msg(utl::ToWide(std::format("Did not find technique with UUID: {}", techniqueUUID))).lvl(log::Level::Error).ex();
+		return it->second->ConstructDerived(material, aiMaterial, gfx, path, instanced, skeleton);
+	}
 }
