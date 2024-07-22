@@ -3,6 +3,7 @@
 #include "Core/third/glm/gtx/euler_angles.hpp"
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Model/Model.h>
 
 namespace tryn::gfx
 {
@@ -117,20 +118,5 @@ namespace tryn::gfx
 		const InstancedModelChild& data, const bool binary, const std::string& name)
 	{
 		streamWriter.Serialize(data.pParentModel, binary, name);
-	}
-
-	InstancedModelChild InstancedModelChild::Serializer::Read(const tryn::ser::StreamReader& streamReader,
-		const bool binary)
-	{
-		auto pParentModel = streamReader.ReadSerialized<InstancedModelParent*>(binary);
-				
-		return pParentModel->Instanciate();
-	}
-
-	void InstancedModelChild::Serializer::Read(InstancedModelChild& data, const tryn::ser::StreamReader& streamReader,
-		const bool binary)
-	{
-		auto pParentModel = streamReader.ReadSerialized<InstancedModelParent*>(binary);
-		data = pParentModel->Instanciate();
 	}
 }

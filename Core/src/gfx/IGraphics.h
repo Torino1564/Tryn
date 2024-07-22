@@ -172,7 +172,7 @@ namespace tryn::gfx
 		std::unique_ptr<IContext> pContext;
 
 	protected:
-		// Rogue parent instanced:
+		// Instaced Parents:
 		std::unordered_map<std::string, std::shared_ptr<class InstancedModelParent>> rogueInstancedModelParentMap;
 	};
 }

@@ -4,8 +4,8 @@
 #include <Core/third/dynamic_bitset.hpp>
 #include "Core/src/gfx/ConstantBuffer.h"
 #include "Core/third/glm/fwd.hpp"
-#include <Core/src/gfx/Model/Model.h>
 #include <Core/src/ser/StreamIO.h>
+#include <Core/src/gfx/Model/Model.h>
 
 namespace tryn::gfx
 {
@@ -50,14 +50,25 @@ namespace tryn::gfx
 		std::uint16_t instanceID;
 		InstancedModelParent* pParentModel;
 
-		struct Serializer : public tryn::ser::Serializer<InstancedModelChild, "InstancedModelChild">
+		struct Serializer : public tryn::ser::Serializer<InstancedModelChild>
 		{
 			static void Write(const tryn::ser::StreamWriter& streamWriter, const InstancedModelChild& data, const bool binary = true,
 			                  const std::string& name = "");
 
-			static InstancedModelChild Read(const tryn::ser::StreamReader& streamReader, const bool binary = true);
+			template <typename Data = void>
+			static InstancedModelChild Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+			{
+				auto pParentModel = streamReader.ReadSerialized<InstancedModelParent*>(binary, pExtraData);
+				
+				return pParentModel->Instanciate();
+			}
 
-			static void Read(InstancedModelChild& data, const tryn::ser::StreamReader& streamReader, const bool binary = true);
+			template <typename Data = void>
+			static void Read(InstancedModelChild& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+			{
+				auto pParentModel = streamReader.ReadSerialized<InstancedModelParent*>(binary, pExtraData);
+				data = pParentModel->Instanciate();
+			}
 		};
 	};
 }
@@ -68,24 +79,24 @@ namespace tryn::ser
 			std::same_as<decltype(t.pGfx), gfx::IGraphics*>;
 		};
 
-	template <>
-	struct TypeSerializer<gfx::InstancedModelParent*>
+	template <typename T>
+	concept InstancedModelParentPointer = requires (T t)
 	{
-		static void Write(const StreamWriter& streamWriter, gfx::InstancedModelParent* const& pData, const bool binary = true, const std::string& name = "")
+		std::is_same_v<decltype(*t), gfx::InstancedModelParent>;
+	};
+
+	template <InstancedModelParentPointer T>
+	struct TypeSerializer<T>
+	{
+		static void Write(const StreamWriter& streamWriter, T const& pData, const bool binary = true, const std::string& name = "")
 		{
 			streamWriter.Serialize(pData->pBase);
 		}
-
-		
-
-		template <typename T = void>
-		static gfx::InstancedModelParent* Read(const StreamReader& streamReader, const bool binary = true, const T* extraData = nullptr)
+		template <typename Data = void>
+		static T Read(const StreamReader& streamReader, const bool binary = true, const Data* extraData = nullptr)
 		{
-			static_assert(HasGfxPointer<T> && extraData != nullptr, "The InstanceModelParent* Serializer requires extra data of type tryn::gfx::IGraphics*!");
-
-
+			static_assert(HasGfxPointer<Data> && extraData != nullptr, "The InstanceModelParent* Serializer requires extra data of type tryn::gfx::IGraphics*!");
+			return {nullptr};
 		}
-
-		static_assert(HasTypeSerializer<gfx::InstancedModelParent*>);
 	};
 }

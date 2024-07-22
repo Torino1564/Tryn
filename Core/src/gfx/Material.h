@@ -19,7 +19,7 @@ namespace tryn::gfx
 {
 	class Material
 	{
-		friend class Technique;
+		friend class TechniqueBase;
 	public:
 		template <TechniqueClass... T>
 		static Material Make(IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path)

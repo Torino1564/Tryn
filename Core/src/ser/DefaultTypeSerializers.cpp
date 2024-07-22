@@ -11,17 +11,4 @@ namespace tryn::ser
 
 		streamWriter.GetStringStream() << data;
 	}
-
-	std::string TypeSerializer<std::string>::Read(const StreamReader& streamReader, const bool binary)
-	{
-		std::size_t numChars = 0;
-		streamReader.GetStringStream() >> std::hex >> numChars;
-
-		std::string newString;
-		newString.resize(numChars);
-
-		streamReader.GetStringStream().read(newString.data(), numChars);
-
-		return newString;
-	}
 }

@@ -15,9 +15,16 @@
 namespace tryn::gfx
 {
 	template <bool Instanced, bool Skinned>
+	FlatBase<Instanced, Skinned>::FlatBase(const std::string& name)
+		:
+	Technique<FlatBase, "FlatBase", Instanced, Skinned>(name)
+	{
+	}
+
+	template <bool Instanced, bool Skinned>
 	FlatBase<Instanced, Skinned>::FlatBase(Material& material, aiMaterial& aiMat, IGraphics& gfx, const std::string& path)
 		:
-		TechniqueBase(Skinned&& Instanced ? "FlatInstSkn" : (Skinned ? "FlatSkn" : (Instanced ? "FlatInst" : "Flat")))
+		Technique<FlatBase, "FlatBase", Instanced, Skinned>(Skinned&& Instanced ? "FlatInstSkn" : (Skinned ? "FlatSkn" : (Instanced ? "FlatInst" : "Flat")))
 	{
 		auto shaderRootPath = gfx.GetShaderRootPath();
 
@@ -25,7 +32,7 @@ namespace tryn::gfx
 		aiString tempFileName;
 
 
-		auto& vLayout = ExtractLayoutFromMaterial(material);
+		auto& vLayout = this->ExtractLayoutFromMaterial(material);
 
 		// Common
 		vLayout.AppendElement(VertexLayout::Position3D);
@@ -90,7 +97,7 @@ namespace tryn::gfx
 			step.AddBindable(std::move(buf));
 		}
 
-		AddStep(std::move(step));
+		this->AddStep(std::move(step));
 	}
 
 

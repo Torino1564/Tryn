@@ -3,14 +3,14 @@
 
 namespace tryn::gfx
 {
-	class Technique;
+	class TechniqueBase;
 	class Step;
 
 	class TechniqueProbe : public utl::IProbe
 	{
 	public:
 		virtual ~TechniqueProbe() = default;
-		void SetTechnique(Technique* technique)
+		void SetTechnique(TechniqueBase* technique)
 		{
 			pTechnique = technique;
 			OnSetTechnique();
@@ -25,7 +25,7 @@ namespace tryn::gfx
 		virtual void OnSetTechnique() {}
 		virtual void OnSetStep() {}
 
-		Technique* pTechnique;
+		TechniqueBase* pTechnique;
 		Step* pStep;
 	};
 }

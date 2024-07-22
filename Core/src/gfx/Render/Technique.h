@@ -29,15 +29,16 @@ namespace tryn::gfx
 	class TechniquePool
 	{
 	public:
+
+		static bool RegisterTechnique(utl::UUID_t UUID);
+
+		static std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, class Material& material, aiMaterial& aiMaterial, class IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skeleton = false);
+	private:
 		static TechniquePool& Get()
 		{
 			static TechniquePool singleton;
 			return singleton;
 		}
-		bool RegisterTechnique(utl::UUID_t UUID, std::unique_ptr<TechniqueBase>&& pTechnique);
-
-		std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, class Material& material, aiMaterial& aiMaterial, class IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skeleton = false) const;
-	private:
 		TechniquePool() = default;
 		std::unordered_map<utl::UUID_t, std::unique_ptr<TechniqueBase>> techniqueMap;
 	};
@@ -47,6 +48,7 @@ namespace tryn::gfx
 		friend class TechniquePool;
 	public:
 		TechniqueBase(const std::string& name);
+		virtual ~TechniqueBase() = default;
 		void AddStep(Step step);
 		void Draw(class IGraphics& gfx, Drawable* parent);
 		void Submit(class IGraphics& gfx, Drawable* parent);
@@ -59,10 +61,14 @@ namespace tryn::gfx
 		std::vector<Step> steps;
 	};
 
-	template <typename T, utl::StaticString Name, bool Instanced, bool Skinned>
+#define ZT_DEFINE_TECHNIQUE(x) 	template <bool Instanced = false, bool Skinned = false> \
+	class FlatBase : public tryn::gfx::Technique<x, #x, Instanced, Skinned>
+
+	template <template <bool Inst, bool Skn> class T, utl::StaticString Name, bool Instanced, bool Skinned>
 	class Technique : public TechniqueBase
 	{
 	public:
+		Technique() = default;
 		Technique(const std::string& name)
 			:
 		TechniqueBase(name) {}
@@ -71,23 +77,25 @@ namespace tryn::gfx
 		{
 			if (instanced && skinned)
 			{
-				return std::make_shared<Technique<T, Name, true, true>>(material, aiMaterial, gfx, path);
-			}
-			else if (instanced)
-			{
-				return std::make_shared<Technique<T, Name, true, false>>(material, aiMaterial, gfx, path);
-			}
-			else if (skinned)
-			{
-				return std::make_shared<Technique<T, Name, false, true>>(material, aiMaterial, gfx, path);
-			}
-			else
-			{
-				return std::make_shared<Technique<T, Name, false, false>>(material, aiMaterial, gfx, path);
+				return std::make_shared<T<false, false>>(material, aiMaterial, gfx, path);
+			}							
+			else if (instanced)			
+			{							
+				return std::make_shared<T<false, false>>(material, aiMaterial, gfx, path);
+			}							
+			else if (skinned)			
+			{							
+				return std::make_shared<T<false, false>>(material, aiMaterial, gfx, path);
+			}							
+			else						
+			{							
+				return std::make_shared<T<false, false>>(material, aiMaterial, gfx, path);
 			}
 		}
 	protected:
+		using Type = Technique<T, Name, Instanced, Skinned>;
 		static constexpr auto UUID = ZT_STRING_HASH(Name.v);
-		static constexpr bool registered = TechniquePool::Get().RegisterTechnique(UUID, std::move(std::make_unique<Technique<T, Name>>(Name.v)));
+		using TechType = T<false, false>;
+		static inline bool registered = TechniquePool::RegisterTechnique(UUID);
 	};
 }

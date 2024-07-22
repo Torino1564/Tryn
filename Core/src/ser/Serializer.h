@@ -6,23 +6,24 @@
 #include <vector>
 #include <format>
 #include <Core/src/utl/StatefulMeta/CTV.h>
-#include "Serializer.h"
 #include <Core/src/utl/StringHasher.h>
 
 #include "Core/src/app/App.h"
 
-#define ZT_DEFINE_SERIALIZER(x) struct Serializer : public tryn::ser::Serializer<x, #x>
+#define ZT_DEFINE_SERIALIZER(x) struct Serializer : public tryn::ser::Serializer<x>
 
-#define ZT_SERIALIZER_HELPER(x) struct Serializer : public tryn::ser::Serializer<x, #x> {\
+#define ZT_SERIALIZER_HELPER(x) struct Serializer : public tryn::ser::Serializer<x> {\
 	static void Write(const tryn::ser::StreamWriter& streamWriter, const x& data, const bool binary = true, const std::string& name = "")\
 	{\
 		\
 	}\
-	static x Read(const tryn::ser::StreamReader& streamReader, const bool binary = true)\
+	template <typename Data = void>\
+	static x Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)\
 	{\
 		\
 	}\
-	static void Read(x& data, const tryn::ser::StreamReader& streamReader, const bool binary = true)\
+	template <typename Data = void>\
+	static void Read(x& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)\
 	{\
 		\
 	}\
@@ -30,84 +31,53 @@
 
 namespace tryn::ser
 {
-	// Init serializer compile time map
-	static constexpr auto SerializerListID = ZT_STRING_HASH("Serializer");
-	ZT_INIT_CTV(SerializerListID);
-
-	template <auto Tag = []{}>
-	using SerializerList = typename utl::CTV::get_list<SerializerListID>;
-
-	template <unsigned int UUID, unsigned N = 0>
-	constexpr auto SerializerByUUID()
-	{
-		if constexpr (N < std::tuple_size_v<SerializerList<>>)
-		{
-			using NthSerializer = typename std::tuple_element_t<N, SerializerList<>>::Type;
-			
-			if constexpr (UUID == NthSerializer::UUID)
-			{
-				return NthSerializer{};
-			}
-			else
-			{
-				return SerializerByUUID<UUID, N + 1>();
-			}
-		}
-	}
-
-	template <unsigned int UUID>
-	using ResolveSerializer = decltype(SerializerByUUID<UUID>());
-
-
 	// Serializer base class
-	template <typename T, utl::CTV::StaticString Name = "?">
+	template <typename T>
 	struct Serializer
 	{
 		static void Write(const class StreamWriter& streamWriter, const T& data, const bool binary = true, const std::string& name = "")
 		{
 			T::Write(streamWriter, data, binary, name);
 		}
-		static T Read(const class StreamReader& streamReader, const bool binary = false)
+		template <typename Data = void>
+		static T Read(const class StreamReader& streamReader, const bool binary = false, const Data* pExtraData = nullptr)
 		{
-			return T::Read(streamReader, binary);
+			return T::Read(streamReader, binary, pExtraData);
 		}
-	private:
-		using Name_t = decltype(utl::CTV::TextType<Name>);
-		static constexpr Name_t nameFunc;
-	public:
+
 		using Type = T;
-		static constexpr auto UUID = ZT_STRING_HASH(nameFunc());
-	private:
-		using Register_t = utl::CTV::UUIDMap_t<typename T::Serializer, Name, UUID, SerializerListID>;
 	};
 
 	template <typename T>
 	struct TypeSerializer;
 
 	template <typename T>
-	concept HasSerializer = requires (const ser::StreamWriter& sw, const class StreamReader& sr, const T& data, const bool binary, const std::string& name)
+	concept HasSerializer = requires (const ser::StreamWriter& sw, const class StreamReader& sr, const T& data, const bool binary, const std::string& name, const void* pExtraData)
 	{
 		std::derived_from<typename T::Serializer, Serializer<T>>;
 		{ T::Serializer::Write(sw, data, binary, name) } -> std::same_as<void>;
-		{ T::Serializer::Read(sr, binary) } -> std::same_as<T>;
+		{ T::Serializer::Read(sr, binary, pExtraData) } -> std::same_as<T>;
 	};
 
 	template <typename T>
-	concept HasRefReader = requires (const StreamReader& sr, T& data, const bool binary)
+	concept HasRefReader = requires (const StreamReader& sr, T& data, const bool binary, const void* pExtraData)
 	{
-		{T::Serializer::Read(data, sr, binary)} -> std::same_as<void>;
+		{T::Serializer::Read(data, sr, binary, pExtraData)} -> std::same_as<void>;
 	};
 
 	template <typename T>
-	concept HasTypeRefReader = requires (const StreamReader& sr, T& data, const bool binary)
+	concept HasTypeRefReader = requires (const StreamReader& sr, T& data, const bool binary, const void* pExtraData)
 	{
-		{TypeSerializer<T>::Read(data, sr, binary)} -> std::same_as<void>;
+		{TypeSerializer<T>::Read(data, sr, binary, pExtraData)} -> std::same_as<void>;
 	};
 
 	template <typename T>
-	concept HasTypeSerializer = requires (const class StreamWriter& sw, const class StreamReader& sr, const T& data, const bool binary, const std::string& name)
+	concept HasTypeSerializer = requires (const class StreamWriter& sw, const class StreamReader& sr, const T& data, const bool binary, const std::string& name, const void* pExtraData)
 	{
 		{ TypeSerializer<T>::Write(sw, data, binary, name) } -> std::same_as<void>;
-		{ TypeSerializer<T>::Read(sr, binary) } -> std::same_as<T>;
+		{ TypeSerializer<T>::Read(sr, binary, pExtraData) } -> std::same_as<T>;
 	};
+
+	template <typename T>
+	concept Serializable = HasSerializer<T> || HasTypeSerializer<T> || std::is_trivially_copyable_v<T>;
 }

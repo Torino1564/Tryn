@@ -14,17 +14,24 @@
 
 namespace tryn::gfx
 {
+	template <bool Instanced, bool Skinned>
+	ForwardPhongBase<Instanced, Skinned>::ForwardPhongBase(const std::string& name)
+		:
+	Technique<ForwardPhongBase, "ForwardPhongBase", Instanced, Skinned>(name)
+	{
+	}
+
 	template<bool Instanced, bool Skinned>
 	ForwardPhongBase<Instanced, Skinned>::ForwardPhongBase(Material& material, aiMaterial& aiMat, IGraphics& gfx, const std::string& rootPath)
 		:
-		TechniqueBase(Skinned && Instanced ? "PhongInstSkn" : (Skinned ? "PhongSkn" : (Instanced ? "PhongInst" : "Phong")))
+		Technique<ForwardPhongBase, "ForwardPhongBase", Instanced, Skinned>(Skinned && Instanced ? "PhongInstSkn" : (Skinned ? "PhongSkn" : (Instanced ? "PhongInst" : "Phong")))
 	{
 		auto shaderRootPath = gfx.GetShaderRootPath();
 
 		std::string shaderCode = "Phong";
 		aiString tempFileName;
 
-		auto& vLayout = ExtractLayoutFromMaterial(material);
+		auto& vLayout = this->ExtractLayoutFromMaterial(material);
 
 		// Common
 		vLayout.AppendElement(VertexLayout::Position3D);
@@ -159,7 +166,7 @@ namespace tryn::gfx
 			step.AddBindable(std::move(buf));
 		}
 
-		AddStep(std::move(step));
+		this->AddStep(std::move(step));
 	}
 
 

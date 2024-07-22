@@ -1,10 +1,6 @@
 #pragma once
 #include <Core/src/ecs/cmp/ComponentManager.h>
-
-namespace tryn::gfx
-{
-	class InstancedModelParent;
-}
+#include <Core/src/gfx/Model/InstancedModel.h>
 
 namespace tryn::ecs::cmp
 {

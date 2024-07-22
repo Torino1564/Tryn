@@ -6,9 +6,10 @@ struct aiMaterial;
 namespace tryn::gfx
 {
 	template <bool Instanced = false, bool Skinned = false>
-	class ForwardPhongBase : public TechniqueBase
+	class ForwardPhongBase : public Technique<ForwardPhongBase, "ForwardPhongBase", Instanced, Skinned>
 	{
 	public:
+		ForwardPhongBase(const std::string& name);
 		ForwardPhongBase(class Material& material, aiMaterial& aiMaterial, class IGraphics& gfx, const std::string& path);
 	};
 

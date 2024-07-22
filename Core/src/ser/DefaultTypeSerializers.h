@@ -3,7 +3,7 @@
 
 namespace tryn::ser
 {
-		template <typename T>
+	template <Serializable T>
 	struct TypeSerializer<std::unique_ptr<T>>
 	{
 		static void Write(const StreamWriter& streamWriter, const std::unique_ptr<T>& pData, const bool binary = true, const std::string& name = "")
@@ -11,22 +11,23 @@ namespace tryn::ser
 			streamWriter.GetStringStream() << "UP:";
 			streamWriter.Serialize(*pData, binary, name);
 		}
-
-		static std::unique_ptr<T> Read(const StreamReader& streamReader, const bool binary = true)
+		template <typename Data = void>
+		static std::unique_ptr<T> Read(const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
 		{
 			streamReader.ExtractExpression("UP:");
-			return std::make_unique<T>(streamReader.ReadSerialized<T>(binary));
+			return std::make_unique<T>(streamReader.ReadSerialized<T>(binary, pExtraData));
 		}
 
-		static void Read(std::unique_ptr<T>& data, const StreamReader& streamReader, const bool binary = true)
+		template <typename Data = void>
+		static void Read(std::unique_ptr<T>& data, const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
 		{
 			streamReader.ExtractExpression("UP:");
 			data.release();
-			data = std::make_unique<T>(streamReader.ReadSerialized<T>(binary));
+			data = std::make_unique<T>(streamReader.ReadSerialized<T>(binary, pExtraData));
 		}
 	};
 
-	template <typename T>
+	template <Serializable T>
 	struct TypeSerializer<std::vector<T>>
 	{
 		static void Write(const StreamWriter& streamWriter, const std::vector<T>& data, const bool binary = true, const std::string& name = "")
@@ -40,7 +41,8 @@ namespace tryn::ser
 			}
 		}
 
-		static std::vector<T> Read(const StreamReader& streamReader, const bool binary = true)
+		template <typename Data = void>
+		static std::vector<T> Read(const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
 		{
 			static std::vector<char> charBuffer;
 			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
@@ -53,13 +55,14 @@ namespace tryn::ser
 
 			for (int i = 0; i < numElements; i++)
 			{
-				newVector.emplace_back(streamReader.ReadSerialized<T>(binary));
+				newVector.emplace_back(streamReader.ReadSerialized<T>(binary, pExtraData));
 			}
 
 			return newVector;
 		}
 
-		static void Read(std::vector<T>& data, const StreamReader& streamReader, const bool binary = true)
+		template <typename Data = void>
+		static void Read(std::vector<T>& data, const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
 		{
 			static std::vector<char> charBuffer;
 			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
@@ -71,7 +74,7 @@ namespace tryn::ser
 
 			for (int i = 0; i < numElements; i++)
 			{
-				data.emplace_back(streamReader.ReadSerialized<T>(binary));
+				data.emplace_back(streamReader.ReadSerialized<T>(binary, pExtraData));
 			}
 		}
 	};
@@ -81,6 +84,18 @@ namespace tryn::ser
 	{
 		static void Write(const StreamWriter& streamWriter, const std::string& data, const bool binary = true, const std::string& name = "");
 
-		static std::string Read(const StreamReader& streamReader, const bool binary = true);
+		template <typename Data = void>
+		static std::string Read(const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+		{
+			std::size_t numChars = 0;
+			streamReader.GetStringStream() >> std::hex >> numChars;
+
+			std::string newString;
+			newString.resize(numChars);
+
+			streamReader.GetStringStream().read(newString.data(), numChars);
+
+			return newString;
+		}
 	};
 }

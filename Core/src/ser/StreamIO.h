@@ -14,7 +14,7 @@ namespace tryn::ser
 			: oss(oss) {}
 
 		template <typename T>
-		requires HasSerializer<T> || std::is_trivially_copyable_v<T> || HasTypeSerializer<T>
+		requires Serializable<T>
 		void Serialize(const T& data,const bool binary = true, const std::string& name = "") const
 		{
 			if constexpr (HasSerializer<T>)
@@ -48,17 +48,17 @@ namespace tryn::ser
 	public:
 		explicit StreamReader(std::istringstream& iss) : iss(iss){}
 
-		template <typename T>
-		requires HasSerializer<T> || std::is_trivially_copyable_v<T> || HasTypeSerializer<T>
-		T ReadSerialized(const bool binary = true) const
+		template <typename T, typename Data = void>
+		requires Serializable<T>
+		T ReadSerialized(const bool binary = true, const Data* pExtraData = nullptr) const
 		{
 			if constexpr (HasSerializer<T>)
 			{
-				return T::Serializer::Read(*this, binary);
+				return T::Serializer::Read(*this, binary, pExtraData);
 			}
 			else if constexpr (HasTypeSerializer<T>)
 			{
-				return TypeSerializer<T>::Read(*this, binary);
+				return TypeSerializer<T>::Read(*this, binary, pExtraData);
 			}
 			else {
 				if (binary)
@@ -74,17 +74,17 @@ namespace tryn::ser
 			}
 		}
 
-		template <typename T>
+		template <typename T, typename Data = void>
 		requires (HasSerializer<T> && HasRefReader<T>) || std::is_trivially_copyable_v<T> || (HasTypeSerializer<T> && HasTypeRefReader<T>) 
-		void ReadSerialized(T& data, const bool binary = true) const
+		void ReadSerialized(T& data, const bool binary = true, const Data* pExtraData = nullptr) const
 		{
 			if constexpr (HasSerializer<T>)
 			{
-				return T::Serializer::Read(data, *this, binary);
+				return T::Serializer::Read(data, *this, binary, pExtraData);
 			}
 			else if constexpr (HasTypeSerializer<T>)
 			{
-				return TypeSerializer<T>::Read(data, *this, binary);
+				return TypeSerializer<T>::Read(data, *this, binary, pExtraData);
 			}
 			else
 			{

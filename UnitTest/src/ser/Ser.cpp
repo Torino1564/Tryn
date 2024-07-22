@@ -23,7 +23,7 @@ namespace Ser
 				streamWriter.Serialize(data.var2, binary, name);
 				streamWriter.Serialize(data.floatArray, binary, name);
 			}
-			static TrivialClass Read(const ser::StreamReader& streamReader, const bool binary = true)
+			static TrivialClass Read(const ser::StreamReader& streamReader, const bool binary = true, const void* pExtraData = nullptr)
 			{
 				TrivialClass newClass;
 				newClass.var1 = streamReader.ReadSerialized<int>(binary);
@@ -48,7 +48,7 @@ namespace Ser
 				streamWriter.Serialize(data.var2, binary, name);
 				streamWriter.Serialize(data.pInt, binary, name);
 			}
-			static NonTrivialClass Read(const ser::StreamReader& streamReader, const bool binary = true)
+			static NonTrivialClass Read(const ser::StreamReader& streamReader, const bool binary = true, const void* pExtraData = nullptr)
 			{
 				NonTrivialClass newClass;
 				newClass.var1 = streamReader.ReadSerialized<int>(binary);

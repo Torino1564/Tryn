@@ -8,6 +8,11 @@
 
 namespace tryn::ecs
 {
+	template <typename T>
+	concept HasGfxPointer = requires (T t) {
+		std::same_as<decltype(t.pGfx), gfx::IGraphics*>;
+	};
+
 	class Entity
 	{
 	public:
@@ -28,7 +33,7 @@ namespace tryn::ecs
 
 	public:
 		// Serializer 
-		struct Serializer : public tryn::ser::Serializer<Entity, "Entity">
+		struct Serializer : public tryn::ser::Serializer<Entity>
 		{
 			template <typename MapElement, ValidComponent C>
 			struct SerializeWriteComponentField
@@ -45,12 +50,14 @@ namespace tryn::ecs
 					streamWriter.Serialize(*pData, binary, name);
 				}
 			};
-
 			template <typename MapElement, ValidComponent C>
 			struct SerializeReadComponentField
 			{
-				void operator()(const tryn::ser::StreamReader& streamReader, const EntityID entityID, const bool binary = true)
+				template <typename Data = void>
+				void operator()(const tryn::ser::StreamReader& streamReader, const EntityID entityID, const bool binary = true, const Data* pExtraData = nullptr)
 				{
+					static_assert(HasGfxPointer<Data> && pExtraData != nullptr, "The SerializeReadComponentField functor requires extra data of type tryn::gfx::IGraphics*!");
+
 					auto data = ECS::Get().archetypeManager.GetArchetype(entityID.archetype)->GetComponentData<C>();
 					
 					using ByteOffsetFunc_t = typename MapElement::ByteOffset_t;
@@ -58,7 +65,7 @@ namespace tryn::ecs
 
 					auto pData = reinterpret_cast<typename MapElement::Type*>(reinterpret_cast<std::byte*>(&data[entityID.ID - 1]) + byteOffsetFunc());
 
-					streamReader.ReadSerialized(pData, binary);
+					streamReader.ReadSerialized(pData, binary, pExtraData);
 				}
 			};
 
@@ -80,7 +87,8 @@ namespace tryn::ecs
 
 			}
 
-			static Entity Read(const tryn::ser::StreamReader& streamReader, const bool binary = true)
+			template <typename Data = void>
+			static Entity Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
 			{
 				Entity newEntity;
 
@@ -98,7 +106,7 @@ namespace tryn::ecs
 
 				for (auto componentUUID : sortedVec)
 				{
-					ComponentManager::IterateComponentMembers<SerializeReadComponentField>(componentUUID, streamReader, newEntity.UUID, binary);
+					ComponentManager::IterateComponentMembers<SerializeReadComponentField>(componentUUID, streamReader, newEntity.UUID, binary, pExtraData);
 				}
 
 				return newEntity;

@@ -3,6 +3,9 @@
 #include <string>
 #include <stdint.h>
 #include <Core/third/glm/mat4x4.hpp>
+#include <Core/src/ser/Serializer.h>
+
+#include "Core/src/ser/StreamIO.h"
 
 namespace tryn::gfx::ani
 {
@@ -47,5 +50,30 @@ namespace tryn::gfx::ani
 		using BoneIndex = uint32_t;
 
 		std::vector<std::pair<AnimationNodeIndex, BoneIndex>> indexPairs;
+	};
+}
+
+namespace tryn::ser
+{
+	// TODO: Finish AnimationSkeletonInterface* serializer
+
+	template <> struct ser::TypeSerializer<gfx::ani::AnimationSkeletonInterface*>
+	{
+		static void Write(const StreamWriter& streamWriter, gfx::ani::AnimationSkeletonInterface* const& pData, const bool binary = true, const std::string& name = "")
+		{
+			streamWriter.Serialize(0u, binary, name);
+		}
+
+		template <typename Data = void>
+		static gfx::ani::AnimationSkeletonInterface* Read(const StreamReader& streamReader, const bool binary = true, const std::string& name = "", const Data* pExtraData = nullptr)
+		{
+			return nullptr;
+		}
+
+		template <typename Data = void>
+		static void Read(const StreamReader& streamReader, gfx::ani::AnimationSkeletonInterface* pData, const bool binary = true, const std::string& name = "", const Data* pExtraData = nullptr)
+		{
+			pData = nullptr;
+		}
 	};
 }

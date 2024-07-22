@@ -130,19 +130,21 @@ namespace tryn::ser
 			streamWriter.Serialize(sortedComponents, binary, name);
 		}
 
-		static ecs::Archetype* Read(const tryn::ser::StreamReader& streamReader, const bool binary = true)
+		template <typename Data = void>
+		static ecs::Archetype* Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
 		{
 			std::vector<utl::UUID_t> componentUUIDs;
 
-			streamReader.ReadSerialized(componentUUIDs, binary);
+			streamReader.ReadSerialized(componentUUIDs, binary, pExtraData);
 
 			return ecs::ECS::Get().archetypeManager.GetArchetype(componentUUIDs);
 		}
 
-		static void Read(ecs::Archetype*& data, const tryn::ser::StreamReader& streamReader, const bool binary = true)
+		template <typename Data = void>
+		static void Read(ecs::Archetype*& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
 		{
 			std::vector<utl::UUID_t> componentUUIDs;
-			streamReader.ReadSerialized(componentUUIDs, binary);
+			streamReader.ReadSerialized(componentUUIDs, binary, pExtraData);
 			data = ecs::ECS::Get().archetypeManager.GetArchetype(componentUUIDs);
 		}
 	};

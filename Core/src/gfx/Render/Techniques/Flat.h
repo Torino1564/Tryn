@@ -1,13 +1,15 @@
 #pragma once
 #include <Core/src/gfx/Render/Technique.h>
+
 struct aiMaterial;
 
 namespace tryn::gfx
 {
 	template <bool Instanced = false, bool Skinned = false>
-	class FlatBase : public TechniqueBase
+	class FlatBase : public Technique<FlatBase, "FlatBase", Instanced, Skinned>
 	{
 	public:
+		FlatBase(const std::string& name);
 		FlatBase(class Material& material, aiMaterial& aiMaterial, class IGraphics& gfx, const std::string& path);
 	};
 

@@ -18,10 +18,10 @@
 namespace tryn::gfx
 {
 	template <typename T>
-	concept DerivedFromTechnique = std::derived_from<T, TechniqueBase>;
+	concept DerivedFromTechniqueBase = std::derived_from<typename T::Type, TechniqueBase>;
 
 	template <template <bool, bool> typename T>
-	concept BaseTechniqueClass = DerivedFromTechnique<T<false, false>>;
+	concept BaseTechniqueClass = DerivedFromTechniqueBase<T<false, false>>;
 
 	
 
@@ -64,7 +64,7 @@ namespace tryn::gfx
 		std::vector<std::shared_ptr<Mesh>> pMeshes;
 
 	public:
-		struct Serializer : public tryn::ser::Serializer<Model, "Model">
+		struct Serializer : public tryn::ser::Serializer<Model>
 		{
 			static void Write(const tryn::ser::StreamWriter& streamWriter, const Model& data, const bool binary = true,
 			                  const std::string& name = "")
@@ -73,11 +73,13 @@ namespace tryn::gfx
 
 			}
 
-			static Model Read(const tryn::ser::StreamReader& streamReader, const bool binary = true)
+			template <typename Data = void>
+			static Model Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
 			{
 			}
 
-			static void Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary = true)
+			template <typename Data = void>
+			static void Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
 			{
 			}
 		};

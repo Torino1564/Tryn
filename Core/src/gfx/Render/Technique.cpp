@@ -5,18 +5,18 @@
 
 namespace tryn::gfx
 {
-	bool TechniquePool::RegisterTechnique(utl::UUID_t UUID, std::unique_ptr<TechniqueBase>&& pTechnique)
+	bool TechniquePool::RegisterTechnique(const utl::UUID_t UUID)
 	{
-		auto [iterator, result] = techniqueMap.insert({UUID, std::forward<std::unique_ptr<TechniqueBase>>(pTechnique)});
-
-		return result;
+		//auto [iterator, result] = Get().techniqueMap.insert({UUID, std::move(pTechnique)});
+		return true;
+		//return result;
 	}
 
 	std::shared_ptr<TechniqueBase> TechniquePool::ConstructTechnique(utl::UUID_t techniqueUUID, Material& material,
-		aiMaterial& aiMaterial, IGraphics& gfx, const std::string& path, const bool instanced, const bool skeleton) const
+		aiMaterial& aiMaterial, IGraphics& gfx, const std::string& path, const bool instanced, const bool skeleton)
 	{
-		auto it = techniqueMap.find(techniqueUUID);
-		trynass(it != techniqueMap.end()).msg(utl::ToWide(std::format("Did not find technique with UUID: {}", techniqueUUID))).lvl(log::Level::Error).ex();
+		auto it = Get().techniqueMap.find(techniqueUUID);
+		trynass(it != Get().techniqueMap.end()).msg(utl::ToWide(std::format("Did not find technique with UUID: {}", techniqueUUID))).lvl(log::Level::Error).ex();
 		return it->second->ConstructDerived(material, aiMaterial, gfx, path, instanced, skeleton);
 	}
 
