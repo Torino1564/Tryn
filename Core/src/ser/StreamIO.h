@@ -90,6 +90,8 @@ namespace tryn::ser
 			{
 				if (binary)
 				{
+					unsigned int position = iss.tellg();
+					std::string_view view {iss.str().data() + iss.str().size() - position, position};
 					iss.read((char*)&data, sizeof(T));
 				}
 				else
