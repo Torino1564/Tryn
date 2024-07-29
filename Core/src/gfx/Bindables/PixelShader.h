@@ -1,24 +1,14 @@
 #pragma once
+#include <memory>
 #include <Core/src/gfx/Bindables/Bindable.h>
-#include <Core/src/gfx/BindablePool.h>
 
 namespace tryn::gfx
 {
 	class IPixelShader : public IBindable
 	{
 	public:
-		static std::shared_ptr<IPixelShader> Resolve(IGraphics& gfx, std::string path)
-		{
-			return BindablePool::Resolve<IPixelShader>(gfx, path);
-		}
-		static const std::string GenerateID(IGraphics& gfx, std::string path)
-		{
-			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
-			std::string UID(typeStr);
-			UID += "#PixelShader#";
-			UID += path;
+		static std::shared_ptr<IPixelShader> Resolve(const IGraphics& gfx, const std::string& path);
 
-			return UID;
-		}
+		static std::string GenerateID(const IGraphics& gfx, const std::string& path);
 	};
 }

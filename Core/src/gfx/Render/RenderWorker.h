@@ -20,7 +20,7 @@ namespace tryn::gfx
 		{
 			Kill();
 		}
-		virtual void SubmitWork(IGraphics&) = 0;
+		virtual void SubmitWork(const IGraphics&) = 0;
 		virtual void AfterAllTasks() override
 		{
 			if (!midSubmit)
@@ -56,7 +56,7 @@ namespace tryn::gfx
 		}
 	protected:
 		RenderTask renderTask;
-		IGraphics* pGfx = nullptr;
+		const IGraphics* pGfx = nullptr;
 		std::unique_ptr<IContext> pContext = nullptr;
 		bool midSubmit = false;
 	};

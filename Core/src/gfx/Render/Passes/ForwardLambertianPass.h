@@ -17,7 +17,7 @@ namespace tryn::gfx
 			pSink = std::make_unique<SinkType>(In<IGenericRenderTargetView>("rtv"), In<IGenericDepthStencil>("depthStencil"), In<IPxConstantBuffer, Policy::Barrier>("pointLightBuffer"));
 			pSource = std::make_unique<SourceType>(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"));
 		}
-		void Execute(IGraphics& gfx) override
+		void Execute(const IGraphics& gfx) override
 		{
 			// bind Render Target View
 			auto& concreteSink = *reinterpret_cast<SinkType*>(pSink.get());

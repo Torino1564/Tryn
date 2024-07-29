@@ -45,7 +45,7 @@ namespace tryn::gfx
 			pSink = std::make_unique<SinkType>(In<typename Param::Type>(Param::name)...);
 			pSource = std::make_unique<SourceType>(Out<typename Param::Type>(Param::name)...);
 		}
-		void Execute(IGraphics& gfx) override
+		void Execute(const IGraphics& gfx) override
 		{
 			auto pConcreteSink = reinterpret_cast<SinkType*>(pSink.get());
 

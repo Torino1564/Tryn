@@ -19,7 +19,7 @@ namespace tryn::gfx
 			pSource = std::move(rhs.pSource);
 			name = std::move(rhs.name);
 		}
-		virtual void Execute(class IGraphics& gfx) = 0;
+		virtual void Execute(const class IGraphics& gfx) = 0;
 		const std::string& GetName() const
 		{
 			return name;

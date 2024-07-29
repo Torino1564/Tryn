@@ -3,7 +3,7 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11TransformCBuf::DX11TransformCBuf(Graphics& gfx)
+	DX11TransformCBuf::DX11TransformCBuf(const Graphics& gfx)
 		:
 		ITransformCBuf(gfx)
 	{

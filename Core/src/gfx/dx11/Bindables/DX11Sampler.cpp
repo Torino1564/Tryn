@@ -3,7 +3,7 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11Sampler::DX11Sampler(Graphics& gfx, SamplerType type, bool reflect, int slot)
+	DX11Sampler::DX11Sampler(const Graphics& gfx, SamplerType type, const bool reflect, const int slot)
 		:
 		gfx(gfx)
 	{

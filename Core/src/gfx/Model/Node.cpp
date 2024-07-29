@@ -14,7 +14,7 @@ namespace tryn::gfx
 		this->transform = std::move(transform);
 		this->appliedTransform = glm::identity<glm::mat4>();
 	}
-	void Node::Submit(IGraphics& gfx, glm::mat4 accumulatedTransform)
+	void Node::Submit(const IGraphics& gfx, glm::mat4 accumulatedTransform)
 	{
 		const auto finalTransform = appliedTransform * transform * accumulatedTransform;
 		for (auto id : meshIds)
@@ -26,7 +26,7 @@ namespace tryn::gfx
 			child.Submit(gfx, finalTransform);
 		}
 	}
-	void Node::Submit(IGraphics& gfx, std::span<const glm::mat4> accumulatedTransforms, InstancedModelParent& parent)
+	void Node::Submit(const IGraphics& gfx, std::span<const glm::mat4> accumulatedTransforms, InstancedModelParent& parent)
 	{
 		auto finalTransforms = mem::ArenaAllocator<>::GP().MakeNewArray<glm::mat4>(accumulatedTransforms.size());
 		for (auto [i, accumulatedTransform] : std::ranges::views::enumerate(accumulatedTransforms))
@@ -42,7 +42,7 @@ namespace tryn::gfx
 			child.Submit(gfx, { finalTransforms }, parent);
 		}
 	}
-	void Node::Submit(IGraphics& gfx, glm::mat4 accumulatedTransform, std::span<const glm::mat4> boneTransforms)
+	void Node::Submit(const IGraphics& gfx, glm::mat4 accumulatedTransform, std::span<const glm::mat4> boneTransforms)
 	{
 		// get main mesh
 		ani::BonedMesh* pBonedMesh = reinterpret_cast<ani::BonedMesh*>(meshes[0].get());

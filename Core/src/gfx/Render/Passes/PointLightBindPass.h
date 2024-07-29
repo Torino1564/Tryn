@@ -17,7 +17,7 @@ namespace tryn::gfx
 			pSink = std::make_unique<SinkType>(In<IPxConstantBuffer>("pointLightBuffer"));
 			pSource = std::make_unique<SourceType>(Out<IPxConstantBuffer>("pointLightBuffer"));
 		}
-		void Execute(IGraphics& gfx) override
+		void Execute(const IGraphics& gfx) override
 		{
 			// Get resources from sinks
 			auto& concreteSink = *reinterpret_cast<SinkType*>(pSink.get());

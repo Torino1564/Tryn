@@ -5,7 +5,7 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11InputLayout::DX11InputLayout(Graphics& gfx, IVertexBuffer& vb, IVertexShader& vs)
+	DX11InputLayout::DX11InputLayout(const Graphics& gfx, IVertexBuffer& vb, IVertexShader& vs)
 		:
 		gfx(gfx)
 	{
@@ -22,7 +22,7 @@ namespace tryn::gfx::dx11
 		gfx.GetDevice().CreateInputLayout(buffer.data(), (UINT)vb.GetLayout().GetElementCount(), dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
 	}
 	
-	DX11InputLayout::DX11InputLayout(Graphics& gfx, VertexLayout& layout, IVertexShader& vs)
+	DX11InputLayout::DX11InputLayout(const Graphics& gfx, VertexLayout& layout, IVertexShader& vs)
 		:
 		gfx(gfx)
 	{

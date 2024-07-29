@@ -44,7 +44,7 @@ namespace tryn::gfx
 		pSamplerState = ISampler::Resolve(renderGraph.Gfx());
 	}
 
-	void FullscreenRenderPass::Execute(IGraphics& gfx)
+	void FullscreenRenderPass::Execute(const IGraphics& gfx)
 	{
 		// Bind buffers and render targets
 		auto& concreteSink = *reinterpret_cast<SinkType*>(pSink.get());

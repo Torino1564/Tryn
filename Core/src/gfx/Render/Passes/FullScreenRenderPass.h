@@ -9,7 +9,7 @@ namespace tryn::gfx
 	public:
 		FullscreenRenderPass(class IRenderGraph& renderGraph, std::string name = "FullScreenRenderPass");
 
-		void Execute(IGraphics& gfx) override;
+		void Execute(const IGraphics& gfx) override;
 
 		using SinkType = Sink<In<IGenericRenderTargetView>, In<IGenericDepthStencil>, In<IShaderResourceRenderTargetView>>;
 		using SourceType = Source<Out<IGenericRenderTargetView>, Out<IGenericDepthStencil>>;

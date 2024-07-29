@@ -4,6 +4,7 @@
 
 namespace tryn::gfx
 {
+	class IGraphics;
 	class IContext;
 	class IBindable
 	{

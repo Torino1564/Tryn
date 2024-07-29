@@ -1,6 +1,6 @@
 #pragma once
+#include <memory>
 #include <Core/src/gfx/Bindables/Bindable.h>
-#include <Core/src/gfx/BindablePool.h>
 #include <string>
 
 namespace tryn::gfx
@@ -8,24 +8,13 @@ namespace tryn::gfx
 	class IVertexShader : public IBindable
 	{
 	public:
-		static std::shared_ptr<IVertexShader> Resolve(IGraphics& gfx, const std::string& path)
-		{
-			return BindablePool::Resolve<IVertexShader>(gfx, path);
-		}
-		static std::string GenerateID(IGraphics& gfx, const std::string& path)
-		{
-			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
-			std::string UID(typeStr);
-			UID += "#VertexShader#";
-			UID += path;
+		static std::shared_ptr<IVertexShader> Resolve(const IGraphics& gfx, const std::string& path);
 
-			return UID;
-		}
-		std::string_view GetPath() const
-		{
-			return path;
-		}
+		static std::string GenerateID(const IGraphics& gfx, const std::string& path);
+
+		std::string_view GetPath() const;
+
 	protected:
-		std::string path;
+		std::string path = {};
 	};
 }

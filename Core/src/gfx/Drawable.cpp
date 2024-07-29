@@ -25,7 +25,7 @@ namespace tryn::gfx
 		return mod;
 	}
 
-	void Drawable::Draw(IGraphics& gfx, glm::mat4 transform)
+	void Drawable::Draw(const IGraphics& gfx, glm::mat4 transform)
 	{
 		this->transform = transform;
 
@@ -37,7 +37,7 @@ namespace tryn::gfx
 			}
 			});
 	}
-	void Drawable::Submit(IGraphics& gfx, glm::mat4 transform)
+	void Drawable::Submit(const IGraphics& gfx, glm::mat4 transform)
 	{
 		extraBindPtrs = {};
 		ExtraSubmitBehavior();
@@ -48,7 +48,7 @@ namespace tryn::gfx
 			technique->Submit(gfx, this);
 		}
 	}
-	void Drawable::Submit(IGraphics& gfx, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
+	void Drawable::Submit(const IGraphics& gfx, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
 	{
 		extraBindPtrs = {};
 		ExtraSubmitBehavior();
@@ -130,7 +130,7 @@ namespace tryn::gfx
 	{
 		pTransformCBuf->BindTransformCBuf(this, context);
 	}
-	void Drawable::InitTransformCBuf(IGraphics& gfx)
+	void Drawable::InitTransformCBuf(const IGraphics& gfx)
 	{
 		pTransformCBuf = gfx.CreateTransformCBuf();
 	}

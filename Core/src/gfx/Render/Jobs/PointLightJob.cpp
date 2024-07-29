@@ -9,7 +9,7 @@ namespace tryn::gfx
 		:
 		IJob(jobID), pParams(&parameters), pRenderGraph(&renderGraph), pPosition(&position) {}
 
-	void PointLightJob::Execute(IGraphics& gfx)
+	void PointLightJob::Execute(const IGraphics& gfx)
 	{
 		ExecuteImpl_();
 	}

@@ -18,8 +18,8 @@ namespace tryn::gfx
 		void Update() const;
 		void Update(IContext& context) const;
 	protected:
-		ITransformCBuf(IGraphics& gfx) :gfx(gfx) {}
-		IGraphics& gfx;
+		ITransformCBuf(const IGraphics& gfx) :gfx(gfx) {}
+		const IGraphics& gfx;
 		static std::unique_ptr<IVtxConstantBuffer> pVCB;
 		mutable const Drawable* parent = nullptr;
 	};

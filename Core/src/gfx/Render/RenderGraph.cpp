@@ -10,7 +10,7 @@
 
 namespace tryn::gfx
 {
-	IRenderGraph::IRenderGraph(IGraphics& gfx, const bool initDefaultSourceAndSinks)
+	IRenderGraph::IRenderGraph(const IGraphics& gfx, const bool initDefaultSourceAndSinks)
 		:
 		gfx(gfx),
 		pRTV(gfx.GetRenderTargetView()),
@@ -55,7 +55,7 @@ namespace tryn::gfx
 		// reserve queue space
 		queues.reserve(maxQueues);
 	}
-	void IRenderGraph::ExecuteFrame(IGraphics& gfx)
+	void IRenderGraph::ExecuteFrame(const IGraphics& gfx)
 	{
 		// pPointLights[0]->Bind();
 
@@ -132,7 +132,7 @@ namespace tryn::gfx
 		pPointLightCBuf->Resize(newSize);
 	}
 
-	IGraphics& IRenderGraph::Gfx() const
+	const IGraphics& IRenderGraph::Gfx() const
 	{
 		return gfx;
 	}

@@ -7,6 +7,6 @@ namespace tryn::gfx::dx11
 	class DX11TransformCBuf : public ITransformCBuf
 	{
 	public:
-		DX11TransformCBuf(Graphics& gfx);
+		DX11TransformCBuf(const Graphics& gfx);
 	};
 }

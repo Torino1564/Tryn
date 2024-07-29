@@ -20,7 +20,7 @@ namespace tryn::gfx
 	{
 		steps.push_back(std::move(step));
 	}
-	void TechniqueBase::Draw(IGraphics& gfx, Drawable* parent)
+	void TechniqueBase::Draw(const IGraphics& gfx, Drawable* parent)
 	{
 		for (auto& step : steps)
 		{
@@ -28,14 +28,14 @@ namespace tryn::gfx
 			step.Draw(gfx, parent);
 		}
 	}
-	void TechniqueBase::Submit(IGraphics& gfx, Drawable* parent)
+	void TechniqueBase::Submit(const IGraphics& gfx, Drawable* parent)
 	{
 		for (auto& step : steps)
 		{
 			step.Submit(gfx, parent);
 		}
 	}
-	void TechniqueBase::Submit(IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
+	void TechniqueBase::Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
 	{
 		for (auto& step : steps)
 		{

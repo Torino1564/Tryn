@@ -35,11 +35,11 @@ namespace tryn::gfx
 	{
 		friend class InstancedModelParent;
 	public:
-		Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false );
+		Model(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false );
 		template <template <bool, bool> typename FirstTechnique = ForwardPhongBase, template <bool, bool> typename... OtherTechniques>
 			requires BaseTechniqueClass<FirstTechnique> && (sizeof...(OtherTechniques) == 0 || BaseTechniqueClass<OtherTechniques...>)
-		static std::unique_ptr<Model> Make(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
-		static std::unique_ptr<Model> Make(gfx::IGraphics& gfx, std::string_view path, const std::span<utl::UUID_t> techniqueUUIDs, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
+		static std::unique_ptr<Model> Make(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
+		static std::unique_ptr<Model> Make(const gfx::IGraphics& gfx, std::string_view path, const std::span<utl::UUID_t> techniqueUUIDs, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
 
 		void Submit(const glm::mat4& entityTransform);
 		void Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms);
@@ -50,7 +50,7 @@ namespace tryn::gfx
 		ani::BonedMesh* GetMainMesh();
 		gfx::IGraphics* GetGfx();
 	private:
-		Model(std::string_view path, gfx::IGraphics& gfx);
+		Model(std::string_view path, const gfx::IGraphics& gfx);
 		Node ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);
 		void ParseSkeleton(const aiNode& boneRoot);
 		void ParseBone(const aiNode& bone, const uint32_t parentID);
@@ -58,7 +58,7 @@ namespace tryn::gfx
 	private:
 		std::optional<ani::Skeleton> skeleton = std::nullopt;
 		std::uint16_t meshCounter = 0;
-		gfx::IGraphics& gfx;
+		const gfx::IGraphics& gfx;
 		std::string name;
 		std::unique_ptr<Node> root;
 		std::vector<std::shared_ptr<Mesh>> pMeshes;
@@ -87,7 +87,7 @@ namespace tryn::gfx
 
 	template <template <bool, bool> typename FirstTechnique, template <bool, bool> typename... OtherTechniques>
 		requires BaseTechniqueClass<FirstTechnique> && (sizeof...(OtherTechniques) == 0 || BaseTechniqueClass<OtherTechniques...>)
-	std::unique_ptr<Model> Model::Make(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, bool instanced)
+	std::unique_ptr<Model> Model::Make(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, bool instanced)
 	{
 		auto pModel = std::make_unique<Model>(std::move(Model{ path, gfx }));
 

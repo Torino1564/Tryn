@@ -155,16 +155,16 @@ namespace tryn::gfx::dx11
 	{
 		return GraphicAPI::DX11;
 	}
-	ID3D11DeviceContext& Graphics::GetContext()
+	ID3D11DeviceContext& Graphics::GetContext() const
 	{
 		auto& dx11context = static_cast<DX11Context&>(*pContext);
 		return dx11context.GetContext();
 	}
-	ID3D11Device& Graphics::GetDevice()
+	ID3D11Device& Graphics::GetDevice() const
 	{
 		return *pDevice.Get();
 	}
-	IDXGISwapChain& Graphics::GetSwapChain()
+	IDXGISwapChain& Graphics::GetSwapChain() const
 	{
 		return *pSwap.Get();
 	}
@@ -208,7 +208,7 @@ namespace tryn::gfx::dx11
 		}
 	}
 
-	std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(std::shared_ptr<VertexBuffer> pCpuBuffer, std::string tag)
+	std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(std::shared_ptr<VertexBuffer> pCpuBuffer, std::string tag) const 
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11VertexBuffer>(*this, pCpuBuffer, tag);
@@ -225,7 +225,7 @@ namespace tryn::gfx::dx11
 	//	return future.get();
 	//}
 
-	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string tag)
+	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string tag) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11IndexBuffer>(*this, indices, tag);
@@ -233,7 +233,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IVertexShader> Graphics::CreateVertexShader(std::string path)
+	std::shared_ptr<IVertexShader> Graphics::CreateVertexShader(std::string path) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11VertexShader>(*this, path);
@@ -241,7 +241,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IPixelShader> Graphics::CreatePixelShader(std::string path)
+	std::shared_ptr<IPixelShader> Graphics::CreatePixelShader(std::string path) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11PixelShader>(*this, path);
@@ -249,7 +249,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs)
+	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11InputLayout>(*this, vb, vs);
@@ -265,7 +265,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}*/
 
-	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs)
+	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11InputLayout>(*this, vLayout, vs);
@@ -273,7 +273,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IPrimitiveTopology> Graphics::CreatePrimitiveTopology()
+	std::shared_ptr<IPrimitiveTopology> Graphics::CreatePrimitiveTopology() const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11PrimitiveTopology>(*this);
@@ -281,7 +281,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IVtxConstantBuffer> Graphics::CreateVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	std::shared_ptr<IVtxConstantBuffer> Graphics::CreateVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11VtxConstantBuffer>(*this, std::move(layout), slot, tag);
@@ -289,7 +289,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IVtxConstantBufferNCach> Graphics::CreateNonCachVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	std::shared_ptr<IVtxConstantBufferNCach> Graphics::CreateNonCachVtxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11VtxConstantBufferNCach>(*this, std::move(layout), slot, tag);
@@ -297,7 +297,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IPxConstantBuffer> Graphics::CreatePxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	std::shared_ptr<IPxConstantBuffer> Graphics::CreatePxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11PxConstantBuffer>(*this, std::move(layout), slot, tag);
@@ -305,7 +305,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IPxConstantBufferNCach> Graphics::CreateNonCachPxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag)
+	std::shared_ptr<IPxConstantBufferNCach> Graphics::CreateNonCachPxConstantBuffer(ConstantBufferLayout&& layout, int slot, std::string tag) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11PxConstantBufferNCach>(*this, std::move(layout), slot, tag);
@@ -313,7 +313,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::unique_ptr<IInstanceBuffer> Graphics::CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot)
+	std::unique_ptr<IInstanceBuffer> Graphics::CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_unique<DX11InstanceBuffer>(*this, node, slot, size);
@@ -321,7 +321,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::unique_ptr<ITransformCBuf> Graphics::CreateTransformCBuf()
+	std::unique_ptr<ITransformCBuf> Graphics::CreateTransformCBuf() const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_unique<DX11TransformCBuf>(*this);
@@ -329,12 +329,12 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::unique_ptr<RenderWorker> Graphics::CreateRenderWorker(ccr::Master* pMaster)
+	std::unique_ptr<RenderWorker> Graphics::CreateRenderWorker(ccr::Master* pMaster) const
 	{
 		return std::make_unique<DX11RenderWorker>(pMaster, *this);
 	}
 
-	std::shared_ptr<ITexture> Graphics::CreateTexture(const std::filesystem::path path, const int slot)
+	std::shared_ptr<ITexture> Graphics::CreateTexture(const std::filesystem::path path, const int slot) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11Texture>(*this, path.string(), slot);
@@ -342,7 +342,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IRasterizer> Graphics::CreateRasterizer(const bool twoSided)
+	std::shared_ptr<IRasterizer> Graphics::CreateRasterizer(const bool twoSided) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11Rasterizer>(*this, twoSided);
@@ -350,35 +350,35 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<ISampler> Graphics::CreateSampler(SamplerType type, bool reflect, int slot)
+	std::shared_ptr<ISampler> Graphics::CreateSampler(SamplerType type, bool reflect, int slot) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11Sampler>(*this, type, reflect, slot);
 			});
 		return future.get();
 	}
-	std::shared_ptr<IOutputOnlyRenderTargetView> Graphics::CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions)
+	std::shared_ptr<IOutputOnlyRenderTargetView> Graphics::CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11OutputOnlyRenderTargetView>(*this, dimensions);
 			});
 		return future.get();
 	}
-	std::shared_ptr<IShaderResourceRenderTargetView> Graphics::CreateShaderResourceRenderTargetView(const spa::DimensionsI dimensions, const uint16_t slot)
+	std::shared_ptr<IShaderResourceRenderTargetView> Graphics::CreateShaderResourceRenderTargetView(const spa::DimensionsI dimensions, const uint16_t slot) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11ShaderResourceRenderTargetView>(*this, dimensions, slot);
 			});
 		return future.get();
 	}
-	std::shared_ptr<IOutputOnlyDepthStencil> Graphics::CreateOutputOnlyDepthStencil(const spa::DimensionsI, ComparissonMode mode)
+	std::shared_ptr<IOutputOnlyDepthStencil> Graphics::CreateOutputOnlyDepthStencil(const spa::DimensionsI, ComparissonMode mode) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11OutputOnlyDepthStencil>(*this, dimensions, mode);
 			});
 		return future.get();
 	}
-	std::shared_ptr<IShaderResourceDepthStencil> Graphics::CreateShaderResourceDepthStencil(const spa::DimensionsI, const uint16_t slot, ComparissonMode mode)
+	std::shared_ptr<IShaderResourceDepthStencil> Graphics::CreateShaderResourceDepthStencil(const spa::DimensionsI, const uint16_t slot, ComparissonMode mode) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11ShaderResourceDepthStencil>(*this, dimensions, slot, mode);

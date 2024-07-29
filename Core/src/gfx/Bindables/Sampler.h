@@ -1,6 +1,7 @@
 #pragma once
+#include <memory>
+
 #include "Bindable.h"
-#include <Core/src/gfx/BindablePool.h>
 
 namespace tryn::gfx
 {
@@ -14,20 +15,10 @@ namespace tryn::gfx
 	class ISampler : public IBindable
 	{
 	public:
-		static std::shared_ptr<ISampler> Resolve(IGraphics& gfx, SamplerType type = SamplerType::Anisotropic, bool reflect = false, int slot = 0u)
-		{
-			return BindablePool::Resolve<ISampler>(gfx, type, reflect, slot);
-		}
-		static std::string GenerateID(IGraphics& gfx, SamplerType type, bool reflect, int slot)
-		{
-			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
-			std::string UID(typeStr);
-			UID += "#Sampler#";
-			using namespace std::string_literals;
-			UID += "#"s + std::to_string((int)type) + (reflect ? "R"s : "W"s) + "@"s + std::to_string(slot);
+		static std::shared_ptr<ISampler> Resolve(const IGraphics& gfx, SamplerType type = SamplerType::Anisotropic, bool reflect = false, int slot = 0u);
 
-			return UID;
-		}
+		static std::string GenerateID(const IGraphics& gfx, SamplerType type, bool reflect, int slot);
+
 	protected:
 		SamplerType samplerType = SamplerType::Anisotropic;
 		bool reflect = true;

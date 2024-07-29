@@ -2,7 +2,7 @@
 #include <sstream>
 #include <Core/src/utl/Exception.h>
 #include "Serializer.h"
-
+#include <span>
 namespace tryn::ser
 {
 	ZT_EX_DEF(StreamIOException);
@@ -91,7 +91,7 @@ namespace tryn::ser
 				if (binary)
 				{
 					unsigned int position = iss.tellg();
-					std::string_view view {iss.str().data() + iss.str().size() - position, position};
+					std::string_view view {iss.str()};
 					iss.read((char*)&data, sizeof(T));
 				}
 				else

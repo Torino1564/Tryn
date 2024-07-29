@@ -4,7 +4,7 @@
 #include <Core/src/gfx/Render/Techniques/Flat.h>
 namespace tryn::gfx
 {
-	PointLight::PointLight(IGraphics& gfx, float radius, glm::vec3 color)
+	PointLight::PointLight(const IGraphics& gfx, float radius, glm::vec3 color)
 		:
 		gfx(gfx)
 	{
@@ -65,11 +65,11 @@ namespace tryn::gfx
 	{
 		pCBuf->Bind(context);
 	}
-	void PointLight::SubmitLight(IGraphics& gfx)
+	void PointLight::SubmitLight(const IGraphics& gfx)
 	{
 		gfx.GetRenderGraph().AddPointLight(this);
 	}
-	void PointLight::Submit(IGraphics& gfx, const glm::mat4 view)
+	void PointLight::Submit(const IGraphics& gfx, const glm::mat4 view)
 	{
 		(*pCBuf)["viewLightPos"].Get<glm::vec3>() = view * glm::vec4(position + GetModel().GetPosition(), 1.0f);
 		(*pCBuf)["ambient"].Get<glm::vec3>() = parameters.ambient;

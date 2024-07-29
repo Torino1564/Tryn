@@ -15,7 +15,7 @@ namespace tryn::gfx
 		friend class RenderQueue;
 	public:
 		InstancedJob(Drawable* parent, Step* step, std::span<const glm::mat4> transforms, class InstancedModelParent* pParentInstanced);
-		void Execute(IGraphics& gfx) override;
+		void Execute(const IGraphics& gfx) override;
 		void Execute(IContext& ctx) override;
 	private:
 		struct Data {

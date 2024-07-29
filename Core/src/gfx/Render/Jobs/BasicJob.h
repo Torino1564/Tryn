@@ -17,7 +17,7 @@ namespace tryn::gfx
 		friend class RenderQueue;
 	public:
 		BasicJob(Drawable* parent, Step* step);
-		void Execute(IGraphics& gfx) override;
+		void Execute(const IGraphics& gfx) override;
 		void Execute(IContext& gfx) override;
 
 	private:

@@ -22,7 +22,7 @@ namespace tryn::gfx
 	}
 
 	template <bool Instanced, bool Skinned>
-	FlatBase<Instanced, Skinned>::FlatBase(Material& material, aiMaterial& aiMat, IGraphics& gfx, const std::string& path)
+	FlatBase<Instanced, Skinned>::FlatBase(Material& material, aiMaterial& aiMat, const IGraphics& gfx, const std::string& path)
 		:
 		Technique<FlatBase, "FlatBase", Instanced, Skinned>(Skinned&& Instanced ? "FlatInstSkn" : (Skinned ? "FlatSkn" : (Instanced ? "FlatInst" : "Flat")))
 	{

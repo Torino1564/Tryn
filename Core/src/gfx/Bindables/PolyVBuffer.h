@@ -23,12 +23,12 @@
 //		virtual void Append(std::string, std::shared_ptr<VertexBuffer>) = 0;
 //		virtual void Append(std::shared_ptr<IVertexBuffer>) = 0;
 //
-//		static std::shared_ptr<IPolyVBuffer> Resolve(IGraphics& gfx, BufferArray& cpuVBs, std::string tag = "?")
+//		static std::shared_ptr<IPolyVBuffer> Resolve(const IGraphics& gfx, BufferArray& cpuVBs, std::string tag = "?")
 //		{
 //			return BindablePool::Resolve<IPolyVBuffer>(gfx, cpuVBs, tag);
 //		}
 //
-//		static std::string GenerateID(IGraphics& gfx, BufferArray& cpuVBs, std::string tag)
+//		static std::string GenerateID(const IGraphics& gfx, BufferArray& cpuVBs, std::string tag)
 //		{
 //			if (tag == "?") return tag;
 //			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];

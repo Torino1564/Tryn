@@ -18,7 +18,7 @@ namespace tryn::gfx::ani
 		return glmMat;
 	}
 
-	BonedMesh::BonedMesh(IGraphics& gfx, const Material& material, const aiMesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale, std::optional<std::uint16_t> meshID)
+	BonedMesh::BonedMesh(const IGraphics& gfx, const Material& material, const aiMesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale, std::optional<std::uint16_t> meshID)
 		:
 		skeleton(skeleton)
 	{
@@ -87,7 +87,7 @@ namespace tryn::gfx::ani
 	{
 		return MeshType::Boned;
 	}
-	void BonedMesh::Submit(IGraphics& gfx, const glm::mat4 finalTransform, std::span<const glm::mat4> boneTransforms)
+	void BonedMesh::Submit(const IGraphics& gfx, const glm::mat4 finalTransform, std::span<const glm::mat4> boneTransforms)
 	{
 		extraBindPtrs = {};
 

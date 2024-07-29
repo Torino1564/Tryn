@@ -13,6 +13,8 @@ struct aiMaterial;
 
 namespace tryn::gfx
 {
+	class IGraphics;
+
 	class TechniqueBase;
 	template <typename OriginalInstanciation, bool NewParam1, bool NewParam2> struct ReplaceTemplateParam;
 
@@ -37,7 +39,7 @@ namespace tryn::gfx
 			return true;
 		}
 
-		static std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, class Material& material, aiMaterial& aiMaterial, class IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skeleton = false);
+		static std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, class Material& material, aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skeleton = false);
 
 	private:
 		static TechniquePool& Get()
@@ -56,11 +58,11 @@ namespace tryn::gfx
 		TechniqueBase(const std::string& name);
 		virtual ~TechniqueBase() = default;
 		void AddStep(Step step);
-		void Draw(class IGraphics& gfx, Drawable* parent);
-		void Submit(class IGraphics& gfx, Drawable* parent);
-		void Submit(class IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instancedParent);
+		void Draw(const IGraphics& gfx, Drawable* parent);
+		void Submit(const IGraphics& gfx, Drawable* parent);
+		void Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instancedParent);
 		void Accept(class TechniqueProbe& probe);
-		virtual std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, aiMaterial& aiMaterial, class IGraphics& gfx, const std::string& path, bool instanced, bool skinned) = 0;
+		virtual std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, bool instanced, bool skinned) = 0;
 	protected:
 		class VertexLayout& ExtractLayoutFromMaterial(class Material& mat);
 		std::string name;
@@ -79,7 +81,7 @@ namespace tryn::gfx
 			:
 		TechniqueBase(name) {}
 
-		std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, aiMaterial& aiMaterial, class IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skinned = false) override
+		std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skinned = false) override
 		{
 			if (instanced && skinned)
 			{
@@ -106,7 +108,7 @@ namespace tryn::gfx
 	};
 
 	inline std::shared_ptr<class TechniqueBase> TechniquePool::ConstructTechnique(utl::UUID_t techniqueUUID,
-		Material& material, aiMaterial& aiMaterial, IGraphics& gfx, const std::string& path, const bool instanced,
+		Material& material, aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced,
 		const bool skeleton)
 	{
 		auto it = Get().techniqueMap.find(techniqueUUID);

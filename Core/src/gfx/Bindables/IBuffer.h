@@ -1,6 +1,5 @@
 #pragma once
 #include <any>
-#include <Core/src/gfx/BindablePool.h>
 #include <Core/src/gfx/ConstantBuffer.h>
 #include <Core/src/gfx/IBufferFwd.h>
 #include <Core/src/gfx/Render/TechniqueProbe.h>
@@ -23,7 +22,7 @@ namespace tryn::gfx
 	concept Buffer_T = IsBufferType_t<T>::value;
 
 	template <BufferType Type>
-	constexpr const char* GetTypeString() {}
+	constexpr const char* GetTypeString() {return nullptr;}
 
 	template <>
 	constexpr const char* GetTypeString<BufferType::VtxConstant>() { return "VtxConstant"; }
@@ -44,165 +43,64 @@ namespace tryn::gfx
 	class IBuffer : public IBindable
 	{
 	public:
-		template<BufferType T = Type, CachingPolicy P = Policy>
-			requires (T == BufferType::VtxConstant && P == CachingPolicy::Caching)
-		static std::shared_ptr<IVtxConstantBuffer> Resolve(IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
-		{
-			return gfx::BindablePool::Resolve<IVtxConstantBuffer>(gfx, std::forward<ConstantBufferLayout>(cbl), slot, tag);
-		}
+		static std::shared_ptr<IVtxConstantBuffer> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
+			requires (Type == BufferType::VtxConstant && Policy == CachingPolicy::Caching);
 
-		template<BufferType T = Type, CachingPolicy P = Policy>
-			requires (T == BufferType::VtxConstant && P == CachingPolicy::NonCaching)
-		static std::shared_ptr<IVtxConstantBufferNCach> Resolve(IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
-		{
-			return gfx::BindablePool::Resolve<IVtxConstantBufferNCach>(gfx, std::forward<ConstantBufferLayout>(cbl), slot, tag);
-		}
+		static std::shared_ptr<IVtxConstantBufferNCach> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
+			requires (Type == BufferType::VtxConstant && Policy == CachingPolicy::NonCaching);
 
-		template<BufferType T = Type, CachingPolicy P = Policy>
-			requires (T == BufferType::PxConstant && P == CachingPolicy::Caching)
-		static std::shared_ptr<IPxConstantBuffer> Resolve(IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
-		{
-			return gfx::BindablePool::Resolve<IPxConstantBuffer>(gfx, std::forward<ConstantBufferLayout>(cbl), slot, tag);
-		}
+		static std::shared_ptr<IPxConstantBuffer> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
+			requires (Type == BufferType::PxConstant && Policy == CachingPolicy::Caching);
 
-		template<BufferType T = Type, CachingPolicy P = Policy>
-			requires (T == BufferType::PxConstant && P == CachingPolicy::NonCaching)
-		static std::shared_ptr<IPxConstantBufferNCach> Resolve(IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
-		{
-			return gfx::BindablePool::Resolve<IPxConstantBufferNCach>(gfx, std::forward<ConstantBufferLayout>(cbl), slot, tag);
-		}
+		static std::shared_ptr<IPxConstantBufferNCach> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
+			requires (Type == BufferType::PxConstant && Policy == CachingPolicy::NonCaching);
 
-		template<BufferType T = Type, CachingPolicy P = Policy>
-			requires (T == BufferType::Vertex && P == CachingPolicy::Caching)
-		static std::shared_ptr<IVertexBuffer> Resolve(IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag = "?")
-		{
-			return gfx::BindablePool::Resolve<IVertexBuffer>(gfx, cpuBuffer, tag);
-		}
+		static std::shared_ptr<IVertexBuffer> Resolve(const IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag = "?")
+			requires (Type == BufferType::Vertex && Policy == CachingPolicy::Caching);
 
-		template<BufferType T = Type, CachingPolicy P = Policy>
-			requires (T == BufferType::Index && P == CachingPolicy::Caching)
-		static std::shared_ptr<IIndexBuffer> Resolve(IGraphics& gfx, std::shared_ptr<IndexBuffer> indices, std::string tag = "?")
-		{
-			return gfx::BindablePool::Resolve<IIndexBuffer>(gfx, indices, tag);
-		}
+		static std::shared_ptr<IIndexBuffer> Resolve(const IGraphics& gfx, std::shared_ptr<IndexBuffer> indices, std::string tag = "?")
+			requires (Type == BufferType::Index && Policy == CachingPolicy::Caching);
 
-		template <BufferType T = Type>
-			requires (T == BufferType::Vertex)
-		static std::string GenerateID(IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag = "?")
-		{
-			if (tag == "?") return tag;
-			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
-			std::stringstream ss;
-			ss << typeStr << "#VertexBuffer#" << std::to_string(cpuBuffer->ByteSize()) << "#";
 
-			for (auto& element : cpuBuffer->GetLayout().Elements)
-			{
-				ss << element.first.GetName() << element.second;
-			};
-			ss << "#" << tag;
+		static std::string GenerateID(const IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag = "?")
+			requires (Type == BufferType::Vertex);
 
-			return ss.str();
-		}
+		static std::string GenerateID(const IGraphics& gfx, std::shared_ptr<IndexBuffer> indices, std::string tag = "?")
+			requires (Type == BufferType::Index);
 
-		template <BufferType T = Type>
-			requires (T == BufferType::Index)
-		static std::string GenerateID(IGraphics& gfx, std::shared_ptr<IndexBuffer> indices, std::string tag = "?")
-		{
-			if (tag == "?") return tag;
-			decltype(auto) typeStr = gfx.GetAPIString();
-			std::string UID(typeStr);
-			UID += "#IndexBuffer#";
-			UID += std::to_string(indices->Size());
-			UID += '#';
-			UID += tag;
-			return UID;
-		}
+		static std::string GenerateID(const IGraphics& gfx, ConstantBufferLayout& cbl, int slot = 0, std::string tag = "?")
+			requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant);
 
-		template <BufferType T = Type>
-			requires (T == BufferType::PxConstant || T == BufferType::VtxConstant)
-		static std::string GenerateID(IGraphics& gfx, ConstantBufferLayout& cbl, int slot = 0, std::string tag = "?")
-		{
-			if (tag == "?") return tag;
-			decltype(auto) typeStr = gfx.GetAPIString();
-			std::stringstream ss;
-			ss << typeStr << "#VtxConstantBuffer#" << slot << '#' << tag;
-			return ss.str();
-		}
 
-		void Bind() override
-		{
-			throw BufferMissmatchException("Invalid call from interface");
-		}
-		void Bind(IContext& context) override
-		{
-			throw BufferMissmatchException("Invalid call from interface");
-		}
+		void Bind() override;
 
-		virtual std::vector<std::any> GetLayoutFromVB() const
-		{
-			throw BufferMissmatchException("Invalid call from interface");
-		}
+		void Bind(IContext& context) override;
 
-		virtual std::vector<std::any> GetSlottedLayoutFromVB(int slot) const
-		{
-			throw BufferMissmatchException("Invalid call from interface");
-		}
+		virtual std::vector<std::any> GetLayoutFromVB() const;
 
-		constexpr BufferType GetType() const
-		{
-			return GetTypeString<Type>();
-		}
+		virtual std::vector<std::any> GetSlottedLayoutFromVB(int slot) const;
+
+		static constexpr BufferType GetType();
 		virtual ~IBuffer() = default;
 
-		std::string_view GetPath() const
-		{
-			return path;
-		}
-		std::string_view GetTag() const
-		{
-			return tag;
-		}
-		template <BufferType T = Type>
-			requires (T == BufferType::Vertex)
-		VertexLayout& GetLayout()
-		{
-			return layout;
-		}
-		template <BufferType T = Type>
-			requires (T == BufferType::Vertex)
-		const VertexLayout& GetLayout() const
-		{
-			return layout;
-		}
+		std::string_view GetPath() const;
 
-		virtual void Resize(const std::size_t newSize)
-		{
-			throw BufferMissmatchException{ "Unsupported Operation! Tried to resize a buffer that doesnt implement the resize operator!" };
-		}
+		std::string_view GetTag() const;
 
-		template <BufferType T = Type>
-			requires (T == BufferType::VtxConstant || T == BufferType::PxConstant)
+		VertexLayout& GetLayout() requires (Type == BufferType::Vertex);
+
+		const VertexLayout& GetLayout() const requires (Type == BufferType::Vertex);
+
+		virtual void Resize(const std::size_t newSize);
+
 		ElementView operator[](std::string id)
-		{
-			return (*std::static_pointer_cast<ConstantBuffer>(pCPUBuffer))[id];
-		}
+			requires (Type == BufferType::VtxConstant || Type == BufferType::PxConstant);
 
-		template <BufferType T = Type>
-			requires (T == BufferType::VtxConstant || T == BufferType::PxConstant)
 		void Accept_(TechniqueProbe& probe)
-		{
-			if (probe.VisitBuffer(*reinterpret_cast<ConstantBuffer*>(pCPUBuffer.get())))
-			{
-				pCPUBuffer->SetDirty();
-			}
-		}
+			requires (Type == BufferType::VtxConstant || Type == BufferType::PxConstant);
 
-		template <BufferType T = Type>
-			requires (T == BufferType::Instance || T == BufferType::VtxConstant || T == BufferType::PxConstant)
-		auto& GetCPUBuffer()
-		{
-			return reinterpret_cast<ConstantBuffer&>(*pCPUBuffer.get());
-		}
+		ConstantBuffer& GetCPUBuffer()
+			requires (Type == BufferType::Instance || Type == BufferType::VtxConstant || Type == BufferType::PxConstant);
 
 		static constexpr BufferType bufferType = Type;
 		static constexpr CachingPolicy policy = Policy;
@@ -217,5 +115,9 @@ namespace tryn::gfx
 		[[no_unique_address]] std::conditional_t<Type == BufferType::Instance, size_t, utl::empty_t> gpuSize;
 	};
 
-	
+	template <BufferType Type, CachingPolicy Policy>
+	constexpr BufferType IBuffer<Type, Policy>::GetType()
+	{
+		return GetTypeString<Type>();
+	}
 }

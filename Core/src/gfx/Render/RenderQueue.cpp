@@ -13,7 +13,7 @@ namespace tryn::gfx
 		:
 		id(id)
 	{}
-	void RenderQueue::RunJobs(IGraphics& gfx)
+	void RenderQueue::RunJobs(const IGraphics& gfx)
 	{
 		for (int i = 0; i < anyVector.Size(); i++)
 		{
@@ -22,7 +22,7 @@ namespace tryn::gfx
 		}
 	}
 
-	void RenderQueue::RunJobsAsync(IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers, gfx::PointLight* pPointLight)
+	void RenderQueue::RunJobsAsync(const IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers, gfx::PointLight* pPointLight)
 	{
 		for (int i = 0; i < anyVector.Size(); i++)
 		{
@@ -109,7 +109,7 @@ namespace tryn::gfx
 		return anyVector;
 	}
 
-	void RenderQueue::ExecuteBatchAsync(IGraphics& gfx, RenderWorker* worker, std::vector<IJob*>::iterator beginIt, std::vector<IJob*>::iterator endIt, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr)
+	void RenderQueue::ExecuteBatchAsync(const IGraphics& gfx, RenderWorker* worker, std::vector<IJob*>::iterator beginIt, std::vector<IJob*>::iterator endIt, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr)
 	{
 		auto batchRenderTask = taskPtr.value_or(std::make_shared<BatchRenderTask>());
 		batchRenderTask->params.begin = beginIt;

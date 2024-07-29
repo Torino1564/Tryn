@@ -15,7 +15,7 @@ namespace tryn::gfx
 		friend class RenderQueue;
 	public:
 		PointLightJob(const PointLightParameters& parameters, const glm::vec3& position, IRenderGraph& renderGraph, std::uint16_t jobID = 0);
-		void Execute(IGraphics& gfx) override;
+		void Execute(const IGraphics& gfx) override;
 		void Execute(IContext& ctx) override;
 	private:
 		void ExecuteImpl_();

@@ -41,8 +41,16 @@
     <ClCompile Include="src\gfx\Animation\BonedMesh.cpp" />
     <ClCompile Include="src\gfx\Bindables\Bindable.cpp" />
     <ClCompile Include="src\gfx\Bindables\DepthStencil.cpp" />
+    <ClCompile Include="src\gfx\Bindables\IBuffer.cpp" />
+    <ClCompile Include="src\gfx\Bindables\InputLayout.cpp" />
     <ClCompile Include="src\gfx\Bindables\JITUpdateBuffer.cpp" />
+    <ClCompile Include="src\gfx\Bindables\PixelShader.cpp" />
+    <ClCompile Include="src\gfx\Bindables\PrimitiveTopology.cpp" />
+    <ClCompile Include="src\gfx\Bindables\Rasterizer.cpp" />
     <ClCompile Include="src\gfx\Bindables\RenderTargetView.cpp" />
+    <ClCompile Include="src\gfx\Bindables\Sampler.cpp" />
+    <ClCompile Include="src\gfx\Bindables\TextureResource.cpp" />
+    <ClCompile Include="src\gfx\Bindables\VertexShader.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11DepthStencil.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
@@ -196,7 +204,7 @@
     <ClInclude Include="src\gfx\Bindables\PoliVertexBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\Rasterizer.h" />
     <ClInclude Include="src\gfx\Bindables\Sampler.h" />
-    <ClInclude Include="src\gfx\Bindables\Texture.h" />
+    <ClInclude Include="src\gfx\Bindables\TextureResource.h" />
     <ClInclude Include="src\gfx\Bindables\TransformCBuf.h" />
     <ClInclude Include="src\gfx\Camera.h" />
     <ClInclude Include="src\gfx\CPUBuffer.h" />

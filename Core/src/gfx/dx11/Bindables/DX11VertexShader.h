@@ -7,13 +7,13 @@ namespace tryn::gfx::dx11
 	class DX11VertexShader : public IVertexShader
 	{
 	public:
-		DX11VertexShader(Graphics& gfx, std::string& path);
+		DX11VertexShader(const Graphics& gfx, std::string& path);
 		void Bind() override;
 		void Bind(IContext& context) override;
 		const Microsoft::WRL::ComPtr<ID3DBlob>& GetBlob() const;
 	private:
 		Microsoft::WRL::ComPtr<ID3D11VertexShader> pVS;
 		Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
-		Graphics& gfx;
+		const Graphics& gfx;
 	};
 }

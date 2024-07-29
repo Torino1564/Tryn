@@ -30,7 +30,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IVertexBuffer>
 		{
 			template <class ... Args>
-			std::shared_ptr<IVertexBuffer> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<IVertexBuffer> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreateVertexBuffer(std::forward<Args>(args)...);
 			}
@@ -38,7 +38,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IVertexShader>
 		{
 			template <class ... Args>
-			std::shared_ptr<IVertexShader> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<IVertexShader> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreateVertexShader(std::forward<Args>(args)...);
 			}
@@ -46,7 +46,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IPixelShader>
 		{
 			template <class ... Args>
-			std::shared_ptr<IPixelShader> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<IPixelShader> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreatePixelShader(std::forward<Args>(args)...);
 			}
@@ -54,7 +54,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IIndexBuffer>
 		{
 			template <class ... Args>
-			std::shared_ptr<IIndexBuffer> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<IIndexBuffer> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreateIndexBuffer(std::forward<Args>(args)...);
 			}
@@ -62,7 +62,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IInputLayout>
 		{
 			template <class ... Args>
-			std::shared_ptr<IInputLayout> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<IInputLayout> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreateInputLayout(std::forward<Args>(args)...);
 			}
@@ -70,7 +70,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IPrimitiveTopology>
 		{
 			template <class ... Args>
-			std::shared_ptr<IPrimitiveTopology> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<IPrimitiveTopology> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreatePrimitiveTopology(std::forward<Args>(args)...);
 			}
@@ -78,7 +78,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IVtxConstantBuffer>
 		{
 			template <class ... Args>
-			std::shared_ptr<IVtxConstantBuffer> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<IVtxConstantBuffer> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreateVtxConstantBuffer(std::forward<Args>(args)...);
 			}
@@ -86,7 +86,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IVtxConstantBufferNCach>
 		{
 			template <class ... Args>
-			std::shared_ptr<IVtxConstantBufferNCach> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<IVtxConstantBufferNCach> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreateNonCachVtxConstantBuffer(std::forward<Args>(args)...);
 			}
@@ -94,7 +94,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IPxConstantBuffer>
 		{
 			template <class ... Args>
-			std::shared_ptr<IPxConstantBuffer> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<IPxConstantBuffer> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreatePxConstantBuffer(std::forward<Args>(args)...);
 			}
@@ -102,7 +102,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IPxConstantBufferNCach>
 		{
 			template <class ... Args>
-			std::shared_ptr<IPxConstantBufferNCach> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<IPxConstantBufferNCach> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreateNonCachPxConstantBuffer(std::forward<Args>(args)...);
 			}
@@ -110,7 +110,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<ITexture>
 		{
 			template <class ... Args>
-			std::shared_ptr<ITexture> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<ITexture> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreateTexture(std::forward<Args>(args)...);
 			}
@@ -118,7 +118,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IRasterizer>
 		{
 			template <class ... Args>
-			std::shared_ptr<IRasterizer> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<IRasterizer> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreateRasterizer(std::forward<Args>(args)...);
 			}
@@ -126,7 +126,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<ISampler>
 		{
 			template <class ... Args>
-			std::shared_ptr<ISampler> operator()(IGraphics& gfx, Args&&...args)
+			std::shared_ptr<ISampler> operator()(const IGraphics& gfx, Args&&...args)
 			{
 				return gfx.CreateSampler(std::forward<Args>(args)...);
 			}
@@ -134,7 +134,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IOutputOnlyRenderTargetView>
 		{
 			template <class... Args>
-			std::shared_ptr<IOutputOnlyRenderTargetView> operator()(IGraphics& gfx, Args&&... args)
+			std::shared_ptr<IOutputOnlyRenderTargetView> operator()(const IGraphics& gfx, Args&&... args)
 			{
 				return gfx.CreateOutputOnlyRenderTargetView(std::forward<Args>(args)...);
 			}
@@ -142,7 +142,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IShaderResourceRenderTargetView>
 		{
 			template <class... Args>
-			std::shared_ptr<IShaderResourceRenderTargetView> operator()(IGraphics& gfx, Args&&... args)
+			std::shared_ptr<IShaderResourceRenderTargetView> operator()(const IGraphics& gfx, Args&&... args)
 			{
 				return gfx.CreateShaderResourceRenderTargetView(std::forward<Args>(args)...);
 			}
@@ -150,7 +150,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IOutputOnlyDepthStencil>
 		{
 			template <class... Args>
-			std::shared_ptr<IOutputOnlyDepthStencil> operator()(IGraphics& gfx, Args&&... args)
+			std::shared_ptr<IOutputOnlyDepthStencil> operator()(const IGraphics& gfx, Args&&... args)
 			{
 				return gfx.CreateOutputOnlyDepthStencil(std::forward<Args>(args)...);
 			}
@@ -158,7 +158,7 @@ namespace tryn::gfx
 		template <> struct ResolveHelper<IShaderResourceDepthStencil>
 		{
 			template <class... Args>
-			std::shared_ptr<IShaderResourceDepthStencil> operator()(IGraphics& gfx, Args&&... args)
+			std::shared_ptr<IShaderResourceDepthStencil> operator()(const IGraphics& gfx, Args&&... args)
 			{
 				return gfx.CreateShaderResourceDepthStencil(std::forward<Args>(args)...);
 			}
@@ -166,7 +166,7 @@ namespace tryn::gfx
 
 	public:
 		template <class T, class... Args>
-		std::shared_ptr<T> static Resolve(IGraphics& gfx, Args&& ... args)
+		std::shared_ptr<T> static Resolve(const IGraphics& gfx, Args&& ... args)
 		{
 			//Gets the key that would be generated from the queried resource
 			const auto key = T::GenerateID(gfx, args...);

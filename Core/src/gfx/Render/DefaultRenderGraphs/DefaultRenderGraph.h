@@ -6,6 +6,6 @@ namespace tryn::gfx
 	class DefaultRenderGraph : public IRenderGraph
 	{
 	public:
-		DefaultRenderGraph(IGraphics& gfx);
+		DefaultRenderGraph(const IGraphics& gfx);
 	};
 }

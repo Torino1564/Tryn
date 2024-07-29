@@ -9,7 +9,7 @@ namespace tryn::gfx
 		data{ parent,step }
 	{}
 
-	void BasicJob::Execute(IGraphics& gfx)
+	void BasicJob::Execute(const IGraphics& gfx)
 	{
 		data.pDrawable->BindBase();
 		data.pDrawable->BindExtraBinds();

@@ -31,16 +31,16 @@ namespace tryn::gfx
 			bind->Bind(context);
 		}
 	}
-	void Step::Draw(IGraphics& gfx, Drawable* parent) const
+	void Step::Draw(const IGraphics& gfx, Drawable* parent) const
 	{
 		gfx.DrawIndexed(parent->GetIndexCount());
 	}
-	void Step::Submit(IGraphics& gfx, Drawable* parent)
+	void Step::Submit(const IGraphics& gfx, Drawable* parent)
 	{
 		auto& renderGraph = gfx.GetRenderGraph();
 		renderGraph.GetRenderQueueByID(renderQueueID).Push(BasicJob(parent,this));
 	}
-	void Step::Submit(IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instanceParent)
+	void Step::Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instanceParent)
 	{
 		auto& renderGraph = gfx.GetRenderGraph();
 		renderGraph.GetRenderQueueByID(renderQueueID).Push(InstancedJob(parent, this, transforms, &instanceParent));

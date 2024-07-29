@@ -4,7 +4,7 @@
 
 namespace tryn::gfx
 {
-	DefaultRenderGraph::DefaultRenderGraph(IGraphics& gfx)
+	DefaultRenderGraph::DefaultRenderGraph(const IGraphics& gfx)
 		:
 		IRenderGraph(gfx)
 	{

@@ -18,8 +18,8 @@ namespace tryn::gfx
 	{
 	public:
 		RenderQueue(std::string id);
-		void RunJobs(IGraphics& gfx);
-		void RunJobsAsync(IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers, gfx::PointLight* pPointLight);
+		void RunJobs(const IGraphics& gfx);
+		void RunJobsAsync(const IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers, gfx::PointLight* pPointLight);
 		void Clear();
 		std::uint16_t GetNumberOfJobs() const;
 		void Push(IJob* pJob);
@@ -35,7 +35,7 @@ namespace tryn::gfx
 		}
 		utl::AnyVector& GetAnyVector();
 	private:
-		void ExecuteBatchAsync(IGraphics& gfx, RenderWorker* worker, std::vector<IJob*>::iterator, std::vector<IJob*>::iterator, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr = std::nullopt);
+		void ExecuteBatchAsync(const IGraphics& gfx, RenderWorker* worker, std::vector<IJob*>::iterator, std::vector<IJob*>::iterator, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr = std::nullopt);
 		void BindPointLight(RenderWorker* worker, PointLight* pPointLight, std::optional<std::shared_ptr<BindPointLightTask>> taskPtr = std::nullopt);
 
 	private:

@@ -8,7 +8,7 @@ tryn::gfx::InstancedJob::InstancedJob(Drawable* parent, Step* step, std::span<co
 {
 }
 
-void tryn::gfx::InstancedJob::Execute(IGraphics& gfx)
+void tryn::gfx::InstancedJob::Execute(const IGraphics& gfx)
 {
 	data.pDrawable->BindBase();
 	data.pDrawable->BindExtraBinds();

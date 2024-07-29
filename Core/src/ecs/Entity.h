@@ -6,6 +6,11 @@
 #include "EntityID.h"
 #include <Core/src/ser/StreamIO.h>
 
+namespace tryn::gfx
+{
+	class IGraphics;
+}
+
 namespace tryn::ecs
 {
 	template <typename T>

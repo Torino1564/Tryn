@@ -4,7 +4,7 @@
 #include <Core/src/gfx/dx11/Bindables/DX11RenderTargetView.h>
 namespace tryn::gfx::dx11
 {
-	DX11Context::DX11Context(Graphics& gfx)
+	DX11Context::DX11Context(const Graphics& gfx)
 	{
 		// Create context
 		gfx.GetDevice().CreateDeferredContext(0u, pContext.GetAddressOf());
@@ -36,7 +36,7 @@ namespace tryn::gfx::dx11
 	{
 		return GraphicAPI::DX11;
 	}
-	void DX11Context::Submit(IGraphics& gfx)
+	void DX11Context::Submit(const IGraphics& gfx)
 	{
 		trynass_msg(deferred, L"Called the submit member on a non deferred context");
 		gfx.AssertContextCoherence(*this);

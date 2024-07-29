@@ -8,8 +8,6 @@
 #include <Core/src/utl/StatefulMeta/CTV.h>
 #include <Core/src/utl/StringHasher.h>
 
-#include "Core/src/app/App.h"
-
 #define ZT_DEFINE_SERIALIZER(x) struct Serializer : public tryn::ser::Serializer<x>
 
 #define ZT_SERIALIZER_HELPER(x) struct Serializer : public tryn::ser::Serializer<x> {\

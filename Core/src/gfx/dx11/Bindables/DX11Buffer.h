@@ -23,7 +23,7 @@ namespace tryn::gfx::dx11
 	class DX11Buffer : public IBuffer<Type, Policy>
 	{
 	public:
-		DX11Buffer(Graphics& gfx, std::shared_ptr<CPUBuffer> pCpuBuffer, std::string tag = "?")
+		DX11Buffer(const Graphics& gfx, std::shared_ptr<CPUBuffer> pCpuBuffer, std::string tag = "?")
 			requires (Type == BufferType::Vertex || Type == BufferType::Index) && (Policy == CachingPolicy::Caching)
 			:
 			gfx(gfx)
@@ -51,7 +51,7 @@ namespace tryn::gfx::dx11
 
 		
 		// TODO: Add NonCaching variant
-		DX11Buffer(Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag = "?")
+		DX11Buffer(const Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag = "?")
 		requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant)
 		: gfx(gfx)
 		{
@@ -65,7 +65,7 @@ namespace tryn::gfx::dx11
 			InitDynamicCBufferOnGPU();
 		}
 
-		DX11Buffer(Graphics& gfx, ConstantBufferLayout::Node arrayElement, int slot, std::size_t numInstances = 50)
+		DX11Buffer(const Graphics& gfx, ConstantBufferLayout::Node arrayElement, int slot, std::size_t numInstances = 50)
 		requires (Type == BufferType::Instance && Policy == CachingPolicy::Caching)
 		: gfx(gfx)
 		{
@@ -230,7 +230,7 @@ namespace tryn::gfx::dx11
 			throw BufferMissmatchException(L"Incompatible buffer type call!");
 		}
 
-		Graphics& gfx;
+		const Graphics& gfx;
 		//Memory
 		UINT stride = 0;
 		UINT offset = 0;

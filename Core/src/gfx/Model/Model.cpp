@@ -35,7 +35,7 @@ namespace tryn::gfx
 		return glmMatrix;
 	}
 
-	Model::Model(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, bool instanced)
+	Model::Model(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, bool instanced)
 		:
 		name(path.data()), gfx(gfx)
 	{
@@ -156,7 +156,7 @@ namespace tryn::gfx
 		}
 	}
 
-	std::unique_ptr<Model> Model::Make(gfx::IGraphics& gfx, std::string_view path,
+	std::unique_ptr<Model> Model::Make(const gfx::IGraphics& gfx, std::string_view path,
 		const std::span<utl::UUID_t> techniqueUUIDs, glm::vec3 scale, bool instanced)
 	{
 		auto pModel = std::make_unique<Model>(std::move(Model{ path, gfx }));
@@ -287,7 +287,7 @@ namespace tryn::gfx
 	{
 		return meshCounter + 1;
 	}
-	Model::Model(std::string_view path, gfx::IGraphics& gfx)
+	Model::Model(std::string_view path, const gfx::IGraphics& gfx)
 		:
 		name(path.data()), gfx(gfx) {}
 	Node Model::ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root)

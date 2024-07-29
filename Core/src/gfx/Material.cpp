@@ -1,7 +1,7 @@
 #include "Material.h"
 #include <assimp/material.h>
 #include <assimp/types.h>
-#include <Core/src/gfx/Bindables/Texture.h>
+#include <Core/src/gfx/Bindables/TextureResource.h>
 #include <Core/src/gfx/Bindables/Rasterizer.h>
 #include <Core/src/gfx/Bindables/IBuffer.h>
 #include <Core/src/gfx/Bindables/VertexShader.h>
@@ -12,7 +12,7 @@
 
 namespace tryn::gfx
 {
-	Material Material::Make(IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path,
+	Material Material::Make(const IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path,
 		std::span<utl::UUID_t> techniqueUUIDs, const bool instanced, const bool skinned)
 	{
 		const auto rootPath = path.parent_path().string() + "\\";
@@ -48,7 +48,7 @@ namespace tryn::gfx
 		return pTechniques;
 	}
 
-	void Material::AddTechnique(utl::UUID_t techniqueUUID, IGraphics& gfx, aiMaterial& material,
+	void Material::AddTechnique(utl::UUID_t techniqueUUID, const IGraphics& gfx, aiMaterial& material,
 		const std::string& path, bool instanced, bool skinned)
 	{
 		pTechniques.push_back(TechniquePool::ConstructTechnique(techniqueUUID, *this, material, gfx, path,  instanced, skinned));

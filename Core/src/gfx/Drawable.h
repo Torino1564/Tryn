@@ -13,9 +13,9 @@ namespace tryn::gfx
 	public:
 		virtual ~Drawable() = default;
 
-		void Draw(IGraphics& gfx , glm::mat4 transform);
-		void Submit(IGraphics& gfx, glm::mat4 transform);
-		void Submit(IGraphics& gfx, std::span<const glm::mat4> transforms, class InstancedModelParent& parent);
+		void Draw(const IGraphics& gfx , glm::mat4 transform);
+		void Submit(const IGraphics& gfx, glm::mat4 transform);
+		void Submit(const IGraphics& gfx, std::span<const glm::mat4> transforms, class InstancedModelParent& parent);
 		void BindBase() const;
 		void BindBase(IContext& context) const;
 		void BindExtraBinds();
@@ -23,7 +23,7 @@ namespace tryn::gfx
 		void AddExtraBind(IBindable* pBindable);
 		void BindTransformCBuf() const;
 		void BindTransformCBuf(IContext& context) const;
-		void InitTransformCBuf(IGraphics& gfx);
+		void InitTransformCBuf(const IGraphics& gfx);
 		[[nodiscard]] IVertexBuffer& GetVertexBuffer() const;
 		[[nodiscard]] uint32_t GetIndexCount() const;
 		void AddTechnique(std::shared_ptr<TechniqueBase> pTechnique);

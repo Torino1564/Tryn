@@ -22,7 +22,7 @@ namespace tryn::gfx
 		friend class TechniqueBase;
 	public:
 		template <TechniqueClass... T>
-		static Material Make(IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path)
+		static Material Make(const IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path)
 		{
 			// TODO:
 			// assert uniqueness
@@ -42,15 +42,15 @@ namespace tryn::gfx
 
 			return mat;
 		}
-		static Material Make(IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path, std::span<utl::UUID_t> techniqueUUIDs, const bool instanced = false,const bool skinned = false);
+		static Material Make(const IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path, std::span<utl::UUID_t> techniqueUUIDs, const bool instanced = false,const bool skinned = false);
 		VertexBuffer ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton = nullptr) const noexcept;
 		IndexBuffer ExtractIndices(const aiMesh& mesh) const noexcept;
 		std::vector<std::shared_ptr<TechniqueBase>> GetTechniques() const noexcept;
 
-		void AddTechnique(utl::UUID_t techniqueUUID, IGraphics& gfx, aiMaterial& material, const std::string& path, bool instanced, bool skinned);
+		void AddTechnique(utl::UUID_t techniqueUUID, const IGraphics& gfx, aiMaterial& material, const std::string& path, bool instanced, bool skinned);
 
 		template <unsigned N = 0, TechniqueClass... T>
-		void AddTechnique(IGraphics& gfx, aiMaterial& material, const std::string& path)
+		void AddTechnique(const IGraphics& gfx, aiMaterial& material, const std::string& path)
 		{
 			if constexpr (N < sizeof...(T))
 			{

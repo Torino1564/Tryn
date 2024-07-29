@@ -20,19 +20,19 @@ namespace tryn::gfx
 		friend class PointLightBindPass;
 
 	public:
-		IRenderGraph(IGraphics& gfx, const bool initDefaultSourceAndSinks = true);
-		virtual void ExecuteFrame(IGraphics& gfx);
+		IRenderGraph(const IGraphics& gfx, const bool initDefaultSourceAndSinks = true);
+		virtual void ExecuteFrame(const IGraphics& gfx);
 		virtual ~IRenderGraph() = default;
 		void AddCamera(Camera*);
 		void AddPointLight(PointLight*);
 		void AddRenderQueue(std::string renderQueueID);
-		virtual void RunQueues(IGraphics& gfx) {};
+		virtual void RunQueues(const IGraphics& gfx) {};
 		RenderQueue& GetRenderQueueByID(std::string_view ID);
 		RenderQueue& GetOrAddRenderQueue(const std::string& renderQueueName);
 		void Reset();
 		std::uint16_t GetMaxPointLights() const;
 		void ResizePointLightBuffer(const std::uint16_t newSize);
-		IGraphics& Gfx() const;
+		const IGraphics& Gfx() const;
 	protected:
 		template <typename Pass>
 		void AddPass(Pass&& pass)
@@ -55,7 +55,7 @@ namespace tryn::gfx
 		std::map<std::string, uint16_t> queueKeys;
 		static constexpr std::uint16_t maxQueues = 50;
 		std::vector<RenderQueue> queues;
-		IGraphics& gfx;
+		const IGraphics& gfx;
 
 		// Global graph resources
 		std::shared_ptr<IGenericRenderTargetView> pRTV;

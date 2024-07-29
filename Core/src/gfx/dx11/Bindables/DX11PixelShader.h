@@ -9,13 +9,13 @@ namespace tryn::gfx::dx11
 	class DX11PixelShader : public IPixelShader
 	{
 	public:
-		DX11PixelShader(Graphics& gfx, std::string);
+		DX11PixelShader(const Graphics& gfx, const std::string&);
 		void Bind() override;
 		void Bind(IContext& context) override;
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11PixelShader> pPS;
 		Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
-		Graphics& gfx;
+		const Graphics& gfx;
 	};
 }

@@ -19,7 +19,7 @@ namespace tryn::gfx::dx11
 			return pDSV.GetAddressOf();
 		}
 		template <BufferResourceType Type = Type>
-		DX11DepthStencil(Graphics& gfx, const spa::DimensionsI dimensions, ComparissonMode mode = ComparissonMode::Less)
+		DX11DepthStencil(const Graphics& gfx, const spa::DimensionsI dimensions, ComparissonMode mode = ComparissonMode::Less)
 			requires (Type == BufferResourceType::OutputOnly)
 		:
 			gfx(gfx)
@@ -27,7 +27,7 @@ namespace tryn::gfx::dx11
 			DSVCreation(gfx, dimensions, mode, (Type == BufferResourceType::ShaderResource));
 		}
 		template <BufferResourceType Type = Type>
-		DX11DepthStencil(Graphics& gfx, const spa::DimensionsI dimensions, const uint16_t slot, ComparissonMode mode = ComparissonMode::Less)
+		DX11DepthStencil(const Graphics& gfx, const spa::DimensionsI dimensions, const uint16_t slot, ComparissonMode mode = ComparissonMode::Less)
 			requires (Type == BufferResourceType::ShaderResource)
 		:
 			gfx(gfx)
@@ -65,7 +65,7 @@ namespace tryn::gfx::dx11
 			gfx.GetContext().ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 		}
 	private:
-		void DSVCreation(Graphics& gfx, const spa::DimensionsI dimensions, ComparissonMode mode, bool isShaderResource)
+		void DSVCreation(const Graphics& gfx, const spa::DimensionsI dimensions, ComparissonMode mode, bool isShaderResource)
 		{
 			// DSV Creation
 			D3D11_DEPTH_STENCIL_DESC dsd = {};
@@ -95,7 +95,7 @@ namespace tryn::gfx::dx11
 			dsvd.Texture2D.MipSlice = 0u;
 			gfx.GetDevice().CreateDepthStencilView(pDepthStencil.Get(), &dsvd, &pDSV) >> chk;
 		}
-		void SRVCreation(Graphics& gfx, const uint16_t slot)
+		void SRVCreation(const Graphics& gfx, const uint16_t slot)
 		{
 			static_assert(Type == BufferResourceType::ShaderResource);
 
@@ -115,7 +115,7 @@ namespace tryn::gfx::dx11
 
 			this->slot = slot;
 		}
-		Graphics& gfx;
+		const Graphics& gfx;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 		[[no_unique_address]] std::conditional_t<Type == BufferResourceType::ShaderResource, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, utl::empty_t> pSRV;
 	};

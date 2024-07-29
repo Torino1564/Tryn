@@ -10,7 +10,7 @@ namespace tryn::gfx
 		pRenderGraph = std::move(renderGraph_p);
 	}
 
-	IRenderGraph& IGraphics::GetRenderGraph()
+	IRenderGraph& IGraphics::GetRenderGraph() const
 	{
 		return *pRenderGraph;
 	}
@@ -21,6 +21,11 @@ namespace tryn::gfx
 		pRenderGraph->ExecuteFrame(*this);
 	}
 
+	const glm::mat4& IGraphics::GetCameraMatrix() const
+	{
+		return camera;
+	}
+
 	glm::mat4& IGraphics::GetCameraMatrix()
 	{
 		return camera;
@@ -29,6 +34,11 @@ namespace tryn::gfx
 	void IGraphics::SetCamera(glm::mat4 camera)
 	{
 		this->camera = std::move(camera);
+	}
+
+	const glm::mat4& IGraphics::GetProjectionMatrix() const
+	{
+		return projection;
 	}
 
 	glm::mat4& IGraphics::GetProjectionMatrix()

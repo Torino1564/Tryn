@@ -17,7 +17,7 @@ namespace tryn::gfx
 		template <typename T> friend struct ser::TypeSerializer;
 		friend class InstancedModelChild;
 	public:
-		InstancedModelParent(gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint32_t> numInstances = std::nullopt);
+		InstancedModelParent(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint32_t> numInstances = std::nullopt);
 		InstancedModelParent();
 		~InstancedModelParent();
 		void Submit(const glm::mat4& entityTransform);

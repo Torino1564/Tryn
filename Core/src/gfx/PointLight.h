@@ -9,18 +9,18 @@ namespace tryn::gfx
 	class PointLight
 	{
 	public:
-		PointLight(IGraphics& gfx, float radius = 0.5f, glm::vec3 color = { 1.0f,1.0f,1.0f });
+		PointLight(const IGraphics& gfx, float radius = 0.5f, glm::vec3 color = { 1.0f,1.0f,1.0f });
 		void ShowControls();
 		void Reset();
 		void Bind() const;
 		void Bind(IContext&) const;
-		void SubmitLight(IGraphics& gfx);
-		void Submit(IGraphics& gfx, const glm::mat4 view);
+		void SubmitLight(const IGraphics& gfx);
+		void Submit(const IGraphics& gfx, const glm::mat4 view);
 		Model& GetModel();
 	public:
 		
 	private:
-		IGraphics& gfx;
+		const IGraphics& gfx;
 		PointLightParameters parameters = {};
 		glm::vec3 position = { 0.0f,0.0f,0.0f };
 		glm::mat4 transformation;

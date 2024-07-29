@@ -12,7 +12,7 @@ namespace tryn::gfx::dx11
 	{
 	public:
 		template <BufferResourceType Type = Type>
-		DX11RenderTargetView(Graphics& gfx, const spa::DimensionsI dimensions)
+		DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions)
 			requires (Type == BufferResourceType::OutputOnly)
 		:
 			gfx(gfx)
@@ -22,7 +22,7 @@ namespace tryn::gfx::dx11
 		}
 
 		template <BufferResourceType Type = Type>
-		DX11RenderTargetView(Graphics& gfx, const spa::DimensionsI dimensions, uint16_t slot)
+		DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, uint16_t slot)
 			requires (Type == BufferResourceType::ShaderResource)
 		:
 			gfx(gfx)
@@ -32,7 +32,7 @@ namespace tryn::gfx::dx11
 			SRVCreation(gfx, slot);
 		}
 		template <BufferResourceType Type = Type>
-		DX11RenderTargetView(Graphics& gfx, ID3D11Texture2D* pTexture)
+		DX11RenderTargetView(const Graphics& gfx, ID3D11Texture2D* pTexture)
 			requires (Type == BufferResourceType::OutputOnly)
 		:
 			gfx(gfx)
@@ -107,7 +107,7 @@ namespace tryn::gfx::dx11
 			gfx.GetContext().ClearRenderTargetView(pRTV.Get(), gfx.GetBackgroundColor());
 		}
 	private:
-		void RTVCreation(Graphics& gfx, const spa::DimensionsI dimensions)
+		void RTVCreation(const Graphics& gfx, const spa::DimensionsI dimensions)
 		{
 			// RTV Creation
 			D3D11_TEXTURE2D_DESC textureDesc = {};
@@ -156,7 +156,7 @@ namespace tryn::gfx::dx11
 				pTexture.Get(), &rtvDesc, &pRTV
 			) >> chk;
 		}
-		void SRVCreation(Graphics& gfx, uint16_t slot)
+		void SRVCreation(const Graphics& gfx, uint16_t slot)
 		{
 			static_assert(Type == BufferResourceType::ShaderResource);
 
@@ -179,7 +179,7 @@ namespace tryn::gfx::dx11
 
 			this->slot = slot;
 		}
-		Graphics& gfx;
+		const Graphics& gfx;
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRTV;
 		[[no_unique_address]] std::conditional_t<Type == BufferResourceType::ShaderResource, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, utl::empty_t> pSRV;

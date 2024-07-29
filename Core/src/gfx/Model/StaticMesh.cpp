@@ -8,7 +8,7 @@
 
 namespace tryn::gfx
 {
-	StaticMesh::StaticMesh(IGraphics& gfx, const Material& material, const aiMesh& mesh, std::string_view tag, glm::vec3 scale, std::optional<std::uint16_t> meshID)
+	StaticMesh::StaticMesh(const IGraphics& gfx, const Material& material, const aiMesh& mesh, std::string_view tag, glm::vec3 scale, std::optional<std::uint16_t> meshID)
 	{
 		if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f)
 		{

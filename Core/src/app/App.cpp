@@ -44,7 +44,7 @@ namespace tryn::app
 		gfx->EndFrame();
 	}
 
-	gfx::IGraphics& App::Gfx()
+	const gfx::IGraphics& App::Gfx() const
 	{
 		return *gfx;
 	}

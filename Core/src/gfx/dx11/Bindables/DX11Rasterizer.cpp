@@ -3,7 +3,7 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11Rasterizer::DX11Rasterizer(Graphics& gfx, bool twoSided)
+	DX11Rasterizer::DX11Rasterizer(const Graphics& gfx, bool twoSided)
 		:
 		gfx(gfx)
 	{

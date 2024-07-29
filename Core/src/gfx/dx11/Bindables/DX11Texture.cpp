@@ -7,7 +7,7 @@
 
 namespace tryn::gfx
 {
-	dx11::DX11Texture::DX11Texture(Graphics& gfx, const std::filesystem::path path, const uint8_t slot)
+	dx11::DX11Texture::DX11Texture(const Graphics& gfx, const std::filesystem::path& path, const uint8_t slot)
 		:
 		gfx(gfx)
 	{

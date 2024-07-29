@@ -10,7 +10,7 @@ namespace tryn::gfx::dx11
 	{
 		friend class Graphics;
 	public:
-		DX11RenderWorker(ccr::Master* pMaster, Graphics& gfx)
+		DX11RenderWorker(ccr::Master* pMaster, const Graphics& gfx)
 		{
 			pContext = std::make_unique<DX11Context>(gfx);
 			pMaster_ = pMaster;
@@ -21,7 +21,7 @@ namespace tryn::gfx::dx11
 			return *pContext;
 		}
 
-		void SubmitWork(IGraphics& gfx) override
+		void SubmitWork(const IGraphics& gfx) override
 		{
 			trylog.debug(L"Submitted work");
 			pContext->Submit(gfx);

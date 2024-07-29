@@ -22,7 +22,7 @@ namespace tryn::gfx
 	}
 
 	template<bool Instanced, bool Skinned>
-	ForwardPhongBase<Instanced, Skinned>::ForwardPhongBase(Material& material, aiMaterial& aiMat, IGraphics& gfx, const std::string& rootPath)
+	ForwardPhongBase<Instanced, Skinned>::ForwardPhongBase(Material& material, aiMaterial& aiMat, const IGraphics& gfx, const std::string& rootPath)
 		:
 		Technique<ForwardPhongBase, "ForwardPhongBase", Instanced, Skinned>(Skinned && Instanced ? "PhongInstSkn" : (Skinned ? "PhongSkn" : (Instanced ? "PhongInst" : "Phong")))
 	{
