@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Technique.h"
 #include <Core/src/gfx/Material.h>
 #include <Core/src/gfx/Model/InstancedModel.h>

@@ -4,7 +4,6 @@
 
 #include <Core/src/gfx/ImguiManager.h>
 #include <format>
-#include <iostream>
 
 namespace tryn::ecs::cmp
 {
@@ -32,5 +31,4 @@ namespace tryn::ecs::cmp
 			ImGuiPrintType<typename MapElement::Type>::ImGuiPrint<MapElement>(pData);
 		}
 	};
-
 }

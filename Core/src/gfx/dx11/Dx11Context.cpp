@@ -1,7 +1,10 @@
+#include "TrynPCH.h"
 #include "Dx11Context.h"
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
 #include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11RenderTargetView.h>
+#include "DX11BufferFwd.h"
+
 namespace tryn::gfx::dx11
 {
 	DX11Context::DX11Context(const Graphics& gfx)

@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Bone.h"
 #include <ranges>
 #include "Animation.h"

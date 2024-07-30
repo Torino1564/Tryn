@@ -1,5 +1,7 @@
+#include "TrynPCH.h"
 #include "DX11TransformCBuf.h"
 #include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
+#include "Core/src/gfx/dx11/DX11BufferFwd.h"
 
 namespace tryn::gfx::dx11
 {

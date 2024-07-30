@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Step.h"
 #include <Core/src/gfx/Model/Mesh.h>
 #include <Core/src/gfx/Render/TechniqueProbe.h>

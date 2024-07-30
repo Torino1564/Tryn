@@ -1,7 +1,10 @@
+#include "TrynPCH.h"
 #include "PointLight.h"
 #include <Core/src/gfx/Model/StaticMeshPool.h>
 #include <Core/src/gfx/Bindables/IBuffer.h>
 #include <Core/src/gfx/Render/Techniques/Flat.h>
+#include "Model/Model.h"
+
 namespace tryn::gfx
 {
 	PointLight::PointLight(const IGraphics& gfx, float radius, glm::vec3 color)

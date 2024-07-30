@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Camera.h"
 #include <Core/third/glm/gtx/matrix_decompose.hpp>
 #include <imgui.h>

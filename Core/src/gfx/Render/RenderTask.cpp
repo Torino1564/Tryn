@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "RenderTask.h"
 #include <Core/src/gfx/Drawable.h>
 

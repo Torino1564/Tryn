@@ -40,7 +40,7 @@ namespace tryn::gfx
 			requires BaseTechniqueClass<FirstTechnique> && (sizeof...(OtherTechniques) == 0 || BaseTechniqueClass<OtherTechniques...>)
 		static std::unique_ptr<Model> Make(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
 		static std::unique_ptr<Model> Make(const gfx::IGraphics& gfx, std::string_view path, const std::span<utl::UUID_t> techniqueUUIDs, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
-
+		~Model();
 		void Submit(const glm::mat4& entityTransform);
 		void Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms);
 		void SpawnControlWindow();
@@ -49,6 +49,7 @@ namespace tryn::gfx
 		std::uint16_t GetMeshAmount() const;
 		ani::BonedMesh* GetMainMesh();
 		const gfx::IGraphics* GetGfx() const;
+
 	private:
 		Model(std::string_view path, const gfx::IGraphics& gfx);
 		Node ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);
@@ -89,7 +90,7 @@ namespace tryn::gfx
 		requires BaseTechniqueClass<FirstTechnique> && (sizeof...(OtherTechniques) == 0 || BaseTechniqueClass<OtherTechniques...>)
 	std::unique_ptr<Model> Model::Make(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, bool instanced)
 	{
-		auto pModel = std::make_unique<Model>(std::move(Model{ path, gfx }));
+		auto pModel = std::unique_ptr<Model>(new Model(path, gfx));
 
 		auto& imp = AssimpManager::Get();
 		const auto pScene = imp.ReadFile(path.data(),

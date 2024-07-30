@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "SimpleFileDriver.h"
 #include "TextFormatter.h"
 

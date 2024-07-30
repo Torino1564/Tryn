@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "DefaultRenderGraph.h"
 #include <Core/src/gfx/Render/Passes/ForwardLambertianPass.h>
 #include <Core/src/gfx/Render/Passes/PointLightBindPass.h>

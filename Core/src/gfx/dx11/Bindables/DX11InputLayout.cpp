@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "DX11InputLayout.h"
 #include <Core/src/gfx/dx11/Bindables/DX11VertexShader.h>
 #include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>

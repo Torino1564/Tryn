@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include <Core/src/gfx/Render/RenderPass.h>
 
 namespace tryn::gfx

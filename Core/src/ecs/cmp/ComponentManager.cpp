@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "ComponentManager_def.h"
 #include <Core/src/ecs/Entity.h>
 #include "ActiveComponent.h"

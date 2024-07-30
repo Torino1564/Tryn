@@ -1,10 +1,10 @@
 #pragma once
 #include "IGraphics.h"
-#include "Model/Model.h"
 #include <Core/src/gfx/PointLightParameters.h>
 
 namespace tryn::gfx
 {
+	class Model;
 	class IContext;
 	class PointLight
 	{

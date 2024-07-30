@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 //#include "DX11PolyVBuffer.h"
 //#include <Core/src/gfx/BindablePool.h>
 //#include <Core/src/gfx/dx11/Bindables/DX11InputLayout.h>

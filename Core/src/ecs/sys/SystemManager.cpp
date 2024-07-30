@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "SystemManager.h"
 #include <Core/third/dynamic_bitset.hpp>
 #include <Core/src/log/Log.h>

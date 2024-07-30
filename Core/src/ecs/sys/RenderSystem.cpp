@@ -1,8 +1,10 @@
+#include "TrynPCH.h"
 #include "RenderSystem.h"
 #include <Core/src/ecs/cmp/ComponentManager.h>
 #include <Core/src/gfx/Render/Jobs/PointLightJob.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
 #include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Model/Model.h>
 
 namespace tryn::ecs::sys
 {

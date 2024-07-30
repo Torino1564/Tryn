@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Bindable.h"
 
 tryn::gfx::IBindable::~IBindable()

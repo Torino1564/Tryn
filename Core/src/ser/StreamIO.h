@@ -92,7 +92,7 @@ namespace tryn::ser
 				if (binary)
 				{
 					unsigned int position = iss.tellg();
-					std::string_view views {iss.str()};
+					std::string_view view {iss.str()};
 					iss.read((char*)&data, sizeof(T));
 				}
 				else

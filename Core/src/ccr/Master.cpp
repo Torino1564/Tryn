@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Master.h"
 #include <Core/src/utl/Assert.h>
 

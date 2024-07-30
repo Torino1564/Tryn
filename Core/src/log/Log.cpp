@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Log.h"
 #include <Core/src/ioc/Singletons.h>
 #include <Core/src/ioc/Container.h>

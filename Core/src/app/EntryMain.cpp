@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "EntryMain.h"
 #include <CLI/CLI.hpp>
 #include <Core/src/app/Initialization.h>

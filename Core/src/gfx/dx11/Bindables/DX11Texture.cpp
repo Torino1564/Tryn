@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "DX11Texture.h"
 #include <Core/src/gfx/dx11/GraphicsError.h>
 #include <Core/third/stb_image/stb_image.h>

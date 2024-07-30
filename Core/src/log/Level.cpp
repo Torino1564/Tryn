@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Level.h"
 
 std::wstring tryn::log::GetLevelName(Level lv)

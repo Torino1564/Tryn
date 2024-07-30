@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Animation.h"
 #include <Core/third/glm/ext/quaternion_common.hpp>
 #include <Core/third/glm/ext/quaternion_float.hpp>

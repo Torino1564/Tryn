@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Exception.h"
 #include "String.h"
 #include <format>

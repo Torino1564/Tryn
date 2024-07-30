@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "DepthStencil.h"
 #include <Core/src/gfx/BindablePool.h>
 

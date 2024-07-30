@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "ConstantBuffer.h"
 #include <Core/src/utl/Assert.h>
 #include <algorithm>

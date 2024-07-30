@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "ForwardPhong.h"
 #include <assimp/material.h>
 #include <assimp/StringUtils.h>

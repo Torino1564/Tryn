@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "WindowClass.h"
 #include "IWindow.h"
 #include "Exception.h"

@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 #include <Core/src/app/Globals.h>
 
 namespace tryn::gfx

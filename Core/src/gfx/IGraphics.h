@@ -1,12 +1,8 @@
 #pragma once
-#include <Core/src/win/TrynWin.h>
-#include <optional>
-#include <typeinfo>
 #include <Core/src/utl/Assert.h>
 #include <Core/src/spa/Dimensions.h>
 #include <vector>
 #include <concepts>
-#include <filesystem>
 #include <memory>
 #include <Core/third/glm/glm.hpp>
 #include <thread>
@@ -21,6 +17,9 @@
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
+
+struct HWND__;
+typedef struct HWND__* HWND;
 
 namespace tryn::app
 {
@@ -60,7 +59,7 @@ namespace tryn::gfx
 		{
 			std::optional<int> width;
 			std::optional<int> height;
-			HWND hWnd{};
+			const HWND* hWnd{};
 		};
 		virtual ~IGraphics() = default;
 		virtual void BeginFrame() = 0;

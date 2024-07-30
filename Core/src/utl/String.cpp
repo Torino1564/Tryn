@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "String.h"
 
 namespace tryn::utl

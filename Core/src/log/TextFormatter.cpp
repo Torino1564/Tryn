@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "TextFormatter.h"
 #include "Entry.h"
 #include <format>

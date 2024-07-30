@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Model.h"
 #include <Core/src/gfx/Material.h>
 #include <Core/third/glm/gtx/transform.hpp>
@@ -159,7 +160,7 @@ namespace tryn::gfx
 	std::unique_ptr<Model> Model::Make(const gfx::IGraphics& gfx, std::string_view path,
 		const std::span<utl::UUID_t> techniqueUUIDs, glm::vec3 scale, bool instanced)
 	{
-		auto pModel = std::make_unique<Model>(std::move(Model{ path, gfx }));
+		auto pModel = std::unique_ptr<Model>(new Model(path, gfx));
 
 		auto& imp = AssimpManager::Get();
 		const auto pScene = imp.ReadFile(path.data(),

@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "GraphicsError.h"
 #include <Core/src/utl/String.h>
 #include <Core/src/win/Utilities.h>

@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "DX11VertexShader.h"
 #include <Core/src/gfx/dx11/GraphicsError.h>
 #include <d3dcompiler.h>

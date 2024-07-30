@@ -2,7 +2,6 @@
 #include "IJob.h"
 #include <span>
 #include <optional>
-#include <memory>
 #include <Core/third/glm/glm.hpp>
 
 namespace tryn::gfx

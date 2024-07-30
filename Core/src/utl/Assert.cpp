@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Assert.h"
 #include <Core/src/log/Log.h>
 

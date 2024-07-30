@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Utilities.h"
 #include <Core/src/log/Log.h>
 #include "Exception.h"

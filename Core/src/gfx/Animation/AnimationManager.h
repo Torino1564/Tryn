@@ -1,6 +1,5 @@
 #pragma once
 #include "Animation.h"
-#include <memory>
 #include <unordered_map>
 #include <Core/third/dynamic_bitset.hpp>
 

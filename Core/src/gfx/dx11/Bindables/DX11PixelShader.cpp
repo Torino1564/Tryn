@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "DX11PixelShader.h"
 #include <Core/src/gfx/dx11/GraphicsError.h>
 #include <Core/src/utl/String.h>

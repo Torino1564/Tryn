@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "ModelComponent.h"
 #include <Core/src/gfx/Model/Model.h>
 

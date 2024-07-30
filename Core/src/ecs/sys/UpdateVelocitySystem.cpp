@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "UpdateVelocitySystem.h"
 #include <Core/src/ecs/cmp/ComponentManager.h>
 

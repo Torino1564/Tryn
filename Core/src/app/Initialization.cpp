@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Initialization.h"
 
 void tryn::app::BootCore()

@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "InstancedModelParentComponent.h"
 
 namespace tryn::ecs::cmp

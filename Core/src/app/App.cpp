@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "App.h"
 #include <Core/src/ecs/Entity.h>
 #include <chrono>

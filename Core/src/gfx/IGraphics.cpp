@@ -1,7 +1,9 @@
+#include "TrynPCH.h"
 #include "IGraphics.h"
 #include <Core/src/log/Log.h>
 #include <Core/src/gfx/Render/DefaultRenderGraphs/DefaultRenderGraph.h>
 #include <Core/third/glm/ext/matrix_clip_space.hpp>
+#include <Core/src/win/TrynWin.h>
 
 namespace tryn::gfx
 {

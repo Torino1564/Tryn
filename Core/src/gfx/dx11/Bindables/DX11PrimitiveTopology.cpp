@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "DX11PrimitiveTopology.h"
 
 namespace tryn::gfx::dx11

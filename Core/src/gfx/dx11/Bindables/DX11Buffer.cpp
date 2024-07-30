@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "DX11Buffer.h"
 
 namespace tryn::gfx::dx11

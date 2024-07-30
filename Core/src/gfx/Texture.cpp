@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Texture.h"
 #include <Core/src/utl/Assert.h>
 #include <Core/src/utl/String.h>

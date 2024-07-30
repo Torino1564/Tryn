@@ -1,3 +1,4 @@
+#include "TrynPCH.h"
 #include "Drawable.h"
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 #include <Core/third/glm/gtx/wrap.hpp>
