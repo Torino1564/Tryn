@@ -1,5 +1,7 @@
 #include <TrynCppUnitTest.h>
 #include <vector>
+#include <sstream>
+#include <fstream>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace tryn;

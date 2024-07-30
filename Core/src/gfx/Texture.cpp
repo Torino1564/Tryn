@@ -1,12 +1,19 @@
 #include "Texture.h"
 #include <Core/src/utl/Assert.h>
 #include <Core/src/utl/String.h>
+#include <Core/third/stb_image/stb_image.h>
 
 namespace tryn::gfx
 {
 	void Texture::STBI_Close::operator()(std::byte* image)
 	{
 		stbi_image_free(image);
+	}
+
+	Texture::STBI_Close& Texture::STBI_Close::Get()
+	{
+		static STBI_Close stbi_close;
+		return stbi_close;
 	}
 
 	Texture::Texture(const std::filesystem::path& path, std::optional<glm::vec3> scale)

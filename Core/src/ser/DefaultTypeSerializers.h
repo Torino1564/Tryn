@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/src/ser/StreamIO.h>
+#include <vector>
 
 namespace tryn::ser
 {

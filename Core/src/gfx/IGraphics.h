@@ -16,10 +16,8 @@
 #include <Core/src/gfx/IContext.h>
 #include <Core/src/gfx/GraphicAPI.h>
 #include <Core/src/gfx/IBufferFwd.h>
-#include <Core/src/gfx/ConstantBuffer.h>
 #include <Core/src/gfx/ComparissonMode.h>
 #include <Core/src/gfx/RTVDSFwd.h>
-#include <Core/src/gfx/IContext.h>
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,

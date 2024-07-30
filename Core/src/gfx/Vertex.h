@@ -12,7 +12,12 @@
 #include <assimp/scene.h>
 #include <Core/src/gfx/CPUBuffer.h>
 #include <concepts>
-#include <Core/src/gfx/Animation/Bone.h>
+#include <Core/src/gfx/VertexFormat.h>
+
+namespace tryn::gfx::ani
+{
+	class Skeleton;
+}
 
 #define DVTX_ELEMENT_AI_EXTRACTOR(member) static void ExtractAndFill( VertexBuffer& buf, const aiMesh& mesh,size_t i, ani::Skeleton const* skeleton = nullptr ) noexcept {buf[i].Attr<type>(0) = *reinterpret_cast<const SysType*>(&mesh.member[i]);}
 #define DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION static inline void ExtractAndFill( VertexBuffer& buf, const aiMesh& mesh,size_t i, ani::Skeleton const* skeleton = nullptr ) noexcept
@@ -44,6 +49,7 @@ struct BGRAColor
 namespace tryn::gfx
 {
 	class VertexBuffer;
+
 	class VertexLayout
 	{
 	public:
@@ -52,16 +58,6 @@ namespace tryn::gfx
 #define X(el) el,
 			LAYOUT_ELEMENT_TYPES
 #undef X
-		};
-		enum class Format
-		{
-			Vec2F,
-			Vec3F,
-			Vec4F,
-			Vec4C_UNorm,
-			Vec4UI16,
-			Float_Uint,
-			Unknown
 		};
 
 		template <VertexElement Element>
@@ -78,7 +74,7 @@ namespace tryn::gfx
 		VERTEX_ELEMENT_ATTR(Position2D)
 		{
 			using SysType = glm::vec2;
-			static constexpr Format format = Format::Vec2F;
+			static constexpr VertexFormat format = VertexFormat::Vec2F;
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P2";
 			
@@ -87,7 +83,7 @@ namespace tryn::gfx
 		VERTEX_ELEMENT_ATTR(Position3D)
 		{
 			using SysType = glm::vec3;
-			static constexpr Format format = Format::Vec3F;
+			static constexpr VertexFormat format = VertexFormat::Vec3F;
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P3";
 			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
@@ -95,7 +91,7 @@ namespace tryn::gfx
 		VERTEX_ELEMENT_ATTR(Normal)
 		{
 			using SysType = glm::vec3;
-			static constexpr Format format = Format::Vec3F;
+			static constexpr VertexFormat format = VertexFormat::Vec3F;
 			static constexpr const char* semantic = "Normal";
 			static constexpr const char* code = "N";
 			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
@@ -103,7 +99,7 @@ namespace tryn::gfx
 		VERTEX_ELEMENT_ATTR(UV)
 		{
 			using SysType = glm::vec2;
-			static constexpr Format format = Format::Vec2F;
+			static constexpr VertexFormat format = VertexFormat::Vec2F;
 			static constexpr const char* semantic = "Texcoord";
 			static constexpr const char* code = "UV";
 			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
@@ -111,7 +107,7 @@ namespace tryn::gfx
 		VERTEX_ELEMENT_ATTR(Float3Color)
 		{
 			using SysType = glm::vec3;
-			static constexpr Format format = Format::Vec3F;
+			static constexpr VertexFormat format = VertexFormat::Vec3F;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "Cf3";
 			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
@@ -119,7 +115,7 @@ namespace tryn::gfx
 		VERTEX_ELEMENT_ATTR(Float4Color)
 		{
 			using SysType = glm::vec4;
-			static constexpr Format format = Format::Vec4F;
+			static constexpr VertexFormat format = VertexFormat::Vec4F;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "Cf4";
 			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
@@ -127,7 +123,7 @@ namespace tryn::gfx
 		VERTEX_ELEMENT_ATTR(Char4Color)
 		{
 			using SysType = BGRAColor;
-			static constexpr Format format = Format::Vec4C_UNorm;
+			static constexpr VertexFormat format = VertexFormat::Vec4C_UNorm;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "Cc4";
 			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
@@ -135,7 +131,7 @@ namespace tryn::gfx
 		VERTEX_ELEMENT_ATTR(Tangent)
 		{
 			using SysType = glm::vec3;
-			static constexpr Format format = Format::Vec3F;
+			static constexpr VertexFormat format = VertexFormat::Vec3F;
 			static constexpr const char* semantic = "Tangent";
 			static constexpr const char* code = "T";
 			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
@@ -143,7 +139,7 @@ namespace tryn::gfx
 		VERTEX_ELEMENT_ATTR(Bitangent)
 		{
 			using SysType = glm::vec3;
-			static constexpr Format format = Format::Vec3F;
+			static constexpr VertexFormat format = VertexFormat::Vec3F;
 			static constexpr const char* semantic = "Bitangent";
 			static constexpr const char* code = "Bt";
 			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
@@ -151,7 +147,7 @@ namespace tryn::gfx
 		VERTEX_ELEMENT_ATTR(BoneIds)
 		{
 			using SysType = glm::vec<4, uint16_t>;
-			static constexpr Format format = Format::Vec4UI16;
+			static constexpr VertexFormat format = VertexFormat::Vec4UI16;
 			static constexpr const char* semantic = "BoneIds";
 			static constexpr const char* code = "BId";
 			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
@@ -159,7 +155,7 @@ namespace tryn::gfx
 		VERTEX_ELEMENT_ATTR(BoneWeights)
 		{
 			using SysType = glm::vec4;
-			static constexpr Format format = Format::Vec4F;
+			static constexpr VertexFormat format = VertexFormat::Vec4F;
 			static constexpr const char* semantic = "BoneWeights";
 			static constexpr const char* code = "BWs";
 			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
@@ -167,7 +163,7 @@ namespace tryn::gfx
 		VERTEX_ELEMENT_ATTR(Unknown)
 		{
 			using SysType = int;
-			static constexpr Format format = Format::Unknown;
+			static constexpr VertexFormat format = VertexFormat::Unknown;
 			static constexpr const char* semantic = "Unknown";
 			static constexpr const char* code = "?";
 			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
@@ -248,7 +244,7 @@ namespace tryn::gfx
 			{
 				return Bridge<VertexNameLookup>(type);
 			}
-			static constexpr Format FormatOf(VertexElement type)
+			static constexpr VertexFormat FormatOf(VertexElement type)
 			{
 				return Bridge<VertexFormatLookup>(type);
 			}
@@ -256,7 +252,7 @@ namespace tryn::gfx
 			{
 				return Bridge<VertexCodeLookup>(type);
 			}
-			Format GetFormat() const;
+			VertexFormat GetFormat() const;
 			const char* GetName() const;
 			VertexElement GetType() const;
 		private:
@@ -439,34 +435,11 @@ namespace tryn::gfx
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Tangent, mTangents);
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Bitangent, mBitangents);
 
-	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::BoneIds>::ExtractAndFill(VertexBuffer& buf, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
-	{
-		auto& viewBoneIDs = buf[i].Attr<VertexLayout::VertexElement::BoneIds>(0);
-		auto& viewBoneWeights = buf[i].Attr<VertexLayout::VertexElement::BoneWeights>(0);
-		for (auto& bone : skeleton->bones)
-		{
-			for (auto& weight : bone.boneWeights)
-			{
-				if (weight.vertexID == i)
-				{
-					for (int j = 0; j < 4; j++)
-					{
-						if (viewBoneIDs[j] == 0u)
-						{
-							viewBoneIDs[j] = bone.ID;
-							viewBoneWeights[j] = weight.weight;
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
-
 	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::BoneWeights>::ExtractAndFill(VertexBuffer& buf, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
 	{
 
 	}
+
 	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::Unknown>::ExtractAndFill(VertexBuffer& buf, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
 	{
 

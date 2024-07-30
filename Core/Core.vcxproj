@@ -57,7 +57,6 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11RenderTargetView.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
-    <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Texture.cpp" />
     <ClCompile Include="src\gfx\dx11\Dx11Context.cpp" />
     <ClCompile Include="src\gfx\dx11\imgui_impl_dx11.cpp" />
@@ -103,7 +102,7 @@
     <ClCompile Include="src\gfx\Gfx.cpp" />
     <ClCompile Include="src\gfx\dx11\Dx11Graphics.cpp" />
     <ClCompile Include="src\gfx\dx11\GraphicsError.cpp" />
-    <ClCompile Include="src\gfx\dx11\TrynWLR.h" />
+    <ClInclude Include="src\gfx\dx11\TrynWLR.h" />
     <ClCompile Include="src\ioc\Container.cpp" />
     <ClCompile Include="src\ioc\Ioc.cpp" />
     <ClCompile Include="src\ioc\Singletons.cpp" />
@@ -129,7 +128,6 @@
     <ClCompile Include="src\win\Utilities.cpp" />
     <ClCompile Include="src\win\Window.cpp" />
     <ClCompile Include="src\win\WindowClass.cpp" />
-    <ClCompile Include="third\lodepng\lodepng.cpp" />
     <ClCompile Include="third\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -152,7 +150,9 @@
     <ClInclude Include="src\gfx\Bindables\RenderTargetView.h" />
     <ClInclude Include="src\gfx\ComparissonMode.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11DepthStencil.h" />
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11RenderTargetView.h" />
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11Sampler.h" />
     <ClInclude Include="src\gfx\dx11\DX11RTVDSVFwd.h" />
     <ClInclude Include="src\gfx\PointLightParameters.h" />
     <ClInclude Include="src\gfx\Render\DefaultRenderGraphs\DefaultRenderGraph.h" />
@@ -215,7 +215,6 @@
     <ClInclude Include="src\gfx\dx11\Bindables\DX11InputLayout.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PixelShader.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.h" />
-    <ClInclude Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11Rasterizer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11Texture.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11TransformCBuf.h" />
@@ -270,6 +269,7 @@
     <ClInclude Include="src\gfx\Render\RenderWorker.h" />
     <ClInclude Include="src\gfx\Texture.h" />
     <ClInclude Include="src\gfx\Vertex.h" />
+    <ClInclude Include="src\gfx\VertexFormat.h" />
     <ClInclude Include="src\gfx\vulkan\Graphics.h" />
     <ClInclude Include="src\gui\Element.h" />
     <ClInclude Include="src\ioc\Container.h" />
@@ -697,7 +697,6 @@
     <ClInclude Include="third\glm\vec3.hpp" />
     <ClInclude Include="third\glm\vec4.hpp" />
     <ClInclude Include="third\glm\vector_relational.hpp" />
-    <ClInclude Include="third\lodepng\lodepng.h" />
     <ClInclude Include="third\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
@@ -1381,18 +1380,21 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Test|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MEMSAN|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -1401,6 +1403,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <EnableFuzzer>false</EnableFuzzer>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <PropertyGroup>
     <VcpkgUseStatic>false</VcpkgUseStatic>

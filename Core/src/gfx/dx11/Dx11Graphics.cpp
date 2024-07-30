@@ -17,6 +17,7 @@
 #include <Core/src/gfx/dx11/Bindables/DX11DepthStencil.h>
 #include "imgui_impl_dx11.h"
 #include <Core/src/win/Window.h>
+#include <Core/src/gfx/Vertex.h>
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 

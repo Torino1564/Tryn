@@ -1,5 +1,6 @@
 #include "Vertex.h"
 #include <Core/src/utl/Assert.h>
+#include <Core/src/gfx/Animation/Bone.h>
 
 namespace tryn::gfx
 {
@@ -29,7 +30,7 @@ namespace tryn::gfx
 		return CodeOf(type);
 	}
 
-	VertexLayout::Format VertexLayout::Element::GetFormat() const
+	VertexFormat VertexLayout::Element::GetFormat() const
 	{
 		return FormatOf(type);
 	}
@@ -142,5 +143,28 @@ namespace tryn::gfx
 		layout(layout)
 	{
 		trynass_msg(pData != nullptr, L"Vertex constructed from a nullptr!");
+	}
+	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::BoneIds>::ExtractAndFill(VertexBuffer& buf, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
+	{
+		auto& viewBoneIDs = buf[i].Attr<BoneIds>(0);
+		auto& viewBoneWeights = buf[i].Attr<BoneWeights>(0);
+		for (auto& bone : skeleton->bones)
+		{
+			for (auto& weight : bone.boneWeights)
+			{
+				if (weight.vertexID == i)
+				{
+					for (int j = 0; j < 4; j++)
+					{
+						if (viewBoneIDs[j] == 0u)
+						{
+							viewBoneIDs[j] = bone.ID;
+							viewBoneWeights[j] = weight.weight;
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 }

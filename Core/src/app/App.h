@@ -1,8 +1,16 @@
 #pragma once
 #include <memory>
-#include <Core/src/gfx/IGraphics.h>
-#include <Core/src/win/IWindow.h>
 #include <Core/src/app/Globals.h>
+
+namespace tryn::gfx
+{
+	class IGraphics;
+}
+
+namespace tryn::win
+{
+	class IWindow;
+}
 
 namespace tryn::app
 {

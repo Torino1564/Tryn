@@ -75,9 +75,6 @@
     <ClCompile Include="src\gfx\dx11\Dx11Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\dx11\TrynWLR.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\dx11\GraphicsError.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -144,9 +141,6 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -166,9 +160,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\win\Mouse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="third\lodepng\lodepng.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="third\stb_image\stb_image.cpp">
@@ -1355,9 +1346,6 @@
     <ClInclude Include="src\gfx\ConstantBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\app\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1668,9 +1656,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\win\Mouse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="third\lodepng\lodepng.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="third\stb_image\stb_image.h">
@@ -2049,6 +2034,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ecs\Archetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11Sampler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\dx11\TrynWLR.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\VertexFormat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

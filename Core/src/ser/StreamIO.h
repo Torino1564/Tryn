@@ -3,6 +3,7 @@
 #include <Core/src/utl/Exception.h>
 #include "Serializer.h"
 #include <span>
+
 namespace tryn::ser
 {
 	ZT_EX_DEF(StreamIOException);

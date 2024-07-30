@@ -1,10 +1,10 @@
 #pragma once
-#include <Core/src/gfx/Vertex.h>
 #include <Core/src/gfx/IGraphics.h>
 #include <d3d11_1.h>
 #include "DX11RTVDSVFwd.h"
 #include "GraphicsError.h"
 #include "Dx11Context.h"
+#include <Core/src/gfx/VertexFormat.h>
 
 namespace tryn::gfx
 {
@@ -37,31 +37,34 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() const override;
 		std::shared_ptr<IGenericDepthStencil> GetDepthStencilView() const override;
 
-		static constexpr DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
+		static constexpr DXGI_FORMAT MapDXGIFormat(const VertexFormat format)
 		{
 			switch (format)
 			{
-			case VertexLayout::Format::Vec2F:
+			case VertexFormat::Vec2F:
 				return DXGI_FORMAT_R32G32_FLOAT;
 				break;
-			case VertexLayout::Format::Vec3F:
+			case VertexFormat::Vec3F:
 				return DXGI_FORMAT_R32G32B32_FLOAT;
 				break;
-			case VertexLayout::Format::Vec4F:
+			case VertexFormat::Vec4F:
 				return DXGI_FORMAT_R32G32B32A32_FLOAT;
 				break;
-			case VertexLayout::Format::Vec4C_UNorm:
+			case VertexFormat::Vec4C_UNorm:
 				return DXGI_FORMAT_R8G8B8A8_UNORM;
 				break;
-			case VertexLayout::Format::Float_Uint:
+			case VertexFormat::Float_Uint:
 				return DXGI_FORMAT_R32_UINT;
 				break;
-			case VertexLayout::Format::Vec4UI16:
+			case VertexFormat::Vec4UI16:
 				return DXGI_FORMAT_R16G16B16A16_UINT;
 				break;
+			default:
+				return DXGI_FORMAT_UNKNOWN;
+				break;
 			}
-			return DXGI_FORMAT_UNKNOWN;
 		}
+		
 		static std::vector<D3D11_INPUT_ELEMENT_DESC> GetSlottedLayout(const VertexLayout& vLayout, int slot);
 
 		// Resource Creation

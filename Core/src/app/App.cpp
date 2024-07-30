@@ -3,6 +3,8 @@
 #include <chrono>
 #include <Core/src/gfx/Profiler.h>
 #include <Core/src/ecs/sys/SystemManager.h>
+#include <Core/src/gfx/IGraphics.h>
+#include <Core/src/win/IWindow.h>
 
 namespace tryn::app
 {
