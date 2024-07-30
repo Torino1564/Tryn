@@ -38,8 +38,8 @@ namespace tryn::gfx::ani
 		std::vector<VectorKey> scalingKeys;
 		std::vector<QuatKey> rotationKeys;
 
-		const glm::vec3& GetPositionVectorKey(uint32_t& previousKey, const double timePoint);
-		const glm::vec3& GetScaleVectorKey(uint32_t& previousKey, const double timePoint);
-		const glm::quat& GetRotationVectorKey( uint32_t& previousKey, const double timePoint);
+		const glm::vec3& GetPositionVectorKey(uint32_t& previousKey, const double timePoint) const;
+		const glm::vec3& GetScaleVectorKey(uint32_t& previousKey, const double timePoint) const;
+		const glm::quat& GetRotationVectorKey( uint32_t& previousKey, const double timePoint) const;
 	};
 }

@@ -14,12 +14,12 @@ namespace tryn::gfx::dx11
 	public:
 		DX11Context() = default;
 		DX11Context(const Graphics& gfx);
-		ID3D11DeviceContext& GetContext();
+		ID3D11DeviceContext& GetContext() const;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetCOMPtr();
 		constexpr GraphicAPI GetApi() const override;
 		void Submit(const IGraphics& gfx) override;
-		void DrawIndexed(int count) override;
-		void DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) override;
+		void DrawIndexed(int count) const override;
+		void DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) const override;
 	private:
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pView;

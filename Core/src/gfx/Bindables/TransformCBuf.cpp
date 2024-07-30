@@ -9,7 +9,7 @@ namespace tryn::gfx
 		BindParent(parent);
 		Bind();
 	}
-	void ITransformCBuf::BindTransformCBuf(const Drawable* parent, IContext& context)
+	void ITransformCBuf::BindTransformCBuf(const Drawable* parent, const IContext& context)
 	{
 		BindParent(parent);
 		Bind(context);
@@ -23,7 +23,7 @@ namespace tryn::gfx
 		Update();
 		pVCB->Bind();
 	}
-	void ITransformCBuf::Bind(IContext& context)
+	void ITransformCBuf::Bind(const IContext& context)
 	{
 		Update(context);
 		context.GetTransfromBuffer().Bind(context);
@@ -35,7 +35,7 @@ namespace tryn::gfx
 		(*pVCB)["view"].Get<glm::mat4>() = transpose(viewMatrix);
 		(*pVCB)["viewProjection"].Get<glm::mat4>() = transpose(gfx.GetProjectionMatrix() * viewMatrix);
 	}
-	void ITransformCBuf::Update(IContext& context) const
+	void ITransformCBuf::Update(const IContext& context) const
 	{
 		context.GetTransfromBuffer()["model"].Get<glm::mat4>() = transpose(parent->GetTransformMatrix());
 		const auto& viewMatrix = gfx.GetCameraMatrix();

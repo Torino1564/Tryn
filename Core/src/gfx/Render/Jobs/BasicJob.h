@@ -18,7 +18,7 @@ namespace tryn::gfx
 	public:
 		BasicJob(Drawable* parent, Step* step);
 		void Execute(const IGraphics& gfx) override;
-		void Execute(IContext& gfx) override;
+		void Execute(const IContext& gfx) override;
 
 	private:
 		struct Data {

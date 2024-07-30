@@ -24,7 +24,7 @@ namespace tryn::gfx
 			bind->Bind();
 		}
 	}
-	void Step::Bind(IContext& context) const
+	void Step::Bind(const IContext& context) const
 	{
 		for (auto& bind : bindables)
 		{

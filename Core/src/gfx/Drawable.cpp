@@ -84,7 +84,7 @@ namespace tryn::gfx
 		pIndexBuffer->Bind();
 		pTopology->Bind();
 	}
-	void Drawable::BindBase(IContext& context) const
+	void Drawable::BindBase(const IContext& context) const
 	{
 		pVertexBuffer->Bind(context);
 		pIndexBuffer->Bind(context);
@@ -100,7 +100,7 @@ namespace tryn::gfx
 			}
 		}
 	}
-	void Drawable::BindExtraBinds(IContext& context)
+	void Drawable::BindExtraBinds(const IContext& context)
 	{
 		for (auto bindPtr : extraBindPtrs)
 		{
@@ -126,7 +126,7 @@ namespace tryn::gfx
 	{
 		pTransformCBuf->BindTransformCBuf(this);
 	}
-	void Drawable::BindTransformCBuf(IContext& context) const
+	void Drawable::BindTransformCBuf(const IContext& context) const
 	{
 		pTransformCBuf->BindTransformCBuf(this, context);
 	}

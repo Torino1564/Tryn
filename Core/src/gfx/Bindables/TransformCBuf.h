@@ -10,13 +10,13 @@ namespace tryn::gfx
 	{
 	public:
 		void BindTransformCBuf(const Drawable* parent);
-		void BindTransformCBuf(const Drawable* parent, IContext& context);
+		void BindTransformCBuf(const Drawable* parent, const IContext& context);
 		void BindParent(const Drawable* parent) const;
 		void Bind() override;
-		void Bind(IContext& context) override;
+		void Bind(const IContext& context) override;
 
 		void Update() const;
-		void Update(IContext& context) const;
+		void Update(const IContext& context) const;
 	protected:
 		ITransformCBuf(const IGraphics& gfx) :gfx(gfx) {}
 		const IGraphics& gfx;

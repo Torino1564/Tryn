@@ -13,24 +13,24 @@ namespace tryn::gfx
 	class RenderTask
 	{
 	public:
-		void operator()();
+		void operator()() const;
 
 		struct {
 			IJob* pJob;
-			IContext* pContext;
+			const IContext* pContext;
 		} params = {};
 	};
 
 	class BatchRenderTask
 	{
 	public:
-		void operator()();
+		void operator()() const;
 
 		struct Params {
 			std::vector<IJob*>::iterator begin;
 			std::vector<IJob*>::iterator end;
-			IContext* pContext;
-			IGraphics* pGfx;
+			const IContext* pContext;
+			const IGraphics* pGfx;
 		} params = {};
 	};
 }

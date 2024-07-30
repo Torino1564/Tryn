@@ -43,6 +43,6 @@ namespace tryn::ecs::sys
 		ZT_NATIVE_ARRAY(PositionComponent)		pointLightPositionArray;
 		ZT_NATIVE_ARRAY(ActiveComponent)		pointLightActiveArray;
 
-		static inline gfx::IGraphics* pGfx;
+		static inline const gfx::IGraphics* pGfx;
 	};
 }

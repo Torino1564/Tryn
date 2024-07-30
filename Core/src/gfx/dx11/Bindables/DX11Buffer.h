@@ -24,213 +24,38 @@ namespace tryn::gfx::dx11
 	{
 	public:
 		DX11Buffer(const Graphics& gfx, std::shared_ptr<CPUBuffer> pCpuBuffer, std::string tag = "?")
-			requires (Type == BufferType::Vertex || Type == BufferType::Index) && (Policy == CachingPolicy::Caching)
-			:
-			gfx(gfx)
-		{
-			this->tag = tag;
-
-			trynass_msg(!pCpuBuffer->Dirty(), L"Cant initialize a dirty Vertex Buffer!");
-
-			this->pCPUBuffer = pCpuBuffer;
-			stride = (UINT)this->pCPUBuffer->Stride();
-
-			D3D11_BUFFER_DESC bd = {};
-			bd.Usage = D3D11_USAGE_DEFAULT;
-			bd.BindFlags = GetBindFlag<Type>();
-			bd.CPUAccessFlags = 0u;
-			bd.MiscFlags = 0u;
-			bd.StructureByteStride = stride;
-			bd.ByteWidth = (UINT)this->pCPUBuffer->ByteSize();
-
-			D3D11_SUBRESOURCE_DATA srd = {};
-			srd.pSysMem = this->pCPUBuffer->Data();
-
-			gfx.GetDevice().CreateBuffer(&bd, &srd, &pBuffer) >> chk;
-		}
-
-		
+			requires (Type == BufferType::Vertex || Type == BufferType::Index) && (Policy == CachingPolicy::Caching);
 		// TODO: Add NonCaching variant
 		DX11Buffer(const Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag = "?")
-		requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant)
-		: gfx(gfx)
-		{
-			this->slot = slot;
-			this->tag = tag;
-
-			trynass_msg(cbl.IsSolid(), L"ConstantBuffer cannot be created with a non solidified layout!");
-			this->type = GraphicAPI::DX11;
-			this->pCPUBuffer = std::make_shared<ConstantBuffer>(std::move(cbl));
-
-			InitDynamicCBufferOnGPU();
-		}
-
+			requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant);
 		DX11Buffer(const Graphics& gfx, ConstantBufferLayout::Node arrayElement, int slot, std::size_t numInstances = 50)
-		requires (Type == BufferType::Instance && Policy == CachingPolicy::Caching)
-		: gfx(gfx)
-		{
-			ConstantBufferLayout layout;
-			layout.Append(cbType::Array, "InstanceArray");
-			this->slot = slot;
-			layout["InstanceArray"].Set(arrayElement, numInstances);
-			layout.Solidify();
-			this->pCPUBuffer = std::make_shared<ConstantBuffer>(std::move(layout));
-			this->gpuSize = this->pCPUBuffer->Size();
-			InitDynamicCBufferOnGPU();
-		}
+			requires (Type == BufferType::Instance && Policy == CachingPolicy::Caching);
+		void Resize(const std::size_t newSize) override;
+		void Resize_(const std::size_t newSize);
+		void InitDynamicCBufferOnGPU();
+		void Bind() override;
+		void Bind(const IContext& context) override;
+		ID3D11Buffer* Data() const;
+		void Update();
+		void Update(ID3D11DeviceContext& context);
 
-		void Resize(const std::size_t newSize) override
-		{
-			Resize_(newSize);
-		}
-
-		template <BufferType T = Type>
-		void Resize_(const std::size_t newSize)
-		{
-			this->pCPUBuffer->Resize(newSize);
-			InitDynamicCBufferOnGPU();
-		}
-
-		void InitDynamicCBufferOnGPU()
-		{
-			D3D11_BUFFER_DESC cbd = {};
-			cbd.Usage = D3D11_USAGE_DYNAMIC;
-			cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-			cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-			cbd.MiscFlags = 0u;
-			cbd.StructureByteStride = 0u;
-			cbd.ByteWidth = (UINT)this->pCPUBuffer->Size();
-			D3D11_SUBRESOURCE_DATA csrd = {};
-			csrd.pSysMem = this->pCPUBuffer->Data();
-
-			gfx.GetDevice().CreateBuffer(&cbd, &csrd, &pBuffer) >> chk;
-		}
-
-		void Bind() override
-		{
-			Bind(gfx.GetContextInterface());
-		}
-
-		void Bind(IContext& context) override
-		{
-			gfx.AssertContextCoherence(context);
-			Bind_(static_cast<DX11Context*>(&context)->GetContext());
-		}
-
-		ID3D11Buffer* Data() const
-		{
-			return pBuffer.Get();
-		}
-
-		void Update()
-		{
-			Update(gfx.GetContextInterface());
-		}
-
-		void Update(ID3D11DeviceContext& context)
-		{
-			D3D11_MAPPED_SUBRESOURCE msr;
-
-			CheckForGPUSizeChanges();
-
-			context.Map(
-				Data(), 0u,
-				D3D11_MAP_WRITE_DISCARD, 0u,
-				&msr
-			) >> chk;
-
-			memcpy(msr.pData, this->pCPUBuffer->Data(), this->pCPUBuffer->ByteSize());
-
-			stride = (UINT)this->pCPUBuffer->Stride();
-
-			context.Unmap(Data(), 0u);
-		}
 	private:
-		void CheckForGPUSizeChanges()
-			requires (Type == BufferType::Instance)
-		{
-			if (this->gpuSize < this->pCPUBuffer->ByteSize() ||
-				this->gpuSize * 0.6 > this->pCPUBuffer->ByteSize())
-			{
-				InitDynamicCBufferOnGPU();
-			}
-		}
-		void CheckForGPUSizeChanges()
-		{
-			return;
-		}
+		void GPUSizeChanges() requires (Type == BufferType::Instance);
+		void GPUSizeChanges() requires (Type != BufferType::Instance);
 		void Bind_(ID3D11DeviceContext& context)
-			requires (Type == BufferType::Vertex)
-		{
-			context.IASetVertexBuffers((UINT)0, (UINT)1, pBuffer.GetAddressOf(), &stride, &offset);
-		}
-
+			requires (Type == BufferType::Vertex);
 		void Bind_(ID3D11DeviceContext& context)
-			requires (Type == BufferType::Index)
-		{
-			context.IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
-		}
-
+			requires (Type == BufferType::Index);
 		void Bind_(ID3D11DeviceContext& context)
-			requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant || Type == BufferType::Instance)
-		{
-			if (this->pCPUBuffer->Dirty())
-			{
-				Update(context);
-				this->pCPUBuffer->SetClean();
-			}
-			if constexpr (Type == BufferType::PxConstant)
-			{
-				context.PSSetConstantBuffers(this->slot, 1u, pBuffer.GetAddressOf());
-			}
-			else
-			{
-				context.VSSetConstantBuffers(this->slot, 1u, pBuffer.GetAddressOf());
-			}
-		}
-
-		std::vector<std::any> GetLayoutFromVB() const override
-		{
-			trynass_msg(Type == BufferType::Vertex, L"Can only get the layout from a Vertex Buffer Type!");
-			return GetSlottedLayoutFromVB(0);
-		}
-
-		std::vector<std::any> GetSlottedLayoutFromVB(int slot) const override
-		{
-			trynass_msg(Type == BufferType::Vertex,L"Can only get the layout from a Vertex Buffer Type!");
-			return GetSlottedLayoutFromVB_(slot);
-		}
-		template <BufferType T = Type>
-		requires (T == BufferType::Vertex)
+			requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant || Type == BufferType::Instance);
+		std::vector<std::any> GetLayoutFromVB() const override;
+		std::vector<std::any> GetSlottedLayoutFromVB(int slot) const override;
 		std::vector<std::any> GetSlottedLayoutFromVB_(int slot) const
-		{
-			trynass_msg(Type == BufferType::Vertex, L"Can only get layouts from Vertex Buffer Types!");
-			const auto& vLayout = this->layout;
-			const auto descSize = vLayout.GetElementCount();
-
-			std::vector<std::any> layout;
-			for (int i = 0; i < descSize; i++)
-			{
-				D3D11_INPUT_ELEMENT_DESC descriptor = {};
-				descriptor.SemanticName = vLayout.Elements[i].first.GetName();
-				descriptor.SemanticIndex = vLayout.Elements[i].second;
-				descriptor.Format = Graphics::MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
-				descriptor.InputSlot = (UINT)slot;
-				descriptor.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-				descriptor.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-				descriptor.InstanceDataStepRate = 0u;
-				layout.push_back(descriptor);
-			}
-
-			return layout;
-		}
-
-		std::vector<std::any> GetSlottedLayoutFromVB_(int slot) const
-		{
-			throw BufferMissmatchException(L"Incompatible buffer type call!");
-		}
+			requires (Type == BufferType::Vertex);
+		static std::vector<std::any> GetSlottedLayoutFromVB_(int slot);
 
 		const Graphics& gfx;
+
 		//Memory
 		UINT stride = 0;
 		UINT offset = 0;

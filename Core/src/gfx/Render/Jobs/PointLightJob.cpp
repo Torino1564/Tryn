@@ -13,11 +13,11 @@ namespace tryn::gfx
 	{
 		ExecuteImpl_();
 	}
-	void PointLightJob::Execute(IContext& ctx)
+	void PointLightJob::Execute(const IContext& ctx)
 	{
 		ExecuteImpl_();
 	}
-	void PointLightJob::ExecuteImpl_()
+	void PointLightJob::ExecuteImpl_() const
 	{
 		// Use JobID as the number in the buffer
 		auto& pCpuBuffer = pRenderGraph->pPointLightCBuf->GetCPUBuffer();

@@ -26,16 +26,16 @@ namespace tryn::gfx::dx11
 		~Graphics() override;
 		void BeginFrame() override;
 		void EndFrame() override;
-		void ClearBuffer(float r = 0, float g = 0, float b = 0) override;
-		void DrawIndexed(int count) override;
-		void DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) override;
+		void ClearBuffer(float r = 0, float g = 0, float b = 0) const override;
+		void DrawIndexed(int count) const override;
+		void DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) const override;
 		constexpr GraphicAPI GetType() const override;
 		ID3D11DeviceContext& GetContext() const;
 		ID3D11Device& GetDevice() const;
 		IDXGISwapChain& GetSwapChain() const;
 		constexpr const char* GetAPIString() const override;
-		std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() override;
-		std::shared_ptr<IGenericDepthStencil> GetDepthStencilView() override;
+		std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() const override;
+		std::shared_ptr<IGenericDepthStencil> GetDepthStencilView() const override;
 
 		static constexpr DXGI_FORMAT MapDXGIFormat(VertexLayout::Format format)
 		{

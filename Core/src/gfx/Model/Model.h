@@ -48,7 +48,7 @@ namespace tryn::gfx
 		glm::vec3 GetPosition() const;
 		std::uint16_t GetMeshAmount() const;
 		ani::BonedMesh* GetMainMesh();
-		gfx::IGraphics* GetGfx();
+		const gfx::IGraphics* GetGfx() const;
 	private:
 		Model(std::string_view path, const gfx::IGraphics& gfx);
 		Node ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);

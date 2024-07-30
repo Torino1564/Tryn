@@ -24,7 +24,7 @@ namespace tryn::gfx::dx11
 			pTCB = std::make_unique<DX11VtxConstantBuffer>(gfx, std::move(cblayout), 0, "transformCbuf");
 		}
 	}
-	ID3D11DeviceContext& DX11Context::GetContext()
+	ID3D11DeviceContext& DX11Context::GetContext() const
 	{
 		return *pContext.Get();
 	}
@@ -44,11 +44,11 @@ namespace tryn::gfx::dx11
 		pContext->FinishCommandList(TRUE, &pCommandList) >> chk;
 		immediateContext.ExecuteCommandList(pCommandList.Get(), TRUE);
 	}
-	void DX11Context::DrawIndexed(int count)
+	void DX11Context::DrawIndexed(int count) const
 	{
 		pContext->DrawIndexed(count, 0u, 0u);
 	}
-	void DX11Context::DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation)
+	void DX11Context::DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) const
 	{
 		pContext->DrawIndexedInstanced(indexCount, instanceCount, startIndexLocation, baseVertexLocation, startIndexLocation);
 	}

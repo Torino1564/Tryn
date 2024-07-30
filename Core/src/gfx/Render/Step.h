@@ -15,7 +15,7 @@ namespace tryn::gfx
 		Step(std::string renderQueueID);
 		void AddBindable(std::shared_ptr<class IBindable> bindable);
 		void Bind() const;
-		void Bind(IContext& context) const;
+		void Bind(const IContext& context) const;
 		void Draw(const IGraphics& gfx, Drawable* parent) const;
 		void Submit(const IGraphics& gfx, Drawable* parent);
 		void Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instanceParent);

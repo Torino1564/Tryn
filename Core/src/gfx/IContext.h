@@ -14,9 +14,9 @@ namespace tryn::gfx
 		virtual ~IContext() = default;
 		constexpr virtual GraphicAPI GetApi() const = 0;
 		virtual void Submit(const IGraphics&) = 0;
-		virtual void DrawIndexed(int count) = 0;
-		virtual void DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) = 0;
-		gfx::IVtxConstantBuffer& GetTransfromBuffer()
+		virtual void DrawIndexed(int count) const = 0;
+		virtual void DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) const = 0;
+		gfx::IVtxConstantBuffer& GetTransfromBuffer() const
 		{
 			return *pTCB;
 		}

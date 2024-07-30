@@ -3,6 +3,7 @@
 
 #include "Core/src/gfx/Bindables/IBuffer.h"
 #include <Core/src/utl/StatefulMeta/TemplateData.h>
+#include <Core/src/gfx/RTVDSFwd.h>
 
 namespace tryn::gfx
 {

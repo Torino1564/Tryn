@@ -48,4 +48,9 @@ namespace tryn::app
 	{
 		return *gfx;
 	}
+
+	gfx::IGraphics& App::Gfx()
+	{
+		return *gfx;
+	}
 }

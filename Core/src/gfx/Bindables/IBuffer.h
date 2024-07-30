@@ -7,6 +7,7 @@
 #include <Core/src/utl/EmptyType.h>
 #include <memory>
 #include "Bindable.h"
+#include <Core/src/gfx/RTVDSFwd.h>
 
 ZT_EX_DEF(BufferMissmatchException);
 
@@ -74,13 +75,13 @@ namespace tryn::gfx
 
 		void Bind() override;
 
-		void Bind(IContext& context) override;
+		void Bind(const IContext& context) override;
 
 		virtual std::vector<std::any> GetLayoutFromVB() const;
 
 		virtual std::vector<std::any> GetSlottedLayoutFromVB(int slot) const;
 
-		static constexpr BufferType GetType();
+		static constexpr const char* GetType();
 		virtual ~IBuffer() = default;
 
 		std::string_view GetPath() const;
@@ -116,7 +117,7 @@ namespace tryn::gfx
 	};
 
 	template <BufferType Type, CachingPolicy Policy>
-	constexpr BufferType IBuffer<Type, Policy>::GetType()
+	constexpr const char* IBuffer<Type, Policy>::GetType()
 	{
 		return GetTypeString<Type>();
 	}

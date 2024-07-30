@@ -4,7 +4,7 @@
 
 namespace tryn::gfx
 {
-    void Camera::Bind(const IGraphics& gfx)
+    void Camera::Bind(IGraphics& gfx)
     {
         auto future = gfx.Dispatch([&] {
             gfx.SetCamera(GetViewMatrix());

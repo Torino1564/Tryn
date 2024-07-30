@@ -4,6 +4,8 @@
 
 namespace tryn::gfx
 {
+	class ISampler;
+
 	class FullscreenRenderPass :public IRenderPass
 	{
 	public:

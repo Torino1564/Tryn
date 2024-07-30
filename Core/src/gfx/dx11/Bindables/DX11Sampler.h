@@ -9,7 +9,7 @@ namespace tryn::gfx::dx11
 	public:
 		DX11Sampler(const Graphics& gfx, SamplerType type, bool reflect, int slot);
 		void Bind() override;
-		void Bind(IContext& context) override;
+		void Bind(const IContext& context) override;
 	private:
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerState;
 		const Graphics& gfx;

@@ -13,10 +13,10 @@ namespace tryn::gfx::dx11
 	{
 		gfx.GetContext().IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
-	void DX11PrimitiveTopology::Bind(IContext& context)
+	void DX11PrimitiveTopology::Bind(const IContext& context)
 	{
 		gfx.AssertContextCoherence(context);
-		auto& dx11context = static_cast<DX11Context*>(&context)->GetContext();
+		auto& dx11context = static_cast<const DX11Context*>(&context)->GetContext();
 		dx11context.IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 }

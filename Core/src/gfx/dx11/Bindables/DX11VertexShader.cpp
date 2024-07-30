@@ -26,10 +26,10 @@ namespace tryn::gfx::dx11
 	{
 		gfx.GetContext().VSSetShader(pVS.Get(), nullptr, 0u);
 	}
-	void DX11VertexShader::Bind(IContext& context)
+	void DX11VertexShader::Bind(const IContext& context)
 	{
 		gfx.AssertContextCoherence(context);
-		auto& dx11context = static_cast<DX11Context*>(&context)->GetContext();
+		auto& dx11context = static_cast<const DX11Context*>(&context)->GetContext();
 		dx11context.VSSetShader(pVS.Get(), nullptr, 0u);
 	}
 	const Microsoft::WRL::ComPtr<ID3DBlob>& DX11VertexShader::GetBlob() const

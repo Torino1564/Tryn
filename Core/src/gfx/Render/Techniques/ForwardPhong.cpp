@@ -4,7 +4,7 @@
 #include <assimp/types.h>
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/gfx/Material.h>
-#include <Core/src/gfx/Bindables/Texture.h>
+#include <Core/src/gfx/Bindables/TextureResource.h>
 #include <Core/src/gfx/Bindables/Rasterizer.h>
 #include <Core/src/gfx/Bindables/IBuffer.h>
 #include <Core/src/gfx/Bindables/VertexShader.h>

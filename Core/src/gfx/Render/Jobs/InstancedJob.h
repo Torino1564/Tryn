@@ -16,7 +16,7 @@ namespace tryn::gfx
 	public:
 		InstancedJob(Drawable* parent, Step* step, std::span<const glm::mat4> transforms, class InstancedModelParent* pParentInstanced);
 		void Execute(const IGraphics& gfx) override;
-		void Execute(IContext& ctx) override;
+		void Execute(const IContext& ctx) override;
 	private:
 		struct Data {
 			Drawable* pDrawable = nullptr;

@@ -16,9 +16,9 @@ namespace tryn::gfx
 	public:
 		PointLightJob(const PointLightParameters& parameters, const glm::vec3& position, IRenderGraph& renderGraph, std::uint16_t jobID = 0);
 		void Execute(const IGraphics& gfx) override;
-		void Execute(IContext& ctx) override;
+		void Execute(const IContext& ctx) override;
 	private:
-		void ExecuteImpl_();
+		void ExecuteImpl_() const;
 		PointLightParameters const* pParams = {};
 		glm::vec3 const* pPosition = nullptr;
 		IRenderGraph* pRenderGraph = nullptr;

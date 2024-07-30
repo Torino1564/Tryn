@@ -52,6 +52,7 @@
     <ClCompile Include="src\gfx\Bindables\TextureResource.cpp" />
     <ClCompile Include="src\gfx\Bindables\VertexShader.cpp" />
     <ClCompile Include="src\gfx\Camera.cpp" />
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11Buffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11DepthStencil.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Rasterizer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11RenderTargetView.cpp" />
@@ -88,6 +89,7 @@
     <ClCompile Include="src\gfx\Render\Passes\FullScreenRenderPass.cpp" />
     <ClCompile Include="src\gfx\Render\Passes\RenderQueuePass.cpp" />
     <ClCompile Include="src\gfx\Render\RenderGraph.cpp" />
+    <ClCompile Include="src\gfx\Render\RenderPass.cpp" />
     <ClCompile Include="src\gfx\Render\RenderQueue.cpp" />
     <ClCompile Include="src\gfx\Render\RenderTask.cpp" />
     <ClCompile Include="src\gfx\Render\Step.cpp" />

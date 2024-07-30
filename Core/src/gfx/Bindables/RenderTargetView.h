@@ -3,7 +3,9 @@
 #include <concepts>
 #include <Core/src/utl/EmptyType.h>
 #include <Core/src/gfx/Bindables/BufferResourceType.h>
-#include <Core/src/gfx/IGraphics.h>
+#include <Core/src/spa/Dimensions.h>
+#include <memory>
+#include <Core/src/gfx/RTVDSFwd.h>
 
 namespace tryn::gfx
 {

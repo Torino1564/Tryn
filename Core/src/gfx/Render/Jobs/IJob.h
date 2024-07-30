@@ -13,7 +13,7 @@ namespace tryn::gfx
 		IJob(std::uint16_t jobID = 0) : jobID(jobID) {}
 		virtual ~IJob() = default;
 		virtual void Execute(const IGraphics& gfx) = 0;
-		virtual void Execute(IContext& gfx) = 0;
+		virtual void Execute(const IContext& gfx) = 0;
 
 	protected:
 		std::uint16_t jobID = 0;

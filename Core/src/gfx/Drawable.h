@@ -17,12 +17,12 @@ namespace tryn::gfx
 		void Submit(const IGraphics& gfx, glm::mat4 transform);
 		void Submit(const IGraphics& gfx, std::span<const glm::mat4> transforms, class InstancedModelParent& parent);
 		void BindBase() const;
-		void BindBase(IContext& context) const;
+		void BindBase(const IContext& context) const;
 		void BindExtraBinds();
-		void BindExtraBinds(IContext& context);
+		void BindExtraBinds(const IContext& context);
 		void AddExtraBind(IBindable* pBindable);
 		void BindTransformCBuf() const;
-		void BindTransformCBuf(IContext& context) const;
+		void BindTransformCBuf(const IContext& context) const;
 		void InitTransformCBuf(const IGraphics& gfx);
 		[[nodiscard]] IVertexBuffer& GetVertexBuffer() const;
 		[[nodiscard]] uint32_t GetIndexCount() const;

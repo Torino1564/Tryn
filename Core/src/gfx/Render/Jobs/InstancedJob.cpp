@@ -17,7 +17,7 @@ void tryn::gfx::InstancedJob::Execute(const IGraphics& gfx)
 	gfx.DrawIndexedInstanced((int)data.pDrawable->GetIndexCount(), (int)data.transforms.size(), 0u, 0u, 0u);
 }
 
-void tryn::gfx::InstancedJob::Execute(IContext& ctx)
+void tryn::gfx::InstancedJob::Execute(const IContext& ctx)
 {
 	data.pDrawable->BindBase(ctx);
 	data.pDrawable->BindExtraBinds(ctx);

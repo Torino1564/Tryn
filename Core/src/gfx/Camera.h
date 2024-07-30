@@ -8,7 +8,7 @@ namespace tryn::gfx
 	class Camera
 	{
 	public:
-		void Bind(const IGraphics& gfx);
+		void Bind(IGraphics& gfx);
 		void Update();
 		void Rotate(float dx, float dy) noexcept;
 		void Submit(IGraphics& gfx);

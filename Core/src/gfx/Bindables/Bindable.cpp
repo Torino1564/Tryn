@@ -3,7 +3,7 @@
 tryn::gfx::IBindable::~IBindable()
 {}
 
-void tryn::gfx::IBindable::Bind(IContext&)
+void tryn::gfx::IBindable::Bind( const IContext&)
 { Bind(); }
 
 void tryn::gfx::IBindable::Accept(TechniqueProbe&)

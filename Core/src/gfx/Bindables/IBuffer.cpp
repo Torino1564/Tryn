@@ -96,7 +96,7 @@ namespace tryn::gfx
 	}
 
 	template <BufferType Type, CachingPolicy Policy>
-	void IBuffer<Type, Policy>::Bind(IContext& context)
+	void IBuffer<Type, Policy>::Bind(const IContext& context)
 	{
 		throw BufferMissmatchException("Invalid call from interface");
 	}

@@ -18,7 +18,7 @@ namespace tryn::gfx
 		gfx.DrawIndexed(data.pDrawable->GetIndexCount());
 	}
 
-	void BasicJob::Execute(IContext& ctx)
+	void BasicJob::Execute(const IContext& ctx)
 	{
 		data.pDrawable->BindBase(ctx);
 		data.pDrawable->BindTransformCBuf(ctx);

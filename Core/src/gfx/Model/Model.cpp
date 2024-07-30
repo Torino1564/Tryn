@@ -378,7 +378,7 @@ namespace tryn::gfx
 	{
 		return reinterpret_cast<ani::BonedMesh*>(pMeshes[0].get());
 	}
-	gfx::IGraphics* Model::GetGfx()
+	const gfx::IGraphics* Model::GetGfx() const
 	{
 		return &gfx;
 	}

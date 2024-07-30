@@ -67,9 +67,9 @@ namespace tryn::gfx
 		virtual ~IGraphics() = default;
 		virtual void BeginFrame() = 0;
 		virtual void EndFrame() = 0;
-		virtual void ClearBuffer(float r, float g, float b) = 0;
-		virtual void DrawIndexed(int count) = 0;
-		virtual void DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) = 0;
+		virtual void ClearBuffer(float r, float g, float b) const = 0;
+		virtual void DrawIndexed(int count) const = 0;
+		virtual void DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) const = 0;
 		void SetRenderGraph(std::unique_ptr<IRenderGraph>&&);
 		IRenderGraph& GetRenderGraph() const;
 		void ExecuteFrame();
@@ -81,8 +81,8 @@ namespace tryn::gfx
 		void SetProjection(glm::mat4 projection);
 		const spa::DimensionsI& GetDimensions() const;
 		virtual constexpr GraphicAPI GetType() const = 0;
-		virtual std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() = 0;
-		virtual std::shared_ptr<IGenericDepthStencil> GetDepthStencilView() = 0;
+		virtual std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() const = 0;
+		virtual std::shared_ptr<IGenericDepthStencil> GetDepthStencilView() const = 0;
 		static const std::vector<std::string>& GetApiArray()
 		{
 			static std::vector<std::string> graphicApiString = {
@@ -92,7 +92,7 @@ namespace tryn::gfx
 			};
 			return graphicApiString;
 		}
-		virtual constexpr void AssertContextCoherence(IContext& context) const
+		virtual constexpr void AssertContextCoherence(const IContext& context) const
 		{
 			trynass(context.GetApi() == GetType());
 		}

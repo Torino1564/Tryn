@@ -19,6 +19,7 @@ namespace tryn::app
 		virtual void PostFrame();
 
 		const gfx::IGraphics& Gfx() const;
+		gfx::IGraphics& Gfx();
 
 	protected:
 		std::shared_ptr<win::IWindow> wnd;

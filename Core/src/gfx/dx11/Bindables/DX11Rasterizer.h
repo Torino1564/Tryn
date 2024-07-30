@@ -9,7 +9,7 @@ namespace tryn::gfx::dx11
 	public:
 		DX11Rasterizer(const Graphics& gfx, bool twoSided = true);
 		void Bind() override;
-		void Bind(IContext& context) override;
+		void Bind(const IContext& context) override;
 	private:
 		Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterizer;
 		const Graphics& gfx;

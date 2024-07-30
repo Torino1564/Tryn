@@ -2,8 +2,6 @@
 #include <stdint.h>
 #include "SinkAndSource.h"
 #include <memory>
-#include <vector>
-#include <unordered_map>
 #include <string>
 
 namespace tryn::gfx
@@ -12,34 +10,19 @@ namespace tryn::gfx
 	{
 	public:
 		virtual ~IRenderPass() = default;
-		IRenderPass(std::string name) : name(std::move(name)) {}
-		IRenderPass(IRenderPass&& rhs) noexcept
-		{
-			pSink = std::move(rhs.pSink);
-			pSource = std::move(rhs.pSource);
-			name = std::move(rhs.name);
-		}
+		IRenderPass(std::string name);
+		IRenderPass(IRenderPass&& rhs) noexcept;
 		virtual void Execute(const class IGraphics& gfx) = 0;
-		const std::string& GetName() const
-		{
-			return name;
-		}
+		const std::string& GetName() const;
+
 		struct RenderPassID
 		{
-			static uint16_t Resolve()
-			{
-				static uint16_t UIDcounter = 0;
-				return UIDcounter++;
-			}
+			static uint16_t Resolve();
 		};
-		ISink& GetSink()
-		{
-			return *pSink;
-		}
-		ISource& GetSource()
-		{
-			return *pSource;
-		}
+		ISink& GetSink() const;
+
+		ISource& GetSource() const;
+
 	protected:
 		// resources
 		std::unique_ptr<ISink> pSink;

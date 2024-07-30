@@ -16,7 +16,7 @@ namespace tryn::gfx::dx11
 		DX11InputLayout(const Graphics& gfx, IVertexBuffer& vb, IVertexShader& vs);
 		DX11InputLayout(const Graphics& gfx, VertexLayout& layout, IVertexShader& vs);
 		void Bind() override;
-		void Bind(IContext& context) override;
+		void Bind(const IContext& context) override;
 
 	private:
 		const Graphics& gfx;

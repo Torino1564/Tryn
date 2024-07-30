@@ -141,13 +141,13 @@ namespace tryn::gfx::dx11
 		future.get();
 	}
 
-	void Graphics::ClearBuffer(float r, float g, float b)
+	void Graphics::ClearBuffer(float r, float g, float b) const
 	{
 		const float color[]{ r, g, b, 1.0f };
 		GetContext().ClearRenderTargetView(pTarget->Get(), color);
 		GetContext().ClearDepthStencilView(pDSV->Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	}
-	void Graphics::DrawIndexed(int count)
+	void Graphics::DrawIndexed(int count) const
 	{
 		GetContext().DrawIndexed(count, 0u, 0u);
 	}
@@ -172,15 +172,15 @@ namespace tryn::gfx::dx11
 	{
 		return APIString;
 	}
-	std::shared_ptr<IGenericRenderTargetView> Graphics::GetRenderTargetView()
+	std::shared_ptr<IGenericRenderTargetView> Graphics::GetRenderTargetView() const
 	{
 		return pTarget;
 	}
-	std::shared_ptr<IGenericDepthStencil> Graphics::GetDepthStencilView()
+	std::shared_ptr<IGenericDepthStencil> Graphics::GetDepthStencilView() const
 	{
 		return pDSV;
 	}
-	void Graphics::DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation)
+	void Graphics::DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) const
 	{
 		pContext->DrawIndexedInstanced(indexCount, instanceCount, startIndexLocation, baseVertexLocation, startInstanceLocation);
 	}

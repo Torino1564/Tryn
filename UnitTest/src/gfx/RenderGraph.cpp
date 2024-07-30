@@ -18,7 +18,7 @@ namespace Gfx
 			// declare queues to utilize
 			queueNames.push_back("TestQueue");
 		}
-		void Execute(IGraphics& gfx) override
+		void Execute(const IGraphics& gfx) override
 		{
 			// bind Render Target View
 			auto& concreteSink = *reinterpret_cast<SinkType*>(pSink.get());
@@ -36,7 +36,7 @@ namespace Gfx
 	class TestRenderGraph : public IRenderGraph
 	{
 	public:
-		TestRenderGraph(IGraphics& gfx)
+		TestRenderGraph(const IGraphics& gfx)
 			:
 			IRenderGraph(gfx)
 		{

@@ -9,13 +9,11 @@ tryn::gfx::JITUpdateBuffer::JITUpdateBuffer(IVtxConstantBuffer* pBuffer, void* p
 
 void tryn::gfx::JITUpdateBuffer::Bind()
 {
-	pBuffer->GetCPUBuffer().Data();
 	memcpy(pBuffer->GetCPUBuffer().Data(), pData, numBytes);
-
 	pBuffer->Bind();
 }
 
-void tryn::gfx::JITUpdateBuffer::Bind(IContext& ctx)
+void tryn::gfx::JITUpdateBuffer::Bind(const IContext& ctx)
 {
 	memcpy(pBuffer->GetCPUBuffer().Data(), pData, numBytes);
 	pBuffer->Bind(ctx);

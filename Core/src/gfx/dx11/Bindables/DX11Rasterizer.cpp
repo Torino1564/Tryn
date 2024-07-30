@@ -18,10 +18,10 @@ namespace tryn::gfx::dx11
 	{
 		gfx.GetContext().RSSetState(pRasterizer.Get());
 	}
-	void DX11Rasterizer::Bind(IContext& context)
+	void DX11Rasterizer::Bind(const IContext& context)
 	{
 		gfx.AssertContextCoherence(context);
-		auto& dx11context = static_cast<DX11Context*>(&context)->GetContext();
+		auto& dx11context = static_cast<const DX11Context*>(&context)->GetContext();
 		dx11context.RSSetState(pRasterizer.Get());
 	}
 }

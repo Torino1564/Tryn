@@ -9,7 +9,7 @@ namespace tryn::gfx::dx11
 	public:
 		DX11PrimitiveTopology(const Graphics& gfx, D3D_PRIMITIVE_TOPOLOGY type = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		void Bind() override;
-		void Bind(IContext& context) override;
+		void Bind(const IContext& context) override;
 
 	private:
 		D3D_PRIMITIVE_TOPOLOGY topologyType;

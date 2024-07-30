@@ -11,7 +11,7 @@ namespace tryn::gfx::ani
 		ticksPerSecond = anim.mTicksPerSecond;
 
 		nodes.reserve(anim.mNumChannels);;
-		for (auto i = 0; i < anim.mNumChannels; i++)
+		for (unsigned int i = 0; i < anim.mNumChannels; i++)
 		{
 			auto& channel = *anim.mChannels[i];
 			auto& node = nodes.emplace_back();
@@ -22,24 +22,24 @@ namespace tryn::gfx::ani
 			node.numRotationKeys = channel.mNumRotationKeys;
 			
 			node.scalingKeys.reserve(node.numScalingKeys);
-			for (auto i = 0; i < node.numScalingKeys; i++)
+			for (unsigned int j = 0; j < node.numScalingKeys; j++)
 			{
-				auto& key = channel.mScalingKeys[i];
-				node.scalingKeys.push_back(VectorKey(key.mTime, reinterpret_cast<glm::vec3*>(&key.mValue)));
+				auto& key = channel.mScalingKeys[j];
+				node.scalingKeys.emplace_back(VectorKey(key.mTime, reinterpret_cast<glm::vec3*>(&key.mValue)));
 			}
 
 			node.positionKeys.reserve(node.numPositionKeys);
-			for (auto i = 0; i < node.numScalingKeys; i++)
+			for (unsigned int j = 0; j < node.numScalingKeys; j++)
 			{
-				auto& key = channel.mPositionKeys[i];
-				node.positionKeys.push_back(VectorKey(key.mTime, reinterpret_cast<glm::vec3*>(&key.mValue)));
+				auto& key = channel.mPositionKeys[j];
+				node.positionKeys.emplace_back(VectorKey(key.mTime, reinterpret_cast<glm::vec3*>(&key.mValue)));
 			}
 
 			node.rotationKeys.reserve(node.numRotationKeys);
-			for (auto i = 0; i < node.numRotationKeys; i++)
+			for (unsigned int j = 0; j < node.numRotationKeys; j++)
 			{
-				auto& key = channel.mRotationKeys[i];
-				node.rotationKeys.push_back(QuatKey(key.mTime, reinterpret_cast<glm::quat*>(&key.mValue)));
+				auto& key = channel.mRotationKeys[j];
+				node.rotationKeys.emplace_back(QuatKey(key.mTime, reinterpret_cast<glm::quat*>(&key.mValue)));
 			}
 		}
 	}
@@ -51,7 +51,7 @@ namespace tryn::gfx::ani
 	{
 		return { nodes };
 	}
-	const glm::vec3& AnimationNode::GetPositionVectorKey( uint32_t& previousKey, const double timePoint)
+	const glm::vec3& AnimationNode::GetPositionVectorKey( uint32_t& previousKey, const double timePoint) const
 	{
 		static constexpr glm::vec3 fallback = { 0.0f,0.0f,0.0f };
 		uint32_t newKey = previousKey;
@@ -79,7 +79,7 @@ namespace tryn::gfx::ani
 		return fallback;
 	}
 
-	const glm::quat& AnimationNode::GetRotationVectorKey(uint32_t& previousKey, const double timePoint)
+	const glm::quat& AnimationNode::GetRotationVectorKey(uint32_t& previousKey, const double timePoint) const
 	{
 		uint32_t idx = previousKey;
 		do
@@ -100,7 +100,7 @@ namespace tryn::gfx::ani
 		} while (previousKey != idx);
 	}
 
-	const glm::vec3& AnimationNode::GetScaleVectorKey(uint32_t& previousKey, const double timePoint)
+	const glm::vec3& AnimationNode::GetScaleVectorKey(uint32_t& previousKey, const double timePoint) const
 	{
 		uint32_t idx = previousKey;
 		do

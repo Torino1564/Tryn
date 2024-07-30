@@ -7,7 +7,7 @@
 class TestRenderGraph : public gfx::IRenderGraph
 {
 public:
-	TestRenderGraph(gfx::IGraphics& gfx)
+	TestRenderGraph(const gfx::IGraphics& gfx)
 		:
 		gfx::IRenderGraph(gfx), master(gbl::configs.numRenderWorkers)
 	{
@@ -17,7 +17,7 @@ public:
 			workerPtrs[i]->StartWorking();
 		}
 	}
-	void ExecuteFrame(gfx::IGraphics& gfx) override
+	void ExecuteFrame(const gfx::IGraphics& gfx) override
 	{
 		{
 			PROFILE_SCOPE("Execute Frame");
@@ -146,13 +146,13 @@ TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphi
 	sponza.GetComponent<ecs::cmp::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
 	sponza.GetComponent<ecs::cmp::ActiveComponent>().active = true;
 
-	entParent.GetComponent<ecs::cmp::InstancedModelParentComponent>().parentModel = gfx::InstancedModelParent(Gfx(), "resources/models/gobber/GoblinX.obj");
+	entParent.GetComponent<ecs::cmp::InstancedModelParentComponent>().pParentModel = std::make_unique<gfx::InstancedModelParent>(Gfx(), "resources/models/gobber/GoblinX.obj");
 	entParent.GetComponent<ecs::cmp::ActiveComponent>().active = true;
 	entParent.GetComponent<ecs::cmp::ScaleComponent>().scale = { .3f,.3f,.3f };
 	entParent.GetComponent<ecs::cmp::VelocityComponent>().velocity = { .0f, 0.f, 0.f };
 	entParent.GetComponent<ecs::cmp::AccelerationComponent>().acceleration = { .0f, 0.f, 0.f };
 
-	auto& instanceParent = entParent.GetComponent<ecs::cmp::InstancedModelParentComponent>().parentModel;
+	auto& instanceParent = *entParent.GetComponent<ecs::cmp::InstancedModelParentComponent>().pParentModel;
 
 	for (auto& entity : entities)
 	{

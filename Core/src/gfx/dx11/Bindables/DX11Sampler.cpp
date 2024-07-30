@@ -1,5 +1,6 @@
 #include "DX11Sampler.h"
 #include <Core/src/gfx/dx11/GraphicsError.h>
+#include <Core/src/gfx/dx11/Dx11Graphics.h>
 
 namespace tryn::gfx::dx11
 {
@@ -32,10 +33,10 @@ namespace tryn::gfx::dx11
 	{
 		gfx.GetContext().PSSetSamplers((UINT)slot, 1u, pSamplerState.GetAddressOf());
 	}
-	void DX11Sampler::Bind(IContext& context)
+	void DX11Sampler::Bind(const IContext& context)
 	{
 		gfx.AssertContextCoherence(context);
-		auto& dx11context = static_cast<DX11Context*>(&context)->GetContext();
+		auto& dx11context = static_cast<const DX11Context*>(&context)->GetContext();
 		dx11context.PSSetSamplers((UINT)slot, 1u, pSamplerState.GetAddressOf());
 	}
 }
