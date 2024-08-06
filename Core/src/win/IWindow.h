@@ -7,6 +7,7 @@
 #include <Core/src/spa/Vec2.h>
 #include "Keyboard.h"
 #include "Mouse.h"
+#include "WindowHandle.h"
 
 namespace tryn::win
 {
@@ -25,7 +26,7 @@ namespace tryn::win
 		};
 		// functions
 		virtual ~IWindow() = default;
-		virtual HWND GetHandle() const = 0;
+		virtual WindowHandle GetHandle() const = 0;
 		virtual bool IsClosing() const = 0;
 		virtual std::future<void> SetTitle(std::wstring title) = 0;
 		virtual spa::DimensionsI GetClientDimensions() const = 0;

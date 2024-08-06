@@ -14,12 +14,11 @@
 #include <Core/src/gfx/IBufferFwd.h>
 #include <Core/src/gfx/ComparissonMode.h>
 #include <Core/src/gfx/RTVDSFwd.h>
+#include <Core/src/win/WindowHandle.h>
+
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
-
-struct HWND__;
-typedef struct HWND__* HWND;
 
 namespace tryn::app
 {
@@ -51,15 +50,16 @@ namespace tryn::gfx
 	class VertexLayout;
 	class RenderWorker;
 	class IGenericRenderTargetView;
+
 	class IGraphics
 	{
 		friend class app::App;
 	public:
 		struct IocParams
 		{
-			std::optional<int> width;
-			std::optional<int> height;
-			const HWND* hWnd{};
+			std::optional<int> width = std::nullopt;
+			std::optional<int> height = std::nullopt;
+			win::WindowHandle hWnd = nullptr;
 		};
 		virtual ~IGraphics() = default;
 		virtual void BeginFrame() = 0;

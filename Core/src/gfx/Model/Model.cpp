@@ -246,6 +246,10 @@ namespace tryn::gfx
 		return pModel;
 	}
 
+	Model::~Model()
+	{
+	}
+
 	void Model::Submit(const glm::mat4& entityTransform = glm::identity<glm::mat4>())
 	{
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);

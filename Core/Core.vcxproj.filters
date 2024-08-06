@@ -342,6 +342,9 @@
     <ClCompile Include="third\TrynPCH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ser\StreamIO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -2053,6 +2056,12 @@
     </ClInclude>
     <ClInclude Include="src\gfx\Bindables\PrimitiveTopology.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dbg\SourceIncludes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\win\WindowHandle.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

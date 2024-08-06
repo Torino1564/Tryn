@@ -25,7 +25,7 @@ namespace tryn::win
 				trylog.error().hr();
 				throw WindowException{ "Failed to get module handle" };
 			}
-			hWnd_ = CreateWindowExW(
+			hWnd_ = (WindowHandle)CreateWindowExW(
 				exStyles,
 				MAKEINTATOM(pWindowClass_->GetAtom()),
 				title.c_str(),
@@ -52,7 +52,7 @@ namespace tryn::win
 		startSignal_.release();
 		future.get();
 	}
-	HWND Window::GetHandle() const
+	WindowHandle Window::GetHandle() const
 	{
 		return hWnd_;
 	}
@@ -67,7 +67,7 @@ namespace tryn::win
 	std::future<void> Window::SetTitle(std::wstring title)
 	{
 		return Dispatch_([=, this] {
-			if (!SetWindowTextW(hWnd_, title.c_str())) {
+			if (!SetWindowTextW((HWND)hWnd_, title.c_str())) {
 				trylog.warn(L"Failed setting window title").hr();
 			}
 			});
@@ -76,7 +76,7 @@ namespace tryn::win
 	{
 		Dispatch_([this] {
 			ImGui_ImplWin32_Shutdown();
-			if (!DestroyWindow(hWnd_)) {
+			if (!DestroyWindow((HWND)hWnd_)) {
 				trylog.warn(L"Failed destroying window").hr();
 			}
 			});
@@ -304,7 +304,7 @@ namespace tryn::win
 	}
 	void Window::NotifyTaskDispatch_() const
 	{
-		if (!PostMessageW(hWnd_, CustomTaskMessageId, 0, 0)) {
+		if (!PostMessageW((HWND)hWnd_, CustomTaskMessageId, 0, 0)) {
 			trylog.error().hr();
 			throw WindowException{ "Failed to post task notification message" };
 		}
@@ -330,8 +330,8 @@ namespace tryn::win
 	void Window::ConfineCursor()
 	{
 		RECT rect;
-		GetClientRect(hWnd_, &rect);
-		MapWindowPoints(hWnd_, nullptr, reinterpret_cast<POINT*>(&rect), 2);
+		GetClientRect((HWND)hWnd_, &rect);
+		MapWindowPoints((HWND)hWnd_, nullptr, reinterpret_cast<POINT*>(&rect), 2);
 		ClipCursor(&rect);
 	}
 	void Window::FreeCursor()
@@ -344,7 +344,7 @@ namespace tryn::win
 		tasks_.PopExecute();
 
 		MSG msg{};
-		while (GetMessageW(&msg, hWnd_, 0, 0)) {
+		while (GetMessageW(&msg, (HWND)hWnd_, 0, 0)) {
 			TranslateMessage(&msg);
 			DispatchMessageW(&msg);
 		}

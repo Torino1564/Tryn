@@ -21,7 +21,7 @@ namespace tryn::gfx::dx11
 	{
 		friend class DX11Context;
 	public:
-		Graphics(HWND hWnd, int width, int height);
+		Graphics(win::WindowHandle hWnd, int width, int height);
 		~Graphics() override;
 		void BeginFrame() override;
 		void EndFrame() override;

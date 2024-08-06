@@ -28,7 +28,7 @@
 
 namespace tryn::gfx::dx11
 {
-	Graphics::Graphics(HWND hWnd, int width, int height)
+	Graphics::Graphics(win::WindowHandle hWnd, int width, int height)
 	{
 		InitThread();
 
@@ -46,7 +46,7 @@ namespace tryn::gfx::dx11
 			swapDesc.SampleDesc.Quality = 0;
 			swapDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 			swapDesc.BufferCount = 1;
-			swapDesc.OutputWindow = hWnd;
+			swapDesc.OutputWindow = (HWND)hWnd;
 			swapDesc.Windowed = TRUE;
 			swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 			swapDesc.Flags = 0;

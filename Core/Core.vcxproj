@@ -66,6 +66,7 @@
     <ClCompile Include="src\gfx\Drawable.cpp" />
     <ClCompile Include="src\app\App.cpp" />
     <ClCompile Include="src\gfx\ConstantBuffer.cpp" />
+    <ClInclude Include="src\dbg\SourceIncludes.h" />
     <ClInclude Include="src\gfx\Bindables\PrimitiveTopology.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11InputLayout.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PixelShader.cpp" />
@@ -102,6 +103,7 @@
     <ClCompile Include="src\gfx\Gfx.cpp" />
     <ClCompile Include="src\gfx\dx11\Dx11Graphics.cpp" />
     <ClCompile Include="src\gfx\dx11\GraphicsError.cpp" />
+    <ClCompile Include="src\ser\StreamIO.cpp" />
     <ClCompile Include="third\TrynPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TrynPCH.h</PrecompiledHeaderFile>
@@ -139,6 +141,7 @@
     <ClCompile Include="src\win\Window.cpp" />
     <ClCompile Include="src\win\WindowClass.cpp" />
     <ClCompile Include="third\stb_image\stb_image.cpp" />
+    <ClInclude Include="src\win\WindowHandle.h" />
     <ClInclude Include="third\TrynPCH.h" />
   </ItemGroup>
   <ItemGroup>

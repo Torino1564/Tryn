@@ -1,8 +1,10 @@
 #pragma once
-#include <sstream>
 #include <Core/src/utl/Exception.h>
 #include "Serializer.h"
 #include <span>
+
+class std::ostringstream;
+class std::istringstream;
 
 namespace tryn::ser
 {
@@ -31,7 +33,7 @@ namespace tryn::ser
 				if (binary)
 				{
 					const auto pData = (char*)(&data);
-					oss.write(pData, sizeof(T));
+					WriteBinary(pData, sizeof(T));
 				}
 			}
 		}
@@ -42,6 +44,7 @@ namespace tryn::ser
 		}
 	private:
 		std::ostringstream& oss;
+		void WriteBinary(const char* pData, unsigned size) const;
 	};
 
 	class StreamReader
@@ -65,7 +68,7 @@ namespace tryn::ser
 				if (binary)
 				{
 					T newElement = {};
-					iss.read((char*)&newElement, sizeof(T));
+					ReadBinary((char*)&newElement, sizeof(T));
 					return newElement;
 				}
 				else
@@ -93,42 +96,22 @@ namespace tryn::ser
 				{
 					unsigned int position = iss.tellg();
 					std::string_view view {iss.str()};
-					iss.read((char*)&data, sizeof(T));
+					ReadBinary((char*)&data, sizeof(T));
 				}
 				else
 				{
-					
+					return;
 				}
 			}
 		}
 
-		void ExtractExpression(const std::string& expression, std::span<char> pExtraChars = {}) const
-		{
-			static std::string charBuffer;
+		void ExtractExpression(const std::string& expression, std::span<char> pExtraChars = {}) const;
 
-			if (expression.size() > charBuffer.size())
-			{
-				charBuffer.resize(expression.size());
-			}
+		std::istringstream& GetStringStream() const;
 
-			std::memset(charBuffer.data(), '0', charBuffer.size());
-
-			iss.read(charBuffer.data(), expression.size());
-
-			if (expression != charBuffer)
-				throw StreamIOException{"Failed to parse the requested expression from file"};
-
-			if (pExtraChars.data() != nullptr)
-			{
-				iss.read(pExtraChars.data(), pExtraChars.size());
-			}
-		}
-
-		auto& GetStringStream() const
-		{
-			return iss;
-		}
 	private:
+
+		void ReadBinary(char* pData, unsigned size) const;
 		std::istringstream& iss;
 	};
 }

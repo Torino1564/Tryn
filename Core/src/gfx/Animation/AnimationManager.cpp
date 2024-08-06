@@ -25,7 +25,7 @@ namespace tryn::gfx::ani
 
         for (int i = 0; i < pScene->mNumAnimations; i++)
         {
-            return New(path, *pScene->mAnimations[i]);
+            New(path, *pScene->mAnimations[i]);
         }
     }
     std::shared_ptr<Animation> AnimationManager::Resolve(const uint32_t key)

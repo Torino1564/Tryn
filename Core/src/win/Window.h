@@ -17,7 +17,7 @@ namespace tryn::win
 	public:
 		Window(std::shared_ptr<IWindowClass> pWindowClass, std::wstring title,
 			spa::DimensionsI clientAreaSize, std::optional<spa::Vec2I> position = std::nullopt);
-		HWND GetHandle() const override;
+		WindowHandle GetHandle() const override;
 		bool IsClosing() const override;
 		spa::DimensionsI GetClientDimensions() const override;
 		std::future<void> SetTitle(std::wstring title) override;
@@ -46,7 +46,7 @@ namespace tryn::win
 		mutable ccr::GenericTaskQueue tasks_;
 		std::binary_semaphore startSignal_{ 0 };
 		std::thread kernelThread_;
-		HWND hWnd_ = nullptr;
+		WindowHandle hWnd_ = nullptr;
 		std::atomic<bool> closing_ = false;
 	};
 }
