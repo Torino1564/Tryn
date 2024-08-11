@@ -3,10 +3,13 @@
 #include <string>
 #include <vector>
 #include <core/third/glm/glm.hpp>
-#include "Mesh.h"
 
 namespace tryn::gfx
 {
+	class Mesh;
+	class IGraphics;
+	class InstancedModelParent;
+
 	class Node
 	{
 	public:

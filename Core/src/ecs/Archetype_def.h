@@ -71,6 +71,7 @@ namespace tryn::ecs
 		friend class Archetype;
 
 	public:
+		// TODO: Access Modes
 		template <ValidComponentWithAccessMode... Cs>
 		std::span<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> GetComponentGroups();
 

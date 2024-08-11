@@ -31,6 +31,8 @@ namespace tryn::gfx
 
 	InstancedModelParent::~InstancedModelParent() = default;
 
+	InstancedModelParent::InstancedModelParent(InstancedModelParent&&) = default;
+
 	void InstancedModelParent::Submit(const glm::mat4& transformation)
 	{
 		auto& settings = pBase->settings;

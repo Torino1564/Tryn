@@ -1,7 +1,5 @@
 #include "TrynPCH.h"
 #include "App.h"
-#include <Core/src/ecs/Entity.h>
-#include <chrono>
 #include <Core/src/gfx/Profiler.h>
 #include <Core/src/ecs/sys/SystemManager.h>
 #include <Core/src/gfx/IGraphics.h>

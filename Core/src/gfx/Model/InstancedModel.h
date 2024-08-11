@@ -20,6 +20,9 @@ namespace tryn::gfx
 		InstancedModelParent(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint32_t> numInstances = std::nullopt);
 		InstancedModelParent();
 		~InstancedModelParent();
+		InstancedModelParent(const InstancedModelParent&) = delete;
+		InstancedModelParent(InstancedModelParent&&);
+
 		void Submit(const glm::mat4& entityTransform);
 		InstancedModelChild Instanciate();
 		void Instanciate(std::span<InstancedModelChild> childSpan);

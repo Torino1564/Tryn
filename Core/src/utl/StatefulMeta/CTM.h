@@ -39,7 +39,6 @@ namespace tryn::utl::CTM
         using ElementNumber_t = decltype(IntType<ElementNumber>);
     };
 
-
     // E3
     template<unsigned N, typename List, unsigned int ID>
     struct state_t {

@@ -53,7 +53,7 @@ namespace tryn::ecs
 		for (auto i = 0 ; i < componentIDs.size() ; i++)
 		{
 			archetype.componentUUIDs.push_back(componentIDs[i]);
-			archetype.components.push_back(GetComponentIndex(componentIDs[i]));
+			archetype.components.push_back(GetComponentInfo<ComponentInfo::Index>(componentIDs[i]));
 			archetype.bufferPtrs.push_back(std::make_unique<std::vector<std::byte>>());
 		}
 		archetype.Resize(100);
@@ -95,7 +95,7 @@ namespace tryn::ecs
 		booker.resize(newSize, true);
 		for (auto [index, pBuffer]: std::ranges::views::enumerate(bufferPtrs) )
 		{
-			pBuffer->resize(newSize * ComponentManager::Get().GetComponentSize(components[index]));
+			pBuffer->resize(newSize * GetComponentInfo<ComponentInfo::Size>(componentUUIDs[index]));
 		}
 	}
 
@@ -173,9 +173,9 @@ namespace tryn::ecs
 		booker.flip(nextFree);
 
 		// Default initialize the subresource data structure
-		for (auto [index, componentUUID] : std::ranges::views::enumerate(components) )
+		for (auto [index, componentUUID] : std::ranges::views::enumerate(componentUUIDs) )
 		{
-			ComponentData<Action::Fill>(&(*bufferPtrs[index])[nextFree], componentUUID);
+			ComponentData(&(*bufferPtrs[index])[nextFree], componentUUID, Action::Fill);
 		}
 
 		bookerPointer = (uint32_t)nextFree;
@@ -192,9 +192,9 @@ namespace tryn::ecs
 		booker[entityID.ID].flip();
 		bookerPointer = entityID.ID - 1;
 
-		for (auto [index, componentUUID] : std::views::enumerate(components))
+		for (auto [index, componentUUID] : std::views::enumerate(componentUUIDs))
 		{
-			ComponentData<Action::Delete>(&(*bufferPtrs[index])[(entityID.ID - 1) * GetComponentInfo<ComponentInfo::Size>(componentUUID)], componentUUID);
+			ComponentData(&(*bufferPtrs[index])[(entityID.ID - 1) * GetComponentInfo<ComponentInfo::Size>(componentUUID)], componentUUID, Action::Delete);
 		}
 	}
 

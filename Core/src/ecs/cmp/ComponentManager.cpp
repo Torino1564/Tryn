@@ -6,16 +6,6 @@
 
 namespace tryn::ecs
 {
-	void tryn::ecs::ComponentManager::ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex)
-	{
-
-	}
-
-	ComponentManager::ComponentManager()
-	{
-		RegisterComponents();
-	}
-
 	ECS::ECS()
 		:
 		componentManager(ComponentManager::Get()), archetypeManager(ArchetypeManager::Get())

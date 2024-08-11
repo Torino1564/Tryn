@@ -32,15 +32,7 @@ namespace tryn::ecs
 		}
 		TEST_METHOD(StatefullBS)
 		{
-			using ComponentList_t = typename ComponentManager::ComponentList<>;
-			ComponentList_t componentTuple = {};
 
-			static constexpr auto animatedID = cmp::AnimatedComponent::index;
-			using AnimatedType = ComponentManager::ComponentByIndex<animatedID>;
-
-			AnimatedType animatedCmp = {};
-
-			ComponentManager::IterateComponentMembers<LogMemberVariable>(AnimatedType::UUID);
 
 		}
 	private:

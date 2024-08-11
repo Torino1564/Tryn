@@ -17,6 +17,7 @@
 #include <format>
 #include <chrono>
 #include <concepts>
+#include <unordered_map>
 
 // third party
 #include <Core/third/glm/glm.hpp>

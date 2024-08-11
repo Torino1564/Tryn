@@ -3,6 +3,7 @@
 #include <CLI/CLI.hpp>
 #include <Core/src/app/Initialization.h>
 #include <Core/src/app/Globals.h>
+#include <Core/src/win/TrynWin.h>
 
 namespace tryn::app
 {

@@ -34,9 +34,10 @@ namespace tryn::ecs
 	};
 
 	template <typename T>
-	concept ValidComponentWithAccessMode =  ValidComponent<typename T::ComponentType> and requires
+	concept ValidComponentWithAccessMode =  ValidComponent<typename T::ComponentType> or requires
 	{
 		{T::accessMode} -> std::convertible_to<AccessMode>;
+		ValidComponent<typename T::ComponentType>;
 	};
 
 

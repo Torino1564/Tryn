@@ -220,7 +220,7 @@ namespace tryn::ecs
 				}
 				for (auto componentIndex : componentIndices)
 				{
-					ImGui::Selectable(ComponentManager::GetComponentName(componentIndex), reinterpret_cast<bool*>(&selectedComponents[componentIndex]));
+					ImGui::Selectable(GetComponentInfo<ComponentInfo::Name>(componentIndex), reinterpret_cast<bool*>(&selectedComponents[componentIndex]));
 				}
 				ImGui::EndCombo();
 			}

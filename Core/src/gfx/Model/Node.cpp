@@ -5,6 +5,7 @@
 #include <Core/src/gfx/Model/InstancedModel.h>
 #include "Core/third/glm/ext/matrix_transform.hpp"
 #include <Core/src/gfx/Animation/BonedMesh.h>
+#include "Mesh.h"
 
 namespace tryn::gfx
 {
