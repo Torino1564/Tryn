@@ -59,10 +59,10 @@ namespace tryn::ecs
 		switch (action)
 		{
 		case Action::Fill:
-			pComponent->SRD().Constructor(pData);
+			pComponent->ConstructSRD(pData);
 			break;
 		case Action::Delete:
-			pComponent->SRD().Destructor(pData);
+			pComponent->DestroySRD(pData);
 			break;
 		}
 	}

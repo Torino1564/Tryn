@@ -25,14 +25,14 @@
 #include <Core/src/ecs/Archetype_def.h>
 
 #define ZT_COMPONENT_FIELDS(x) \
-	public: struct SubresourceData : public tryn::ecs::SubresourceDataBase<SubresourceData> { x };\
+	public: struct SubresourceData{ x };\
 	const static inline SubresourceData srd = {}
 
 #define ZT_DEFINE_COMPONENT(x) class x; class x : public tryn::ecs::Component<x, #x>
 
 
 #define ZT_DEFINE_COMPONENT_VARIABLE_2(type, var) \
-	type var = {}; \
+	type var; \
 	using ZT_CAT_C(var, _t) = tryn::utl::CTM::Map_t<type, #type, #var, sizeof(type), UUID>
 
 
@@ -128,52 +128,23 @@ namespace tryn::ecs
 		static void IterateComponentMembers(const utl::UUID_t componentUUID, FuncArgs&&... funcArgs );
 	};
 
-	class ISubresourceData
-	{
-	public:
-		virtual ~ISubresourceData() = default;
-		virtual void Constructor(void* pData, const size_t size = 0) const = 0;
-		virtual void Destructor(void* pData, const size_t size = 0) const = 0;
-	};
-
-	template <typename T>
-	class SubresourceDataBase : public ISubresourceData
-	{
-	public:
-		~SubresourceDataBase() override = default;
-		void Constructor(void* pData, const size_t size) const override
-		{
-			// assert size if possible
-			trynass(size == 0 || size == sizeof(T)).msg(L"Error constructing Subresource Data in place!");
-
-			auto pData_ = static_cast<T*>(pData);
-			new (pData_) T();
-		}
-		void Destructor(void* pData, const size_t size) const override
-		{
-			// assert size if possible
-			trynass(size == 0 || size == sizeof(T)).msg(L"Error constructing Subresource Data in place!");
-
-			auto pData_ = static_cast<T*>(pData);
-			delete(pData_);
-		}
-	};
-
 	class IComponent
 	{
 	public:
+		virtual ~IComponent() = default;
 		constexpr virtual utl::UUID_t GetUUID() const = 0;
-		virtual const ISubresourceData& SRD() const = 0;
 		virtual const char* Name() const = 0;
 		virtual size_t Size() const = 0;
+		virtual void ConstructSRD(void* pData, size_t = 0) const = 0;
+		virtual void DestroySRD(void* pData, size_t = 0) const = 0;
 	};
 
 	template <typename T, utl::StaticString Name_>
 	class Component : public IComponent
 	{
 	public:
-		virtual ~Component() = default;
 		ZT_COMPONENT_FIELDS();
+
 	protected:
 		using Name_t = decltype(utl::TextType<Name_>);
 		static constexpr Name_t nameFunc;
@@ -187,10 +158,6 @@ namespace tryn::ecs
 		{
 			return UUID;
 		}
-		const ISubresourceData& SRD() const override
-		{
-			return srd;
-		}
 		const char* Name() const override
 		{
 			return name;
@@ -198,6 +165,22 @@ namespace tryn::ecs
 		size_t Size() const override
 		{
 			return sizeof(typename T::srd);
+		}
+		void ConstructSRD(void* pData, const size_t size) const override
+		{
+			// assert size if possible
+			trynass(size == 0 || size == sizeof(T)).msg(L"Error constructing Subresource Data in place!");
+
+			auto pData_ = static_cast<typename T::SubresourceData*>(pData);
+			new (pData_) typename T::SubresourceData();
+		}
+		void DestroySRD(void* pData, const size_t size) const override
+		{
+			// assert size if possible
+			trynass(size == 0 || size == sizeof(T)).msg(L"Error constructing Subresource Data in place!");
+
+			auto pData_ = static_cast<typename T::SubresourceData*>(pData);
+			std::destroy_at(pData);
 		}
 	private:
 		utl::CTM::setter<0, std::tuple<>, utl::CTM::tu_tag, UUID> setter;

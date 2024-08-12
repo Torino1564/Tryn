@@ -4,7 +4,5 @@
 
 namespace tryn::ecs::cmp
 {
-	ModelComponent::SubresourceData::~SubresourceData() = default;
-	ModelComponent::SubresourceData::SubresourceData() = default;
 
 }

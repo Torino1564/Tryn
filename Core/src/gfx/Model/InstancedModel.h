@@ -26,7 +26,7 @@ namespace tryn::gfx
 		void Submit(const glm::mat4& entityTransform);
 		InstancedModelChild Instanciate();
 		void Instanciate(std::span<InstancedModelChild> childSpan);
-		IInstanceBuffer& RequestInstanceBuffer(std::uint16_t key);
+		IInstanceBuffer& RequestInstanceBuffer(std::uint16_t key) const;
 	private:
 		std::uint32_t ResolveID();
 		void Resize(std::size_t newSize);
@@ -47,7 +47,7 @@ namespace tryn::gfx
 		friend class InstancedModelParent;
 	public:	
 		~InstancedModelChild();
-		void Submit(const glm::mat4& transformation);
+		void Submit(const glm::mat4& transformation) const;
 
 	public:
 		std::uint16_t instanceID;

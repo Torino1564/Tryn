@@ -60,9 +60,9 @@ namespace tryn::gfx
 		std::optional<ani::Skeleton> skeleton = std::nullopt;
 		std::uint16_t meshCounter = 0;
 		const gfx::IGraphics& gfx;
-		std::string name;
-		std::unique_ptr<Node> root;
-		std::vector<std::shared_ptr<Mesh>> pMeshes;
+		std::string name = {};
+		std::unique_ptr<Node> root = {};
+		std::vector<std::shared_ptr<Mesh>> pMeshes = {};
 
 	public:
 		struct Serializer : public tryn::ser::Serializer<Model>

@@ -12,7 +12,7 @@ namespace tryn::gfx
 		:
 		pBase(std::make_unique<Model>(gfx, path, scale, true))
 	{
-		instancedGroup = "InstaceGroup";
+		instancedGroup = "InstanceGroup";
 		instancedGroup += path.data();
 
 		trynass_msg(numInstances.value_or(10) != 0, L"numInstances cannot be 0!");
@@ -66,7 +66,7 @@ namespace tryn::gfx
 			child.pParentModel = this;
 		}
 	}
-	IInstanceBuffer& InstancedModelParent::RequestInstanceBuffer(std::uint16_t key)
+	IInstanceBuffer& InstancedModelParent::RequestInstanceBuffer(const std::uint16_t key) const
 	{
 		trynass_msg(key < pTransformationBuffers.size(), L"Out of bounds access!");
 		return *pTransformationBuffers[key].get();
@@ -98,7 +98,7 @@ namespace tryn::gfx
 
 		return slot;
 	}
-	void InstancedModelParent::Resize(std::size_t newSize)
+	void InstancedModelParent::Resize(const std::size_t newSize)
 	{
 		transforms.resize(newSize, glm::mat4{ 0.0f });
 		booker.resize(newSize, true);
@@ -110,9 +110,10 @@ namespace tryn::gfx
 	}
 	InstancedModelChild::~InstancedModelChild()
 	{
-		pParentModel->booker[instanceID].flip();
+		if (pParentModel != nullptr)
+			pParentModel->booker[instanceID].flip();
 	}
-	void InstancedModelChild::Submit(const glm::mat4& transformation)
+	void InstancedModelChild::Submit(const glm::mat4& transformation) const
 	{
 		pParentModel->transforms[instanceID] = transformation;
 	}
