@@ -70,7 +70,7 @@ namespace tryn::ecs
 
 					auto pData = reinterpret_cast<typename MapElement::Type*>(reinterpret_cast<std::byte*>(&data[entityID.ID - 1]) + byteOffsetFunc());
 
-					streamReader.ReadSerialized(pData, binary, pExtraData);
+					streamReader.ReadSerialized(*pData, binary, pExtraData);
 				}
 			};
 
@@ -98,10 +98,10 @@ namespace tryn::ecs
 				Entity newEntity;
 
 				// Name
-				newEntity.name = streamReader.ReadSerialized<std::string>(binary);
+				newEntity.name = streamReader.ReadSerialized<std::string>(binary, pExtraData);
 
 				// Archetype & UUID
-				newEntity.pArchetype = streamReader.ReadSerialized<Archetype*>(binary);
+				newEntity.pArchetype = streamReader.ReadSerialized<Archetype*>(binary, pExtraData);
 				newEntity.UUID = newEntity.pArchetype->ResolveEntityUUID();
 
 				auto sortedVec = newEntity.pArchetype->componentUUIDs;

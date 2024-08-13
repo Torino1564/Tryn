@@ -142,6 +142,9 @@
     <ClCompile Include="src\win\WindowClass.cpp" />
     <ClCompile Include="third\stb_image\stb_image.cpp" />
     <ClInclude Include="src\gfx\CoreGraphics.h" />
+    <ClInclude Include="src\gfx\Model\ShapeMesh.h" />
+    <ClInclude Include="src\gfx\Shape.h" />
+    <ClInclude Include="src\gfx\Terrain\Plane.h" />
     <ClInclude Include="src\win\WinCore.h" />
     <ClInclude Include="src\win\WindowHandle.h" />
     <ClInclude Include="third\TrynPCH.h" />

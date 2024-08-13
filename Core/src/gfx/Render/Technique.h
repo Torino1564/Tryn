@@ -39,7 +39,7 @@ namespace tryn::gfx
 			return true;
 		}
 
-		static std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, class Material& material, aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skeleton = false);
+		static std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, class Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skeleton = false);
 
 	private:
 		static TechniquePool& Get()
@@ -62,7 +62,7 @@ namespace tryn::gfx
 		void Submit(const IGraphics& gfx, Drawable* parent);
 		void Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instancedParent);
 		void Accept(class TechniqueProbe& probe);
-		virtual std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, bool instanced, bool skinned) = 0;
+		virtual std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, bool instanced, bool skinned) = 0;
 	protected:
 		class VertexLayout& ExtractLayoutFromMaterial(class Material& mat);
 		std::string name;
@@ -81,7 +81,7 @@ namespace tryn::gfx
 			:
 		TechniqueBase(name) {}
 
-		std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skinned = false) override
+		std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skinned = false) override
 		{
 			if (instanced && skinned)
 			{
@@ -100,6 +100,11 @@ namespace tryn::gfx
 				return std::make_shared<T<false, false>>(material, aiMaterial, gfx, path);
 			}
 		}
+	public:
+		static constexpr auto GetUUID()
+		{
+			return UUID;
+		}
 	protected:
 		using Type = Technique<T, Name, Instanced, Skinned>;
 		static constexpr auto UUID = ZT_STRING_HASH(Name.v);
@@ -108,7 +113,7 @@ namespace tryn::gfx
 	};
 
 	inline std::shared_ptr<class TechniqueBase> TechniquePool::ConstructTechnique(utl::UUID_t techniqueUUID,
-		Material& material, aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced,
+		Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced,
 		const bool skeleton)
 	{
 		auto it = Get().techniqueMap.find(techniqueUUID);

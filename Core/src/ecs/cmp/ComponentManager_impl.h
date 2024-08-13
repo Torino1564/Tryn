@@ -7,6 +7,7 @@ namespace tryn::ecs
 	unsigned int ComponentManager::RegisterComponent()
 	{
 		auto componentIndex = NextFreeAndIncrement();
+		T test = {};
 		const auto success = ComponentMap().insert({T::UUID, std::move(std::make_pair(std::make_unique<T>(), componentIndex))});
 		ComponentVector().push_back(T::UUID);
 		return componentIndex;
@@ -83,7 +84,7 @@ namespace tryn::ecs
 		}
 		else if constexpr (Info == ComponentInfo::Index)
 		{
-			return ComponentManager::ComponentMap()[componentUUID].second;
+			return index;
 		}
 	}
 }

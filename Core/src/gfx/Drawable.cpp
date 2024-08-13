@@ -32,7 +32,7 @@ namespace tryn::gfx
 
 		gfx.Dispatch([&] {
 			BindBase();
-			for (auto& technique : techniques)
+			for (auto& technique : GetSelectedMaterial().GetTechniques())
 			{
 				technique->Draw(gfx, this);
 			}
@@ -44,7 +44,7 @@ namespace tryn::gfx
 		ExtraSubmitBehavior();
 		this->transform = transform;
 
-		for (auto& technique : techniques)
+		for (auto& technique : GetSelectedMaterial().GetTechniques())
 		{
 			technique->Submit(gfx, this);
 		}
@@ -74,7 +74,7 @@ namespace tryn::gfx
 
 		AddExtraBind(&instanceBuffer);
 
-		for (auto& technique : techniques)
+		for (auto& technique : GetSelectedMaterial().GetTechniques())
 		{
 			technique->Submit(gfx, this, transforms, instancedParent);
 		}
@@ -143,10 +143,6 @@ namespace tryn::gfx
 	{
 		return indexCount;
 	}
-	void Drawable::AddTechnique(std::shared_ptr<TechniqueBase> pTechnique)
-	{
-		techniques.push_back(std::move(pTechnique));
-	}
 	glm::mat4 Drawable::GetTransformMatrix() const
 	{
 		return transform;
@@ -154,5 +150,10 @@ namespace tryn::gfx
 	std::uint16_t Drawable::GetID() const
 	{
 		return ID;
+	}
+
+	Material& Drawable::GetSelectedMaterial() const
+	{
+		return *pMaterials[selectedMaterial];
 	}
 }

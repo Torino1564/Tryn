@@ -9,8 +9,10 @@
 
 namespace tryn::gfx
 {
-	StaticMesh::StaticMesh(const IGraphics& gfx, const Material& material, const aiMesh& mesh, std::string_view tag, glm::vec3 scale, std::optional<std::uint16_t> meshID)
+	StaticMesh::StaticMesh(const IGraphics& gfx, const aiMesh& mesh, std::string_view tag, const Material* pMaterial, glm::vec3 scale, std::optional<std::uint16_t> meshID)
 	{
+		auto material = pMaterial ? *pMaterial : Material::MakeDefault(gfx);
+
 		if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f)
 		{
 			this->tag = std::format("{}#Scale[X:{},Y:{},Z:{}]", tag, scale.x, scale.y, scale.z);
@@ -32,10 +34,38 @@ namespace tryn::gfx
 		pTopology = IPrimitiveTopology::Resolve(gfx);
 		InitTransformCBuf(gfx);
 
-		for (auto& technique : material.GetTechniques())
+		this->pMaterials.emplace_back(std::make_unique<Material>(material));
+		this->selectedMaterial = pMaterials.size() - 1;
+	}
+
+	StaticMesh::StaticMesh(const IGraphics& gfx, const Shape3D& shape,
+		std::string_view tag, const Material* pMaterial, glm::vec3 scale, std::optional<std::uint16_t> meshID)
+	{
+		auto material = pMaterial ? *pMaterial : Material::MakeDefault(gfx);
+
+		if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f)
 		{
-			techniques.push_back(technique);
+			this->tag = std::format("{}#Scale[X:{},Y:{},Z:{}]", tag, scale.x, scale.y, scale.z);
 		}
+		else
+		{
+			this->tag = tag;
+		}
+
+		ID = meshID.value_or(0);
+		auto vertexBuffer = material.ExtractVertices(shape);
+		vertexBuffer.SetClean();
+		const auto indices = material.ExtractIndices(shape);
+
+		indexCount = static_cast<uint32_t>(indices.Size());
+
+		pVertexBuffer = IVertexBuffer::Resolve(gfx, std::make_shared<VertexBuffer>(vertexBuffer), this->tag);
+		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<IndexBuffer>(indices));
+		pTopology = IPrimitiveTopology::Resolve(gfx);
+		InitTransformCBuf(gfx);
+
+		this->pMaterials.emplace_back(std::make_unique<Material>(material));
+		this->selectedMaterial = pMaterials.size() - 1;
 	}
 
 	MeshType StaticMesh::Type() const

@@ -186,7 +186,7 @@ namespace tryn::gfx
 		{
 			SetImpl_(pResource, exposureName);
 		}
-		virtual bool IsBounded(const std::string& exposureName)
+		virtual bool IsBounded(const std::string& exposureName) override
 		{
 			for (int i = 0; i < names.size(); i++)
 			{

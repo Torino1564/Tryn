@@ -13,15 +13,24 @@
 #include <Core/src/gfx/CPUBuffer.h>
 #include <concepts>
 #include <Core/src/gfx/VertexFormat.h>
+#include <Core/src/gfx/Shape.h>
 
 namespace tryn::gfx::ani
 {
 	class Skeleton;
 }
 
-#define DVTX_ELEMENT_AI_EXTRACTOR(member) static void ExtractAndFill( VertexBuffer& buf, const aiMesh& mesh,size_t i, ani::Skeleton const* skeleton = nullptr ) noexcept {buf[i].Attr<type>(0) = *reinterpret_cast<const SysType*>(&mesh.member[i]);}
+#define DVTX_ELEMENT_EXTRACTOR DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;\
+		DVTX_ELEMENT_SHAPE_EXTRACTOR_DECLARATION
+
 #define DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION static inline void ExtractAndFill( VertexBuffer& buf, const aiMesh& mesh,size_t i, ani::Skeleton const* skeleton = nullptr ) noexcept
+
+#define DVTX_ELEMENT_SHAPE_EXTRACTOR_DECLARATION static inline void ExtractAndFill( VertexBuffer& buf, const gfx::Shape3D&, size_t i) noexcept
+
 #define DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(vertexElement, member) void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::vertexElement>::ExtractAndFill(VertexBuffer& buf, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept { buf[i].Attr<VertexLayout::VertexElement::vertexElement>(0) = *reinterpret_cast<const SysType*>(&mesh.member[i]); }
+
+#define DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(vertexElement, memberFunc) void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::vertexElement>::ExtractAndFill(VertexBuffer& buf, const Shape3D& shape, size_t i) noexcept { buf[i].Attr<VertexLayout::VertexElement::vertexElement>(0) = *reinterpret_cast<const SysType*>(&shape.memberFunc()[i]); }
+
 ZT_EX_DEF(DvtxException);
 
 #define LAYOUT_ELEMENT_TYPES \
@@ -78,7 +87,7 @@ namespace tryn::gfx
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P2";
 			
-			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+			DVTX_ELEMENT_EXTRACTOR;
 		};
 		VERTEX_ELEMENT_ATTR(Position3D)
 		{
@@ -86,7 +95,7 @@ namespace tryn::gfx
 			static constexpr VertexFormat format = VertexFormat::Vec3F;
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P3";
-			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+			DVTX_ELEMENT_EXTRACTOR;
 		};
 		VERTEX_ELEMENT_ATTR(Normal)
 		{
@@ -94,7 +103,7 @@ namespace tryn::gfx
 			static constexpr VertexFormat format = VertexFormat::Vec3F;
 			static constexpr const char* semantic = "Normal";
 			static constexpr const char* code = "N";
-			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+			DVTX_ELEMENT_EXTRACTOR;
 		};
 		VERTEX_ELEMENT_ATTR(UV)
 		{
@@ -102,7 +111,7 @@ namespace tryn::gfx
 			static constexpr VertexFormat format = VertexFormat::Vec2F;
 			static constexpr const char* semantic = "Texcoord";
 			static constexpr const char* code = "UV";
-			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+			DVTX_ELEMENT_EXTRACTOR;
 		};
 		VERTEX_ELEMENT_ATTR(Float3Color)
 		{
@@ -110,7 +119,7 @@ namespace tryn::gfx
 			static constexpr VertexFormat format = VertexFormat::Vec3F;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "Cf3";
-			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+			DVTX_ELEMENT_EXTRACTOR;
 		};
 		VERTEX_ELEMENT_ATTR(Float4Color)
 		{
@@ -118,7 +127,7 @@ namespace tryn::gfx
 			static constexpr VertexFormat format = VertexFormat::Vec4F;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "Cf4";
-			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+			DVTX_ELEMENT_EXTRACTOR;
 		};
 		VERTEX_ELEMENT_ATTR(Char4Color)
 		{
@@ -126,7 +135,7 @@ namespace tryn::gfx
 			static constexpr VertexFormat format = VertexFormat::Vec4C_UNorm;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "Cc4";
-			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+			DVTX_ELEMENT_EXTRACTOR;
 		};
 		VERTEX_ELEMENT_ATTR(Tangent)
 		{
@@ -134,7 +143,7 @@ namespace tryn::gfx
 			static constexpr VertexFormat format = VertexFormat::Vec3F;
 			static constexpr const char* semantic = "Tangent";
 			static constexpr const char* code = "T";
-			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+			DVTX_ELEMENT_EXTRACTOR;
 		};
 		VERTEX_ELEMENT_ATTR(Bitangent)
 		{
@@ -142,7 +151,7 @@ namespace tryn::gfx
 			static constexpr VertexFormat format = VertexFormat::Vec3F;
 			static constexpr const char* semantic = "Bitangent";
 			static constexpr const char* code = "Bt";
-			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+			DVTX_ELEMENT_EXTRACTOR;
 		};
 		VERTEX_ELEMENT_ATTR(BoneIds)
 		{
@@ -150,7 +159,7 @@ namespace tryn::gfx
 			static constexpr VertexFormat format = VertexFormat::Vec4UI16;
 			static constexpr const char* semantic = "BoneIds";
 			static constexpr const char* code = "BId";
-			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+			DVTX_ELEMENT_EXTRACTOR;
 		};
 		VERTEX_ELEMENT_ATTR(BoneWeights)
 		{
@@ -158,7 +167,7 @@ namespace tryn::gfx
 			static constexpr VertexFormat format = VertexFormat::Vec4F;
 			static constexpr const char* semantic = "BoneWeights";
 			static constexpr const char* code = "BWs";
-			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+			DVTX_ELEMENT_EXTRACTOR;
 		};
 		VERTEX_ELEMENT_ATTR(Unknown)
 		{
@@ -166,7 +175,7 @@ namespace tryn::gfx
 			static constexpr VertexFormat format = VertexFormat::Unknown;
 			static constexpr const char* semantic = "Unknown";
 			static constexpr const char* code = "?";
-			DVTX_ELEMENT_AI_EXTRACTOR_DECLARATION;
+			DVTX_ELEMENT_EXTRACTOR;
 		};
 
 		template<template<VertexElement> class F, typename... Args>
@@ -227,6 +236,17 @@ namespace tryn::gfx
 					for (auto end = mesh.mNumVertices, i = 0u; i < end; i++)
 					{
 						VertexLayout::VertexElementAttr<type>::ExtractAndFill(buf, mesh, i, skeleton);
+					}
+				}
+			};
+			template<VertexLayout::VertexElement type>
+			struct AttributeShapeMeshFill
+			{
+				static constexpr void Exec(VertexBuffer& buf, const gfx::Shape3D& shape)
+				{
+					for (auto i = 0u; i < shape.NumVertices(); i++)
+					{
+						VertexLayout::VertexElementAttr<type>::ExtractAndFill(buf, shape, i);
 					}
 				}
 			};
@@ -401,6 +421,7 @@ namespace tryn::gfx
 	public:
 		VertexBuffer(VertexLayout layout_, size_t size = 0);
 		VertexBuffer(VertexLayout layout, const aiMesh& mesh, ani::Skeleton* skeleton = nullptr);
+		VertexBuffer(VertexLayout layout, const class Shape3D& mesh);
 		void Resize(size_t newSize) override;
 		constexpr std::size_t ByteSize() const noexcept override;
 		constexpr std::size_t Size() const noexcept override;
@@ -426,14 +447,26 @@ namespace tryn::gfx
 	};
 
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Position2D, mVertices);
+	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Position2D, Vertices);
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Position3D, mVertices);
+	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Position3D, Vertices);
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Normal, mNormals);
+	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Normal, Normals);
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(UV, mTextureCoords[0]);
+	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(UV, TexCoords);
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Float3Color, mColors[0]);
+	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Float3Color, Vertices);
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Float4Color, mColors[0]);
+	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Float4Color, Vertices);
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Char4Color, mColors[0]);
+	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Char4Color, Vertices);
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Tangent, mTangents);
+	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Tangent, Tangents);
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Bitangent, mBitangents);
+	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Bitangent, Bitangents);
+	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(BoneWeights, Vertices);
+	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(BoneIds, Vertices);
+	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Unknown, Vertices);
 
 	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::BoneWeights>::ExtractAndFill(VertexBuffer& buf, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
 	{

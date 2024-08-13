@@ -25,13 +25,14 @@ namespace Ser
 				streamWriter.Serialize(data.var2, binary, name);
 				streamWriter.Serialize(data.floatArray, binary, name);
 			}
-			static TrivialClass Read(const ser::StreamReader& streamReader, const bool binary = true, const void* pExtraData = nullptr)
+			template <typename Data = void>
+			static TrivialClass Read(const ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
 			{
 				TrivialClass newClass;
 				newClass.var1 = streamReader.ReadSerialized<int>(binary);
 				newClass.var2 = streamReader.ReadSerialized<float>(binary);
 				newClass.floatArray = streamReader.ReadSerialized<std::vector<float>>(binary);
-				return std::move(newClass);
+				return newClass;
 			}
 		};
 	};
@@ -67,7 +68,11 @@ namespace Ser
 	public:
 		TEST_METHOD_INITIALIZE(Init)
 		{
+			app::BootCore();
 			pStreamWriter = std::make_unique<ser::StreamWriter>(oss);
+			pWnd = ioc::Get().Resolve<win::IWindow>(win::IWindow::IocParams{ .size = spa::DimensionsI{.width = (1024), .height = (768) } });
+			pWnd->SetTitle(L"TrynGame");
+			pGfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{ pWnd->GetClientDimensions().width, pWnd->GetClientDimensions().height, pWnd->GetHandle() });
 		}
 		TEST_METHOD(SerializeTest1)
 		{
@@ -131,7 +136,7 @@ namespace Ser
 			std::istringstream iss(fileContent);
 
 			ser::StreamReader streamReader(iss);
-
+			
 			auto str1FromFile = streamReader.ReadSerialized<std::string>(true);
 			auto str2FromFile = streamReader.ReadSerialized<std::string>(true);
 		}
@@ -164,13 +169,21 @@ namespace Ser
 
 			ser::StreamReader streamReader(iss);
 
-			auto ent2 = streamReader.ReadSerialized<ecs::Entity>();
+			struct EntityExtraData
+			{
+				gfx::IGraphics* pGfx;
+			};
+
+			EntityExtraData data {.pGfx = pGfx.get()};
+			auto ent2 = streamReader.ReadSerialized<ecs::Entity>(true, &data);
 
 			auto [activeComp] = ent2.GetComponent<ecs::cmp::ActiveComponent>();
 			auto [positionComp] = ent2.GetComponent<ecs::cmp::PositionComponent>();
 			auto componentSpan = ent2.GetComponents();
 		}
 	public:
+		std::shared_ptr<win::IWindow> pWnd;
+		std::shared_ptr<gfx::IGraphics> pGfx;
 		std::ostringstream oss;
 		std::unique_ptr<ser::StreamWriter> pStreamWriter;
 	};

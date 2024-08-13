@@ -12,7 +12,7 @@ namespace tryn::gfx
 	{
 	public:
 		ForwardPhongBase(const std::string& name);
-		ForwardPhongBase(class Material& material, aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path);
+		ForwardPhongBase(class Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path);
 	};
 
 	using ForwardPhong = ForwardPhongBase<false, false>;

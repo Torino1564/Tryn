@@ -79,10 +79,8 @@ namespace tryn::gfx::ani
 		cblayout.Solidify();
 		pSkeletonCBuffer = gfx.CreateVtxConstantBuffer(std::move(cblayout), 5);
 
-		for (auto& technique : material.GetTechniques())
-		{
-			techniques.push_back(technique);
-		}
+		pMaterials.push_back(std::make_unique<Material>(material));
+		selectedMaterial = pMaterials.size() - 1;
 	}
 	MeshType BonedMesh::Type() const
 	{
@@ -98,7 +96,7 @@ namespace tryn::gfx::ani
 
 		AddExtraBind(jitBuffer);
 
-		for (auto& technique : techniques)
+		for (auto& technique : GetSelectedMaterial().GetTechniques())
 		{
 			technique->Submit(gfx, this);
 		}

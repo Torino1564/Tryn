@@ -2,7 +2,7 @@
 #include <tuple>
 #include <concepts>
 #include <type_traits>
-#include <string>
+#include <Core/src/utl/StringHasher.h>
 
 namespace tryn::utl::ctc
 {
@@ -27,7 +27,7 @@ namespace tryn::utl::ctc
 
 
     // E3
-    template<unsigned N, typename List, unsigned int ID>
+    template<unsigned N, typename List, utl::UUID_t ID>
     struct state_t {
         static constexpr unsigned n = N;
         static constexpr unsigned id = ID;
@@ -43,7 +43,7 @@ namespace tryn::utl::ctc
     template<
         unsigned N,
         std::same_as<tu_tag> TUTag,
-        unsigned int ID
+        utl::UUID_t ID
     >
     struct reader {
         friend auto state_func(reader<N, TUTag, ID>);
@@ -54,7 +54,7 @@ namespace tryn::utl::ctc
         unsigned N,
         typename List,
         std::same_as<tu_tag> TUTag,
-        unsigned int ID
+        utl::UUID_t ID
     >
     struct setter {
         // E5
@@ -86,7 +86,7 @@ namespace tryn::utl::ctc
     template<
         std::same_as<tu_tag> TUTag,
         auto EvalTag,
-        unsigned int ID,
+        utl::UUID_t ID,
         unsigned N = 0
     >
     [[nodiscard]]
@@ -108,14 +108,14 @@ namespace tryn::utl::ctc
 
     // E8
     template<
-        unsigned int ID = 0,
+        utl::UUID_t ID = 0,
         std::same_as<tu_tag> TUTag = tu_tag,
         auto EvalTag = [] {},
         auto State = get_state<TUTag, EvalTag, ID>()
     >
     using get_list = typename std::remove_cvref_t<decltype(State)>::list;
     template<
-        unsigned int ID = 0,
+        utl::UUID_t ID = 0,
         std::same_as<tu_tag> TUTag = tu_tag,
         auto EvalTag = [] {},
         auto State = get_state<TUTag, EvalTag, ID>()
@@ -131,7 +131,7 @@ namespace tryn::utl::ctc
         typename T,
         std::same_as<tu_tag> TUTag,
         auto EvalTag,
-        unsigned int ID
+        utl::UUID_t ID
     >
     [[nodiscard]]
     consteval auto append_impl() {
@@ -146,26 +146,26 @@ namespace tryn::utl::ctc
     // E10
     template<
         typename T,
-        unsigned int ID,
+        utl::UUID_t ID,
         std::same_as<tu_tag> TUTag = tu_tag,
         auto EvalTag = [] {},
         auto State = append_impl<T, TUTag, EvalTag, ID>()
     >
     constexpr auto append = [] { return State; };           // E10.1
 
-    template <unsigned N, unsigned int ID>
+    template <unsigned N, utl::UUID_t ID>
     struct readerC {
         friend auto counted_flag(readerC<N, ID>);
     };
 
-    template <unsigned N, unsigned int ID>
+    template <unsigned N, utl::UUID_t ID>
     struct setterC {
         friend auto	counted_flag(readerC<N, ID>) {}
 
         static constexpr unsigned n = N;
     };
 
-    template<auto Tag, typename T, unsigned int ID, unsigned NextVal = 0>
+    template<auto Tag, typename T, utl::UUID_t ID, unsigned NextVal = 0>
     [[nodiscard]]
     consteval auto counter_impl()
     {
@@ -184,7 +184,7 @@ namespace tryn::utl::ctc
         }
     }
 
-    template <typename T, unsigned int ID = 0, auto Tag = [] {}, auto Val = counter_impl<Tag, T, ID>() >
+    template <typename T, utl::UUID_t ID = 0, auto Tag = [] {}, auto Val = counter_impl<Tag, T, ID>() >
     constexpr auto counter = Val;
 }
 

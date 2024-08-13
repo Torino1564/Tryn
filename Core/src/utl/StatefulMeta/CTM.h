@@ -4,8 +4,9 @@
 #include <type_traits>
 #include <string>
 #include <Core/src/utl/StatefulMeta/TemplateData.h>
-#define ZT_CAT_C(x, y) x##y
+#include <Core/src/utl/StringHasher.h>
 
+#define ZT_CAT_C(x, y) x##y
 
 namespace tryn::utl::CTM
 {
@@ -40,10 +41,10 @@ namespace tryn::utl::CTM
     };
 
     // E3
-    template<unsigned N, typename List, unsigned int ID>
+    template<unsigned N, typename List, utl::UUID_t ID>
     struct state_t {
         static constexpr unsigned n = N;
-        static constexpr unsigned id = ID;
+        static constexpr utl::UUID_t id = ID;
         using list = List;
     };
 
@@ -56,7 +57,7 @@ namespace tryn::utl::CTM
     template<
         unsigned N,
         std::same_as<tu_tag> TUTag,
-        unsigned int ID
+        utl::UUID_t ID
     >
     struct reader {
         friend auto state_func(reader<N, TUTag, ID>);
@@ -67,7 +68,7 @@ namespace tryn::utl::CTM
         unsigned N,
         typename List,
         std::same_as<tu_tag> TUTag,
-        unsigned int ID
+        utl::UUID_t ID
     >
     struct setter {
         // E5
@@ -106,7 +107,7 @@ namespace tryn::utl::CTM
     template<
         std::same_as<tu_tag> TUTag,
         auto EvalTag,
-        unsigned int ID,
+        utl::UUID_t ID,
         unsigned N = 0
     >
     [[nodiscard]]
@@ -128,7 +129,7 @@ namespace tryn::utl::CTM
 
     // E8
     template<
-        unsigned int ID = 0,
+        utl::UUID_t ID = 0,
         std::same_as<tu_tag> TUTag = tu_tag,
         auto EvalTag = [] {},
         auto State = get_state<TUTag, EvalTag, ID>()
@@ -137,7 +138,7 @@ namespace tryn::utl::CTM
 
 
     template<
-        unsigned int ID = 0,
+        utl::UUID_t ID = 0,
         std::same_as<tu_tag> TUTag = tu_tag,
         auto EvalTag = [] {},
         auto State = get_state<TUTag, EvalTag, ID>()
@@ -147,7 +148,7 @@ namespace tryn::utl::CTM
         return State.n;
     }
     
-    template<unsigned int ID, unsigned int N, auto Tag = [] {}>
+    template<utl::UUID_t ID, unsigned int N, auto Tag = [] {}>
     consteval auto get_offset()
     {
         if constexpr (N == 1)
@@ -173,7 +174,7 @@ namespace tryn::utl::CTM
         unsigned int VarSize,
         std::same_as<tu_tag> TUTag,
         auto EvalTag,
-        unsigned int ID
+        utl::UUID_t ID
     >
     [[nodiscard]]
     consteval auto append_impl() {
@@ -197,26 +198,26 @@ namespace tryn::utl::CTM
         StaticString TypeName,
         StaticString VarName,
         unsigned int VarSize,
-        unsigned int ID,
+        utl::UUID_t ID,
         std::same_as<tu_tag> TUTag = tu_tag,
         auto EvalTag = [] {},
         auto State = append_impl<T, TypeName, VarName, VarSize, TUTag, EvalTag, ID>()
     >
     constexpr auto append = [] { return State; };           // E10.1
 
-    template <unsigned N, unsigned int ID>
+    template <unsigned N, utl::UUID_t ID>
     struct readerC {
         friend auto counted_flag(readerC<N, ID>);
     };
 
-    template <unsigned N, unsigned int ID>
+    template <unsigned N, utl::UUID_t ID>
     struct setterC {
         friend auto	counted_flag(readerC<N, ID>) {}
 
         static constexpr unsigned n = N;
     };
 
-    template<auto Tag, typename T, StaticString TypeName, StaticString VarName, unsigned int VarSize, unsigned int ID, unsigned NextVal = 0>
+    template<auto Tag, typename T, StaticString TypeName, StaticString VarName, unsigned int VarSize, utl::UUID_t ID, unsigned NextVal = 0>
     [[nodiscard]]
     consteval auto Map_Impl()
     {
@@ -239,7 +240,7 @@ namespace tryn::utl::CTM
         StaticString TypeName,
         StaticString VarName,
         unsigned int VarSize,
-        unsigned int ID = 0,
+        utl::UUID_t ID = 0,
         auto Tag = [] {},
         auto Val = Map_Impl<Tag, T, TypeName, VarName, VarSize, ID>() >
     constexpr auto Map = Val;
@@ -248,7 +249,7 @@ namespace tryn::utl::CTM
         StaticString TypeName,
         StaticString VarName,
         unsigned int VarSize,
-        unsigned int ID = 0,
+        utl::UUID_t ID = 0,
         auto Tag = [] {},
         auto Val = Map_Impl<Tag, T, TypeName, VarName, VarSize, ID>() >
     struct Map_t

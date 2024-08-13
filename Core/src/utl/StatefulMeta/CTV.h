@@ -60,7 +60,7 @@ namespace tryn::utl::CTV
 
 
     // E3
-    template<unsigned N, typename List, unsigned int ID>
+    template<unsigned N, typename List, utl::UUID_t ID>
     struct state_t {
         static constexpr unsigned n = N;
         static constexpr unsigned id = ID;
@@ -76,7 +76,7 @@ namespace tryn::utl::CTV
     template<
         unsigned N,
         std::same_as<tu_tag> TUTag,
-        unsigned int ID
+        utl::UUID_t ID
     >
     struct reader {
         friend auto state_func(reader<N, TUTag, ID>);
@@ -87,7 +87,7 @@ namespace tryn::utl::CTV
         unsigned N,
         typename List,
         std::same_as<tu_tag> TUTag,
-        unsigned int ID
+        utl::UUID_t ID
     >
     struct setter {
         // E5
@@ -127,7 +127,7 @@ namespace tryn::utl::CTV
     template<
         std::same_as<tu_tag> TUTag,
         auto EvalTag,
-        unsigned int ID,
+        utl::UUID_t ID,
         unsigned N = 0
     >
     [[nodiscard]]
@@ -149,7 +149,7 @@ namespace tryn::utl::CTV
 
     // E8
     template<
-        unsigned int ID = 0,
+        utl::UUID_t ID = 0,
         std::same_as<tu_tag> TUTag = tu_tag,
         auto EvalTag = [] {},
         auto State = get_state<TUTag, EvalTag, ID>()
@@ -158,7 +158,7 @@ namespace tryn::utl::CTV
 
 
     template<
-        unsigned int ID = 0,
+        utl::UUID_t ID = 0,
         std::same_as<tu_tag> TUTag = tu_tag,
         auto EvalTag = [] {},
         auto State = get_state<TUTag, EvalTag, ID>()
@@ -175,7 +175,7 @@ namespace tryn::utl::CTV
 		unsigned int UUID,
         std::same_as<tu_tag> TUTag,
         auto EvalTag,
-        unsigned int ID
+        utl::UUID_t ID
     >
     [[nodiscard]]
     consteval auto append_impl() {
@@ -193,26 +193,26 @@ namespace tryn::utl::CTV
     // E10
     template<
         typename T, StaticString TypeName, unsigned int UUID,
-        unsigned int ID,
+        utl::UUID_t ID,
         std::same_as<tu_tag> TUTag = tu_tag,
         auto EvalTag = [] {},
         auto State = append_impl<T, TypeName, UUID, TUTag, EvalTag, ID>()
     >
     constexpr auto append = [] { return State; };           // E10.1
 
-    template <unsigned N, unsigned int ID>
+    template <unsigned N, utl::UUID_t ID>
     struct readerC {
         friend auto counted_flag(readerC<N, ID>);
     };
 
-    template <unsigned N, unsigned int ID>
+    template <unsigned N, utl::UUID_t ID>
     struct setterC {
         friend auto	counted_flag(readerC<N, ID>) {}
 
         static constexpr unsigned n = N;
     };
 
-    template<auto Tag, typename T, StaticString TypeName, unsigned int UUID, unsigned int ID, unsigned NextVal = 0>
+    template<auto Tag, typename T, StaticString TypeName, unsigned int UUID, utl::UUID_t ID, unsigned NextVal = 0>
     [[nodiscard]]
     consteval auto UUIDMap_Impl()
     {
@@ -234,7 +234,7 @@ namespace tryn::utl::CTV
     template <typename T,
         StaticString TypeName,
         unsigned int UUID,
-        unsigned int ID = 0,
+        utl::UUID_t ID = 0,
         auto Tag = [] {},
         auto Val = UUIDMap_Impl<Tag, T, TypeName, UUID, ID>() >
     constexpr auto UUIDMap = Val;
@@ -242,7 +242,7 @@ namespace tryn::utl::CTV
     template <typename T,
         StaticString TypeName,
         unsigned int UUID,
-        unsigned int ID = 0,
+        utl::UUID_t ID = 0,
         auto Tag = [] {},
         auto Val = UUIDMap_Impl<Tag, T, TypeName, UUID, ID>() >
 

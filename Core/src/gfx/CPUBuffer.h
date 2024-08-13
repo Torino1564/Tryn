@@ -73,9 +73,9 @@ namespace tryn::gfx
 			buffer.resize(indexCount);
 			dirty = false;
 		}
-		IndexBuffer(std::vector<int> data)
+		IndexBuffer(const std::vector<uint32_t>& data)
 		{
-			buffer = std::move(data);
+			buffer = data;
 			dirty = false;
 		}
 		constexpr void* Data() const noexcept override
@@ -99,7 +99,7 @@ namespace tryn::gfx
 			buffer.resize(newSize);
 		}
 	private:
-		static constexpr int stride = sizeof(int);
-		std::vector<int> buffer;
+		static constexpr int stride = sizeof(uint32_t);
+		std::vector<uint32_t> buffer;
 	};
 }

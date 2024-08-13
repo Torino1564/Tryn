@@ -23,7 +23,10 @@ namespace tryn::gfx
 	template <template <bool, bool> typename T>
 	concept BaseTechniqueClass = DerivedFromTechniqueBase<T<false, false>>;
 
-	
+	template <typename T>
+	concept HasGfxPointer = requires (T t) {
+		std::same_as<decltype(t.pGfx), gfx::IGraphics*>;
+	};
 
 	struct Settings
 	{
@@ -41,6 +44,7 @@ namespace tryn::gfx
 		static std::unique_ptr<Model> Make(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
 		static std::unique_ptr<Model> Make(const gfx::IGraphics& gfx, std::string_view path, const std::span<utl::UUID_t> techniqueUUIDs, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
 		~Model();
+		Model(Model&&) = default;
 		void Submit(const glm::mat4& entityTransform);
 		void Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms);
 		void SpawnControlWindow();
@@ -63,6 +67,7 @@ namespace tryn::gfx
 		std::string name = {};
 		std::unique_ptr<Node> root = {};
 		std::vector<std::shared_ptr<Mesh>> pMeshes = {};
+		friend class Serializer;
 
 	public:
 		struct Serializer : public tryn::ser::Serializer<Model>
@@ -73,10 +78,13 @@ namespace tryn::gfx
 				streamWriter.Serialize(data.name, binary, name);
 
 			}
-
+			
 			template <typename Data = void>
 			static Model Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
 			{
+				static_assert(HasGfxPointer<Data>, "The SerializeReadComponentField functor requires extra data of type tryn::gfx::IGraphics*!");
+				const auto name = streamReader.ReadSerialized<std::string>(binary, pExtraData);
+				return Model(name, *pExtraData->pGfx);
 			}
 
 			template <typename Data = void>
@@ -201,7 +209,7 @@ namespace tryn::gfx
 			for (size_t i = 0; i < pScene->mNumMeshes; i++)
 			{
 				const auto& mesh = *pScene->mMeshes[i];
-				auto pMesh = std::make_shared<StaticMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), scale, pModel->meshCounter++);
+				auto pMesh = std::make_shared<StaticMesh>(gfx, mesh, mesh.mName.C_Str(), &materials[mesh.mMaterialIndex], scale, pModel->meshCounter++);
 				pModel->pMeshes.push_back(std::move(pMesh));
 			}
 		}

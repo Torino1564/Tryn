@@ -21,7 +21,7 @@ int WINAPI wWinMain(
 	static constexpr auto bufferSize = 10000;
 	static std::array<char, bufferSize> buffer = {};
 	static std::array<char*, 100> charPtrs = {};
-	auto index = 0;
+	size_t index = 0;
 	for (int i = 0; i < argc; i++)
 	{
 		auto tempString = tryn::utl::ToNarrow(wargv[i]);

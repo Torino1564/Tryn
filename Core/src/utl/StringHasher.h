@@ -5,11 +5,12 @@
 
 // Credits to tower120 on stack overflow for this hasher
 
-#define ZT_STRING_HASH(x) (tryn::utl::MM<sizeof(x)-1>::crc32(x))
+//#define ZT_STRING_HASH(x) (tryn::utl::MM<sizeof(x)-1>::crc32(x))
+#define ZT_STRING_HASH(x) (tryn::utl::fnv1a_64(x))
 
 namespace tryn::utl
 {
-    using UUID_t = unsigned int;
+    using UUID_t = uint64_t;
 
     static inline constexpr UUID_t crc_table[256] = {
         0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
@@ -74,4 +75,15 @@ namespace tryn::utl
           return prev_crc^ 0xFFFFFFFF;
       }
     };
+
+    constexpr uint64_t fnv1a_64(const std::string_view str)
+	{
+        const auto length = str.size();
+	    uint64_t hash = 0xcbf29ce484222325; // FNV offset basis
+	    for (std::size_t i = 0; i < length; ++i) {
+	        hash ^= static_cast<uint64_t>(str[i]);
+	        hash *= 0x100000001b3; // FNV prime
+	    }
+	    return hash;
+	}
 }

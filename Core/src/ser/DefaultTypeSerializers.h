@@ -24,7 +24,7 @@ namespace tryn::ser
 		{
 			streamReader.ExtractExpression("UP:");
 			data.release();
-			data = std::make_unique<T>(streamReader.ReadSerialized<T>(binary, pExtraData));
+			data = std::unique_ptr<T>(new T(std::move(streamReader.ReadSerialized<T>(binary, pExtraData))));
 		}
 	};
 

@@ -39,6 +39,8 @@ namespace tryn::gfx
 		sul::dynamic_bitset<> booker;
 		gfx::ConstantBufferLayout::Node arrayElement;
 		std::vector<std::unique_ptr<IInstanceBuffer>> pTransformationBuffers;
+
+
 	};
 
 
@@ -92,18 +94,23 @@ namespace tryn::ser
 	template <typename T>
 	concept InstancedModelParentPointer = PointerLike<T> && std::is_same_v<std::remove_pointer_t<T>, gfx::InstancedModelParent> || std::is_same_v<std::remove_reference_t<decltype(*std::declval<T>())>, gfx::InstancedModelParent>;
 
-	template <InstancedModelParentPointer T>
-	struct TypeSerializer<T>
+	template <>
+	struct TypeSerializer<std::unique_ptr<gfx::InstancedModelParent>>
 	{
-		static void Write(const StreamWriter& streamWriter, T const& pData, const bool binary = true, const std::string& name = "")
+		static void Write(const StreamWriter& streamWriter, const std::unique_ptr<gfx::InstancedModelParent>& pData, const bool binary = true, const std::string& name = "")
 		{
 			streamWriter.Serialize(pData->pBase);
 		}
 		template <typename Data = void>
-		static T Read(const StreamReader& streamReader, const bool binary = true, const Data* extraData = nullptr)
+		static std::unique_ptr<gfx::InstancedModelParent> Read(const StreamReader& streamReader, const bool binary = true, const Data* extraData = nullptr)
 		{
 			static_assert(HasGfxPointer<Data> && extraData != nullptr, "The InstanceModelParent* Serializer requires extra data of type tryn::gfx::IGraphics*!");
 			return {nullptr};
+		}
+		template <typename Data = void>
+		static void Read(std::unique_ptr<gfx::InstancedModelParent>& data, const StreamReader& streamReader, const bool binary = true, const Data* extraData = nullptr)
+		{
+			//static_assert(HasGfxPointer<Data> && extraData != nullptr, "The InstanceModelParent* Serializer requires extra data of type tryn::gfx::IGraphics*!");
 		}
 	};
 }

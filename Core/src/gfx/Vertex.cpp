@@ -3,6 +3,8 @@
 #include <Core/src/utl/Assert.h>
 #include <Core/src/gfx/Animation/Bone.h>
 
+#include "Shape.h"
+
 namespace tryn::gfx
 {
 	VertexLayout::Element::Element(VertexElement type, size_t offset)
@@ -95,6 +97,19 @@ namespace tryn::gfx
 		}
 		dirty = false;
 	}
+
+	VertexBuffer::VertexBuffer(VertexLayout layout, const Shape3D& shape)
+	{
+		this->layout = std::move(layout);
+		Resize(shape.NumVertices());
+
+		for (unsigned int i = 0; i < this->layout.GetElementCount(); i++)
+		{
+			VertexLayout::Bridge<VertexLayout::Element::AttributeShapeMeshFill>(this->layout.ResolveByIndex(i).GetType(), *this, shape);
+		}
+		dirty = false;
+	}
+
 	void VertexBuffer::Resize(size_t newSize)
 	{
 		buffer.resize(newSize * layout.Size());

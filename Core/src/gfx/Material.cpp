@@ -11,10 +11,19 @@
 #include <Core/src/gfx/Bindables/Sampler.h>
 #include <fstream>
 
+#include "CoreGraphics.h"
+
 namespace tryn::gfx
 {
-	Material Material::Make(const IGraphics& gfx, aiMaterial& material, const std::filesystem::path& path,
-		std::span<utl::UUID_t> techniqueUUIDs, const bool instanced, const bool skinned)
+	Material Material::MakeDefault(const IGraphics& gfx)
+	{
+		static const aiMaterial emptyMat = {};
+		static const std::filesystem::path emptyPath = {};
+		return Make<ForwardPhong>(gfx, emptyMat, emptyPath);
+	}
+
+	Material Material::Make(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path,
+	                        std::span<utl::UUID_t> techniqueUUIDs, const bool instanced, const bool skinned)
 	{
 		const auto rootPath = path.parent_path().string() + "\\";
 
@@ -32,7 +41,7 @@ namespace tryn::gfx
 	}
 	IndexBuffer Material::ExtractIndices(const aiMesh& mesh) const noexcept
 	{
-		std::vector<int> indices;
+		std::vector<uint32_t> indices;
 		indices.resize(mesh.mNumFaces * 3);
 
 		for (unsigned int i = 0; i < mesh.mNumFaces; i++)
@@ -44,12 +53,23 @@ namespace tryn::gfx
 		}
 		return { indices };
 	}
+
+	VertexBuffer Material::ExtractVertices(const Shape3D& mesh) const noexcept
+	{
+		return { vLayout, mesh};
+	}
+
+	IndexBuffer Material::ExtractIndices(const Shape3D& mesh) const noexcept
+	{
+		return IndexBuffer(mesh.Indices());
+	}
+
 	std::vector<std::shared_ptr<TechniqueBase>> Material::GetTechniques() const noexcept
 	{
 		return pTechniques;
 	}
 
-	void Material::AddTechnique(utl::UUID_t techniqueUUID, const IGraphics& gfx, aiMaterial& material,
+	void Material::AddTechnique(utl::UUID_t techniqueUUID, const IGraphics& gfx, const aiMaterial& material,
 		const std::string& path, bool instanced, bool skinned)
 	{
 		pTechniques.push_back(TechniquePool::ConstructTechnique(techniqueUUID, *this, material, gfx, path,  instanced, skinned));

@@ -97,6 +97,6 @@ namespace tryn::gfx::dx11
 		Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 		std::shared_ptr<DX11OutputOnlyRenderTargetView> pTarget;
 		std::shared_ptr<DX11OutputOnlyDepthStencil> pDSV;
-		D3D11_VIEWPORT viewport;
+		D3D11_VIEWPORT viewport = {};
 	};
 }

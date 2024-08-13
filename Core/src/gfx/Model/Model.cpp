@@ -135,7 +135,7 @@ namespace tryn::gfx
 			for (size_t i = 0; i < pScene->mNumMeshes; i++)
 			{
 				const auto& mesh = *pScene->mMeshes[i];
-				pMeshes.push_back(std::make_unique<StaticMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), scale, meshCounter++));
+				pMeshes.push_back(std::make_unique<StaticMesh>(gfx, mesh, mesh.mName.C_Str(), &materials[mesh.mMaterialIndex], scale, meshCounter++));
 			}
 		}
 
@@ -221,7 +221,7 @@ namespace tryn::gfx
 			for (size_t i = 0; i < pScene->mNumMeshes; i++)
 			{
 				const auto& mesh = *pScene->mMeshes[i];
-				auto pMesh = std::make_shared<StaticMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), scale, pModel->meshCounter++);
+				auto pMesh = std::make_shared<StaticMesh>(gfx, mesh, mesh.mName.C_Str(), &materials[mesh.mMaterialIndex], scale, pModel->meshCounter++);
 				pModel->pMeshes.push_back(std::move(pMesh));
 			}
 		}

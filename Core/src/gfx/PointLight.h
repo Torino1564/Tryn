@@ -23,7 +23,7 @@ namespace tryn::gfx
 		const IGraphics& gfx;
 		PointLightParameters parameters = {};
 		glm::vec3 position = { 0.0f,0.0f,0.0f };
-		glm::mat4 transformation;
+		glm::mat4 transformation = {};
 		std::unique_ptr<Model> pModel;
 		static std::shared_ptr<IPxConstantBuffer> pCBuf;
 	};
