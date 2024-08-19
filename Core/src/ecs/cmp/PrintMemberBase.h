@@ -7,6 +7,11 @@
 
 namespace tryn::ecs::cmp
 {
+	class TypeFunctorManager
+	{
+		
+	};
+
 	template <typename ElementType>
 	struct ImGuiPrintType
 	{

@@ -146,6 +146,7 @@
     <ClInclude Include="src\gfx\Shape.h" />
     <ClInclude Include="src\gfx\Terrain\Plane.h" />
     <ClInclude Include="src\utl\TypeName.h" />
+    <ClInclude Include="src\utl\TypeRegister.h" />
     <ClInclude Include="src\win\WinCore.h" />
     <ClInclude Include="src\win\WindowHandle.h" />
     <ClInclude Include="third\TrynPCH.h" />
