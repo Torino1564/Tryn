@@ -67,6 +67,7 @@
     <ClCompile Include="src\app\App.cpp" />
     <ClCompile Include="src\gfx\ConstantBuffer.cpp" />
     <ClInclude Include="src\dbg\SourceIncludes.h" />
+    <ClInclude Include="src\ecs\SerializeLambda.h" />
     <ClInclude Include="src\gfx\Bindables\PrimitiveTopology.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11InputLayout.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PixelShader.cpp" />
@@ -104,6 +105,7 @@
     <ClCompile Include="src\gfx\dx11\Dx11Graphics.cpp" />
     <ClCompile Include="src\gfx\dx11\GraphicsError.cpp" />
     <ClCompile Include="src\ser\StreamIO.cpp" />
+    <ClCompile Include="src\utl\TypeData.cpp" />
     <ClCompile Include="third\TrynPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TrynPCH.h</PrecompiledHeaderFile>
@@ -145,8 +147,8 @@
     <ClInclude Include="src\gfx\Model\ShapeMesh.h" />
     <ClInclude Include="src\gfx\Shape.h" />
     <ClInclude Include="src\gfx\Terrain\Plane.h" />
+    <ClInclude Include="src\utl\TypeData.h" />
     <ClInclude Include="src\utl\TypeName.h" />
-    <ClInclude Include="src\utl\TypeRegister.h" />
     <ClInclude Include="src\win\WinCore.h" />
     <ClInclude Include="src\win\WindowHandle.h" />
     <ClInclude Include="third\TrynPCH.h" />

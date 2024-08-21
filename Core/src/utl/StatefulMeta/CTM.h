@@ -5,6 +5,7 @@
 #include <string>
 #include <Core/src/utl/StatefulMeta/TemplateData.h>
 #include <Core/src/utl/StringHasher.h>
+#include <Core/src/utl/TypeData.h>
 
 #define ZT_CAT_C(x, y) x##y
 
@@ -38,6 +39,31 @@ namespace tryn::utl::CTM
         using VarSize_t = decltype(IntType<VarSize>);
         using ByteOffset_t = decltype(IntType<ByteOffset>);
         using ElementNumber_t = decltype(IntType<ElementNumber>);
+    };
+
+    struct ElementData
+    {
+        template <typename MapElement>
+        static ElementData MakeOffMapElement()
+        {
+	        ElementData retval(TypeData::MakeTypeData<typename MapElement::Type>(),
+                MapElement::TypeName_t()(),
+                MapElement::VarName_t()(),
+                MapElement::ByteOffset_t()(),
+                MapElement::ElementNumber_t()());
+
+            return retval;
+        }
+
+        ElementData(const TypeData& typeData, const std::string& typeName, const std::string& varName, const unsigned int byteOffset, const unsigned int elementNumber)
+	        :
+        typeData(typeData), typeName(typeName), varName(varName), byteOffset(byteOffset), elementNumber(elementNumber) {}
+
+        const TypeData typeData;
+	    const std::string typeName;
+        const std::string varName;
+        const unsigned int byteOffset;
+        const unsigned int elementNumber;
     };
 
     // E3

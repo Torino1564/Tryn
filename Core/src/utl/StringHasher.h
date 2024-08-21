@@ -2,11 +2,15 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <Core/src/utl/StringHasher.h>
+#include <Core/src/utl/TypeName.h>
+
+#define ZT_TYPE_UUID(x) ZT_STRING_HASH(ZT_TYPE_OF(x))
 
 // Credits to tower120 on stack overflow for this hasher
 
 //#define ZT_STRING_HASH(x) (tryn::utl::MM<sizeof(x)-1>::crc32(x))
-#define ZT_STRING_HASH(x) (tryn::utl::fnv1a_64(x))
+#define ZT_STRING_HASH(x) tryn::utl::fnv1a_64(x)
 
 namespace tryn::utl
 {

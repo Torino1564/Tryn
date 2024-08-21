@@ -345,6 +345,9 @@
     <ClCompile Include="src\ser\StreamIO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\utl\TypeData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -2081,7 +2084,10 @@
     <ClInclude Include="src\utl\TypeName.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utl\TypeRegister.h">
+    <ClInclude Include="src\ecs\SerializeLambda.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utl\TypeData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

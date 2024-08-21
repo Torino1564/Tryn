@@ -1,6 +1,18 @@
 #pragma once
 #include <source_location>
 
+#define ZT_TYPE_OF(x) tryn::utl::type_of<x>()
+
+#ifdef _MSC_VER
+#define BEGIN_OFFSET 41
+#define END_OFFSET 7
+#endif
+
+#ifdef __GNUC__
+#define BEGIN_OFFSET 48
+#define END_OFFSET 1
+#endif
+
 namespace tryn::utl
 {
 	template <typename T>
@@ -13,7 +25,7 @@ namespace tryn::utl
 	consteval std::string_view type_of_impl_() {
 	    constexpr std::string_view functionName = func_name<T>();
 
-	    return {functionName.begin() + 37, functionName.end() - 1};
+	    return {functionName.begin() + BEGIN_OFFSET, functionName.end() - END_OFFSET};;
 	}
 
 	template <typename T>
