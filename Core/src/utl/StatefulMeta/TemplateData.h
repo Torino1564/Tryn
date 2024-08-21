@@ -9,6 +9,15 @@ namespace tryn::utl
         {
             std::copy_n(str, N, v);
         }
+        template <unsigned int M = N>
+        constexpr StaticString Make(std::string_view view)
+        {
+            return StaticString<M>(view.data());
+        }
+        constexpr StaticString(std::span<char, N> view)
+        {
+            std::copy_n(view.data(), N, v);
+        }
         static constexpr unsigned int n = N;
         char v[N];
     };

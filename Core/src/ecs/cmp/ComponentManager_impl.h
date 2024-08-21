@@ -13,44 +13,44 @@ namespace tryn::ecs
 		return componentIndex;
 	}
 
-	template <template <typename, ValidComponent> class Func, unsigned ComponentN, bool FoundCmp, typename Component,
-	          unsigned ElementN, typename ... FuncArgs, auto Tag>
-	void ComponentManager::IterateComponentMembers(const utl::UUID_t componentUUID, FuncArgs&&... funcArgs)
-	{
-		if constexpr (!FoundCmp)
-		{
-			if constexpr (ComponentN >= utl::ctc::element_count<GetComponentListID()>())
-			{
-				return;
-			}
-			using CurrentComponent = std::tuple_element_t<ComponentN, utl::ctc::get_list<listID>>;
-			if (CurrentComponent::UUID == componentUUID)
-			{
-				IterateComponentMembers<Func, ComponentN, true, CurrentComponent>(componentUUID, funcArgs...);
-				return;
-			}
-			else
-			{
-				if constexpr (ComponentN < utl::ctc::element_count<listID>() - 1)
-					return IterateComponentMembers<Func, ComponentN + 1, false>(componentUUID, funcArgs...);
-			}
-		}
-		else
-		{
-			using VarMap = utl::CTM::get_list<Component::UUID>;
-			if constexpr (ElementN < std::tuple_size_v<VarMap>)
-			{
-				using MapElement = std::tuple_element_t<ElementN, VarMap>;
-				Func<MapElement, Component> func;
-				func(funcArgs...);
-				IterateComponentMembers<Func, ComponentN, true, Component, ElementN + 1>(componentUUID, funcArgs...);
-			}
-			else
-			{
-				return;
-			}
-		}
-	}
+	//template <template <typename, ValidComponent> class Func, unsigned ComponentN, bool FoundCmp, typename Component,
+	//          unsigned ElementN, typename ... FuncArgs, auto Tag>
+	//void ComponentManager::IterateComponentMembers(const utl::UUID_t componentUUID, FuncArgs&&... funcArgs)
+	//{
+	//	if constexpr (!FoundCmp)
+	//	{
+	//		if constexpr (ComponentN >= utl::ctc::element_count<GetComponentListID()>())
+	//		{
+	//			return;
+	//		}
+	//		using CurrentComponent = std::tuple_element_t<ComponentN, utl::ctc::get_list<listID>>;
+	//		if (CurrentComponent::UUID == componentUUID)
+	//		{
+	//			IterateComponentMembers<Func, ComponentN, true, CurrentComponent>(componentUUID, funcArgs...);
+	//			return;
+	//		}
+	//		else
+	//		{
+	//			if constexpr (ComponentN < utl::ctc::element_count<listID>() - 1)
+	//				return IterateComponentMembers<Func, ComponentN + 1, false>(componentUUID, funcArgs...);
+	//		}
+	//	}
+	//	else
+	//	{
+	//		using VarMap = utl::CTM::get_list<Component::UUID>;
+	//		if constexpr (ElementN < std::tuple_size_v<VarMap>)
+	//		{
+	//			using MapElement = std::tuple_element_t<ElementN, VarMap>;
+	//			Func<MapElement, Component> func;
+	//			func(funcArgs...);
+	//			IterateComponentMembers<Func, ComponentN, true, Component, ElementN + 1>(componentUUID, funcArgs...);
+	//		}
+	//		else
+	//		{
+	//			return;
+	//		}
+	//	}
+	//}
 
 	inline void ComponentData(std::byte* pData, const utl::UUID_t componentUUID, const Action action)
 	{
@@ -65,6 +65,21 @@ namespace tryn::ecs
 		case Action::Delete:
 			pComponent->DestroySRD(pData);
 			break;
+		}
+	}
+
+	template <typename T, utl::StaticString Name_>
+	template <template <typename, ValidComponent> class Func, unsigned ElementN, auto Tag, typename ... FuncArgs>
+	void Component<T, Name_>::IterateMembers(FuncArgs&&... funcArgs)
+	{
+		using VarMap_ = utl::CTM::get_list<UUID>;
+		VarMap_ testVarMap;
+		if constexpr (ElementN < std::tuple_size_v<VarMap_>)
+		{
+			using MapElement = std::tuple_element_t<ElementN, VarMap_>;
+			Func<MapElement, T> func;
+			func(funcArgs...);
+			IterateMembers<Func, ElementN + 1>(funcArgs...);
 		}
 	}
 

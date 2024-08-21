@@ -1,6 +1,8 @@
 #pragma once
 #include <source_location>
 
+#include "StatefulMeta/TemplateData.h"
+
 #define ZT_TYPE_OF(x) tryn::utl::type_of<x>()
 
 #ifdef _MSC_VER

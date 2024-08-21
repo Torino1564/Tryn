@@ -55,7 +55,7 @@ namespace tryn::ecs
 				std::ranges::sort(sortedVec);
 				for (auto componentUUID : sortedVec)
 				{
-					ComponentManager::IterateComponentMembers<ecs::SerializeWriteComponentField>(componentUUID, streamWriter, data.UUID, binary, name);
+					//ComponentManager::IterateComponentMembers<ecs::SerializeWriteComponentField>(componentUUID, streamWriter, data.UUID, binary, name);
 				}
 
 			}
@@ -79,7 +79,7 @@ namespace tryn::ecs
 
 				for (auto componentUUID : sortedVec)
 				{
-					ComponentManager::IterateComponentMembers<ecs::SerializeReadComponentField>(componentUUID, streamReader, newEntity.UUID, binary, pExtraData);
+					//ComponentManager::IterateComponentMembers<ecs::SerializeReadComponentField>(componentUUID, streamReader, newEntity.UUID, binary, pExtraData);
 				}
 
 				return newEntity;
@@ -200,7 +200,7 @@ namespace tryn::ecs
 				{
 					continue;
 				}
-				ComponentManager::IterateComponentMembers<PrintImGuiMemberVariable>(sortedComponentUUIDs[index], this->UUID);
+				//ComponentManager::IterateComponentMembers<PrintImGuiMemberVariable>(sortedComponentUUIDs[index], this->UUID);
 			}
 			ImGui::End();
 		}

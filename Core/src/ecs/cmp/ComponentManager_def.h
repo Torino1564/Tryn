@@ -26,7 +26,13 @@
 
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ x };\
-	const static inline SubresourceData srd = {}
+	const static inline SubresourceData srd = {};\
+	static const std::vector<tryn::utl::CTM::ElementData>& GetReflectData_()\
+	{\
+		static const std::vector<tryn::utl::CTM::ElementData> singleton = tryn::ecs::CreateElementDataVector<ComponentType>();\
+		return singleton;\
+	}\
+	static const inline auto vec = GetReflectData_()
 
 #define ZT_DEFINE_COMPONENT(x) class x; class x : public tryn::ecs::Component<x, #x>
 
@@ -50,19 +56,6 @@ ZT_EX_DEF(ComponentSMPException);
 namespace tryn::ecs
 {
 	class IComponent;
-
-	template <typename T>
-	struct PrintMemberVariable
-	{
-		void operator()()
-		{
-			typename T::TypeName_t typeNameFunc;
-			typename T::VarName_t varNameFunc;
-			typename T::VarSize_t varSizeFunc;
-			typename T::ElementNumber_t elNumberFunc;
-			std::cout << std::format("Element Number: {}\n Type Name: {}\n Var Name: {}\n Var Size: {}\n\n", elNumberFunc(), typeNameFunc(), varNameFunc(), varSizeFunc());
-		}
-	};
 
 	class ComponentManager
 	{
@@ -117,16 +110,34 @@ namespace tryn::ecs
 			}
 		};
 
-		template <
-			template <typename, ValidComponent> typename Func = DoNothing,
-			unsigned ComponentN = 0,
-			bool FoundCmp = false,
-			typename Component = int, 
-			unsigned ElementN = 0,
-			typename... FuncArgs,
-			auto Tag = []{}>
-		static void IterateComponentMembers(const utl::UUID_t componentUUID, FuncArgs&&... funcArgs );
+		//template <
+		//	template <typename, ValidComponent> typename Func = DoNothing,
+		//	unsigned ComponentN = 0,
+		//	bool FoundCmp = false,
+		//	typename Component = int, 
+		//	unsigned ElementN = 0,
+		//	typename... FuncArgs,
+		//	auto Tag = []{}>
+		//static void IterateComponentMembers(const utl::UUID_t componentUUID, FuncArgs&&... funcArgs );
 	};
+
+	template <typename T, ValidComponent C>
+	class FillElementData
+	{
+	public:
+		void operator ()(std::vector<utl::CTM::ElementData>& vec) const
+		{
+			vec.push_back(utl::CTM::ElementData::MakeOffMapElement<T>());
+		}
+	};
+
+	template <typename C>
+	inline std::vector<utl::CTM::ElementData> CreateElementDataVector()
+	{
+		std::vector<utl::CTM::ElementData> retval;
+		C::template IterateMembers<FillElementData>(retval);
+		return retval;
+	}
 
 	class IComponent
 	{
@@ -137,7 +148,7 @@ namespace tryn::ecs
 		virtual size_t Size() const = 0;
 		virtual void ConstructSRD(void* pData, size_t = 0) const = 0;
 		virtual void DestroySRD(void* pData, size_t = 0) const = 0;
-		virtual std::vector<utl::CTM::ElementData>& GetReflectData() = 0;
+		virtual const std::vector<utl::CTM::ElementData>& GetReflectData() = 0;
 	};
 
 	template <typename T, utl::StaticString Name_>
@@ -151,19 +162,13 @@ namespace tryn::ecs
 			if (!init)
 			{
 				init = true;
-				ComponentManager::IterateComponentMembers<FillElementData, 0, true, T>(UUID);
+				// ComponentManager::IterateComponentMembers<FillElementData, 0, true, T>(UUID);
 			}
 		}
-
-		template <typename T, ValidComponent C>
-		class FillElementData
+		const std::vector<utl::CTM::ElementData>& GetReflectData() override
 		{
-		public:
-			void operator ()()
-			{
-				C::GetReflectData_().push_back(utl::CTM::ElementData::MakeOffMapElement<T>());
-			}
-		};
+			return T::GetReflectData_();
+		}
 	protected:
 		using Name_t = decltype(utl::TextType<Name_>);
 		static constexpr Name_t nameFunc;
@@ -201,39 +206,23 @@ namespace tryn::ecs
 			auto pData_ = static_cast<typename T::SubresourceData*>(pData);
 			std::destroy_at(pData);
 		}
-		std::vector<utl::CTM::ElementData>& GetReflectData() override
-		{
-			return GetReflectData_();
-		}
-		static std::vector<utl::CTM::ElementData>& GetReflectData_()
-		{
-			static std::vector<utl::CTM::ElementData> reflectData; 
-			return reflectData;
-		}
 		static bool& Initialized()
 		{
 			static bool initialized = false;
 			return initialized;
 		}
 
+		template <typename C>
+		friend std::vector<utl::CTM::ElementData> CreateElementDataVector();
+
 	private:
 		utl::CTM::setter<0, std::tuple<>, utl::CTM::tu_tag, UUID> setter;
 		using VarMap = utl::CTM::get_list<UUID>;
 		static constexpr auto counted = utl::ctc::counter<T, ComponentManager::listID>;
 
-	public:
+	protected:
 		template <template <typename, ValidComponent> class Func, unsigned ElementN = 0, auto Tag = []{}, typename... FuncArgs>
-		void IterateMembers(FuncArgs&&... funcArgs)
-		{
-			VarMap testVarMap;
-			if constexpr (ElementN < std::tuple_size_v<VarMap>)
-			{
-				using MapElement = std::tuple_element_t<ElementN, VarMap>;
-				Func<MapElement, T> func;
-				func(funcArgs...);
-				IterateMembers<Func, ElementN + 1>(funcArgs...);
-			}
-		}
+		static void IterateMembers(FuncArgs&&... funcArgs);
 	};
 
 	ZT_DEFINE_COMPONENT(ActivationComponent)
