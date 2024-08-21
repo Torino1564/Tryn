@@ -31,43 +31,39 @@ namespace tryn::ecs
 	ZT_DEFINE_SYSTEM(System1)
 	{
 	public:
-		System1()
-		{
-			
-		}
-		static void Execute()
+		System1(const sys::SystemGraph & pGraph) : SystemImpl(pGraph) {}
+
+		void Execute() override
 		{
 			trylog.info(L"System1 says Execute!");
 		}
-		ZT_SYSTEM_UID;
 	};
 
 	ZT_DEFINE_SYSTEM(System2)
 	{
 	public:
-		System2()
-		{
-		}
-		static void Execute()
+		System2(const sys::SystemGraph & pGraph) : SystemImpl(pGraph) {}
+
+		void Execute() override
 		{
 			trylog.info(L"System2 says Execute!");
 		}
-		ZT_SYSTEM_UID;
 	};
 
 	ZT_DEFINE_SYSTEM(System3)
 	{
 	public:
-		System3()
+		System3(const sys::SystemGraph & pGraph) : SystemImpl(pGraph) {}
+
+		static void InitDependencies(sys::System* self)
 		{
-			AddDependency<System1>();
-			AddDependency<System2>();
+			self->AddDependency<System1>();
+			self->AddDependency<System2>();
 		}
-		static void Execute()
+		void Execute() override
 		{
 			trylog.info(L"System3 says Execute!");
 		}
-		ZT_SYSTEM_UID;
 	};
 
 	TEST_CLASS(EntitySystem)

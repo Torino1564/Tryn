@@ -4,6 +4,9 @@
 
 namespace tryn::ecs::sys
 {
+	UpdatePositionSystem::UpdatePositionSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
+	{}
+
 	void UpdatePositionSystem::Execute()
 	{
 		// Check stopwatch

@@ -4,6 +4,9 @@
 
 namespace tryn::ecs::sys
 {
+	UpdateVelocitySystem::UpdateVelocitySystem(const SystemGraph& pGraph): SystemImpl(pGraph)
+	{}
+
 	void UpdateVelocitySystem::Execute()
 	{
 		// Check stopwatch

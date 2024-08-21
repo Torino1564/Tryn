@@ -9,17 +9,15 @@ namespace tryn::ecs::sys
 	ZT_DEFINE_SYSTEM(AnimationSystem)
 	{
 	public:
-		ZT_SYSTEM_UID;
-		AnimationSystem()
-		{
-			AddDependency<TransformSystem>();
-		}
-		static void Execute();
-		static void OnCreate();
+		AnimationSystem(const SystemGraph & pGraph);
+		static void InitDependencies(System* self);
+		void Execute() override;
+		void Init() override;
+
 	private:
 		// state
-		static inline std::chrono::high_resolution_clock::time_point previous;
-		static inline double deltaTime = 0;
+		std::chrono::high_resolution_clock::time_point previous;
+		double deltaTime = 0;
 		// data
 		ZT_NATIVE_ARRAY(AnimatedComponent) animatedArray;
 		ZT_NATIVE_ARRAY(BoneTransformsComponent) boneTransformsArray;

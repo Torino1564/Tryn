@@ -4,10 +4,8 @@
 #include <TrynGame/Game/Core/Player.h>
 
 TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::shared_ptr<tryn::gfx::IGraphics> pGraphics)
+	: App(pWindow, pGraphics)
 {
-	this->wnd = pWindow;
-	this->gfx = pGraphics;
-
 	Gfx().SetRenderGraph(std::make_unique<TrynGameRenderGraph>(Gfx()));
 
 	pPlayer = std::make_unique<Player>("player1", "Game/Resources/Models/PlayerModels/ShinySphere/ShinySphere.obj", Gfx());

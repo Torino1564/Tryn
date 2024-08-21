@@ -66,23 +66,13 @@ tryn::app::App* tryn::app::CreateApp(int argc, char** argv)
 }
 
 TestApp::TestApp(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphics> gfx)
+	: App(wnd, gfx)
 {
-	this->wnd = std::move(wnd);
-	this->gfx = std::move(gfx);
-
 	// Graphic Matrices
 	Gfx().SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(Gfx().GetDimensions().width), static_cast<float>(Gfx().GetDimensions().height), 0.1f, 10000000000.0f));
 	Gfx().SetRenderGraph(std::make_unique<TestRenderGraph>(Gfx()));
 
 	camera.GetPosition() = {0.0f,0.0f,-3.0f};
-
-	auto& sysManager = ecs::sys::SystemManager::Get();
-	sysManager.RegisterSystem<ecs::sys::TransformSystem>();
-	sysManager.RegisterSystem<ecs::sys::RenderSystem>();
-	sysManager.RegisterSystem<ecs::sys::UpdatePositionSystem>();
-	sysManager.RegisterSystem<ecs::sys::UpdateVelocitySystem>();
-	sysManager.RegisterSystem<ecs::sys::AnimationSystem>();
-	sysManager.Finalize();
 
 	auto entParent = ecs::Entity::CreateNew<
 		ecs::cmp::ActiveComponent,

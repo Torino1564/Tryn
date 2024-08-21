@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TrynGame", "TrynGame\TrynGame.vcxproj", "{F395D1F7-FC2B-4F79-B94D-032770A36C81}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TrynEditor", "TrynEditor\TrynEditor.vcxproj", "{F1FDB82E-DDD4-476A-BAAB-0419F30EE34A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MEMSAN|x64 = Debug_MEMSAN|x64
@@ -45,6 +47,12 @@ Global
 		{F395D1F7-FC2B-4F79-B94D-032770A36C81}.Debug|x64.Build.0 = Debug|x64
 		{F395D1F7-FC2B-4F79-B94D-032770A36C81}.Release|x64.ActiveCfg = Release|x64
 		{F395D1F7-FC2B-4F79-B94D-032770A36C81}.Release|x64.Build.0 = Release|x64
+		{F1FDB82E-DDD4-476A-BAAB-0419F30EE34A}.Debug_MEMSAN|x64.ActiveCfg = Debug|x64
+		{F1FDB82E-DDD4-476A-BAAB-0419F30EE34A}.Debug_MEMSAN|x64.Build.0 = Debug|x64
+		{F1FDB82E-DDD4-476A-BAAB-0419F30EE34A}.Debug|x64.ActiveCfg = Debug|x64
+		{F1FDB82E-DDD4-476A-BAAB-0419F30EE34A}.Debug|x64.Build.0 = Debug|x64
+		{F1FDB82E-DDD4-476A-BAAB-0419F30EE34A}.Release|x64.ActiveCfg = Release|x64
+		{F1FDB82E-DDD4-476A-BAAB-0419F30EE34A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

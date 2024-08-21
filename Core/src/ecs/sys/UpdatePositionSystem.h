@@ -8,11 +8,13 @@ namespace tryn::ecs::sys
 {
 	ZT_DEFINE_SYSTEM(UpdatePositionSystem)
 	{
-		ZT_SYSTEM_UID;
-		static void Execute();
+	public:
+		UpdatePositionSystem(const SystemGraph & pGraph);
+		void Execute() override;
+
 	private:
-		static inline utl::MultiSpan<cmp::PositionComponent::SubresourceData> positionArray;
-		static inline utl::MultiSpan<cmp::VelocityComponent::SubresourceData> velocityArray;
-		static inline utl::Stopwatch sw;
+		utl::MultiSpan<cmp::PositionComponent::SubresourceData> positionArray;
+		utl::MultiSpan<cmp::VelocityComponent::SubresourceData> velocityArray;
+		utl::Stopwatch sw;
 	};
 }

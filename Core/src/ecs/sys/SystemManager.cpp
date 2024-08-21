@@ -12,17 +12,16 @@
 #include <Core/src/ecs/sys/UpdateVelocitySystem.h>
 #include <Core/src/ecs/sys/AnimationSystem.h>
 
+#include "Core/src/app/App.h"
+
 namespace tryn::ecs::sys
 {
-	SystemManager::SystemManager()
+	SystemGraph::SystemGraph(SystemManager& manager)
+		:
+	pManager(&manager)
 	{
-		// Register default systems
-		RegisterSystem<ecs::sys::TransformSystem>();
-		RegisterSystem<ecs::sys::RenderSystem>();
-		RegisterSystem<ecs::sys::UpdatePositionSystem>();
-		RegisterSystem<ecs::sys::UpdateVelocitySystem>();
-		RegisterSystem<ecs::sys::AnimationSystem>();
 	}
+
 	void SystemGraph::Finalize()
 	{
 		sul::dynamic_bitset<> systemsSet;
@@ -113,9 +112,66 @@ namespace tryn::ecs::sys
 		}
 	}
 
+	const gfx::IGraphics& SystemGraph::Gfx() const
+	{
+		trynass(pManager).msg(L"pManager was nullptr!").ex();
+		return pManager->Gfx();
+	}
+
+	gfx::IGraphics& SystemGraph::Gfx()
+	{
+		trynass(pManager).msg(L"pManager was nullptr!").ex();
+		return pManager->Gfx();
+	}
+
+	System::System(const SystemGraph& graph)
+		:
+	pGraph(&graph)
+	{
+	}
+
+	bool System::SystemUID::operator==(const SystemUID& rhs) const
+	{
+		if (id == rhs.id)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	SystemManager::SystemManager(app::App& app)
+		:
+	pApp(&app),
+	graph(*this)
+	{
+		// Register default systems
+		RegisterSystem<ecs::sys::TransformSystem>();
+		RegisterSystem<ecs::sys::RenderSystem>();
+		RegisterSystem<ecs::sys::UpdatePositionSystem>();
+		RegisterSystem<ecs::sys::UpdateVelocitySystem>();
+		RegisterSystem<ecs::sys::AnimationSystem>();
+	}
+
 	void SystemManager::ExecuteSystems()
 	{
 		ECS::Get().allocator.Wipe();
 		graph.Execute();
+	}
+
+	const gfx::IGraphics& SystemManager::Gfx() const
+	{
+		trynass(pApp).msg(L"pApp was null!").ex();
+
+		return pApp->Gfx();
+	}
+
+	gfx::IGraphics& SystemManager::Gfx()
+	{
+		trynass(pApp).msg(L"pApp was null!").ex();
+
+		return pApp->Gfx();
 	}
 }

@@ -1,5 +1,6 @@
 #include "TrynPCH.h"
 #include "EntryMain.h"
+#define CLI11_COMPILE 1
 #include <CLI/CLI.hpp>
 #include <Core/src/app/Initialization.h>
 #include <Core/src/app/Globals.h>

@@ -8,6 +8,15 @@
 
 namespace tryn::ecs::sys
 {
+	RenderSystem::RenderSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
+	{}
+
+	void RenderSystem::InitDependencies(System* self)
+	{
+		self->AddDependency<sys::AnimationSystem>();
+		self->AddDependency<sys::TransformSystem>();
+	}
+
 	void RenderSystem::Execute()
 	{
 		// Request data
@@ -102,11 +111,6 @@ namespace tryn::ecs::sys
 			pointLightActiveArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(pointLightData));
 		}
 
-		if (pGfx == nullptr)
-		{
-			pGfx = modelArray[0].pModel->GetGfx();
-		}
-
 		// Kernel
 
 		for (auto i = 0; i < modelArray.Size(); i++)
@@ -143,7 +147,7 @@ namespace tryn::ecs::sys
 
 		// Get handle to render graph
 
-		auto& renderGraph = pGfx->GetRenderGraph();
+		auto& renderGraph = pGraph->Gfx().GetRenderGraph();
 
 		for (auto i = 0; i < pointLightActiveArray.Size(); i++)
 		{

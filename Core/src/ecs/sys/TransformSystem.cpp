@@ -6,9 +6,12 @@
 
 namespace tryn::ecs::sys
 {
-	TransformSystem::TransformSystem()
+	TransformSystem::TransformSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
+	{}
+
+	void TransformSystem::InitDependencies(System* self)
 	{
-		AddDependency<sys::UpdatePositionSystem>();
+		self->AddDependency<sys::UpdatePositionSystem>();
 	}
 
 	void TransformSystem::Execute()

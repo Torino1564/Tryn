@@ -11,14 +11,18 @@ namespace tryn::win
 	class IWindow;
 }
 
+namespace tryn::ecs::sys
+{
+	class SystemManager;
+}
+
 namespace tryn::app
 {
 	class App
 	{
 	public:
-		App() = default;
-		App(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphics> gfx);
-		virtual ~App() {};
+		App(const std::shared_ptr<win::IWindow>& wnd, const std::shared_ptr<gfx::IGraphics>& gfx);
+		virtual ~App();
 
 		void Go();
 		virtual void PreFrame();
@@ -29,6 +33,7 @@ namespace tryn::app
 		gfx::IGraphics& Gfx();
 
 	protected:
+		std::unique_ptr<ecs::sys::SystemManager> pSystemManager;
 		std::shared_ptr<win::IWindow> wnd;
 		std::shared_ptr<gfx::IGraphics> gfx;
 		long double dt = 0;

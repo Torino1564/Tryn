@@ -7,12 +7,22 @@
 #include <ranges>
 
 #define ZT_DEFINE_SYSTEM(x) class x : public tryn::ecs::sys::SystemImpl<x>
-//#define ZT_SYSTEM_UID public: const static inline auto UID = tryn::ecs::sys::System::SystemUID::Resolve()
-#define ZT_SYSTEM_UID public: const static inline auto UIDs = 0
-#define ZT_NATIVE_ARRAY(x) private: static inline tryn::utl::MultiSpan<cmp::x::SubresourceData>
+#define ZT_NATIVE_ARRAY(x) private: tryn::utl::MultiSpan<cmp::x::SubresourceData>
+
+namespace tryn::app
+{
+	class App;
+}
+
+namespace tryn::gfx
+{
+	class IGraphics;
+}
 
 namespace tryn::ecs::sys
 {
+	class SystemManager;
+
 	template <typename T>
 	class SystemImpl;
 	class System;
@@ -25,6 +35,8 @@ namespace tryn::ecs::sys
 	class SystemGraph
 	{
 	public:
+		SystemGraph() = default;
+		SystemGraph(SystemManager& manager);
 		template <ValidSystem S>
 		void RegisterSystem()
 		{
@@ -42,17 +54,21 @@ namespace tryn::ecs::sys
 				return;
 			}
 			// registers the system
-			pSystems[S::UID.id] = std::make_unique<S>();
+			pSystems[S::UID.id] = std::make_unique<S>(*this);
 		}
 		void Finalize();
 		void Execute();
+		const gfx::IGraphics& Gfx() const;
+		gfx::IGraphics& Gfx();
 	private:
+
+		SystemManager* pManager = nullptr;
 		struct Level
 		{
 			std::vector<std::int16_t> systemIndices;
 		};
 		// finalized graph flag, levels it has to execute
-		bool finalized;
+		bool finalized = false;
 		std::vector<Level> levels;
 		// Systems owned, index of the array is the systemUID;
 		std::vector<std::unique_ptr<System>> pSystems;
@@ -62,9 +78,11 @@ namespace tryn::ecs::sys
 	{
 		friend class SystemGraph;
 	public:
+		System(const SystemGraph& graph);
 		virtual ~System() = default;
 		virtual void Execute() = 0;
 		virtual void Init() = 0;
+
 		template <typename S>
 		void AddDependency()
 		{
@@ -89,18 +107,11 @@ namespace tryn::ecs::sys
 				static int UIDcounter = 0;
 				return SystemUID{ UIDcounter++ };
 			}
-			bool operator==(const SystemUID& rhs) const
-			{
-				if (id == rhs.id)
-				{
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
+			bool operator==(const SystemUID& rhs) const;
 		};
+
+		const SystemGraph* pGraph = nullptr;
+
 	private:
 		std::vector<SystemUID> dependencyUIDs;
 	};
@@ -108,29 +119,22 @@ namespace tryn::ecs::sys
 	template <typename T>
 	class SystemImpl : public System
 	{
-	public:	
-		virtual ~SystemImpl() = default;
-		virtual void Execute() override
-		{
-			T::Execute();
-		}
-		virtual void Init() override
-		{
-			T::OnCreate();
-		}
-		static void OnCreate() {}
 	public:
+		SystemImpl(const SystemGraph& graph) : System(graph)
+		{
+			T::InitDependencies(this);	
+		}
+		static void InitDependencies(System* self) {}
+		void Execute() override {}
+		void Init() override {}
+
 		const static inline auto UID = SystemUID::Resolve();
 	};
 
 	class SystemManager
 	{
 	public:
-		static SystemManager& Get()
-		{
-			static SystemManager singleton;
-			return singleton;
-		}
+		SystemManager(app::App&);
 		void ExecuteSystems();
 		template <ValidSystem S>
 		void RegisterSystem()
@@ -141,8 +145,10 @@ namespace tryn::ecs::sys
 		{
 			graph.Finalize();
 		}
+		const gfx::IGraphics& Gfx() const;
+		gfx::IGraphics& Gfx();
 	private:
-		SystemManager();
+		app::App* pApp;
 		SystemGraph graph;
 	};
 }

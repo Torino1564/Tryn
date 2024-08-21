@@ -7,16 +7,21 @@
 
 namespace tryn::app
 {
-	App::App(std::shared_ptr<win::IWindow> wnd, std::shared_ptr<gfx::IGraphics> gfx)
+	App::App(const std::shared_ptr<win::IWindow>& wnd, const std::shared_ptr<gfx::IGraphics>& gfx)
 		:
+		pSystemManager(std::make_unique<ecs::sys::SystemManager>(*this)),
 		wnd(wnd),
 		gfx(gfx)
 	{}
+
+	App::~App()
+	{
+	}
+
 	void App::Go()
 	{
 		while (!wnd->IsClosing())
 		{
-		//	trylog.debug(L"Started Frame");
 			auto start = std::chrono::high_resolution_clock::now();
 			PreFrame();
 			DoFrame();
@@ -41,7 +46,7 @@ namespace tryn::app
 
 	void App::PostFrame()
 	{
-		ecs::sys::SystemManager::Get().ExecuteSystems();
+		pSystemManager->ExecuteSystems();
 		gfx->EndFrame();
 	}
 

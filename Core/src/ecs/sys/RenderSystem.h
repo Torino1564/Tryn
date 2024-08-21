@@ -10,29 +10,22 @@ namespace tryn::ecs::sys
 	ZT_DEFINE_SYSTEM(RenderSystem)
 	{
 	public:
-		ZT_SYSTEM_UID;
-		RenderSystem()
-		{
-			AddDependency<sys::AnimationSystem>();
-			AddDependency<sys::TransformSystem>();
-		}
-		static void OnCreate()
-		{
+		RenderSystem(const SystemGraph & pGraph);
+		static void InitDependencies(System* self);
+		void Execute() override;
 
-		}
-		static void Execute();
 	private:
-		static inline utl::MultiSpan<cmp::ModelComponent::SubresourceData> modelArray;
-		static inline utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformArray;
-		static inline utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeArray;
+		utl::MultiSpan<cmp::ModelComponent::SubresourceData> modelArray;
+		utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformArray;
+		utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeArray;
 
-		static inline utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeChildrenArray;
-		static inline utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformChildrenArray;
-		static inline utl::MultiSpan<cmp::InstancedModelChildComponent::SubresourceData> childrenModelArray;
+		utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeChildrenArray;
+		utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformChildrenArray;
+		utl::MultiSpan<cmp::InstancedModelChildComponent::SubresourceData> childrenModelArray;
 
-		static inline utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeParentArray;
-		static inline utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformParentArray;
-		static inline utl::MultiSpan<cmp::InstancedModelParentComponent::SubresourceData> parentModelArray;
+		utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeParentArray;
+		utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformParentArray;
+		utl::MultiSpan<cmp::InstancedModelParentComponent::SubresourceData> parentModelArray;
 
 		ZT_NATIVE_ARRAY(ActiveComponent) activeSkinnedArray;
 		ZT_NATIVE_ARRAY(TransformComponent) transformSkinnedArray;
@@ -42,7 +35,5 @@ namespace tryn::ecs::sys
 		ZT_NATIVE_ARRAY(PointLightComponent)	pointLightArray;
 		ZT_NATIVE_ARRAY(PositionComponent)		pointLightPositionArray;
 		ZT_NATIVE_ARRAY(ActiveComponent)		pointLightActiveArray;
-
-		static inline const gfx::IGraphics* pGfx;
 	};
 }

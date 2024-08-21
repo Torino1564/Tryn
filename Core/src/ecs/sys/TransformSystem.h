@@ -8,15 +8,16 @@ namespace tryn::ecs::sys
 {
 	ZT_DEFINE_SYSTEM(TransformSystem)
 	{
-		ZT_SYSTEM_UID;
 	public:
-		TransformSystem();
-		static void Execute();
+		TransformSystem(const SystemGraph& pGraph);
+		static void InitDependencies(System* self);
+		void Execute() override;
+
 	private:
-		static inline utl::MultiSpan<cmp::PositionComponent::SubresourceData> positionArray;
-		static inline utl::MultiSpan<cmp::ScaleComponent::SubresourceData> scaleArray;
-		static inline utl::MultiSpan<cmp::RotationComponent::SubresourceData> rotationArray;
-		static inline utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformArray;
-		static inline utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeArray;
+		utl::MultiSpan<cmp::PositionComponent::SubresourceData> positionArray;
+		utl::MultiSpan<cmp::ScaleComponent::SubresourceData> scaleArray;
+		utl::MultiSpan<cmp::RotationComponent::SubresourceData> rotationArray;
+		utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformArray;
+		utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeArray;
 	};
 }

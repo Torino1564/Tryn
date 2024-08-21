@@ -5,6 +5,14 @@
 
 namespace tryn::ecs::sys
 {
+	AnimationSystem::AnimationSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
+	{}
+
+	void AnimationSystem::InitDependencies(System* self)
+	{
+		self->AddDependency<TransformSystem>();
+	}
+
 	void AnimationSystem::Execute()
 	{
 		// update state
@@ -80,7 +88,7 @@ namespace tryn::ecs::sys
 			}
 		}
 	}
-	void AnimationSystem::OnCreate()
+	void AnimationSystem::Init()
 	{
 		previous = std::chrono::high_resolution_clock::now();
 	}
