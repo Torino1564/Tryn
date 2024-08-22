@@ -7,13 +7,11 @@
 	{\
 		\
 	}\
-	template <typename Data = void>\
-	static x Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)\
+	static x Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const class ExtraDataPack* pExtraData = nullptr)\
 	{\
 		\
 	}\
-	template <typename Data = void>\
-	static void Read(x& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)\
+	static void Read(x& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const class ExtraDataPack* pExtraData = nullptr)\
 	{\
 		\
 	}\
@@ -29,8 +27,7 @@ namespace tryn::ser
 		{
 			T::Write(streamWriter, data, binary, name);
 		}
-		template <typename Data = void>
-		static T Read(const class StreamReader& streamReader, const bool binary = false, const Data* pExtraData = nullptr)
+		static T Read(const class StreamReader& streamReader, const bool binary = false, const class ExtraDataPack* pExtraData = nullptr)
 		{
 			return T::Read(streamReader, binary, pExtraData);
 		}
@@ -42,7 +39,7 @@ namespace tryn::ser
 	struct TypeSerializer;
 
 	template <typename T>
-	concept HasSerializer = requires (const ser::StreamWriter& sw, const class StreamReader& sr, const T& data, const bool binary, const std::string& name, const void* pExtraData)
+	concept HasSerializer = requires (const ser::StreamWriter& sw, const class StreamReader& sr, const T& data, const bool binary, const std::string& name, const class ExtraDataPack* pExtraData)
 	{
 		std::derived_from<typename T::Serializer, Serializer<T>>;
 		{ T::Serializer::Write(sw, data, binary, name) } -> std::same_as<void>;
@@ -50,19 +47,19 @@ namespace tryn::ser
 	};
 
 	template <typename T>
-	concept HasRefReader = requires (const StreamReader& sr, T& data, const bool binary, const void* pExtraData)
+	concept HasRefReader = requires (const StreamReader& sr, T& data, const bool binary, const class ExtraDataPack* pExtraData)
 	{
 		{T::Serializer::Read(data, sr, binary, pExtraData)} -> std::same_as<void>;
 	};
 
 	template <typename T>
-	concept HasTypeRefReader = requires (const StreamReader& sr, T& data, const bool binary, const void* pExtraData)
+	concept HasTypeRefReader = requires (const StreamReader& sr, T& data, const bool binary, const class ExtraDataPack* pExtraData)
 	{
 		{TypeSerializer<T>::Read(data, sr, binary, pExtraData)} -> std::same_as<void>;
 	};
 
 	template <typename T>
-	concept HasTypeSerializer = requires (const class StreamWriter& sw, const class StreamReader& sr, const T& data, const bool binary, const std::string& name, const void* pExtraData)
+	concept HasTypeSerializer = requires (const class StreamWriter& sw, const class StreamReader& sr, const T& data, const bool binary, const std::string& name, const class ExtraDataPack* pExtraData)
 	{
 		{ TypeSerializer<T>::Write(sw, data, binary, name) } -> std::same_as<void>;
 		{ TypeSerializer<T>::Read(sr, binary, pExtraData) } -> std::same_as<T>;

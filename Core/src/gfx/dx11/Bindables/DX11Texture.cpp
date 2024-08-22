@@ -1,8 +1,6 @@
 #include "TrynPCH.h"
 #include "DX11Texture.h"
 #include <Core/src/gfx/dx11/GraphicsError.h>
-#include <Core/third/stb_image/stb_image.h>
-#include <Core/src/utl/String.h>
 #include <Core/src/gfx/dx11/Dx11Context.h>
 #include <Core/src/gfx/TexturePool.h>
 

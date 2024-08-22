@@ -79,16 +79,18 @@ namespace tryn::gfx
 
 			}
 			
-			template <typename Data = void>
-			static Model Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+			static Model Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr)
 			{
-				static_assert(HasGfxPointer<Data>, "The SerializeReadComponentField functor requires extra data of type tryn::gfx::IGraphics*!");
+				trynass(pExtraData).msg(L"The SerializeReadComponentField functor requires extra data named pGfx!");
+
+				const IGraphics* pGfx = nullptr;
+				pExtraData->Get("pGfx")((const void**)&pGfx);
+
 				const auto name = streamReader.ReadSerialized<std::string>(binary, pExtraData);
-				return Model(name, *pExtraData->pGfx);
+				return Model(name, *pGfx);
 			}
 
-			template <typename Data = void>
-			static void Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+			static void Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr)
 			{
 			}
 		};

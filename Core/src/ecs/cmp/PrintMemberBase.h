@@ -1,17 +1,12 @@
 #pragma once
-
-// check for user defined prints
-
 #include <Core/src/gfx/ImguiManager.h>
 #include <format>
+#include <Core/src/ecs/EntityID.h>
+#include <Core/src/ecs/EcsClass.h>
+#include <Core/src/ecs/Archetype_def.h>
 
 namespace tryn::ecs::cmp
 {
-	class TypeFunctorManager
-	{
-		
-	};
-
 	template <typename ElementType>
 	struct ImGuiPrintType
 	{
@@ -28,11 +23,19 @@ namespace tryn::ecs::cmp
 		}
 	};
 
-	template <typename MapElement>
-	struct ImGuiPrintElement
+	template <typename MapElement, ValidComponent C>
+	struct PrintImGuiMemberVariable
 	{
-		static void Print(typename MapElement::Type* pData)
+		void operator()(EntityID entityUUID)
 		{
+			auto pArchetype = ECS::Get().archetypeManager.GetArchetype(entityUUID.archetype);
+			auto data = pArchetype->GetComponentData<C>();
+
+			using ByteOffsetFunc_t = typename MapElement::ByteOffset_t;
+			ByteOffsetFunc_t byteOffsetFunc;
+
+			auto pData = reinterpret_cast<typename MapElement::Type*>(reinterpret_cast<std::byte*>(&data[entityUUID.ID - 1]) + byteOffsetFunc());
+
 			ImGuiPrintType<typename MapElement::Type>::ImGuiPrint<MapElement>(pData);
 		}
 	};

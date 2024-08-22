@@ -93,6 +93,11 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 void TrynGameApp::DoFrame()
 {
+	for (auto& view : ecs::ComponentManager::ComponentViewVector())
+	{
+		view.Func<0>();
+	}
+
 	// Process input
 	auto& playerVelocity = pPlayer->GetComponent<ecs::cmp::VelocityComponent>().velocity;
 	playerVelocity = { 0.0f, 0.0f, 0.0f };

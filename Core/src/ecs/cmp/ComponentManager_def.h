@@ -57,6 +57,42 @@ namespace tryn::ecs
 {
 	class IComponent;
 
+	template <template <typename, ValidComponent Comp> class Callback, typename... Args>
+	struct CallbackSignature
+	{
+		template <typename T, ValidComponent Comp> 
+		using CallbackType = Callback<T, Comp>;
+
+		using ArgTypes = std::tuple<Args...>;
+	};
+
+	
+	template <typename T>
+	concept CallbackSignatureClass = requires {
+    typename T::ArgTypes;
+	} && std::is_class_v<T>;
+
+
+	template <typename MapElement_t, ValidComponent C>
+	struct DoNothing
+	{
+		constexpr void operator()()
+		{
+			return;
+		}
+	};
+
+	template <typename T, ValidComponent C>
+	class VerySimpleCallback
+	{
+	public:
+		void operator ()() const
+		{
+			using Type = typename T::Type;
+			Type testvar;
+		}
+	};
+
 	class ComponentManager
 	{
 	private:
@@ -84,6 +120,8 @@ namespace tryn::ecs
 			static std::vector<utl::UUID_t> componentVector;
 			return componentVector;
 		}
+		static auto& ComponentViewVector();
+
 		static ComponentManager& Get()
 		{
 			static ComponentManager singleton;
@@ -100,15 +138,6 @@ namespace tryn::ecs
 		{
 			return ComponentMap().size();
 		}
-
-		template <typename MapElement_t, ValidComponent C>
-		struct DoNothing
-		{
-			constexpr void operator()()
-			{
-				return;
-			}
-		};
 
 		//template <
 		//	template <typename, ValidComponent> typename Func = DoNothing,
@@ -178,6 +207,7 @@ namespace tryn::ecs
 		static constexpr auto UUID = ZT_STRING_HASH(nameFunc());
 		static inline auto index = ComponentManager::RegisterComponent<T>();
 		using ComponentType = T;
+
 		constexpr utl::UUID_t GetUUID() const override
 		{
 			return UUID;
@@ -215,21 +245,73 @@ namespace tryn::ecs
 		template <typename C>
 		friend std::vector<utl::CTM::ElementData> CreateElementDataVector();
 
+		template <CallbackSignatureClass... Args>
+		friend class ComponentView;
 	private:
 		utl::CTM::setter<0, std::tuple<>, utl::CTM::tu_tag, UUID> setter;
 		using VarMap = utl::CTM::get_list<UUID>;
-		static constexpr auto counted = utl::ctc::counter<T, ComponentManager::listID>;
 
 	protected:
-		template <template <typename, ValidComponent> class Func, unsigned ElementN = 0, auto Tag = []{}, typename... FuncArgs>
+		template <template <typename, ValidComponent> class Func = DoNothing, unsigned ElementN = 0, auto Tag = []{}, typename... FuncArgs>
 		static void IterateMembers(FuncArgs&&... funcArgs);
 	};
 
-	ZT_DEFINE_COMPONENT(ActivationComponent)
+	template <CallbackSignatureClass... Signatures>
+	class ComponentView
 	{
-		ZT_COMPONENT_FIELDS(
-			ZT_DEFINE_COMPONENT_VAR(bool, activation);
-		);
+		using SignatureTuple = std::tuple<Signatures...>;
+	public:
+		template <typename C>
+		static ComponentView Make(const C& component)
+		{
+			ComponentView retval;
+			retval.pComponent = &component;
+			using Tuple0 = std::tuple_element_t<0, SignatureTuple>;
+			using ArgsTuple0 = typename Tuple0::ArgTypes;
+
+			using Indx = std::make_index_sequence<std::tuple_size_v<ArgsTuple0>>;
+
+			retval.ImplementCallback<C, 0u, ArgsTuple0>(component, Indx{});
+
+			return retval;
+		}
+
+		template <unsigned Index, typename... Args>
+		void Func(Args&&... args) const
+		{
+			auto& funcPtr = std::get<Index>(funcPtrs);
+			funcPtr(pComponent, std::forward_as_tuple(args...));
+		}
+	private:
+
+
+		template <typename C, unsigned int N = 0, typename Tuple, std::size_t... Indices>
+		void ImplementCallback(const C& component, std::index_sequence<Indices...>)
+		{
+			if constexpr (N < sizeof...(Signatures))
+			{
+				using Signature = std::tuple_element_t<N, SignatureTuple>;
+				using ArgsTuple = typename Signature::ArgTypes;
+
+				std::get<N>(funcPtrs) = [](const void* pComp, ArgsTuple&& args)
+				{
+					auto func = static_cast<const C*>(pComp)-> template IterateMembers<typename Signature::CallbackType, 0, []{}, std::tuple_element_t<Indices, Tuple>...>;
+					std::apply(func, std::move(args));
+				};
+
+				if constexpr (N + 1< sizeof...(Signatures))
+				{
+					using TupleNp1 = std::tuple_element_t<N + 1, SignatureTuple>;
+					using ArgsTupleNp1 = typename TupleNp1::ArgTypes;
+					using Indx = std::make_index_sequence<std::tuple_size_v<ArgsTupleNp1>>;
+
+					return ImplementCallback<C, N + 1, ArgsTupleNp1>(component, Indx{});
+				}
+			}
+		}
+
+		const void* pComponent = nullptr;
+		std::tuple<void (*)(const void*, typename Signatures::ArgTypes&&)...> funcPtrs = {};
 	};
 
 	enum class Action

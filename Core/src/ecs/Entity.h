@@ -110,25 +110,6 @@ namespace tryn::ecs
 		std::vector<std::uint8_t> selectedComponents;
 	};
 
-	template <typename MapElement, ValidComponent C>
-	struct PrintImGuiMemberVariable
-	{
-		void operator()(EntityID entityUUID)
-		{
-			auto pArchetype = ECS::Get().archetypeManager.GetArchetype(entityUUID.archetype);
-			auto data = pArchetype->GetComponentData<C>();
-
-			using ByteOffsetFunc_t = typename MapElement::ByteOffset_t;
-			ByteOffsetFunc_t byteOffsetFunc;
-
-			auto pData = reinterpret_cast<typename MapElement::Type*>(reinterpret_cast<std::byte*>(&data[entityUUID.ID - 1]) + byteOffsetFunc());
-
-			cmp::ImGuiPrintElement<MapElement>::Print(pData);
-		}
-	};
-
-
-
 	template<ValidComponent ...Cs>
 	inline Entity Entity::CreateNew(std::string name)
 	{

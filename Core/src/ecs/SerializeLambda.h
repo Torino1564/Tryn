@@ -2,6 +2,7 @@
 #include "EntityID.h"
 #include <Core/src/ecs/Archetype.h>
 #include <Core/src/ser/StreamIO.h>
+#include <Core/src/ser/ExtraDataPack.h>
 
 namespace tryn::ecs
 {
@@ -24,8 +25,7 @@ namespace tryn::ecs
 	template <typename MapElement, ValidComponent C>
 	struct SerializeReadComponentField
 	{
-		template <typename Data = void>
-		void operator()(const ser::StreamReader& streamReader, const EntityID entityID, const bool binary = true, const Data* pExtraData = nullptr)
+		void operator()(const ser::StreamReader& streamReader, const EntityID entityID, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr)
 		{
 			//static_assert(HasGfxPointer<Data> && pExtraData != nullptr, "The SerializeReadComponentField functor requires extra data of type tryn::gfx::IGraphics*!");
 

@@ -2,6 +2,7 @@
 #include <string>
 #include <type_traits>
 #include "Core/src/utl/StatefulMeta/TemplateData.h"
+#include <Core/src/mem/ArenaAllocator.h>
 
 namespace tryn::ecs
 {

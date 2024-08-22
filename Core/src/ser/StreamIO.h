@@ -2,6 +2,7 @@
 #include <Core/src/utl/Exception.h>
 #include "Serializer.h"
 #include <span>
+#include <Core/src/ser/ExtraDataPack.h>
 
 class std::ostringstream;
 class std::istringstream;
@@ -52,9 +53,9 @@ namespace tryn::ser
 	public:
 		explicit StreamReader(std::istringstream& iss) : iss(iss){}
 
-		template <typename T, typename Data = void>
+		template <typename T>
 		requires Serializable<T>
-		T ReadSerialized(const bool binary = true, const Data* pExtraData = nullptr) const
+		T ReadSerialized(const bool binary = true, const ExtraDataPack* pExtraData = nullptr) const
 		{
 			if constexpr (HasSerializer<T>)
 			{
@@ -78,9 +79,9 @@ namespace tryn::ser
 			}
 		}
 
-		template <typename T, typename Data = void>
+		template <typename T>
 		requires (HasSerializer<T> && HasRefReader<T>) || std::is_trivially_copyable_v<T> || (HasTypeSerializer<T> && HasTypeRefReader<T>) 
-		void ReadSerialized(T& data, const bool binary = true, const Data* pExtraData = nullptr) const
+		void ReadSerialized(T& data, const bool binary = true, const ExtraDataPack* pExtraData = nullptr) const
 		{
 			if constexpr (HasSerializer<T>)
 			{

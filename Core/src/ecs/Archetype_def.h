@@ -5,6 +5,7 @@
 #include "EcsClass.h"
 #include "Core/src/ser/Serializer.h"
 #include "Core/src/ser/StreamIO.h"
+#include <Core/src/utl/StringHasher.h>
 
 namespace tryn::ecs
 {

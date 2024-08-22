@@ -1,5 +1,7 @@
 #pragma once
 #include "ComponentManager_def.h"
+#include <Core/src/ecs/SerializeLambda.h>
+#include <Core/src/ecs/cmp/PrintMemberBase.h>
 
 namespace tryn::ecs
 {
@@ -8,9 +10,26 @@ namespace tryn::ecs
 	{
 		auto componentIndex = NextFreeAndIncrement();
 		T test = {};
-		const auto success = ComponentMap().insert({T::UUID, std::move(std::make_pair(std::make_unique<T>(), componentIndex))});
+		const auto [it, success] = ComponentMap().insert({T::UUID, std::move(std::make_pair(std::make_unique<T>(), componentIndex))});
 		ComponentVector().push_back(T::UUID);
+		ComponentViewVector().push_back(std::move(ComponentView<
+			CallbackSignature<VerySimpleCallback>,
+			CallbackSignature<SerializeWriteComponentField, const ser::StreamWriter&, const EntityID, const bool, const std::string&>,
+			CallbackSignature<SerializeReadComponentField, const ser::StreamReader&, const EntityID, const bool, const ser::ExtraDataPack*>,
+			CallbackSignature<cmp::PrintImGuiMemberVariable, EntityID>
+		>::Make<T>(*static_cast<T*>(&*it->second.first))  ));
 		return componentIndex;
+	}
+
+	inline auto& ComponentManager::ComponentViewVector()
+	{
+		static std::vector<ComponentView<
+			CallbackSignature<VerySimpleCallback>,
+			CallbackSignature<SerializeWriteComponentField, const ser::StreamWriter&, const EntityID, const bool, const std::string&>,
+			CallbackSignature<SerializeReadComponentField, const ser::StreamReader&, const EntityID, const bool, const ser::ExtraDataPack*>,
+			CallbackSignature<cmp::PrintImGuiMemberVariable, EntityID>
+		>> componentViewVector;
+		return componentViewVector;
 	}
 
 	//template <template <typename, ValidComponent> class Func, unsigned ComponentN, bool FoundCmp, typename Component,

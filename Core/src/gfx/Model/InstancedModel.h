@@ -101,14 +101,16 @@ namespace tryn::ser
 		{
 			streamWriter.Serialize(pData->pBase);
 		}
-		template <typename Data = void>
-		static std::unique_ptr<gfx::InstancedModelParent> Read(const StreamReader& streamReader, const bool binary = true, const Data* extraData = nullptr)
+		static std::unique_ptr<gfx::InstancedModelParent> Read(const StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr)
 		{
-			static_assert(HasGfxPointer<Data> && extraData != nullptr, "The InstanceModelParent* Serializer requires extra data of type tryn::gfx::IGraphics*!");
+			trynass(pExtraData).msg(L"The SerializeReadComponentField functor requires extra data named pGfx!");
+
+			const class IGraphics* pGfx = nullptr;
+			pExtraData->Get("pGfx")((const void**)&pGfx);
+
 			return {nullptr};
 		}
-		template <typename Data = void>
-		static void Read(std::unique_ptr<gfx::InstancedModelParent>& data, const StreamReader& streamReader, const bool binary = true, const Data* extraData = nullptr)
+		static void Read(std::unique_ptr<gfx::InstancedModelParent>& data, const StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* = nullptr)
 		{
 			//static_assert(HasGfxPointer<Data> && extraData != nullptr, "The InstanceModelParent* Serializer requires extra data of type tryn::gfx::IGraphics*!");
 		}

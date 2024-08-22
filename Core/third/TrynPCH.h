@@ -22,4 +22,3 @@
 // third party
 #include <Core/third/glm/glm.hpp>
 #include <Core/third/dynamic_bitset.hpp>
-#include <Core/third/stb_image/stb_image.h>

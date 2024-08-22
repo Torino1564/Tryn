@@ -2,24 +2,12 @@
 #include "Texture.h"
 #include <Core/src/utl/Assert.h>
 #include <Core/src/utl/String.h>
-#include <Core/third/stb_image/stb_image.h>
 
 namespace tryn::gfx
 {
-	void Texture::STBI_Close::operator()(std::byte* image)
-	{
-		stbi_image_free(image);
-	}
-
-	Texture::STBI_Close& Texture::STBI_Close::Get()
-	{
-		static STBI_Close stbi_close;
-		return stbi_close;
-	}
-
 	Texture::Texture(const std::filesystem::path& path, std::optional<glm::vec3> scale)
 	{
-		auto texture = stbi_load(path.string().c_str(), &width, &height, &numChannels, STBI_rgb_alpha);
+		auto texture = StbImageManager::Load(path.string(), dimensions, numChannels, StbImageManager::RGB_ALPHA());
 
 		trynass_msg(texture != nullptr, utl::ToWide(std::format("The specified file could not be loaded! File: {}", path.string().c_str())));
 
@@ -34,7 +22,7 @@ namespace tryn::gfx
 			this->scale = scale;
 		}
 
-		buffer = std::move(std::unique_ptr<std::byte,STBI_Close>(reinterpret_cast<std::byte*>(texture), STBI_Close::Get()));
+		buffer = std::move(std::unique_ptr<std::byte,STBI_Close>(texture, STBI_Close::Get()));
 	}
 
 	std::string Texture::GetID() const noexcept
@@ -48,19 +36,19 @@ namespace tryn::gfx
 	}
 	int Texture::GetHeight() const noexcept
 	{
-		return height;
+		return dimensions.height;
 	}
 	int Texture::GetWidth() const noexcept
 	{
-		return width;
+		return dimensions.width;
 	}
 	int Texture::GetNumChannels() const noexcept
 	{
-		return STBI_rgb_alpha;
+		return StbImageManager::RGB_ALPHA();
 	}
 	int Texture::GetRowPitch() const noexcept
 	{
-		return width * STBI_rgb_alpha;
+		return dimensions.width * StbImageManager::RGB_ALPHA();
 	}
 	bool Texture::HasAlpha() const noexcept
 	{

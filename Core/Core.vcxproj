@@ -97,6 +97,7 @@
     <ClCompile Include="src\gfx\Render\Technique.cpp" />
     <ClCompile Include="src\gfx\Render\Techniques\Flat.cpp" />
     <ClCompile Include="src\gfx\Render\Techniques\ForwardPhong.cpp" />
+    <ClCompile Include="src\gfx\StbImageManager.cpp" />
     <ClCompile Include="src\gfx\Texture.cpp" />
     <ClCompile Include="src\gfx\Vertex.cpp" />
     <ClCompile Include="src\gfx\vulkan\Graphics.cpp" />
@@ -142,11 +143,12 @@
     <ClCompile Include="src\win\Utilities.cpp" />
     <ClCompile Include="src\win\Window.cpp" />
     <ClCompile Include="src\win\WindowClass.cpp" />
-    <ClCompile Include="third\stb_image\stb_image.cpp" />
     <ClInclude Include="src\gfx\CoreGraphics.h" />
     <ClInclude Include="src\gfx\Model\ShapeMesh.h" />
     <ClInclude Include="src\gfx\Shape.h" />
+    <ClInclude Include="src\gfx\StbImageManager.h" />
     <ClInclude Include="src\gfx\Terrain\Plane.h" />
+    <ClInclude Include="src\ser\ExtraDataPack.h" />
     <ClInclude Include="src\utl\TypeData.h" />
     <ClInclude Include="src\utl\TypeName.h" />
     <ClInclude Include="src\win\WinCore.h" />
