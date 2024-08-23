@@ -71,22 +71,6 @@ namespace tryn::ecs
 	//	}
 	//}
 
-	inline void ComponentData(std::byte* pData, const utl::UUID_t componentUUID, const Action action)
-	{
-		auto& map = ComponentManager::ComponentMap();
-		auto& [pComponent, index] = map[componentUUID];
-
-		switch (action)
-		{
-		case Action::Fill:
-			pComponent->ConstructSRD(pData);
-			break;
-		case Action::Delete:
-			pComponent->DestroySRD(pData);
-			break;
-		}
-	}
-
 	template <typename T, utl::StaticString Name_>
 	template <template <typename, ValidComponent> class Func, unsigned ElementN, auto Tag, typename ... FuncArgs>
 	void Component<T, Name_>::IterateMembers(FuncArgs&&... funcArgs)

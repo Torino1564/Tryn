@@ -319,7 +319,21 @@ namespace tryn::ecs
 		Fill, Delete
 	};
 
-	inline void ComponentData(const std::byte* pData, const utl::UUID_t componentUUID, const Action action);
+	inline void ComponentData(const std::byte* pData, const utl::UUID_t componentUUID, const Action action)
+	{
+		auto& map = ComponentManager::ComponentMap();
+		auto& [pComponent, index] = map[componentUUID];
+
+		switch (action)
+		{
+		case Action::Fill:
+			pComponent->ConstructSRD((void*)pData);
+			break;
+		case Action::Delete:
+			pComponent->DestroySRD((void*)pData);
+			break;
+		}
+	}
 
 	enum class ComponentInfo
 	{
