@@ -10,8 +10,15 @@ namespace tryn::ecs::cmp
 {
 	ZT_DEFINE_COMPONENT(ModelComponent)
 	{
-		ZT_COMPONENT_FIELDS(
-			ZT_DEFINE_COMPONENT_VAR(std::unique_ptr<gfx::Model>, pModel);
-		);
+		public: struct SubresourceData
+		{
+			std::unique_ptr<gfx::Model> pModel;
+			using pModel_t = tryn::utl::CTM::Map_t<std::unique_ptr<gfx::Model>, "std::unique_ptr<gfx::Model>", "pModel", sizeof(std::unique_ptr<gfx::Model>), UUID>;
+			~SubresourceData();
+			SubresourceData();
+		};
+		const static inline SubresourceData srd = {};
+		static const unsigned int index;
+		static const std::vector<tryn::utl::CTM::ElementData>& GetReflectData_();;
 	};
 }

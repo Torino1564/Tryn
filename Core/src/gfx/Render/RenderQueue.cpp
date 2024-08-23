@@ -1,11 +1,7 @@
 #include "TrynPCH.h"
 #include "RenderQueue.h"
-#include <Core/src/gfx/Drawable.h>
-#include "Step.h"
-#include <Core/src/log/Log.h>
 #include <Core/src/gfx/Render/RenderTask.h>
 #include <Core/src/gfx/PointLight.h>
-#include <Core/src/gfx/Model/InstancedModel.h>
 #include <Core/src/gfx/Bindables/IBuffer.h>
 
 namespace tryn::gfx

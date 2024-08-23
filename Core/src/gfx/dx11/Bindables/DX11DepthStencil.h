@@ -28,5 +28,6 @@ namespace tryn::gfx::dx11
 		const Graphics& gfx;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 		[[no_unique_address]] std::conditional_t<Type == BufferResourceType::ShaderResource, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, utl::empty_t> pSRV;
+
 	};
 }

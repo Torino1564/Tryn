@@ -6,6 +6,7 @@
 #include "Core/src/ser/Serializer.h"
 #include "Core/src/ser/StreamIO.h"
 #include <Core/src/utl/StringHasher.h>
+#include <Core/third/dynamic_bitset.hpp>
 
 namespace tryn::ecs
 {
@@ -42,15 +43,14 @@ namespace tryn::ecs
 		void AppendComponents();
 
 		int GetUUID() const;
-		auto ComponentCount() const;
-		auto ComponentArraySize() const;
+		size_t ComponentCount() const;
+		uint32_t ComponentArraySize() const;
 		struct EntityID ResolveEntityUUID();
 		void Free(struct EntityID);
 		void Grow();
 		void Resize(std::uint32_t newSize);
 
 	private:
-		template <auto Tag = []{}>
 		void InitSortedComponentUUIDs();
 
 		void InitializeUUID();
@@ -71,7 +71,6 @@ namespace tryn::ecs
 	public:
 		friend class Archetype;
 
-	public:
 		// TODO: Access Modes
 		template <ValidComponentWithAccessMode... Cs>
 		std::span<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> GetComponentGroups();
@@ -125,29 +124,10 @@ namespace tryn::ser
 	template <>
 	struct ser::TypeSerializer<ecs::Archetype *>
 	{
-		static void Write(const StreamWriter& streamWriter, ecs::Archetype* const& data, const bool binary = true, const std::string& name = "")
-		{
-			std::vector<utl::UUID_t> sortedComponents = data->componentUUIDs;
-			std::ranges::sort(sortedComponents);
-			streamWriter.Serialize(sortedComponents, binary, name);
-		}
+		static void Write(const StreamWriter& streamWriter, ecs::Archetype* const& data, const bool binary = true, const std::string& name = "");
 
-		template <typename Data = void>
-		static ecs::Archetype* Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
-		{
-			std::vector<utl::UUID_t> componentUUIDs;
+		static ecs::Archetype* Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr);
 
-			streamReader.ReadSerialized(componentUUIDs, binary, pExtraData);
-
-			return ecs::ECS::Get().archetypeManager.GetArchetype(componentUUIDs);
-		}
-
-		template <typename Data = void>
-		static void Read(ecs::Archetype*& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
-		{
-			std::vector<utl::UUID_t> componentUUIDs;
-			streamReader.ReadSerialized(componentUUIDs, binary, pExtraData);
-			data = ecs::ECS::Get().archetypeManager.GetArchetype(componentUUIDs);
-		}
+		static void Read(ecs::Archetype*& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr);
 	};
 }

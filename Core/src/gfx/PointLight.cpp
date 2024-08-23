@@ -1,9 +1,9 @@
 #include "TrynPCH.h"
 #include "PointLight.h"
-#include <Core/src/gfx/Model/StaticMeshPool.h>
 #include <Core/src/gfx/Bindables/IBuffer.h>
 #include <Core/src/gfx/Render/Techniques/Flat.h>
 #include "Model/Model.h"
+#include <Core/src/gfx/ImguiManager.h>
 
 namespace tryn::gfx
 {

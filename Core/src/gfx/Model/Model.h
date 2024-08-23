@@ -1,9 +1,7 @@
 #pragma once
 #include <memory>
 #include "Node.h"
-#include <Core/src/gfx/IGraphics.h>
 #include "Mesh.h"
-#include <Core/src/gfx/ImguiManager.h>
 #include <Core/src/gfx/Animation/Bone.h>
 #include <Core/src/gfx/Animation/BonedMesh.h>
 #include <Core/src/gfx/Model/StaticMesh.h>
@@ -17,6 +15,7 @@
 
 namespace tryn::gfx
 {
+	class IGraphics;
 	template <typename T>
 	concept DerivedFromTechniqueBase = std::derived_from<typename T::Type, TechniqueBase>;
 
@@ -73,26 +72,11 @@ namespace tryn::gfx
 		struct Serializer : public tryn::ser::Serializer<Model>
 		{
 			static void Write(const tryn::ser::StreamWriter& streamWriter, const Model& data, const bool binary = true,
-			                  const std::string& name = "")
-			{
-				streamWriter.Serialize(data.name, binary, name);
+			                  const std::string& name = "");
 
-			}
-			
-			static Model Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr)
-			{
-				trynass(pExtraData).msg(L"The SerializeReadComponentField functor requires extra data named pGfx!");
+			static Model Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr);
 
-				const IGraphics* pGfx = nullptr;
-				pExtraData->Get("pGfx")((const void**)&pGfx);
-
-				const auto name = streamReader.ReadSerialized<std::string>(binary, pExtraData);
-				return Model(name, *pGfx);
-			}
-
-			static void Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr)
-			{
-			}
+			static void Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr);
 		};
 	};
 

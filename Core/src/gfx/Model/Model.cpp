@@ -9,6 +9,8 @@
 #include <Core/src/mem/ArenaAllocator.h>
 #include <queue>
 #include <Core/src/gfx/Animation/Bone.h>
+#include <Core/src/gfx/IGraphics.h>
+#include <Core/src/gfx/ImguiManager.h>
 
 #include "Core/third/glm/gtx/euler_angles.hpp"
 
@@ -377,6 +379,31 @@ namespace tryn::gfx
 			ParseBone(*bone.mChildren[i], thisID);
 		}
 	}
+
+	void Model::Serializer::Write(const tryn::ser::StreamWriter& streamWriter, const Model& data, const bool binary,
+		const std::string& name)
+	{
+		streamWriter.Serialize(data.name, binary, name);
+	}
+
+	Model Model::Serializer::Read(const tryn::ser::StreamReader& streamReader, const bool binary,
+	                              const ser::ExtraDataPack* pExtraData)
+	{
+		trynass(pExtraData).msg(L"The SerializeReadComponentField functor requires extra data named pGfx!");
+
+		const IGraphics* pGfx = nullptr;
+		pExtraData->Get("pGfx")((const void**)&pGfx);
+
+		const auto name = streamReader.ReadSerialized<std::string>(binary, pExtraData);
+		return Model(name, *pGfx);
+	}
+
+	void Model::Serializer::Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary,
+		const ser::ExtraDataPack* pExtraData)
+	{
+		// TODO
+	}
+
 	ani::BonedMesh* Model::GetMainMesh()
 	{
 		return reinterpret_cast<ani::BonedMesh*>(pMeshes[0].get());

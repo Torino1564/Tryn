@@ -1,5 +1,6 @@
 #pragma once
 #include "StringHasher.h"
+#include <unordered_map>
 
 namespace tryn::utl
 {

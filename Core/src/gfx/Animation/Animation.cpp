@@ -2,9 +2,12 @@
 #include "Animation.h"
 #include <Core/third/glm/ext/quaternion_common.hpp>
 #include <Core/third/glm/ext/quaternion_float.hpp>
+#include <assimp/anim.h>
+
+
 namespace tryn::gfx::ani
 {
-	Animation::Animation(const std::string& path, const uint32_t id, aiAnimation& anim)
+	Animation::Animation(const std::string& path, const uint32_t id, const aiAnimation& anim)
 		: ID(id)
 	{
 		name = path + anim.mName.C_Str();

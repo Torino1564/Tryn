@@ -3,10 +3,11 @@
 #include <string>
 #include "Key.h"
 #include <Core/third/glm/glm.hpp>
-#include <assimp/anim.h>
 #include <span>
 #include "Bone.h"
 #include "AnimationState.h"
+
+struct aiAnimation;
 
 namespace tryn::gfx::ani
 {
@@ -18,7 +19,7 @@ namespace tryn::gfx::ani
 	{
 		friend class AnimationManager;
 	public:
-		Animation(const std::string& path, const uint32_t id, aiAnimation& anim);
+		Animation(const std::string& path, const uint32_t id, const aiAnimation& anim);
 		void Animate(AnimationSkeletonInterface& animInterface, double timePoint, std::span<glm::mat4> boneTransforms);
 		std::span<const AnimationNode> GetNodes() const;
 		double durationInTicks;

@@ -147,6 +147,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_Test|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Game\Core\Player.cpp" />
+    <ClCompile Include="Game\Core\TestComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">

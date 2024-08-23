@@ -1,6 +1,5 @@
 #pragma once
 #include <Core/src/gfx/IGraphics.h>
-#include <d3d11_1.h>
 #include "DX11RTVDSVFwd.h"
 #include "Dx11Context.h"
 #include <Core/src/gfx/VertexFormat.h>

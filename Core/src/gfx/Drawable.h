@@ -13,9 +13,9 @@ namespace tryn::gfx
 	public:
 		virtual ~Drawable() = default;
 
-		void Draw(const IGraphics& gfx , glm::mat4 transform);
-		void Submit(const IGraphics& gfx, glm::mat4 transform);
-		void Submit(const IGraphics& gfx, std::span<const glm::mat4> transforms, class InstancedModelParent& parent);
+		void Draw(const IGraphics& gfx , const glm::mat4& transform);
+		void Submit(const IGraphics& gfx, const glm::mat4& transform);
+		void Submit(const IGraphics& gfx, std::span<const glm::mat4> transforms, InstancedModelParent& parent);
 		void BindBase() const;
 		void BindBase(const IContext& context) const;
 		void BindExtraBinds();
@@ -31,7 +31,7 @@ namespace tryn::gfx
 
 	protected:
 		Material& GetSelectedMaterial() const;
-		virtual void inline ExtraSubmitBehavior() {}
+		virtual void ExtraSubmitBehavior() {}
 		std::array<IBindable*, 10> extraBindPtrs;
 		std::shared_ptr<IVertexBuffer> pVertexBuffer;
 		std::shared_ptr<IIndexBuffer> pIndexBuffer;

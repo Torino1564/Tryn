@@ -35,20 +35,17 @@ namespace tryn::gfx::dx11
 	{
 		ID3D11DepthStencilView* pDepthStencilView = nullptr;
 
-		if (dynamic_cast<DX11OutputOnlyDepthStencil*>(pDSV))
+		trynass(pDSV->GetAPI() == GraphicAPI::DX11).msg(L"Invalid Depth Stencil View passed to the BindAsRTV function (API type missmatch)").ex();
+
+		if (pDSV->GetType() == BufferResourceType::OutputOnly)
 		{
 			pDepthStencilView = static_cast<DX11OutputOnlyDepthStencil*>(pDSV)->Get();
 		}
-		else if (dynamic_cast<DX11ShaderResourceDepthStencil*>(pDSV))
+		else
 		{
 			pDepthStencilView = static_cast<DX11ShaderResourceDepthStencil*>(pDSV)->Get();
 		}
-		else
-		{
-			trylog.error(L"Invalid Depth Stencil View passed to the BindAsRTV function (API type missmatch)");
-			return;
-		}
-			
+
 		gfx.GetContext().OMSetRenderTargets(1u, pRTV.GetAddressOf(), pDepthStencilView);
 
 		// configure viewport

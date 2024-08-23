@@ -85,24 +85,4 @@ namespace tryn::ecs
 			IterateMembers<Func, ElementN + 1>(funcArgs...);
 		}
 	}
-
-	template <ComponentInfo Info>
-	typename ReturnType<Info>::T GetComponentInfo(const utl::UUID_t componentUUID)
-	{
-		auto& map = ComponentManager::ComponentMap();
-		auto& [pComponent, index] = map[componentUUID];
-
-		if constexpr (Info == ComponentInfo::Name)
-		{
-			return pComponent->Name();
-		}
-		else if constexpr (Info == ComponentInfo::Size)
-		{
-			return pComponent->Size();
-		}
-		else if constexpr (Info == ComponentInfo::Index)
-		{
-			return index;
-		}
-	}
 }

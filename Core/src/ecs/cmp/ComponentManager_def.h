@@ -6,7 +6,6 @@
 #include <concepts>
 #include <span>
 #include <array>
-#include <Core/third/dynamic_bitset.hpp>
 #include <type_traits>
 #include <optional>
 #include <Core/src/mem/ArenaAllocator.h>
@@ -27,12 +26,8 @@
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ x };\
 	const static inline SubresourceData srd = {};\
-	static const std::vector<tryn::utl::CTM::ElementData>& GetReflectData_()\
-	{\
-		static const std::vector<tryn::utl::CTM::ElementData> singleton = tryn::ecs::CreateElementDataVector<ComponentType>();\
-		return singleton;\
-	}\
-	static const inline auto vec = GetReflectData_()
+	static const unsigned int index;\
+	static const std::vector<tryn::utl::CTM::ElementData>& GetReflectData_();\
 
 #define ZT_DEFINE_COMPONENT(x) class x; class x : public tryn::ecs::Component<x, #x>
 
@@ -88,8 +83,6 @@ namespace tryn::ecs
 	public:
 		void operator ()() const
 		{
-			using Type = typename T::Type;
-			Type testvar;
 		}
 	};
 
@@ -97,8 +90,6 @@ namespace tryn::ecs
 	{
 	private:
 		ComponentManager() = default;
-		template <typename T>
-		static unsigned int RegisterComponent();
 		static unsigned int NextFreeAndIncrement()
 		{
 			static unsigned int componentCount = 0;
@@ -110,6 +101,8 @@ namespace tryn::ecs
 		static constexpr std::uint16_t listID = 0;
 
 	public:
+		template <typename T>
+		static unsigned int RegisterComponent();
 		static auto& ComponentMap()
 		{
 			static std::unordered_map<utl::UUID_t, std::pair<std::unique_ptr<IComponent>, unsigned int>> componentMap;
@@ -184,7 +177,6 @@ namespace tryn::ecs
 	class Component : public IComponent
 	{
 	public:
-		ZT_COMPONENT_FIELDS();
 		Component()
 		{
 			auto& init = Initialized();
@@ -205,7 +197,6 @@ namespace tryn::ecs
 	public:
 		constexpr static const char* name = nameFunc();
 		static constexpr auto UUID = ZT_STRING_HASH(nameFunc());
-		static inline auto index = ComponentManager::RegisterComponent<T>();
 		using ComponentType = T;
 
 		constexpr utl::UUID_t GetUUID() const override

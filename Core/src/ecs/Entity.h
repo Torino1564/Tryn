@@ -42,48 +42,9 @@ namespace tryn::ecs
 		// Serializer 
 		struct Serializer : public ser::Serializer<Entity>
 		{
-			static void Write(const ser::StreamWriter& streamWriter, const Entity& data, const bool binary = true, const std::string& name = "")
-			{
-				// Name
-				streamWriter.Serialize(data.name, binary, name);
+			static void Write(const ser::StreamWriter& streamWriter, const Entity& data, const bool binary = true, const std::string& name = "");
 
-				// Archetype
-				streamWriter.Serialize(data.pArchetype, binary, name);
-
-				// Component Data. By default, components are serialized in ascending order by their UUID
-				auto sortedVec = data.pArchetype->componentUUIDs;
-				std::ranges::sort(sortedVec);
-				for (auto componentUUID : sortedVec)
-				{
-					//ComponentManager::IterateComponentMembers<ecs::SerializeWriteComponentField>(componentUUID, streamWriter, data.UUID, binary, name);
-				}
-
-			}
-
-			template <typename Data = void>
-			static Entity Read(const ser::StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
-			{
-				Entity newEntity;
-
-				// Name
-				newEntity.name = streamReader.ReadSerialized<std::string>(binary, pExtraData);
-
-				// Archetype & UUID
-				newEntity.pArchetype = streamReader.ReadSerialized<Archetype*>(binary, pExtraData);
-				newEntity.UUID = newEntity.pArchetype->ResolveEntityUUID();
-
-				auto sortedVec = newEntity.pArchetype->componentUUIDs;
-				std::ranges::sort(sortedVec);
-
-				// Component Data. Again, sorted in ascending order
-
-				for (auto componentUUID : sortedVec)
-				{
-					//ComponentManager::IterateComponentMembers<ecs::SerializeReadComponentField>(componentUUID, streamReader, newEntity.UUID, binary, pExtraData);
-				}
-
-				return newEntity;
-			}
+			static Entity Read(const ser::StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr);
 		};
 
 	protected:
@@ -154,37 +115,4 @@ namespace tryn::ecs
 	{
 		newComponentIDs[index] = C::UUID;
 	}
-
-	inline void Entity::SpawnControlWindow()
-	{
-		if (ImGui::Begin(std::format("[{}] - Entity properties", name).c_str()))
-		{
-			ImGui::Text(std::format("Entity UUID: {}:{}", UUID.archetype, UUID.ID).c_str());
-			ImGui::Text("Components:");
-			auto& componentIndices = pArchetype->components;
-			auto& sortedComponentUUIDs = pArchetype->sortedComponentUUIDs;
-			if (ImGui::BeginCombo("Components", "Select a component"))
-			{
-				if (selectedComponents.size() != ComponentManager::GetComponentCount())
-				{
-					selectedComponents.resize(ComponentManager::GetComponentCount(), false);
-				}
-				for (auto componentIndex : componentIndices)
-				{
-					ImGui::Selectable(GetComponentInfo<ComponentInfo::Name>(ComponentManager::ComponentVector()[componentIndex]), reinterpret_cast<bool*>(&selectedComponents[componentIndex]));
-				}
-				ImGui::EndCombo();
-			}
-			for (auto [index, selected] : std::ranges::enumerate_view(selectedComponents))
-			{
-				if (!selected)
-				{
-					continue;
-				}
-				//ComponentManager::IterateComponentMembers<PrintImGuiMemberVariable>(sortedComponentUUIDs[index], this->UUID);
-			}
-			ImGui::End();
-		}
-	}
-
 }

@@ -3,6 +3,7 @@
 #include "Dx11Graphics.h"
 #include "GraphicsError.h"
 #include <d3dcompiler.h>
+#include <d3d11_1.h>
 #include <Core/src/gfx/dx11/Bindables/DX11InputLayout.h>
 #include <Core/src/gfx/dx11/Bindables/DX11VertexShader.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PixelShader.h>

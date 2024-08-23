@@ -14,6 +14,7 @@ namespace tryn::gfx
 	public:
 		virtual ~IGenericDepthStencil() = default;
 		virtual void Clear() const = 0;
+		virtual BufferResourceType GetType() const = 0;
 	};
 
 	template <BufferResourceType Type>
@@ -31,6 +32,10 @@ namespace tryn::gfx
 		static std::shared_ptr<IShaderResourceDepthStencil> Resolve(const IGraphics& gfx, const spa::DimensionsI dimensions, uint16_t slot, ComparissonMode mode = ComparissonMode::Less)
 			requires (Type == BufferResourceType::ShaderResource);
 
+		BufferResourceType GetType() const override
+		{
+			return Type;
+		}
 	protected:
 		std::conditional_t<Type == BufferResourceType::ShaderResource, uint16_t, utl::empty_t> slot;
 	};

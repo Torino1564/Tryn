@@ -1,8 +1,7 @@
 #include "TrynPCH.h"
 #include "Drawable.h"
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
-#include <Core/third/glm/gtx/wrap.hpp>
-#include <Core/third/glm/gtx/transform.hpp>
+#include <Core/src/gfx/Material.h>
 #include <Core/third/glm/glm.hpp>
 #include <Core/third/glm/gtx/euler_angles.hpp>
 #include <Core/src/gfx/Bindables/IBuffer.h>
@@ -26,7 +25,7 @@ namespace tryn::gfx
 		return mod;
 	}
 
-	void Drawable::Draw(const IGraphics& gfx, glm::mat4 transform)
+	void Drawable::Draw(const IGraphics& gfx, const glm::mat4& transform)
 	{
 		this->transform = transform;
 
@@ -38,7 +37,7 @@ namespace tryn::gfx
 			}
 			});
 	}
-	void Drawable::Submit(const IGraphics& gfx, glm::mat4 transform)
+	void Drawable::Submit(const IGraphics& gfx, const glm::mat4& transform)
 	{
 		extraBindPtrs = {};
 		ExtraSubmitBehavior();
@@ -49,7 +48,7 @@ namespace tryn::gfx
 			technique->Submit(gfx, this);
 		}
 	}
-	void Drawable::Submit(const IGraphics& gfx, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
+	void Drawable::Submit(const IGraphics& gfx, const std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
 	{
 		extraBindPtrs = {};
 		ExtraSubmitBehavior();

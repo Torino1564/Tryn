@@ -1,5 +1,4 @@
 #pragma once
-#include <core/src/gfx/IGraphics.h>
 #include <core/src/gfx/Render/Technique.h>
 #include <Core/src/gfx/Vertex.h>
 #include <filesystem>
@@ -17,6 +16,7 @@ struct aiMesh;
 
 namespace tryn::gfx
 {
+	class IGraphics;
 	class Material
 	{
 		friend class TechniqueBase;

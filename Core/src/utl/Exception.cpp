@@ -17,7 +17,7 @@ namespace tryn::utl
 	const char* BufferedException::what() const
 	{
 		using namespace std::string_literals;
-		buffer_ = "["s + typeid(const_cast<BufferedException&>(*this)).name() + "]"s;
+		buffer_ = "["s + name().data() + "]"s;
 		if (!message_.empty()) {
 			buffer_ += ": ";
 			buffer_ += message_;

@@ -20,6 +20,7 @@ namespace tryn::gfx::dx11
 		ComparissonMode mode) requires (Type == BufferResourceType::OutputOnly):
 		gfx(gfx)
 	{
+		this->type = GraphicAPI::DX11;
 		DSVCreation(gfx, dimensions, mode, (Type == BufferResourceType::ShaderResource));
 	}
 
@@ -28,6 +29,7 @@ namespace tryn::gfx::dx11
 		const uint16_t slot, ComparissonMode mode) requires (Type == BufferResourceType::ShaderResource):
 		gfx(gfx)
 	{
+		this->type = GraphicAPI::DX11;
 		DSVCreation(gfx, dimensions, mode, (Type == BufferResourceType::ShaderResource));
 		SRVCreation(gfx, slot);
 	}

@@ -69,7 +69,7 @@ namespace tryn::ser
 				if (binary)
 				{
 					T newElement = {};
-					ReadBinary((char*)&newElement, sizeof(T));
+					iss.read((char*)&newElement, sizeof(T));
 					return newElement;
 				}
 				else
@@ -95,9 +95,7 @@ namespace tryn::ser
 			{
 				if (binary)
 				{
-					unsigned int position = iss.tellg();
-					std::string_view view {iss.str()};
-					ReadBinary((char*)&data, sizeof(T));
+					iss.read((char*)&data, sizeof(T));
 				}
 				else
 				{

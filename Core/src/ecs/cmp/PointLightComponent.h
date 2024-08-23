@@ -7,9 +7,9 @@ namespace tryn::ecs::cmp
 {
 	ZT_DEFINE_COMPONENT(PointLightComponent)
 	{
-		ZT_COMPONENT_FIELDS(
-			ZT_DEFINE_COMPONENT_VAR(gfx::PointLightParameters, parameters);
-		);
+		public: struct SubresourceData{ gfx::PointLightParameters parameters; using parameters_t = tryn::utl::CTM::Map_t<gfx::PointLightParameters, "gfx::PointLightParameters", "parameters", sizeof(gfx::PointLightParameters), UUID>; }; const static inline SubresourceData srd = {}; static const unsigned int index;
+		static const std::vector<utl::CTM::ElementData>& GetReflectData_();
+		static const std::vector<utl::CTM::ElementData>& vec;
 	};
 
 	template <> struct ImGuiPrintType<gfx::PointLightParameters>
