@@ -78,6 +78,7 @@
     <ClCompile Include="src\app\App.cpp" />
     <ClCompile Include="src\gfx\ConstantBuffer.cpp" />
     <ClCompile Include="src\ecs\cmp\TransformComponent.cpp" />
+    <ClInclude Include="include\DllApi.h" />
     <ClInclude Include="src\dbg\SourceIncludes.h" />
     <ClInclude Include="src\ecs\SerializeLambda.h" />
     <ClInclude Include="src\gfx\Bindables\PrimitiveTopology.h" />
