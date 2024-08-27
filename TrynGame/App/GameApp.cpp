@@ -1,7 +1,8 @@
-#include "TrynGameEngine.h"
-#include <Engine/Render/RenderGraph.h>
 #include "GameApp.h"
+#include <Engine/Render/RenderGraph.h>
 #include <TrynGame/Game/Core/Player.h>
+#include <Core/src/ecs/cmp/Components.h>
+#include <Core/src/win/IWindow.h>
 
 TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::shared_ptr<tryn::gfx::IGraphics> pGraphics)
 	: App(pWindow, pGraphics)

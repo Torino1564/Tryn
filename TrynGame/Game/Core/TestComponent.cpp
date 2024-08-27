@@ -1,6 +1,6 @@
-#include "TrynGameEngine.h"
 #include "TestComponent.h"
 
+using namespace tryn;
 namespace tgame::cmp
 {
 	const unsigned int TestComponent::index = ecs::ComponentManager::RegisterComponent<TestComponent>();

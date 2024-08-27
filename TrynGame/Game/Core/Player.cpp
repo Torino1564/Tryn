@@ -1,6 +1,7 @@
-#include "TrynGameEngine.h"
-
 #include "Player.h"
+#include <Core/src/ecs/cmp/Components.h>
+#include <Core/src/gfx/Model/Model.h>
+#include "Core/src/gfx/Render/Techniques/ForwardPhong.h"
 
 using namespace tryn;
 

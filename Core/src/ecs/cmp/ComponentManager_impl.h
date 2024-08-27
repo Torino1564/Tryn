@@ -71,9 +71,9 @@ namespace tryn::ecs
 	//	}
 	//}
 
-	template <typename T, utl::StaticString Name_>
+	template <typename T>
 	template <template <typename, ValidComponent> class Func, unsigned ElementN, auto Tag, typename ... FuncArgs>
-	void Component<T, Name_>::IterateMembers(FuncArgs&&... funcArgs)
+	void Component<T>::IterateMembers(FuncArgs&&... funcArgs)
 	{
 		using VarMap_ = utl::CTM::get_list<UUID>;
 		VarMap_ testVarMap;

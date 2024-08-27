@@ -21,9 +21,6 @@
     <ClCompile Include="Game\Core\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\TrynGameEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="App\EntryPoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -41,9 +38,6 @@
     <ClInclude Include="Game\Core\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\TrynGameEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\CustomImGuiPrintTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -57,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Render\RenderGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\ComponentEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

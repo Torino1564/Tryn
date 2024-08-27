@@ -83,8 +83,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>TrynGameEngine.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -98,8 +97,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);TESTING_FROM_TEST</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>TrynGameEngine.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -121,8 +119,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>TrynGameEngine.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -141,11 +138,6 @@
     <ClCompile Include="App\EntryPoint.cpp" />
     <ClCompile Include="App\GameApp.cpp" />
     <ClCompile Include="Engine\Render\RenderGraph.cpp" />
-    <ClCompile Include="Engine\TrynGameEngine.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_Test|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="Game\Core\Player.cpp" />
     <ClCompile Include="Game\Core\TestComponent.cpp" />
   </ItemGroup>
@@ -157,11 +149,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\GameApp.h" />
+    <ClInclude Include="Editor\ComponentEditor.h" />
     <ClInclude Include="Engine\CustomSystems.h" />
     <ClInclude Include="Engine\CustomComponents.h" />
     <ClInclude Include="Engine\CustomImGuiPrintTypes.h" />
     <ClInclude Include="Engine\Render\RenderGraph.h" />
-    <ClInclude Include="Engine\TrynGameEngine.h" />
     <ClInclude Include="Game\Core\Player.h" />
     <ClInclude Include="Game\Core\TestComponent.h" />
   </ItemGroup>

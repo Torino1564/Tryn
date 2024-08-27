@@ -1,20 +1,21 @@
 #pragma once
-#include <string>
 #include <type_traits>
 #include "Core/src/utl/StatefulMeta/TemplateData.h"
 #include <Core/src/mem/ArenaAllocator.h>
+
+#include "Core/src/utl/StringHasher.h"
 
 namespace tryn::ecs
 {
 	class ComponentManager;
 
-	template <typename T, utl::StaticString Name>
+	template <typename T>
 	class Component;
 
 	template <typename T>
 	concept ImplementsUUID = requires
 	{
-		std::convertible_to<decltype(T::UUID), std::string>;
+		std::convertible_to<decltype(T::UUID), utl::UUID_t>;
 	};
 
 	template <typename T>

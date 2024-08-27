@@ -4,6 +4,7 @@
 #include <Core/src/ecs/EntityID.h>
 #include <Core/src/ecs/EcsClass.h>
 #include <Core/src/ecs/Archetype_def.h>
+#include <typeinfo>
 
 namespace tryn::ecs::cmp
 {
@@ -21,6 +22,12 @@ namespace tryn::ecs::cmp
 
 			ImGui::Text(std::format("{}: {}",typeNameFunc(), varNameFunc()).c_str());
 		}
+	};
+
+	template <typename T>
+	class ImGuiPrintManager
+	{
+		static constexpr auto& uuid = typeid(T);
 	};
 
 	template <typename MapElement, ValidComponent C>
