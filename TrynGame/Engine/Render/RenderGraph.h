@@ -1,10 +1,10 @@
 #pragma once
-#include <Engine/TrynGameEngine.h>
+#include "Core/src/gfx/Render/RenderGraph.h"
 
-class TrynGameRenderGraph : public gfx::IRenderGraph
+class TrynGameRenderGraph : public tryn::gfx::IRenderGraph
 {
 public:
-	explicit TrynGameRenderGraph(gfx::IGraphics& gfx);
+	explicit TrynGameRenderGraph(tryn::gfx::IGraphics& gfx);
 private:
-	std::shared_ptr<gfx::IShaderResourceRenderTargetView> pOffScreenBuffer;
+	std::shared_ptr<tryn::gfx::IShaderResourceRenderTargetView> pOffScreenBuffer;
 };

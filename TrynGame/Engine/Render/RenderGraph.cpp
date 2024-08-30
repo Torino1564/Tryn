@@ -1,9 +1,15 @@
-#include "TrynGameEngine.h"
 #include "RenderGraph.h"
+#include "Core/src/gfx/Render/Passes/ClearTargetPass.h"
+#include <Core/src/gfx/Bindables/RenderTargetView.h>
+#include <Core/src/gfx/IGraphics.h>
+
+#include "Core/src/gfx/Render/Passes/ForwardLambertianPass.h"
+#include "Core/src/gfx/Render/Passes/FullScreenRenderPass.h"
+#include <Core/src/gfx/Render/Passes/PointLightBindPass.h>
 
 using namespace tryn::gfx;
 
-TrynGameRenderGraph::TrynGameRenderGraph(gfx::IGraphics& gfx)
+TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 	:
 		IRenderGraph(gfx, false)
 	{
@@ -23,15 +29,15 @@ TrynGameRenderGraph::TrynGameRenderGraph(gfx::IGraphics& gfx)
 
 		pGlobalSink = MakeUniqueSink(In<IShaderResourceRenderTargetView>("OSRtv"), In<IShaderResourceRenderTargetView>("rtv"));
 
-		AddPass(std::move(gfx::ClearTargetPass<TargetIn<IGenericDepthStencil, "depthStencil">, TargetIn<IGenericRenderTargetView, "rtv">, TargetIn<IShaderResourceRenderTargetView, "OSRtv">>("initClear")));
+		AddPass(ClearTargetPass<TargetIn<IGenericDepthStencil, "depthStencil">, TargetIn<IGenericRenderTargetView, "rtv">, TargetIn<IShaderResourceRenderTargetView, "OSRtv">>("initClear"));
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "rtv" }, LinkageParam{ .passName = "initClear", .resourceName = "rtv" });
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "OSRtv" }, LinkageParam{ .passName = "initClear", .resourceName = "OSRtv" });
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "depthStencil" }, LinkageParam{ .passName = "initClear", .resourceName = "depthStencil" });
 
-		AddPass(std::move(gfx::PointLightBindPass(*this)));
+		AddPass(tryn::gfx::PointLightBindPass(*this));
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "pointLightBuffer" }, LinkageParam{ .passName = "PointLightBind", .resourceName = "pointLightBuffer" });
 
-		AddPass(std::move(gfx::ForwardLambertianPass(*this)));
+		AddPass(ForwardLambertianPass(*this));
 		AddLinkage(LinkageParam{ .passName = "initClear", .resourceName = "OSRtv" }, LinkageParam{ .passName = "lambertian", .resourceName = "rtv" });
 		AddLinkage(LinkageParam{ .passName = "initClear", .resourceName = "depthStencil" }, LinkageParam{ .passName = "lambertian", .resourceName = "depthStencil" });
 		AddLinkage(LinkageParam{ .passName = "PointLightBind", .resourceName = "pointLightBuffer" }, LinkageParam{ .passName = "lambertian", .resourceName = "pointLightBuffer" });

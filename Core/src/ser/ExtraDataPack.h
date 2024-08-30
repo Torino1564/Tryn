@@ -14,7 +14,7 @@ namespace tryn::ser
 		{
 			funcPtr = [](const void* pData, const void** ppFill){
 				auto pCasted = static_cast<const C*>(pData);
-				auto ppFillCasted = static_cast<const C**>(ppFill);
+				auto ppFillCasted = reinterpret_cast<const C**>(ppFill);
 				*ppFillCasted = pCasted;
 			};
 		}

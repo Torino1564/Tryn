@@ -1,7 +1,10 @@
 #pragma once
 #include <Core/src/ecs/cmp/ComponentManager.h>
 
-extern "C" __declspec(dllexport) inline auto GetComponents()
+extern "C" __declspec(dllexport) inline void GetComponents(tryn::ecs::IComponent** outPtr, unsigned int* numElements)
 {
-	return tryn::ecs::ComponentManager::ComponentVector();
+	for (auto& pComponent : tryn::ecs::ComponentManager::ComponentMap())
+	{
+		
+	}
 }

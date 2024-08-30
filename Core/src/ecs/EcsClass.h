@@ -9,7 +9,7 @@ namespace tryn::ecs
 {
 	class ComponentManager;
 
-	template <typename T>
+	template <typename T, utl::StaticString>
 	class Component;
 
 	template <typename T>

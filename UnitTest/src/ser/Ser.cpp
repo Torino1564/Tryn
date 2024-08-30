@@ -174,7 +174,10 @@ namespace Ser
 				gfx::IGraphics* pGfx;
 			};
 
-			EntityExtraData data {.pGfx = pGfx.get()};
+			ser::ExtraDataPack data;
+
+			data.AddElement(ser::ElementDataView(*pGfx.get(), "gfx"));
+
 			auto ent2 = streamReader.ReadSerialized<ecs::Entity>(true, &data);
 
 			auto [activeComp] = ent2.GetComponent<ecs::cmp::ActiveComponent>();

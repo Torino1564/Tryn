@@ -11,7 +11,7 @@
 namespace tryn::ecs
 {
 	template <ValidComponent... Cs>
-	using HeterogeneusComponentDataPointerContainer = typename std::tuple<std::span<typename Cs::SubresourceData>...>;
+	using HeterogeneusComponentDataPointerContainer = std::tuple<std::span<typename Cs::SubresourceData>...>;
 
 	class Archetype
 	{

@@ -9,6 +9,14 @@ namespace tryn::ecs
 		);
 	};
 
+	const unsigned int TestComponent1::index = ComponentManager::RegisterComponent<TestComponent1>();
+
+	const std::vector<utl::CTM::ElementData>& TestComponent1::GetReflectData_()
+	{
+		static const std::vector<tryn::utl::CTM::ElementData> singleton = tryn::ecs::CreateElementDataVector<ComponentType>();
+		return singleton;
+	}
+
 	ZT_DEFINE_COMPONENT(TestComponent2)
 	{
 		ZT_COMPONENT_FIELDS(
@@ -17,6 +25,14 @@ namespace tryn::ecs
 			float fireIntensity;
 		);
 	};
+
+	const unsigned int TestComponent2::index = ComponentManager::RegisterComponent<TestComponent2>();
+
+	const std::vector<utl::CTM::ElementData>& TestComponent2::GetReflectData_()
+	{
+		static const std::vector<tryn::utl::CTM::ElementData> singleton = tryn::ecs::CreateElementDataVector<ComponentType>();
+		return singleton;
+	}
 
 	ZT_DEFINE_COMPONENT(TestComponent3)
 	{
@@ -27,6 +43,14 @@ namespace tryn::ecs
 			float whatever = .0f;
 		);
 	};
+
+	const unsigned int TestComponent3::index = ComponentManager::RegisterComponent<TestComponent3>();
+
+	const std::vector<utl::CTM::ElementData>& TestComponent3::GetReflectData_()
+	{
+		static const std::vector<tryn::utl::CTM::ElementData> singleton = tryn::ecs::CreateElementDataVector<ComponentType>();
+		return singleton;
+	}
 
 	ZT_DEFINE_SYSTEM(System1)
 	{
