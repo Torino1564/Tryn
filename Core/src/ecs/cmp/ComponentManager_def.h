@@ -18,7 +18,6 @@
 #include <Core/src/utl/Exception.h>
 #include <Core/src/ecs/cmp/PrintMember.h>
 #include <Core/src/utl/StringHasher.h>
-#include "variant"
 #include <Core/src/ecs/EntityID.h>
 #include <Core/src/ecs/EcsClass.h>
 #include <Core/src/ecs/Archetype_def.h>
@@ -29,7 +28,7 @@
 	static const unsigned int index;\
 	static const std::vector<tryn::utl::CTM::ElementData>& GetReflectData_();\
 
-#define ZT_DEFINE_COMPONENT(x) class x; class x : public tryn::ecs::Component<x>
+#define ZT_DEFINE_COMPONENT(x) class x; class x : public tryn::ecs::Component<x, #x>
 
 
 #define ZT_DEFINE_COMPONENT_VARIABLE_2(type, var) \
@@ -96,7 +95,7 @@ namespace tryn::ecs
 			return componentCount++;
 		}
 	// stateful meta bs
-		template <typename T>
+		template <typename T, utl::StaticString Name>
 		friend class Component;
 
 		static constexpr std::uint16_t listID = 0;
@@ -164,7 +163,7 @@ namespace tryn::ecs
 		virtual const std::vector<utl::CTM::ElementData>& GetReflectData() = 0;
 	};
 
-	template <typename T>
+	template <typename T, utl::StaticString Name_>
 	class Component : public IComponent
 	{
 	public:
@@ -172,8 +171,7 @@ namespace tryn::ecs
 		{
 			return T::GetReflectData_();
 		}
-		static constexpr auto& tid = typeid(T);
-		constexpr static auto name = tid.name();
+		constexpr static auto name = Name_.v;
 		static constexpr auto UUID = ZT_STRING_HASH(name);
 		using ComponentType = T;
 

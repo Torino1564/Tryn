@@ -1,7 +1,7 @@
-#include "TrynGameEngine.h"
-
 #include "GameApp.h"
 #include <Core/src/app/EntryPoint.h>
+#include "Core/src/ioc/Container.h"
+#include <Core/src/win/IWindow.h>
 
 using namespace tryn;
 

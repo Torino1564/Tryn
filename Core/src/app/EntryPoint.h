@@ -1,7 +1,7 @@
 #pragma once
+#include "EntryMain.h"
 #include <Core/src/utl/Assert.h>
 #include <Core/src/utl/String.h>
-#include "EntryMain.h"
 
 #ifdef CONSOLE_ONLY
 int main(int argc, char** argv)

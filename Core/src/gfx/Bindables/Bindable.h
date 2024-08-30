@@ -6,6 +6,7 @@ namespace tryn::gfx
 {
 	class IGraphics;
 	class IContext;
+
 	class IBindable
 	{
 	public:
@@ -16,6 +17,7 @@ namespace tryn::gfx
 		GraphicAPI GetAPI() const;
 
 	protected:
+
 		GraphicAPI type = GraphicAPI::Unknown;
 	};
 }
