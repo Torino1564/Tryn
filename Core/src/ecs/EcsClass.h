@@ -73,21 +73,25 @@ namespace tryn::ecs
 
 	class ComponentManager;
 	class ArchetypeManager;
+	class SystemManager;
 
 	using ComponentSize = typename std::size_t;
 
 	class ECS
 	{
 	public:
+		ECS()
+		:
+		pComponentManager(std::make_unique<ComponentManager>()), pArchetypeManager(std::make_unique<ArchetypeManager>()), pSystemManager(std::make_unique<SystemManager>())
+		{}
 		static ECS& Get()
 		{
 			static ECS ecs;
 			return ecs;
 		}
-		ComponentManager& componentManager;
-		ArchetypeManager& archetypeManager;
+		std::unique_ptr<ComponentManager> pComponentManager;
+		std::unique_ptr<ArchetypeManager> pArchetypeManager;
+		std::unique_ptr<SystemManager> pSystemManager;
 		mem::ArenaAllocator<> allocator;
-	private:
-		ECS();
 	};
 }

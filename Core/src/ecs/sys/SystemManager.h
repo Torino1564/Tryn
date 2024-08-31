@@ -37,6 +37,7 @@ namespace tryn::ecs::sys
 	public:
 		SystemGraph() = default;
 		SystemGraph(SystemManager& manager);
+
 		template <ValidSystem S>
 		void RegisterSystem()
 		{
@@ -56,6 +57,7 @@ namespace tryn::ecs::sys
 			// registers the system
 			pSystems[S::UID.id] = std::make_unique<S>(*this);
 		}
+
 		void Finalize();
 		void Execute();
 		const gfx::IGraphics& Gfx() const;

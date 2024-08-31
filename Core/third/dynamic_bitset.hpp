@@ -8,6 +8,8 @@
 #ifndef SUL_DYNAMIC_BITSET_HPP
 #define SUL_DYNAMIC_BITSET_HPP
 
+#undef max
+#undef min
 /**
  * @brief      @ref sul::dynamic_bitset version major.
  *

@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <Core/src/utl/StringHasher.h>
 #include <Core/src/utl/TypeName.h>
 
 #define ZT_TYPE_UUID(x) ZT_STRING_HASH(ZT_TYPE_OF(x))

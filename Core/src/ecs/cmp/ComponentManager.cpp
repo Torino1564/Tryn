@@ -3,14 +3,11 @@
 #include <Core/src/ecs/Entity.h>
 #include "ActiveComponent.h"
 #include "Core/src/ecs/Archetype.h"
+#include "Core/src/ecs/sys/AnimationSystem.h"
+#include <Core/src/ecs/sys/SystemManager.h>
 
 namespace tryn::ecs
 {
-	ECS::ECS()
-		:
-		componentManager(ComponentManager::Get()), archetypeManager(ArchetypeManager::Get())
-	{}
-
 	void Archetype::InitializeUUID()
 	{
 		UUID = ECS::Get().archetypeManager.ResolveUUID();

@@ -1,44 +1,91 @@
 #pragma once
+#include <array>
+#include <string>
+#include <algorithm>
 #include <source_location>
+#include <memory>
 
 #include "StatefulMeta/TemplateData.h"
 
 #define ZT_TYPE_OF(x) tryn::utl::type_of<x>()
 
 #ifdef _MSC_VER
-#define BEGIN_OFFSET 41
+#define BEGIN_OFFSET 84
 #define END_OFFSET 7
 #endif
 
 #ifdef __GNUC__
-#define BEGIN_OFFSET 48
+#define BEGIN_OFFSET 22
 #define END_OFFSET 1
 #endif
 
 namespace tryn::utl
 {
+	template <auto Data>
+	consteval const auto& make_static()
+	{
+		return Data;
+	}
+
+	struct oversized_array
+	{
+		std::array<char, 1 * 1024> data{};
+		std::size_t size;
+	};
+
+	constexpr auto to_oversized_array(const std::string& str)
+	{
+		oversized_array result;
+		std::copy(str.begin(), str.end(), result.data.begin());
+		result.size = str.size();
+		return result;
+	}
+
+	consteval auto to_right_sized_array(auto callable)
+	{
+		constexpr auto oversized = to_oversized_array(callable());
+		std::array<char, oversized.size> result;
+		std::copy(oversized.data.begin(), std::next(oversized.data.begin(), oversized.size), result.begin());
+		return result;
+	}
+
+	consteval auto to_string_view(auto callable) -> std::string_view
+	{
+		constexpr auto& static_data = make_static<to_right_sized_array(callable)>();
+		return std::string_view{static_data.begin(), static_data.end()};
+	}
+
 	template <typename T>
-	consteval auto func_name() {
+	consteval auto func_name()
+	{
 	    const auto& loc = std::source_location::current();
-	    return loc.function_name();
+	    std::string_view retval = loc.function_name();
+
+		return retval;
 	}
 
-	template <typename T>
-	consteval std::string_view type_of_impl_() {
-	    constexpr std::string_view functionName = func_name<T>();
+    template <typename T>
+    struct GetTypeNameString
+    {
+        constexpr std::string operator()()
+        {
+            std::string functionName = func_name<T>().data();
+            
+	        return {functionName.begin() + BEGIN_OFFSET, functionName.end() - END_OFFSET};
+        }
+    };
 
-	    return {functionName.begin() + BEGIN_OFFSET, functionName.end() - END_OFFSET};;
-	}
+    template <typename T>
+    constexpr std::string_view type_of()
+    {
+        return to_string_view(GetTypeNameString<T>());
+    }
 
-	template <typename T>
-	constexpr auto type_of(T&& arg) {
-	    return type_of_impl_<decltype(arg)>();
-	}
-
-	template <typename T>
-	constexpr auto type_of() {
-	    return type_of_impl_<T>();
-	}
+    template <typename T>
+    constexpr std::string_view type_of(T&& arg)
+    {
+        return to_string_view(GetTypeNameString<T>());
+    }
 
 	static constexpr auto name = type_of<float>();
 }
