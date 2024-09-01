@@ -22,6 +22,8 @@
 #include <Core/src/ecs/EcsClass.h>
 #include <Core/src/ecs/Archetype_def.h>
 
+#include "Core/src/ecs/SerializeLambda.h"
+
 #define ZT_COMPONENT_FIELDS(x) \
 	public: struct SubresourceData{ x };\
 	const static inline SubresourceData srd = {};\
@@ -85,139 +87,6 @@ namespace tryn::ecs
 		}
 	};
 
-	class ComponentManager
-	{
-	private:
-		ComponentManager() = default;
-		static unsigned int NextFreeAndIncrement()
-		{
-			static unsigned int componentCount = 0;
-			return componentCount++;
-		}
-	// stateful meta bs
-		template <typename T, utl::StaticString Name>
-		friend class Component;
-
-		static constexpr std::uint16_t listID = 0;
-
-	public:
-		template <typename T>
-		static unsigned int RegisterComponent();
-		static auto& ComponentMap()
-		{
-			static std::unordered_map<utl::UUID_t, std::pair<std::unique_ptr<IComponent>, unsigned int>> componentMap;
-			return componentMap;
-		}
-		static auto& ComponentVector()
-		{
-			static std::vector<utl::UUID_t> componentVector;
-			return componentVector;
-		}
-		static auto& ComponentViewVector();
-
-		static ComponentManager& Get()
-		{
-			static ComponentManager singleton;
-			return singleton;
-		}
-		static constexpr auto GetComponentListID()
-		{
-			return listID;
-		}
-
-		void ActivateComponent(std::uint16_t componentUUID, std::uint16_t componentIndex);	
-
-		static size_t GetComponentCount()
-		{
-			return ComponentMap().size();
-		}
-	};
-
-	template <typename T, ValidComponent C>
-	class FillElementData
-	{
-	public:
-		void operator ()(std::vector<utl::CTM::ElementData>& vec) const
-		{
-			vec.push_back(utl::CTM::ElementData::MakeOffMapElement<T>());
-		}
-	};
-
-	template <typename C>
-	inline std::vector<utl::CTM::ElementData> CreateElementDataVector()
-	{
-		std::vector<utl::CTM::ElementData> retval;
-		C::template IterateMembers<FillElementData>(retval);
-		return retval;
-	}
-
-	class IComponent
-	{
-	public:
-		virtual ~IComponent() = default;
-		constexpr virtual utl::UUID_t GetUUID() const = 0;
-		virtual const char* Name() const = 0;
-		virtual size_t Size() const = 0;
-		virtual void ConstructSRD(void* pData, size_t = 0) const = 0;
-		virtual void DestroySRD(void* pData, size_t = 0) const = 0;
-		virtual const std::vector<utl::CTM::ElementData>& GetReflectData() = 0;
-	};
-
-	template <typename T, utl::StaticString Name_>
-	class Component : public IComponent
-	{
-	public:
-		const std::vector<utl::CTM::ElementData>& GetReflectData() override
-		{
-			return T::GetReflectData_();
-		}
-		constexpr static auto name = Name_.v;
-		static constexpr auto UUID = ZT_STRING_HASH(name);
-		using ComponentType = T;
-
-		constexpr utl::UUID_t GetUUID() const override
-		{
-			return UUID;
-		}
-		const char* Name() const override
-		{
-			return name;
-		}
-		size_t Size() const override
-		{
-			return sizeof(typename T::srd);
-		}
-		void ConstructSRD(void* pData, const size_t size) const override
-		{
-			// assert size if possible
-			trynass(size == 0 || size == sizeof(T)).msg(L"Error constructing Subresource Data in place!");
-
-			auto pData_ = static_cast<typename T::SubresourceData*>(pData);
-			new (pData_) typename T::SubresourceData();
-		}
-		void DestroySRD(void* pData, const size_t size) const override
-		{
-			// assert size if possible
-			trynass(size == 0 || size == sizeof(T)).msg(L"Error constructing Subresource Data in place!");
-
-			auto pData_ = static_cast<typename T::SubresourceData*>(pData);
-			std::destroy_at(pData);
-		}
-
-		template <typename C>
-		friend std::vector<utl::CTM::ElementData> CreateElementDataVector();
-
-		template <CallbackSignatureClass... Args>
-		friend class ComponentView;
-	private:
-		utl::CTM::setter<0, std::tuple<>, utl::CTM::tu_tag, UUID> setter;
-		using VarMap = utl::CTM::get_list<UUID>;
-
-	protected:
-		template <template <typename, ValidComponent> class Func = DoNothing, unsigned ElementN = 0, auto Tag = []{}, typename... FuncArgs>
-		static void IterateMembers(FuncArgs&&... funcArgs);
-	};
-
 	template <CallbackSignatureClass... Signatures>
 	class ComponentView
 	{
@@ -256,12 +125,12 @@ namespace tryn::ecs
 				using ArgsTuple = typename Signature::ArgTypes;
 
 				std::get<N>(funcPtrs) = [](const void* pComp, ArgsTuple&& args)
-				{
-					auto func = static_cast<const C*>(pComp)-> template IterateMembers<typename Signature::CallbackType, 0, []{}, std::tuple_element_t<Indices, Tuple>...>;
-					std::apply(func, std::move(args));
-				};
+					{
+						auto func = static_cast<const C*>(pComp)-> template IterateMembers<typename Signature::CallbackType, 0, [] {}, std::tuple_element_t<Indices, Tuple>... > ;
+						std::apply(func, std::move(args));
+					};
 
-				if constexpr (N + 1< sizeof...(Signatures))
+				if constexpr (N + 1 < sizeof...(Signatures))
 				{
 					using TupleNp1 = std::tuple_element_t<N + 1, SignatureTuple>;
 					using ArgsTupleNp1 = typename TupleNp1::ArgTypes;
@@ -275,6 +144,131 @@ namespace tryn::ecs
 		const void* pComponent = nullptr;
 		std::tuple<void (*)(const void*, typename Signatures::ArgTypes&&)...> funcPtrs = {};
 	};
+
+	class ComponentManager
+	{
+	public:
+		template <typename T>
+		static unsigned int RegisterComponent();
+		static std::unordered_map<utl::UUID_t, std::pair<std::unique_ptr<IComponent>, unsigned int>>& ComponentMap();
+		static std::vector<utl::UUID_t>& ComponentVector();
+		static auto& ComponentViewVector()
+		{
+			static std::vector<ComponentView<
+				CallbackSignature<VerySimpleCallback>,
+				CallbackSignature<SerializeWriteComponentField, const ser::StreamWriter&, const EntityID, const bool, const std::string&>,
+				CallbackSignature<SerializeReadComponentField, const ser::StreamReader&, const EntityID, const bool, const ser::ExtraDataPack*>,
+				CallbackSignature<PrintImGuiMemberVariable, EntityID>
+				>> componentViewVector;
+			return componentViewVector;
+		}
+		static ComponentManager& Get();
+		static constexpr auto GetComponentListID();
+		static size_t GetComponentCount();
+
+		ComponentManager(const ECS* pEcs);
+	private:
+		static unsigned int NextFreeAndIncrement();
+
+		// stateful meta bs
+		template <typename T, utl::StaticString Name>
+		friend class Component;
+
+		static constexpr std::uint16_t listID = 0;
+
+		const ECS* pEcs = nullptr;
+	};
+
+	constexpr auto ComponentManager::GetComponentListID()
+	{
+		return listID;
+	}
+
+	template <typename T, ValidComponent C>
+	class FillElementData
+	{
+	public:
+		void operator ()(std::vector<utl::CTM::ElementData>& vec) const
+		{
+			vec.push_back(utl::CTM::ElementData::MakeOffMapElement<T>());
+		}
+	};
+
+	template <typename C>
+	std::vector<utl::CTM::ElementData> CreateElementDataVector()
+	{
+		std::vector<utl::CTM::ElementData> retval;
+		C::template IterateMembers<FillElementData>(retval);
+		return retval;
+	}
+
+	class IComponent
+	{
+	public:
+		virtual ~IComponent() = default;
+		constexpr virtual utl::UUID_t GetUUID() const = 0;
+		virtual const char* Name() const = 0;
+		virtual size_t Size() const = 0;
+		virtual void ConstructSRD(void* pData, size_t = 0) const = 0;
+		virtual void DestroySRD(void* pData, size_t = 0) const = 0;
+		virtual const std::vector<utl::CTM::ElementData>& GetReflectData() = 0;
+	};
+
+	template <typename T, utl::StaticString Name_>
+	class Component : public IComponent
+	{
+	public:
+		const std::vector<utl::CTM::ElementData>& GetReflectData() override
+		{
+			return T::GetReflectData_();
+		}
+		constexpr static auto name = ZT_TYPE_OF(T);
+		static constexpr auto UUID = ZT_STRING_HASH(name);
+		using ComponentType = T;
+
+		constexpr utl::UUID_t GetUUID() const override
+		{
+			return UUID;
+		}
+		const char* Name() const override
+		{
+			return name.data();
+		}
+		size_t Size() const override
+		{
+			return sizeof(typename T::srd);
+		}
+		void ConstructSRD(void* pData, const size_t size) const override
+		{
+			// assert size if possible
+			trynass(size == 0 || size == sizeof(T)).msg(L"Error constructing Subresource Data in place!");
+
+			auto pData_ = static_cast<typename T::SubresourceData*>(pData);
+			new (pData_) typename T::SubresourceData();
+		}
+		void DestroySRD(void* pData, const size_t size) const override
+		{
+			// assert size if possible
+			trynass(size == 0 || size == sizeof(T)).msg(L"Error constructing Subresource Data in place!");
+
+			auto pData_ = static_cast<typename T::SubresourceData*>(pData);
+			std::destroy_at(pData);
+		}
+
+		template <typename C>
+		friend std::vector<utl::CTM::ElementData> CreateElementDataVector();
+
+		template <CallbackSignatureClass... Args>
+		friend class ComponentView;
+	private:
+		utl::CTM::setter<0, std::tuple<>, utl::CTM::tu_tag, UUID> setter;
+		using VarMap = utl::CTM::get_list<UUID>;
+
+	protected:
+		template <template <typename, ValidComponent> class Func = DoNothing, unsigned ElementN = 0, auto Tag = []{}, typename... FuncArgs>
+		static void IterateMembers(FuncArgs&&... funcArgs);
+	};
+
 
 	enum class Action
 	{

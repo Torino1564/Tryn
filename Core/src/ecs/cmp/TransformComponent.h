@@ -2,7 +2,7 @@
 #include "ComponentManager.h"
 #include <Core/third/glm/mat4x4.hpp>
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	ZT_DEFINE_COMPONENT(TransformComponent)
 	{

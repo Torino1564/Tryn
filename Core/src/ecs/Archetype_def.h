@@ -51,6 +51,7 @@ namespace tryn::ecs
 		void Resize(std::uint32_t newSize);
 
 	private:
+		Archetype() = default;
 		void InitSortedComponentUUIDs();
 
 		void InitializeUUID();
@@ -73,29 +74,30 @@ namespace tryn::ecs
 
 		// TODO: Access Modes
 		template <ValidComponentWithAccessMode... Cs>
-		std::span<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> GetComponentGroups();
+		std::span<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> GetComponentGroups() const;
 
 		std::span<Archetype*> QueryArchetype(std::span<utl::UUID_t> componentIDs) const;
 
 		template <ValidComponent... Cs>
-		std::span<Archetype*> QueryArchetype();
+		std::span<Archetype*> QueryArchetype() const;
 
 		Archetype* GetArchetype(std::span<utl::UUID_t> components);
 
 
 		template <ValidComponent... Cs>
-		Archetype* GetArchetype();
+		Archetype* GetArchetype() const;
 
-		Archetype* GetArchetype(const int archetypeCounter);
+		const Archetype& GetArchetype(const int archetypeCounter) const;
 
 		static ArchetypeManager& Get()
 		{
-			static ArchetypeManager singleton;
+			static ArchetypeManager singleton(nullptr);
 			return singleton;
 		}
 		template <ValidComponent... Cs>
 		Archetype* AddArchetype();
 		Archetype* AddArchetype(std::span<utl::UUID_t> componentIDs);
+		ArchetypeManager(ECS* pEcs);
 
 	private:
 		enum ComponentIdentifier
@@ -109,8 +111,7 @@ namespace tryn::ecs
 		template <int arraySize, ComponentIdentifier Type, ValidComponent C>
 		void ExtractComponentIDs(std::array<utl::UUID_t, arraySize>& componentIDs, int index = 0);
 
-		ArchetypeManager();
-
+		ECS* pEcs = nullptr;
 		int ResolveUUID();
 		int archetypeCounter = 0;
 		// Indexed by componentUUID

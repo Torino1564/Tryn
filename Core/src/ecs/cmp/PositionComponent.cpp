@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "PositionComponent.h"
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	const unsigned int PositionComponent::index = ComponentManager::RegisterComponent<PositionComponent>();
 

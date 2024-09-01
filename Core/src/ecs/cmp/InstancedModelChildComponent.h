@@ -2,7 +2,7 @@
 #include "ComponentManager.h"
 #include <Core/src/gfx/Model/InstancedModel.h>
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	ZT_DEFINE_COMPONENT(InstancedModelChildComponent)
 	{

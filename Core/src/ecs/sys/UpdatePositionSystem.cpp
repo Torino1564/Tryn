@@ -2,9 +2,9 @@
 #include "UpdatePositionSystem.h"
 #include <Core/src/ecs/cmp/ComponentManager.h>
 
-namespace tryn::ecs::sys
+namespace tryn::ecs
 {
-	UpdatePositionSystem::UpdatePositionSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
+	UpdatePositionSystem::UpdatePositionSystem(const SystemGraph& pGraph, ECS* pEcs): SystemImpl(pGraph, pEcs)
 	{}
 
 	void UpdatePositionSystem::Execute()
@@ -14,9 +14,9 @@ namespace tryn::ecs::sys
 
 		// Request data
 
-		auto data = ECS::Get().archetypeManager.GetComponentGroups<
-			ReadOnly<cmp::VelocityComponent>,
-			ReadWrite<cmp::PositionComponent>>();
+		auto data = pEcs->GetArchetypeManager().GetComponentGroups<
+			ReadOnly<VelocityComponent>,
+			ReadWrite<PositionComponent>>();
 
 		// Clear data arrays
 
@@ -27,8 +27,8 @@ namespace tryn::ecs::sys
 
 		for (auto& entry : data)
 		{
-			positionArray.PushBack(std::get<std::span<cmp::PositionComponent::SubresourceData>>(entry));
-			velocityArray.PushBack(std::get<std::span<cmp::VelocityComponent::SubresourceData>>(entry));
+			positionArray.PushBack(std::get<std::span<PositionComponent::SubresourceData>>(entry));
+			velocityArray.PushBack(std::get<std::span<VelocityComponent::SubresourceData>>(entry));
 		}
 
 		// Kernel

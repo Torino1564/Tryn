@@ -16,20 +16,9 @@ namespace tryn::ecs
 			CallbackSignature<VerySimpleCallback>,
 			CallbackSignature<SerializeWriteComponentField, const ser::StreamWriter&, const EntityID, const bool, const std::string&>,
 			CallbackSignature<SerializeReadComponentField, const ser::StreamReader&, const EntityID, const bool, const ser::ExtraDataPack*>,
-			CallbackSignature<cmp::PrintImGuiMemberVariable, EntityID>
+			CallbackSignature<PrintImGuiMemberVariable, EntityID>
 		>::Make<T>(*static_cast<T*>(&*it->second.first))  ));
 		return componentIndex;
-	}
-
-	inline auto& ComponentManager::ComponentViewVector()
-	{
-		static std::vector<ComponentView<
-			CallbackSignature<VerySimpleCallback>,
-			CallbackSignature<SerializeWriteComponentField, const ser::StreamWriter&, const EntityID, const bool, const std::string&>,
-			CallbackSignature<SerializeReadComponentField, const ser::StreamReader&, const EntityID, const bool, const ser::ExtraDataPack*>,
-			CallbackSignature<cmp::PrintImGuiMemberVariable, EntityID>
-		>> componentViewVector;
-		return componentViewVector;
 	}
 
 	template <typename T, utl::StaticString Name>

@@ -5,6 +5,16 @@
 
 #include "Core/src/utl/StringHasher.h"
 
+namespace tryn::gfx
+{
+	class IGraphics;
+}
+
+namespace tryn::app
+{
+	class App;
+}
+
 namespace tryn::ecs
 {
 	class ComponentManager;
@@ -80,15 +90,23 @@ namespace tryn::ecs
 	class ECS
 	{
 	public:
-		ECS()
-		:
-		pComponentManager(std::make_unique<ComponentManager>()), pArchetypeManager(std::make_unique<ArchetypeManager>()), pSystemManager(std::make_unique<SystemManager>())
-		{}
+		ECS(const app::App* pApp);
+		~ECS();
 		static ECS& Get()
 		{
-			static ECS ecs;
+			static ECS ecs(nullptr);
 			return ecs;
 		}
+		void WipeAllocator();
+		const gfx::IGraphics& Gfx() const;
+		const mem::ArenaAllocator<>& GetAllocator() const;
+		mem::ArenaAllocator<>& GetAllocator();
+		const ComponentManager& GetComponentManager() const;
+		const ArchetypeManager& GetArchetypeManager() const;
+		ArchetypeManager& GetArchetypeManager();
+		const SystemManager& GetSystemManager() const;
+	private:
+		const app::App* pApp;
 		std::unique_ptr<ComponentManager> pComponentManager;
 		std::unique_ptr<ArchetypeManager> pArchetypeManager;
 		std::unique_ptr<SystemManager> pSystemManager;

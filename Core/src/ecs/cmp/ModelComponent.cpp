@@ -2,7 +2,7 @@
 #include "ModelComponent.h"
 #include <Core/src/gfx/Model/Model.h>
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	const unsigned int ModelComponent::index = ComponentManager::RegisterComponent<ModelComponent>();
 

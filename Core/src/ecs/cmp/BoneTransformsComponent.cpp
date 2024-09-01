@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "BoneTransformsComponent.h"
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	const unsigned int BoneTransformsComponent::index = ComponentManager::RegisterComponent<BoneTransformsComponent>();
 

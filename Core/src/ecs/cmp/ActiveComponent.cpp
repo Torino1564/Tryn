@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "ActiveComponent.h"
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	const unsigned int ActiveComponent::index = ComponentManager::RegisterComponent<ActiveComponent>();
 

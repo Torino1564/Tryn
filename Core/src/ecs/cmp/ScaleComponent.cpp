@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "ScaleComponent.h"
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	const unsigned int ScaleComponent::index = ComponentManager::RegisterComponent<ScaleComponent>();
 

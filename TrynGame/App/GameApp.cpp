@@ -11,36 +11,36 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 	pPlayer = std::make_unique<Player>("player1", "Game/Resources/Models/PlayerModels/ShinySphere/ShinySphere.obj", Gfx());
 
-	pPlayer->GetComponent<ecs::cmp::PositionComponent>().position = {10.0f, 10.0f, 10.0f};
+	pPlayer->GetComponent<ecs::PositionComponent>().position = {10.0f, 10.0f, 10.0f};
 
 	pPointLight = std::make_unique<gfx::PointLight>(Gfx(), 0.01f);
 
 	{
 		auto pTestEnt = std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
-		ecs::cmp::ActiveComponent,
-		ecs::cmp::PositionComponent,
-		ecs::cmp::TransformComponent,
-		ecs::cmp::ModelComponent,
-		ecs::cmp::ScaleComponent,
-		ecs::cmp::RotationComponent,
-		ecs::cmp::PointLightComponent>("light"));
+		ecs::ActiveComponent,
+		ecs::PositionComponent,
+		ecs::TransformComponent,
+		ecs::ModelComponent,
+		ecs::ScaleComponent,
+		ecs::RotationComponent,
+		ecs::PointLightComponent>("light"));
 	}
 
 	entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
-		ecs::cmp::ActiveComponent,
-		ecs::cmp::PositionComponent,
-		ecs::cmp::TransformComponent,
-		ecs::cmp::ModelComponent,
-		ecs::cmp::ScaleComponent,
-		ecs::cmp::RotationComponent,
-		ecs::cmp::PointLightComponent>("light")));
+		ecs::ActiveComponent,
+		ecs::PositionComponent,
+		ecs::TransformComponent,
+		ecs::ModelComponent,
+		ecs::ScaleComponent,
+		ecs::RotationComponent,
+		ecs::PointLightComponent>("light")));
 
 	const auto& pLight = entities.back();
 
-	pLight->GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
-	pLight->GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make<gfx::FlatBase>(Gfx(), "Game/Resources/Models/sphere.obj");
-	pLight->GetComponent<ecs::cmp::ActiveComponent>().active = true;
-	pLight->GetComponent<ecs::cmp::PointLightComponent>().parameters = gfx::PointLightParameters{
+	pLight->GetComponent<ecs::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
+	pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::FlatBase>(Gfx(), "Game/Resources/Models/sphere.obj");
+	pLight->GetComponent<ecs::ActiveComponent>().active = true;
+	pLight->GetComponent<ecs::PointLightComponent>().parameters = gfx::PointLightParameters{
 		.ambient = {0.1f, 0.1f, 0.1f},
 		.diffuseColor = glm::normalize(glm::vec3{1.0f, 1.0f, 1.0f}),
 		.diffuseIntensity = 1.0f,
@@ -48,39 +48,39 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		.linearAtt = 0.045f,
 		.quadraticAtt = 0.0075f
 	};
-	pLight->GetComponent<ecs::cmp::ScaleComponent>().scale = {1.0f, 1.0f, 1.0f};
+	pLight->GetComponent<ecs::ScaleComponent>().scale = {1.0f, 1.0f, 1.0f};
 
 	entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
-		ecs::cmp::ActiveComponent,
-		ecs::cmp::PositionComponent,
-		ecs::cmp::TransformComponent,
-		ecs::cmp::ModelComponent,
-		ecs::cmp::ScaleComponent,
-		ecs::cmp::RotationComponent>("sponza")));
+		ecs::ActiveComponent,
+		ecs::PositionComponent,
+		ecs::TransformComponent,
+		ecs::ModelComponent,
+		ecs::ScaleComponent,
+		ecs::RotationComponent>("sponza")));
 
 	auto& sponza = *entities.back();
 
-	sponza.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-	sponza.GetComponent<ecs::cmp::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
-	sponza.GetComponent<ecs::cmp::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
-	sponza.GetComponent<ecs::cmp::ActiveComponent>().active = false;
+	sponza.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
+	sponza.GetComponent<ecs::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
+	sponza.GetComponent<ecs::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
+	sponza.GetComponent<ecs::ActiveComponent>().active = false;
 
 	entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
-		ecs::cmp::ActiveComponent,
-		ecs::cmp::PositionComponent,
-		ecs::cmp::TransformComponent,
-		ecs::cmp::ModelComponent,
-		ecs::cmp::ScaleComponent,
-		ecs::cmp::RotationComponent>("TestPlane")));
+		ecs::ActiveComponent,
+		ecs::PositionComponent,
+		ecs::TransformComponent,
+		ecs::ModelComponent,
+		ecs::ScaleComponent,
+		ecs::RotationComponent>("TestPlane")));
 
 	auto& plane = *entities.back();
 
-	plane.GetComponent<ecs::cmp::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-	plane.GetComponent<ecs::cmp::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
-	plane.GetComponent<ecs::cmp::ScaleComponent>().scale = { 10.0f, 10.0f, 10.0f };
-	plane.GetComponent<ecs::cmp::ActiveComponent>().active = true;
+	plane.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
+	plane.GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
+	plane.GetComponent<ecs::ScaleComponent>().scale = { 10.0f, 10.0f, 10.0f };
+	plane.GetComponent<ecs::ActiveComponent>().active = true;
 
-	auto& pModelWatch = plane.GetComponent<ecs::cmp::ModelComponent>().pModel;
+	auto& pModelWatch = plane.GetComponent<ecs::ModelComponent>().pModel;
 
 	this->wnd->keyboard.DisableAutoRepeat();
 
@@ -100,7 +100,7 @@ void TrynGameApp::DoFrame()
 	}
 
 	// Process input
-	auto& playerVelocity = pPlayer->GetComponent<ecs::cmp::VelocityComponent>().velocity;
+	auto& playerVelocity = pPlayer->GetComponent<ecs::VelocityComponent>().velocity;
 	playerVelocity = { 0.0f, 0.0f, 0.0f };
 	pActiveCamera->Submit(Gfx());
 
@@ -112,7 +112,7 @@ void TrynGameApp::DoFrame()
 	if (state == Mode::Player)
 	{
 		auto& playerCameraPosition = player.GetPosition();
-		auto& playerObjectPosition = pPlayer->GetComponent<ecs::cmp::PositionComponent>().position;
+		auto& playerObjectPosition = pPlayer->GetComponent<ecs::PositionComponent>().position;
 		playerCameraPosition.x = playerObjectPosition.x;
 		playerCameraPosition.z = playerObjectPosition.z;
 

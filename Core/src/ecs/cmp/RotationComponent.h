@@ -1,7 +1,7 @@
 #pragma once
 #include <Core/src/ecs/cmp/ComponentManager.h>
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	ZT_DEFINE_COMPONENT(RotationComponent)
 	{

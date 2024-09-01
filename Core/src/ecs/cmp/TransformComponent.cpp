@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "TransformComponent.h"
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	const unsigned int TransformComponent::index = ComponentManager::RegisterComponent<TransformComponent>();
 

@@ -3,7 +3,7 @@
 #include <tuple>
 #include <type_traits>
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 
 }

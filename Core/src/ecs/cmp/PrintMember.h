@@ -4,7 +4,7 @@
 
 #include "Core/third/glm/vec3.hpp"
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	template <> struct ImGuiPrintType<glm::vec3>
 	{

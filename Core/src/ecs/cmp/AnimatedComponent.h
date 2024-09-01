@@ -7,7 +7,7 @@ namespace tryn::gfx::ani
 	struct AnimationSkeletonInterface;
 }
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	ZT_DEFINE_COMPONENT(AnimatedComponent)
 	{

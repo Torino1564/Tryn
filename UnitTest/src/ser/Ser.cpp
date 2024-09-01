@@ -142,13 +142,13 @@ namespace Ser
 		}
 		TEST_METHOD(SerliazeEntity)
 		{
-			auto ent1 = ecs::Entity::CreateNew<ecs::cmp::ActiveComponent, ecs::cmp::PositionComponent>("ent1");
+			auto ent1 = ecs::Entity::CreateNew<ecs::ActiveComponent, ecs::PositionComponent>("ent1");
 
 			std::ostringstream oss2;
 			ser::StreamWriter streamWriter2(oss2);
 
-			ent1.GetComponent<ecs::cmp::ActiveComponent>().active = true;
-			ent1.GetComponent<ecs::cmp::PositionComponent>().position = {69.0f, 420.0f, 1337.7f};
+			ent1.GetComponent<ecs::ActiveComponent>().active = true;
+			ent1.GetComponent<ecs::PositionComponent>().position = {69.0f, 420.0f, 1337.7f};
 
 			streamWriter2.Serialize(ent1);
 
@@ -180,8 +180,8 @@ namespace Ser
 
 			auto ent2 = streamReader.ReadSerialized<ecs::Entity>(true, &data);
 
-			auto [activeComp] = ent2.GetComponent<ecs::cmp::ActiveComponent>();
-			auto [positionComp] = ent2.GetComponent<ecs::cmp::PositionComponent>();
+			auto [activeComp] = ent2.GetComponent<ecs::ActiveComponent>();
+			auto [positionComp] = ent2.GetComponent<ecs::PositionComponent>();
 			auto componentSpan = ent2.GetComponents();
 		}
 	public:

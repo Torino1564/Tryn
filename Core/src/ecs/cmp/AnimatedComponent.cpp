@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "AnimatedComponent.h"
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	const unsigned int AnimatedComponent::index = ComponentManager::RegisterComponent<AnimatedComponent>();
 

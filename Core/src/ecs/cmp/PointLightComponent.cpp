@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "PointLightComponent.h"
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	const unsigned int PointLightComponent::index = ComponentManager::RegisterComponent<PointLightComponent>();
 	const std::vector<utl::CTM::ElementData>& PointLightComponent::GetReflectData_()

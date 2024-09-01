@@ -6,7 +6,7 @@
 #include <Core/src/ecs/Archetype_def.h>
 #include <typeinfo>
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	template <typename ElementType>
 	struct ImGuiPrintType

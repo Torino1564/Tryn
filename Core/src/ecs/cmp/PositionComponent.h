@@ -2,7 +2,7 @@
 #include "ComponentManager.h"
 #include <Core/third/glm/vec3.hpp>
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	ZT_DEFINE_COMPONENT(PositionComponent)
 	{

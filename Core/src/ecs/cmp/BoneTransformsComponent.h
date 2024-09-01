@@ -2,7 +2,7 @@
 #include "ComponentManager.h"
 #include <span>
 #include <Core/third/glm/glm.hpp>
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	ZT_DEFINE_COMPONENT(BoneTransformsComponent)
 	{

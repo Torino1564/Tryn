@@ -2,7 +2,7 @@
 #include "UpdateVelocitySystem.h"
 #include <Core/src/ecs/cmp/ComponentManager.h>
 
-namespace tryn::ecs::sys
+namespace tryn::ecs
 {
 	UpdateVelocitySystem::UpdateVelocitySystem(const SystemGraph& pGraph): SystemImpl(pGraph)
 	{}
@@ -14,9 +14,9 @@ namespace tryn::ecs::sys
 
 		// Request data
 
-		auto data = ECS::Get().archetypeManager.GetComponentGroups<
-			ReadOnly<cmp::AccelerationComponent>,
-			ReadWrite<cmp::VelocityComponent>>();
+		auto data = pEcs->GetArchetypeManager().GetComponentGroups<
+			ReadOnly<AccelerationComponent>,
+			ReadWrite<VelocityComponent>>();
 
 		// Clear data arrays
 
@@ -27,8 +27,8 @@ namespace tryn::ecs::sys
 
 		for (auto& entry : data)
 		{
-			velocityArray.PushBack(std::get<std::span<cmp::VelocityComponent::SubresourceData>>(entry));
-			accelerationArray.PushBack(std::get<std::span<cmp::AccelerationComponent::SubresourceData>>(entry));
+			velocityArray.PushBack(std::get<std::span<VelocityComponent::SubresourceData>>(entry));
+			accelerationArray.PushBack(std::get<std::span<AccelerationComponent::SubresourceData>>(entry));
 		}
 
 		// Kernel

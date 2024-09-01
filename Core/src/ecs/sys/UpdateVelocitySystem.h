@@ -5,7 +5,7 @@
 
 #include <Core/src/utl/Stopwatch.h>
 
-namespace tryn::ecs::sys
+namespace tryn::ecs
 {
 	ZT_DEFINE_SYSTEM(UpdateVelocitySystem)
 	{
@@ -14,8 +14,8 @@ namespace tryn::ecs::sys
 		void Execute() override;
 
 	private:
-		utl::MultiSpan<cmp::VelocityComponent::SubresourceData> velocityArray;
-		utl::MultiSpan<cmp::AccelerationComponent::SubresourceData> accelerationArray;
+		utl::MultiSpan<VelocityComponent::SubresourceData> velocityArray;
+		utl::MultiSpan<AccelerationComponent::SubresourceData> accelerationArray;
 		utl::Stopwatch sw;
 	};
 }

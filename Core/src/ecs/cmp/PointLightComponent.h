@@ -3,7 +3,7 @@
 #include <Core/src/gfx/PointLightParameters.h>
 #include <Core/src/ecs/cmp/PrintMemberBase.h>
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	ZT_DEFINE_COMPONENT(PointLightComponent)
 	{

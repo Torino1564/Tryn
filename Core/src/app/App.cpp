@@ -9,7 +9,7 @@ namespace tryn::app
 {
 	App::App(const std::shared_ptr<win::IWindow>& wnd, const std::shared_ptr<gfx::IGraphics>& gfx)
 		:
-		pSystemManager(std::make_unique<ecs::sys::SystemManager>(*this)),
+		pEcs(std::make_unique<ecs::ECS>(this)),
 		wnd(wnd),
 		gfx(gfx)
 	{}
@@ -46,7 +46,8 @@ namespace tryn::app
 
 	void App::PostFrame()
 	{
-		pSystemManager->ExecuteSystems();
+		pEcs->WipeAllocator();
+		pEcs->GetSystemManager().ExecuteSystems();
 		gfx->EndFrame();
 	}
 

@@ -3,7 +3,6 @@
 #include <Core/third/dynamic_bitset.hpp>
 #include <Core/src/log/Log.h>
 #include <ranges>
-#include <Core/src/utl/String.h>
 #include <Core/src/ecs/cmp/ComponentManager.h>
 
 #include <Core/src/ecs/sys/TransformSystem.h>
@@ -12,9 +11,8 @@
 #include <Core/src/ecs/sys/UpdateVelocitySystem.h>
 #include <Core/src/ecs/sys/AnimationSystem.h>
 
-#include "Core/src/app/App.h"
 
-namespace tryn::ecs::sys
+namespace tryn::ecs
 {
 	SystemGraph::SystemGraph(SystemManager& manager)
 		:
@@ -94,12 +92,9 @@ namespace tryn::ecs::sys
 
 		finalized = true;
 	}
-	void SystemGraph::Execute()
+	void SystemGraph::Execute() const
 	{
-		if (!finalized) [[unlikely]]
-		{
-			Finalize();
-		}
+		trynass(finalized).msg(L"The system graph must be finalized before it can be executed!").ex();
 
 		for (auto [levelIndex, level] : std::ranges::views::enumerate(levels))
 		{
@@ -118,15 +113,9 @@ namespace tryn::ecs::sys
 		return pManager->Gfx();
 	}
 
-	gfx::IGraphics& SystemGraph::Gfx()
-	{
-		trynass(pManager).msg(L"pManager was nullptr!").ex();
-		return pManager->Gfx();
-	}
-
-	System::System(const SystemGraph& graph)
+	System::System(const SystemGraph& graph, ECS* pEcs)
 		:
-	pGraph(&graph)
+		pEcs(pEcs), pGraph(&graph)
 	{
 	}
 
@@ -142,36 +131,33 @@ namespace tryn::ecs::sys
 		}
 	}
 
-	SystemManager::SystemManager(app::App& app)
+	SystemManager::SystemManager(ECS* pEcs)
 		:
-	pApp(&app),
+	pEcs(pEcs),
 	graph(*this)
 	{
 		// Register default systems
-		RegisterSystem<ecs::sys::TransformSystem>();
-		RegisterSystem<ecs::sys::RenderSystem>();
-		RegisterSystem<ecs::sys::UpdatePositionSystem>();
-		RegisterSystem<ecs::sys::UpdateVelocitySystem>();
-		RegisterSystem<ecs::sys::AnimationSystem>();
+		RegisterSystem<ecs::TransformSystem>();
+		RegisterSystem<ecs::RenderSystem>();
+		RegisterSystem<ecs::UpdatePositionSystem>();
+		RegisterSystem<ecs::UpdateVelocitySystem>();
+		RegisterSystem<ecs::AnimationSystem>();
 	}
 
-	void SystemManager::ExecuteSystems()
+	void SystemManager::ExecuteSystems() const
 	{
-		ECS::Get().allocator.Wipe();
 		graph.Execute();
+	}
+
+	void SystemManager::Finalize()
+	{
+		graph.Finalize();
 	}
 
 	const gfx::IGraphics& SystemManager::Gfx() const
 	{
-		trynass(pApp).msg(L"pApp was null!").ex();
+		trynass(pEcs).msg(L"pApp was null!").ex();
 
-		return pApp->Gfx();
-	}
-
-	gfx::IGraphics& SystemManager::Gfx()
-	{
-		trynass(pApp).msg(L"pApp was null!").ex();
-
-		return pApp->Gfx();
+		return pEcs->Gfx();
 	}
 }

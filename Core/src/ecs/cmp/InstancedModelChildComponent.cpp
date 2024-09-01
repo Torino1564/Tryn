@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "InstancedModelChildComponent.h"
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	const unsigned int InstancedModelChildComponent::index = ComponentManager::RegisterComponent<InstancedModelChildComponent>();
 

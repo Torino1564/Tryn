@@ -6,7 +6,7 @@ namespace tryn::gfx
 	class InstancedModelParent;
 }
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	ZT_DEFINE_COMPONENT(InstancedModelParentComponent)
 	{

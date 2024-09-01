@@ -39,11 +39,6 @@ namespace tryn::ecs
 		return {bookerPointer, UUID};
 	}
 
-	ArchetypeManager::ArchetypeManager()
-	{
-		archetypeBuffer.reserve(1000);
-	}
-
 	int ArchetypeManager::ResolveUUID()
 	{
 		return archetypeCounter++;
@@ -65,10 +60,16 @@ namespace tryn::ecs
 		return &newlyAddedArchetype;
 	}
 
-	Archetype* ArchetypeManager::GetArchetype(const int archetypeCounter)
+	ArchetypeManager::ArchetypeManager(ECS* pEcs)
+		: pEcs(pEcs)
+	{
+		archetypeBuffer.reserve(1000);
+	}
+
+	const Archetype& ArchetypeManager::GetArchetype(const int archetypeCounter) const
 	{
 		trynass(archetypeCounter <= this->archetypeCounter);
-		return &archetypeBuffer[archetypeCounter];
+		return archetypeBuffer[archetypeCounter];
 	}
 
 	int Archetype::GetUUID() const
@@ -130,7 +131,7 @@ namespace tryn::ecs
 
 		std::ranges::fill(archetypeMap.begin(), archetypeMap.end(), std::pair<Archetype*, int>{nullptr, 0});
 
-		auto pResult = ECS::Get().allocator.MakeNew<std::array<Archetype*, 100>>();
+		auto pResult = pEcs->GetAllocator().MakeNew<std::array<Archetype*, 100>>();
 		auto& result = *pResult;
 
 		for (int i = 0 ; i < componentIDs.size() ; i++)
@@ -198,18 +199,24 @@ namespace tryn::ser
 	ecs::Archetype* TypeSerializer<ecs::Archetype*>::Read(const tryn::ser::StreamReader& streamReader,
 		const bool binary, const ExtraDataPack* pExtraData)
 	{
+		ecs::ECS* pEcs = nullptr;
+		pExtraData->Get("pEcs")((const void**)pEcs);
+
 		std::vector<utl::UUID_t> componentUUIDs;
 
 		streamReader.ReadSerialized(componentUUIDs, binary, pExtraData);
 
-		return ecs::ECS::Get().archetypeManager.GetArchetype(componentUUIDs);
+		return pEcs->GetArchetypeManager().GetArchetype(componentUUIDs);
 	}
 
 	void TypeSerializer<ecs::Archetype*>::Read(ecs::Archetype*& data, const tryn::ser::StreamReader& streamReader,
 		const bool binary, const ExtraDataPack* pExtraData)
 	{
+		ecs::ECS* pEcs = nullptr;
+		pExtraData->Get("pEcs")((const void**)pEcs);
+
 		std::vector<utl::UUID_t> componentUUIDs;
 		streamReader.ReadSerialized(componentUUIDs, binary, pExtraData);
-		data = ecs::ECS::Get().archetypeManager.GetArchetype(componentUUIDs);
+		data = pEcs->GetArchetypeManager().GetArchetype(componentUUIDs);
 	}
 }

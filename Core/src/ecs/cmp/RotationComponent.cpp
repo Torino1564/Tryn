@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "RotationComponent.h"
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	const unsigned int RotationComponent::index = ComponentManager::RegisterComponent<RotationComponent>();
 

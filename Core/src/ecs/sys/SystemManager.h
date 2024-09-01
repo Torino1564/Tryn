@@ -4,10 +4,10 @@
 #include <concepts>
 #include <Core/src/utl/Assert.h>
 #include <Core/src/log/Log.h>
-#include <ranges>
+#include <Core/src/ecs/EcsClass.h>
 
-#define ZT_DEFINE_SYSTEM(x) class x : public tryn::ecs::sys::SystemImpl<x>
-#define ZT_NATIVE_ARRAY(x) private: tryn::utl::MultiSpan<cmp::x::SubresourceData>
+#define ZT_DEFINE_SYSTEM(x) class x : public tryn::ecs::SystemImpl<x>
+#define ZT_NATIVE_ARRAY(x) private: tryn::utl::MultiSpan<x::SubresourceData>
 
 namespace tryn::app
 {
@@ -19,7 +19,7 @@ namespace tryn::gfx
 	class IGraphics;
 }
 
-namespace tryn::ecs::sys
+namespace tryn::ecs
 {
 	class SystemManager;
 
@@ -39,7 +39,7 @@ namespace tryn::ecs::sys
 		SystemGraph(SystemManager& manager);
 
 		template <ValidSystem S>
-		void RegisterSystem()
+		void RegisterSystem(const SystemManager* pManager)
 		{
 			// assert not finalized
 			trynass_msg(!finalized, L"Cannot register new systems into a finalized system graph!");
@@ -55,11 +55,11 @@ namespace tryn::ecs::sys
 				return;
 			}
 			// registers the system
-			pSystems[S::UID.id] = std::make_unique<S>(*this);
+			pSystems[S::UID.id] = std::make_unique<S>(*this, pManager);
 		}
 
 		void Finalize();
-		void Execute();
+		void Execute() const;
 		const gfx::IGraphics& Gfx() const;
 		gfx::IGraphics& Gfx();
 	private:
@@ -80,7 +80,7 @@ namespace tryn::ecs::sys
 	{
 		friend class SystemGraph;
 	public:
-		System(const SystemGraph& graph);
+		System(const SystemGraph& graph, ECS* pEcs);
 		virtual ~System() = default;
 		virtual void Execute() = 0;
 		virtual void Init() = 0;
@@ -111,7 +111,7 @@ namespace tryn::ecs::sys
 			}
 			bool operator==(const SystemUID& rhs) const;
 		};
-
+		ECS* pEcs = nullptr;
 		const SystemGraph* pGraph = nullptr;
 
 	private:
@@ -122,7 +122,7 @@ namespace tryn::ecs::sys
 	class SystemImpl : public System
 	{
 	public:
-		SystemImpl(const SystemGraph& graph) : System(graph)
+		SystemImpl(const SystemGraph& graph, ECS* pEcs) : System(graph, pEcs)
 		{
 			T::InitDependencies(this);	
 		}
@@ -136,21 +136,17 @@ namespace tryn::ecs::sys
 	class SystemManager
 	{
 	public:
-		SystemManager(app::App&);
-		void ExecuteSystems();
+		SystemManager(ECS* pEcs);
+		void ExecuteSystems() const;
 		template <ValidSystem S>
 		void RegisterSystem()
 		{
-			graph.RegisterSystem<S>();
+			graph.RegisterSystem<S>(this);
 		}
-		void Finalize()
-		{
-			graph.Finalize();
-		}
+		void Finalize();
 		const gfx::IGraphics& Gfx() const;
-		gfx::IGraphics& Gfx();
 	private:
-		app::App* pApp;
+		ECS* pEcs = nullptr;
 		SystemGraph graph;
 	};
 }

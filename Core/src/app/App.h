@@ -1,5 +1,4 @@
 #pragma once
-#include <Core/src/app/Globals.h>
 
 namespace tryn::gfx
 {
@@ -11,9 +10,9 @@ namespace tryn::win
 	class IWindow;
 }
 
-namespace tryn::ecs::sys
+namespace tryn::ecs
 {
-	class SystemManager;
+	class ECS;
 }
 
 namespace tryn::app
@@ -33,7 +32,7 @@ namespace tryn::app
 		gfx::IGraphics& Gfx();
 
 	protected:
-		std::unique_ptr<ecs::sys::SystemManager> pSystemManager;
+		std::unique_ptr<ecs::ECS> pEcs;
 		std::shared_ptr<win::IWindow> wnd;
 		std::shared_ptr<gfx::IGraphics> gfx;
 		long double dt = 0;

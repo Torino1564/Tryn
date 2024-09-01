@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "AccelerationComponent.h"
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	const unsigned int AccelerationComponent::index = ComponentManager::RegisterComponent<AccelerationComponent>();
 

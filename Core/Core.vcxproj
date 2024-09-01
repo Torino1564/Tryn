@@ -40,6 +40,7 @@
     <ClCompile Include="src\ecs\cmp\RotationComponent.cpp" />
     <ClCompile Include="src\ecs\cmp\ScaleComponent.cpp" />
     <ClCompile Include="src\ecs\cmp\VelocityComponent.cpp" />
+    <ClCompile Include="src\ecs\EcsClass.cpp" />
     <ClCompile Include="src\ecs\sys\AnimationSystem.cpp" />
     <ClCompile Include="src\ecs\sys\UpdateVelocitySystem.cpp" />
     <ClCompile Include="src\ecs\sys\RenderSystem.cpp" />

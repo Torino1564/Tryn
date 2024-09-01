@@ -1,7 +1,7 @@
 #pragma once
 #include <Core/src/ecs/cmp/PrintMemberBase.h>
 
-namespace tryn::ecs::cmp
+namespace tryn::ecs
 {
 	template <> struct ImGuiPrintType<float>
 	{

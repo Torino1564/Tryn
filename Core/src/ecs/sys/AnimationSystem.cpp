@@ -3,9 +3,9 @@
 #include <Core/src/gfx/Animation/Animation.h>
 #include "Core/third/glm/gtc/quaternion.hpp"
 
-namespace tryn::ecs::sys
+namespace tryn::ecs
 {
-	AnimationSystem::AnimationSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
+	AnimationSystem::AnimationSystem(const SystemGraph& pGraph, const ECS* pEcs): SystemImpl(pGraph, pEcs)
 	{}
 
 	void AnimationSystem::InitDependencies(System* self)
@@ -21,13 +21,15 @@ namespace tryn::ecs::sys
 		deltaTime = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(now - previous).count()) * 10e-6;
 		previous = now;
 
+		mem::ArenaAllocator<>& allocator = pEcs->GetAllocator();
+
 		// declare the data
 
-		auto data = ECS::Get().archetypeManager.GetComponentGroups<
-			cmp::ActiveComponent,
-			cmp::BoneTransformsComponent,
-			cmp::TransformComponent,
-			cmp::AnimatedComponent>();
+		auto data = pEcs->GetArchetypeManager().GetComponentGroups<
+			ActiveComponent,
+			BoneTransformsComponent,
+			TransformComponent,
+			AnimatedComponent>();
 
 		// clear the arrays
 
@@ -40,10 +42,10 @@ namespace tryn::ecs::sys
 
 		for (auto& queriedData : data)
 		{
-			activeArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
-			animatedArray.PushBack(std::get<std::span<cmp::AnimatedComponent::SubresourceData>>(queriedData));
-			boneTransformsArray.PushBack(std::get<std::span<cmp::BoneTransformsComponent::SubresourceData>>(queriedData));
-			transformsArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
+			activeArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(queriedData));
+			animatedArray.PushBack(std::get<std::span<AnimatedComponent::SubresourceData>>(queriedData));
+			boneTransformsArray.PushBack(std::get<std::span<BoneTransformsComponent::SubresourceData>>(queriedData));
+			transformsArray.PushBack(std::get<std::span<TransformComponent::SubresourceData>>(queriedData));
 		}
 
 		// kernel
@@ -58,8 +60,8 @@ namespace tryn::ecs::sys
 			double realtimePoint = fmod(time, skAnInterface.pAnimation->durationInTicks * skAnInterface.pAnimation->ticksPerSecond );
 			double timePoint = realtimePoint / skAnInterface.pAnimation->ticksPerSecond;
 
-			boneTransformsArray[i].transforms = ECS::Get().allocator.MakeNewArray<glm::mat4>(skAnInterface.pSkeleton->bones.size());
-			auto localTransforms = ECS::Get().allocator.MakeNewArray<glm::mat4>(skAnInterface.pSkeleton->bones.size());
+			boneTransformsArray[i].transforms = allocator.MakeNewArray<glm::mat4>(skAnInterface.pSkeleton->bones.size());
+			auto localTransforms = allocator.MakeNewArray<glm::mat4>(skAnInterface.pSkeleton->bones.size());
 			auto& transformArray = boneTransformsArray[i].transforms;
 
 			for (int j = 0; j < transformArray.size(); j++)

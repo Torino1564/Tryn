@@ -6,49 +6,49 @@
 #include <Core/src/gfx/Bindables/IBuffer.h>
 #include <Core/src/gfx/Model/Model.h>
 
-namespace tryn::ecs::sys
+namespace tryn::ecs
 {
 	RenderSystem::RenderSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
 	{}
 
 	void RenderSystem::InitDependencies(System* self)
 	{
-		self->AddDependency<sys::AnimationSystem>();
-		self->AddDependency<sys::TransformSystem>();
+		self->AddDependency<AnimationSystem>();
+		self->AddDependency<TransformSystem>();
 	}
 
 	void RenderSystem::Execute()
 	{
 		// Request data
 
-		auto data = ECS::Get().archetypeManager.GetComponentGroups<
-			ReadOnly<cmp::TransformComponent>,
-			ReadOnly<cmp::ActiveComponent>,
-			WriteOnly<cmp::ModelComponent>
+		auto data = pEcs->GetArchetypeManager().GetComponentGroups<
+			ReadOnly<TransformComponent>,
+			ReadOnly<ActiveComponent>,
+			WriteOnly<ModelComponent>
 		>();
 
-		auto dataChildren = ECS::Get().archetypeManager.GetComponentGroups<
-			WriteOnly<cmp::InstancedModelChildComponent>,
-			ReadOnly<cmp::TransformComponent>,
-			ReadOnly<cmp::ActiveComponent>>();
+		auto dataChildren = pEcs->GetArchetypeManager().GetComponentGroups<
+			WriteOnly<InstancedModelChildComponent>,
+			ReadOnly<TransformComponent>,
+			ReadOnly<ActiveComponent>>();
 
-		auto dataParents = ECS::Get().archetypeManager.GetComponentGroups<
-			WriteOnly<cmp::InstancedModelParentComponent>,
-			ReadOnly<cmp::TransformComponent>,
-			ReadOnly<cmp::ActiveComponent>
+		auto dataParents = pEcs->GetArchetypeManager().GetComponentGroups<
+			WriteOnly<InstancedModelParentComponent>,
+			ReadOnly<TransformComponent>,
+			ReadOnly<ActiveComponent>
 		>();
 
-		auto dataSkinned = ECS::Get().archetypeManager.GetComponentGroups<
-			ReadOnly<cmp::ActiveComponent>,
-			ReadOnly<cmp::TransformComponent>,
-			ReadOnly<cmp::BoneTransformsComponent>,
-			ReadWrite<cmp::ModelComponent>
+		auto dataSkinned = pEcs->GetArchetypeManager().GetComponentGroups<
+			ReadOnly<ActiveComponent>,
+			ReadOnly<TransformComponent>,
+			ReadOnly<BoneTransformsComponent>,
+			ReadWrite<ModelComponent>
 		>();
 
-		auto dataPointLight = ECS::Get().archetypeManager.GetComponentGroups<
-			ReadOnly<cmp::ActiveComponent>,
-			ReadOnly<cmp::PositionComponent>,
-			ReadOnly<cmp::PointLightComponent>
+		auto dataPointLight = pEcs->GetArchetypeManager().GetComponentGroups<
+			ReadOnly<ActiveComponent>,
+			ReadOnly<PositionComponent>,
+			ReadOnly<PointLightComponent>
 		>();
 
 		// Reset data arrays
@@ -77,38 +77,38 @@ namespace tryn::ecs::sys
 
 		for (auto& queriedData : data)
 		{
-			transformArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
-			modelArray.PushBack(std::get<std::span<cmp::ModelComponent::SubresourceData>>(queriedData));
-			activeArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
+			transformArray.PushBack(std::get<std::span<TransformComponent::SubresourceData>>(queriedData));
+			modelArray.PushBack(std::get<std::span<ModelComponent::SubresourceData>>(queriedData));
+			activeArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(queriedData));
 		}
 
 		for (auto& queriedData : dataChildren)
 		{
-			activeChildrenArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
-			transformChildrenArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
-			childrenModelArray.PushBack(std::get<std::span<cmp::InstancedModelChildComponent::SubresourceData>>(queriedData));
+			activeChildrenArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(queriedData));
+			transformChildrenArray.PushBack(std::get<std::span<TransformComponent::SubresourceData>>(queriedData));
+			childrenModelArray.PushBack(std::get<std::span<InstancedModelChildComponent::SubresourceData>>(queriedData));
 		}
 
 		for (auto& queriedData : dataParents)
 		{
-			activeParentArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
-			parentModelArray.PushBack(std::get<std::span<cmp::InstancedModelParentComponent::SubresourceData>>(queriedData));
-			transformParentArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
+			activeParentArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(queriedData));
+			parentModelArray.PushBack(std::get<std::span<InstancedModelParentComponent::SubresourceData>>(queriedData));
+			transformParentArray.PushBack(std::get<std::span<TransformComponent::SubresourceData>>(queriedData));
 		}
 
 		for (auto& queriedData : dataSkinned)
 		{
-			activeSkinnedArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
-			boneTransformArray.PushBack(std::get<std::span<cmp::BoneTransformsComponent::SubresourceData>>(queriedData));
-			transformSkinnedArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
-			skinnedModelArray.PushBack(std::get<std::span<cmp::ModelComponent::SubresourceData>>(queriedData));
+			activeSkinnedArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(queriedData));
+			boneTransformArray.PushBack(std::get<std::span<BoneTransformsComponent::SubresourceData>>(queriedData));
+			transformSkinnedArray.PushBack(std::get<std::span<TransformComponent::SubresourceData>>(queriedData));
+			skinnedModelArray.PushBack(std::get<std::span<ModelComponent::SubresourceData>>(queriedData));
 		}
 
 		for (auto& pointLightData : dataPointLight)
 		{
-			pointLightArray.PushBack(std::get<std::span<cmp::PointLightComponent::SubresourceData>>(pointLightData));
-			pointLightPositionArray.PushBack(std::get<std::span<cmp::PositionComponent::SubresourceData>>(pointLightData));
-			pointLightActiveArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(pointLightData));
+			pointLightArray.PushBack(std::get<std::span<PointLightComponent::SubresourceData>>(pointLightData));
+			pointLightPositionArray.PushBack(std::get<std::span<PositionComponent::SubresourceData>>(pointLightData));
+			pointLightActiveArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(pointLightData));
 		}
 
 		// Kernel

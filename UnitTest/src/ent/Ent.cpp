@@ -55,7 +55,7 @@ namespace tryn::ecs
 	ZT_DEFINE_SYSTEM(System1)
 	{
 	public:
-		System1(const sys::SystemGraph & pGraph) : SystemImpl(pGraph) {}
+		System1(const SystemGraph & pGraph) : SystemImpl(pGraph) {}
 
 		void Execute() override
 		{
@@ -66,7 +66,7 @@ namespace tryn::ecs
 	ZT_DEFINE_SYSTEM(System2)
 	{
 	public:
-		System2(const sys::SystemGraph & pGraph) : SystemImpl(pGraph) {}
+		System2(const SystemGraph & pGraph) : SystemImpl(pGraph) {}
 
 		void Execute() override
 		{
@@ -77,9 +77,9 @@ namespace tryn::ecs
 	ZT_DEFINE_SYSTEM(System3)
 	{
 	public:
-		System3(const sys::SystemGraph & pGraph) : SystemImpl(pGraph) {}
+		System3(const SystemGraph & pGraph) : SystemImpl(pGraph) {}
 
-		static void InitDependencies(sys::System* self)
+		static void InitDependencies(System* self)
 		{
 			self->AddDependency<System1>();
 			self->AddDependency<System2>();
@@ -133,7 +133,7 @@ namespace tryn::ecs
 		}
 		TEST_METHOD(SystemTests)
 		{
-			ecs::sys::SystemGraph sysGraph;
+			ecs::SystemGraph sysGraph;
 
 			sysGraph.RegisterSystem<System1>();
 			sysGraph.RegisterSystem<System2>();

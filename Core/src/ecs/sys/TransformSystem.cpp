@@ -4,25 +4,27 @@
 #include <Core/third/glm/gtx/euler_angles.hpp>
 #include <Core/src/ecs/sys/UpdatePositionSystem.h>
 
-namespace tryn::ecs::sys
+#include "Core/src/gfx/CoreGraphics.h"
+
+namespace tryn::ecs
 {
-	TransformSystem::TransformSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
+	TransformSystem::TransformSystem(const SystemGraph& pGraph, ECS* pEcs): SystemImpl(pGraph, PCRYPT_ECC_CMS_SHARED_INFO)
 	{}
 
 	void TransformSystem::InitDependencies(System* self)
 	{
-		self->AddDependency<sys::UpdatePositionSystem>();
+		self->AddDependency<UpdatePositionSystem>();
 	}
 
 	void TransformSystem::Execute()
 	{
 		// Request Data
-		auto data = ECS::Get().archetypeManager.GetComponentGroups<
-			ReadOnly<cmp::PositionComponent>,
-			ReadOnly<cmp::ScaleComponent>,
-			ReadOnly<cmp::RotationComponent>,
-			ReadOnly<cmp::ActiveComponent>,
-			WriteOnly<cmp::TransformComponent>>();
+		auto data = pEcs->GetArchetypeManager().GetComponentGroups<
+			ReadOnly<PositionComponent>,
+			ReadOnly<ScaleComponent>,
+			ReadOnly<RotationComponent>,
+			ReadOnly<ActiveComponent>,
+			WriteOnly<TransformComponent>>();
 		
 		// Reset arrays
 		
@@ -36,11 +38,11 @@ namespace tryn::ecs::sys
 
 		for (auto& queriedData : data)
 		{
-			positionArray.PushBack(std::get<std::span<cmp::PositionComponent::SubresourceData>>(queriedData));
-			scaleArray.PushBack(std::get<std::span<cmp::ScaleComponent::SubresourceData>>(queriedData));
-			rotationArray.PushBack(std::get<std::span<cmp::RotationComponent::SubresourceData>>(queriedData));
-			transformArray.PushBack(std::get<std::span<cmp::TransformComponent::SubresourceData>>(queriedData));
-			activeArray.PushBack(std::get<std::span<cmp::ActiveComponent::SubresourceData>>(queriedData));
+			positionArray.PushBack(std::get<std::span<PositionComponent::SubresourceData>>(queriedData));
+			scaleArray.PushBack(std::get<std::span<ScaleComponent::SubresourceData>>(queriedData));
+			rotationArray.PushBack(std::get<std::span<RotationComponent::SubresourceData>>(queriedData));
+			transformArray.PushBack(std::get<std::span<TransformComponent::SubresourceData>>(queriedData));
+			activeArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(queriedData));
 		}
 
 		// Kernel

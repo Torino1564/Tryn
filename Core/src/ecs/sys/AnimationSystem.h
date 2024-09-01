@@ -4,12 +4,12 @@
 #include <Core/src/ecs/sys/TransformSystem.h>
 #include <chrono>
 
-namespace tryn::ecs::sys
+namespace tryn::ecs
 {
 	ZT_DEFINE_SYSTEM(AnimationSystem)
 	{
 	public:
-		AnimationSystem(const SystemGraph & pGraph);
+		AnimationSystem(const SystemGraph& pGraph, const ECS* pEcs);
 		static void InitDependencies(System* self);
 		void Execute() override;
 		void Init() override;

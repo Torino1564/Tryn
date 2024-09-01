@@ -5,7 +5,7 @@
 
 #include "AnimationSystem.h"
 
-namespace tryn::ecs::sys
+namespace tryn::ecs
 {
 	ZT_DEFINE_SYSTEM(RenderSystem)
 	{
@@ -15,17 +15,17 @@ namespace tryn::ecs::sys
 		void Execute() override;
 
 	private:
-		utl::MultiSpan<cmp::ModelComponent::SubresourceData> modelArray;
-		utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformArray;
-		utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeArray;
+		utl::MultiSpan<ModelComponent::SubresourceData> modelArray;
+		utl::MultiSpan<TransformComponent::SubresourceData> transformArray;
+		utl::MultiSpan<ActiveComponent::SubresourceData> activeArray;
 
-		utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeChildrenArray;
-		utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformChildrenArray;
-		utl::MultiSpan<cmp::InstancedModelChildComponent::SubresourceData> childrenModelArray;
+		utl::MultiSpan<ActiveComponent::SubresourceData> activeChildrenArray;
+		utl::MultiSpan<TransformComponent::SubresourceData> transformChildrenArray;
+		utl::MultiSpan<InstancedModelChildComponent::SubresourceData> childrenModelArray;
 
-		utl::MultiSpan<cmp::ActiveComponent::SubresourceData> activeParentArray;
-		utl::MultiSpan<cmp::TransformComponent::SubresourceData> transformParentArray;
-		utl::MultiSpan<cmp::InstancedModelParentComponent::SubresourceData> parentModelArray;
+		utl::MultiSpan<ActiveComponent::SubresourceData> activeParentArray;
+		utl::MultiSpan<TransformComponent::SubresourceData> transformParentArray;
+		utl::MultiSpan<InstancedModelParentComponent::SubresourceData> parentModelArray;
 
 		ZT_NATIVE_ARRAY(ActiveComponent) activeSkinnedArray;
 		ZT_NATIVE_ARRAY(TransformComponent) transformSkinnedArray;

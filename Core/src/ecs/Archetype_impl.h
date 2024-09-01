@@ -61,10 +61,10 @@ namespace tryn::ecs
 	}
 
 	template <ValidComponentWithAccessMode... Cs>
-	std::span<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> ArchetypeManager::GetComponentGroups()
+	std::span<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> ArchetypeManager::GetComponentGroups() const
 	{
 		auto archetypeQuery = QueryArchetype<typename Cs::ComponentType...>();
-		mem::NativeArray<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> heterogeneusComponentSpanArray((uint32_t)archetypeQuery.size(), ECS::Get().allocator);
+		mem::NativeArray<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> heterogeneusComponentSpanArray((uint32_t)archetypeQuery.size(), pEcs->GetAllocator());
 
 		for (auto i = 0 ; i < archetypeQuery.size() ; i++)
 		{
@@ -101,9 +101,9 @@ namespace tryn::ecs
 	}
 
 	template <ValidComponent... Cs>
-	Archetype* ArchetypeManager::GetArchetype()
+	Archetype* ArchetypeManager::GetArchetype() const
 	{
-		auto pComponentIDs = ECS::Get().allocator.MakeNew<std::array<utl::UUID_t, sizeof...(Cs)>>();
+		auto pComponentIDs = pEcs->GetAllocator().MakeNew<std::array<utl::UUID_t, sizeof...(Cs)>>();
 		auto& componentIDs = *pComponentIDs;
 		ExtractComponentIDs<sizeof...(Cs), UUID, Cs...>(componentIDs);
 
@@ -111,9 +111,9 @@ namespace tryn::ecs
 	}
 
 	template <ValidComponent... Cs>
-	std::span<Archetype*> ArchetypeManager::QueryArchetype()
+	std::span<Archetype*> ArchetypeManager::QueryArchetype() const
 	{
-		auto pComponentIDs = ECS::Get().allocator.MakeNew<std::array<utl::UUID_t, sizeof...(Cs)>>();
+		auto pComponentIDs = pEcs->GetAllocator().MakeNew<std::array<utl::UUID_t, sizeof...(Cs)>>();
 		auto& componentIDs = *pComponentIDs;
 		ExtractComponentIDs<sizeof...(Cs), Index, Cs...>(componentIDs);
 
