@@ -46,7 +46,7 @@ namespace tryn::utl::CTM
         template <typename MapElement>
         static ElementData MakeOffMapElement()
         {
-	        ElementData retval(TypeData::MakeTypeData<typename MapElement::Type>(),
+	        ElementData retval(
                 MapElement::TypeName_t()(),
                 MapElement::VarName_t()(),
                 MapElement::ByteOffset_t()(),
@@ -55,11 +55,6 @@ namespace tryn::utl::CTM
             return retval;
         }
 
-        ElementData(const TypeData& typeData, const std::string& typeName, const std::string& varName, const unsigned int byteOffset, const unsigned int elementNumber)
-	        :
-        typeData(typeData), typeName(typeName), varName(varName), byteOffset(byteOffset), elementNumber(elementNumber) {}
-
-        const TypeData typeData;
 	    const std::string typeName;
         const std::string varName;
         const unsigned int byteOffset;

@@ -40,6 +40,7 @@
     <ClCompile Include="src\ecs\cmp\RotationComponent.cpp" />
     <ClCompile Include="src\ecs\cmp\ScaleComponent.cpp" />
     <ClCompile Include="src\ecs\cmp\VelocityComponent.cpp" />
+    <ClCompile Include="src\ecs\Component.cpp" />
     <ClCompile Include="src\ecs\EcsClass.cpp" />
     <ClCompile Include="src\ecs\sys\AnimationSystem.cpp" />
     <ClCompile Include="src\ecs\sys\UpdateVelocitySystem.cpp" />
@@ -81,6 +82,7 @@
     <ClCompile Include="src\ecs\cmp\TransformComponent.cpp" />
     <ClInclude Include="include\DllApi.h" />
     <ClInclude Include="src\dbg\SourceIncludes.h" />
+    <ClInclude Include="src\ecs\Component.h" />
     <ClInclude Include="src\ecs\SerializeLambda.h" />
     <ClInclude Include="src\gfx\Bindables\PrimitiveTopology.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11InputLayout.cpp" />
@@ -167,6 +169,7 @@
     <ClInclude Include="src\utl\TypeName.h" />
     <ClInclude Include="src\win\WinCore.h" />
     <ClInclude Include="src\win\WindowHandle.h" />
+    <ClInclude Include="third\field_reflection.hpp" />
     <ClInclude Include="third\TrynPCH.h" />
   </ItemGroup>
   <ItemGroup>
@@ -175,7 +178,6 @@
     <ClInclude Include="include\TrynCore.h" />
     <ClInclude Include="src\app\EntryMain.h" />
     <ClInclude Include="src\ecs\cmp\ComponentManager.h" />
-    <ClInclude Include="src\ecs\cmp\ComponentManager_impl.h" />
     <ClInclude Include="src\ecs\cmp\Components.h" />
     <ClInclude Include="src\ecs\cmp\PointLightComponent.h" />
     <ClInclude Include="src\ecs\Ecs.h" />
@@ -212,7 +214,6 @@
     <ClInclude Include="src\ecs\cmp\AnimatedComponent.h" />
     <ClInclude Include="src\ecs\Archetype_def.h" />
     <ClInclude Include="src\ecs\cmp\BoneTransformsComponent.h" />
-    <ClInclude Include="src\ecs\cmp\ComponentManager_def.h" />
     <ClInclude Include="src\ecs\cmp\ComponentPack.h" />
     <ClInclude Include="src\ecs\cmp\InstancedModelChildComponent.h" />
     <ClInclude Include="src\ecs\cmp\InstancedModelParentComponent.h" />

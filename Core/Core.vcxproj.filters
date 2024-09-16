@@ -387,6 +387,9 @@
     <ClCompile Include="src\ecs\EcsClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1808,9 +1811,6 @@
     <ClInclude Include="src\utl\UUID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ecs\cmp\ComponentManager_def.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\ecs\cmp\ModelComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2072,9 +2072,6 @@
     <ClInclude Include="src\ecs\Archetype_impl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ecs\cmp\ComponentManager_impl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\ecs\cmp\ComponentManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2136,6 +2133,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\DllApi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\field_reflection.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
