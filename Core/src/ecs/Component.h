@@ -10,56 +10,6 @@ namespace tryn::ecs
 		typename T::ArgTypes;
 	}&& std::is_class_v<T>;
 
-	template <template <typename T> class Fun>
-	struct Placeholder
-	{
-		using tt = Fun;
-
-		template <typename T>
-		using ttp = tt<T>;
-	};
-
-	template <typename T>
-	struct Test
-	{
-		template <typename OtherT>
-		static void Call(void*)
-		{
-			
-		}
-	};
-
-	struct WrappedTask
-	{
-		template <template <typename T> typename FunctionTemplate>
-		static WrappedTask Make()
-		{
-			WrappedTask task;
-			auto fun = [](void* data)
-				{
-					using ft = FunctionTemplate;
-					static auto& inside = []<typename T0>(void* var)
-						{
-							auto trueVar = static_cast<T0*>(var);
-							FunctionTemplate<T0>(data);
-						};
-					
-				};
-		}
-
-		template <typename T>
-		void (*CallWith())(T*)
-		{
-			void(*retval)(T*) = nullptr;
-
-			auto second = []<typename T0>()
-			{
-				
-			};
-
-		}
-	};
-
 	class IComponentWrapper
 	{
 	public:
@@ -69,7 +19,8 @@ namespace tryn::ecs
 		virtual void Construct(void* pData) const = 0;
 		virtual void Destroy(void* pData) const = 0;
 		virtual uint32_t Index() const = 0;
-		virtual void ForEachField(void(*)(std::string_view, void*)) = 0;
+		virtual void Serialize(ser::StreamWriter& streamWriter, void* data) = 0;
+		virtual void ImGuiPrint(void* data) = 0;
 	};
 
 	template <typename T>
@@ -108,14 +59,30 @@ namespace tryn::ecs
 		template <CallbackSignatureClass... Args>
 		friend class ComponentView;
 
-		void ForEachField(void(*callback)(const std::string_view, void*)) override
+		void Serialize(ser::StreamWriter& streamWriter, void* data) override
+		{
+			auto pData = static_cast<T*>(data);
+
+			streamWriter.Serialize(*pData);
+		}
+
+		void ImGuiPrint(void* data) override
 		{
 			namespace fr = field_reflection;
-			
-			fr::for_each_field(ComponentType(), [&](std::string_view field, auto& value)
-				{
-					callback(field, value);
-				});
+			auto pData = static_cast<T*>(data);
+			auto tuple = fr::to_tuple(*pData);
+
+
+		}
+
+	private:
+		template <unsigned N = 0, typename... Types>
+		void ImGuiPrint_(std::tuple<Types...>& tuple)
+		{
+			if constexpr (N < std::tuple_size_v<decltype(tuple)>)
+			{
+				ImGui::Text(std::format("{}: {}", ZT_TYPE_OF(std::get<N>(tuple)), varNameFunc()).c_str());
+			}
 		}
 	};
 }

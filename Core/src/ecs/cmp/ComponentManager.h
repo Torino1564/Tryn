@@ -144,5 +144,6 @@ namespace tryn::ecs
 		const ECS* pEcs = nullptr;
 		uint32_t componentCount = 0;
 		std::vector<IComponentWrapper> componentWrappers;
+		
 	};
 }
