@@ -1,13 +1,10 @@
 #pragma once
-#include "ComponentManager.h"
 #include <Core/third/glm/mat4x4.hpp>
 
 namespace tryn::ecs
 {
-	ZT_DEFINE_COMPONENT(TransformComponent)
+	struct TransformComponent
 	{
-		ZT_COMPONENT_FIELDS(
-			ZT_DEFINE_COMPONENT_VAR(glm::mat4x4, transform);
-		);
+		glm::mat4x4 transform;
 	};
 }

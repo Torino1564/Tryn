@@ -3,12 +3,12 @@
 
 namespace tryn::ecs
 {
-	uint32_t ComponentManager::ComponentCount() const
+	uint16_t ComponentManager::ComponentCount() const
 	{
 		return componentWrappers.size();
 	}
 
-	uint32_t ComponentManager::NextFreeAndIncrement()
+	uint16_t ComponentManager::NextFreeAndIncrement()
 	{
 		return componentCount++;
 	}
@@ -16,11 +16,6 @@ namespace tryn::ecs
 	ComponentManager::ComponentManager(const ECS* pEcs)
 		: pEcs(pEcs)
 	{
-	}
-
-	void ComponentManager::RegisterComponent(SoftComponentDescriptor&&)
-	{
-		// TODO: Implement Soft components
 	}
 }
 

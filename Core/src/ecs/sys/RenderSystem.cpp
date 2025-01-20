@@ -8,7 +8,7 @@
 
 namespace tryn::ecs
 {
-	RenderSystem::RenderSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
+	RenderSystem::RenderSystem(const SystemGraph& pGraph, ECS* pEcs): SystemImpl(pGraph, pEcs)
 	{}
 
 	void RenderSystem::InitDependencies(System* self)

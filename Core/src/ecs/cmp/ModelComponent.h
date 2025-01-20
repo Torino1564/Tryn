@@ -1,5 +1,4 @@
 #pragma once
-#include "ComponentManager.h"
 
 namespace tryn::gfx
 {
@@ -8,17 +7,8 @@ namespace tryn::gfx
 
 namespace tryn::ecs
 {
-	ZT_DEFINE_COMPONENT(ModelComponent)
+	class ModelComponent
 	{
-		public: struct SubresourceData
-		{
-			std::unique_ptr<gfx::Model> pModel;
-			using pModel_t = tryn::utl::CTM::Map_t<std::unique_ptr<gfx::Model>, "std::unique_ptr<gfx::Model>", "pModel", sizeof(std::unique_ptr<gfx::Model>), UUID>;
-			~SubresourceData();
-			SubresourceData();
-		};
-		const static inline SubresourceData srd = {};
-		static const unsigned int index;
-		static const std::vector<tryn::utl::CTM::ElementData>& GetReflectData_();;
+		std::unique_ptr<gfx::Model> pModel;
 	};
 }

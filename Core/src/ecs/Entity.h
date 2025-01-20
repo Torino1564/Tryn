@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 #include <Core/src/ecs/cmp/ComponentManager.h>
 #include <Core/src/ecs/Archetype.h>
 #include <array>
@@ -7,6 +6,7 @@
 #include <Core/src/ser/StreamIO.h>
 
 #include "SerializeLambda.h"
+#include "Core/src/gfx/CoreGraphics.h"
 
 namespace tryn::gfx
 {
@@ -23,44 +23,28 @@ namespace tryn::ecs
 	class Entity
 	{
 	public:
-		Entity(std::string name = "?");
+		Entity() = delete;
 
 		virtual ~Entity();
 
-		template <ValidComponent... Cs>
-		static Entity CreateNew(std::string name = "?");
-		std::span<unsigned int> GetComponents();
+		template <typename... Cs>
+		static Entity CreateNew(std::string name = "?", const ECS& ecs);
+		std::span<utl::UUID_t> GetComponents();
 
-		template <ValidComponent C>
-		typename C::SubresourceData& GetComponent();
+		template <typename C>
+		C& GetComponent();
 
 		void Instanciate(std::span<Entity> destination);
 
 		void SpawnControlWindow();
 
-	public:
-		// Serializer 
-		struct Serializer : public ser::Serializer<Entity>
-		{
-			static void Write(const ser::StreamWriter& streamWriter, const Entity& data, const bool binary = true, const std::string& name = "");
-
-			static Entity Read(const ser::StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr);
-		};
-
 	protected:
-		template <auto Tag = []{}>
-		void DeleteImpl_() const
-		{
-			pArchetype->Free(UUID);
-		}
-		template <ValidComponent... Cs>
-		void AddComponent();
+		Entity(std::string name = "?");
 
-		template <ValidComponent First, ValidComponent Second, ValidComponent... Rest>
-		void AddComponent_(std::array<utl::UUID_t, 100>& newComponentIDs, int& index = 0);
+		template <typename... Cs>
+		void AddComponent(ECS& ecs);
+		void AddComponent(ECS& ecs, std::span<utl::UUID_t> componentList);
 
-		template <ValidComponent C>
-		void AddComponent_(std::array<utl::UUID_t, 100>& newComponentIDs, int index = 0);
 
 		std::string name;
 		EntityID UUID = {};
@@ -71,48 +55,26 @@ namespace tryn::ecs
 		std::vector<std::uint8_t> selectedComponents;
 	};
 
-	template<ValidComponent ...Cs>
-	inline Entity Entity::CreateNew(std::string name)
+	template<typename ...Cs>
+	inline Entity Entity::CreateNew(std::string name, const ECS& ecs)
 	{
 		Entity ent(std::move(name));
-		ent.pArchetype = ArchetypeManager::Get().GetArchetype<Cs...>();
+		ent.pArchetype = ecs.GetArchetypeManager().GetArchetype<Cs...>();
 		ent.UUID = ent.pArchetype->ResolveEntityUUID();
 		return ent;
 	}
 
-	template<ValidComponent C>
-	inline C::SubresourceData& Entity::GetComponent()
+	template<typename C>
+	inline C& Entity::GetComponent()
 	{
 		auto data = pArchetype->GetComponentData<C>();
 		return data[UUID.ID - 1];
 	}
 
-	template<ValidComponent ...Cs>
-	inline void Entity::AddComponent()
+	template<typename ...Cs>
+	inline void Entity::AddComponent(ECS& ecs)
 	{
-		auto& newComponentIDs = *ECS::Get().allocator.MakeNew<std::array<utl::UUID_t, 100>>();
-		int index = 0;
-		AddComponent<Cs...>(newComponentIDs, index);
-
-		for (auto componentID : pArchetype->components)
-		{
-			newComponentIDs[++index] = componentID;
-		}
-
-		// Request the new Archetype
-		auto newArchetype = ArchetypeManager::Get().GetArchetype(std::span<utl::UUID_t>(newComponentIDs.begin(), newComponentIDs.size()));
-	}
-
-	template<ValidComponent First, ValidComponent Second, ValidComponent ...Rest>
-	inline void Entity::AddComponent_(std::array<utl::UUID_t, 100>& newComponentIDs, int& index)
-	{
-		AddComponent_<First>(newComponentIDs, index++);
-		AddComponent_<Second, Rest...>(newComponentIDs, index);
-	}
-
-	template<ValidComponent C>
-	inline void Entity::AddComponent_(std::array<utl::UUID_t, 100>& newComponentIDs, int index)
-	{
-		newComponentIDs[index] = C::UUID;
+		std::array<utl::UUID_t, sizeof...(Cs)> newComponentIDs = { ZT_TYPE_UUID(Cs)... };
+		AddComponent(ecs, newComponentIDs);
 	}
 }

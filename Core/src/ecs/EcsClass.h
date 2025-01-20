@@ -22,21 +22,6 @@ namespace tryn::ecs
 	template <typename T, utl::StaticString>
 	class Component;
 
-	template <typename T>
-	concept ImplementsUUID = requires
-	{
-		std::convertible_to<decltype(T::UUID), utl::UUID_t>;
-	};
-
-	template <typename T>
-	concept ImplementsSRD = requires
-	{
-		typename T::SubresourceData;
-	};
-
-	template <typename T>
-	concept ValidComponent = ImplementsSRD<T> && ImplementsUUID<T>;
-
 	enum class AccessMode
 	{
 		ReadWrite,
@@ -45,36 +30,29 @@ namespace tryn::ecs
 		Discard
 	};
 
-	template <typename T>
-	concept ValidComponentWithAccessMode =  ValidComponent<typename T::ComponentType> or requires
-	{
-		{T::accessMode} -> std::convertible_to<AccessMode>;
-		ValidComponent<typename T::ComponentType>;
-	};
 
-
-	template <ValidComponent C>
+	template <typename C>
 	struct ReadOnly
 	{
 		using ComponentType = C;
 		static constexpr auto accessMode = AccessMode::ReadOnly;
 	};
 
-	template <ValidComponent C>
+	template <typename C>
 	struct ReadWrite
 	{
 		using ComponentType = C;
 		static constexpr auto accessMode = AccessMode::ReadWrite;
 	};
 
-	template <ValidComponent C>
+	template <typename C>
 	struct WriteOnly
 	{
 		using ComponentType = C;
 		static constexpr auto accessMode = AccessMode::WriteOnly;
 	};
 
-	template <ValidComponent C>
+	template <typename C>
 	struct Discard
 	{
 		using ComponentType = C;
@@ -92,11 +70,6 @@ namespace tryn::ecs
 	public:
 		ECS(const app::App* pApp);
 		~ECS();
-		static ECS& Get()
-		{
-			static ECS ecs(nullptr);
-			return ecs;
-		}
 		void WipeAllocator();
 		const gfx::IGraphics& Gfx() const;
 		const mem::ArenaAllocator<>& GetAllocator() const;

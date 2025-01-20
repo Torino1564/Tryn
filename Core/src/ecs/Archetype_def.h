@@ -1,18 +1,19 @@
 #pragma once
 #include <span>
 #include <vector>
-
+#include <map>
+#include <set>
 #include "EcsClass.h"
 #include "Core/src/ser/Serializer.h"
 #include "Core/src/ser/StreamIO.h"
 #include <Core/src/utl/StringHasher.h>
 #include <Core/third/dynamic_bitset.hpp>
 
+#include "Component.h"
+
 namespace tryn::ecs
 {
-	template <ValidComponent... Cs>
-	using HeterogeneusComponentDataPointerContainer = std::tuple<std::span<typename Cs::SubresourceData>...>;
-
+	using ArchetypeID = std::uint16_t;
 	class Archetype
 	{
 		friend class Entity;
@@ -20,51 +21,39 @@ namespace tryn::ecs
 		template <typename T> friend struct ser::TypeSerializer;
 
 	public:
-		template <ValidComponent... Cs>
-		void FillComponentPointerTuple(std::tuple<std::span<typename Cs::SubresourceData>...>& container);
+		template <typename C>
+		std::span<C> GetComponentData();
 
-		template <int N, typename... Cs> using NthTypeOf = typename std::tuple_element<N, std::tuple<Cs...>>::type;
-
-		template <int N = 0, ValidComponent... Cs>
-		void FillComponentPointerTupleImpl(std::tuple<std::span<typename Cs::SubresourceData>...>& container);
-
-		template <ValidComponent C, bool Index = true>
-		std::span<typename C::SubresourceData> GetComponentData();
-
-		template <ValidComponent... Cs>
-		static Archetype Make();
-
-		static Archetype Make(std::span<utl::UUID_t> componentIDs);
-
-		template <ValidComponent First, ValidComponent Second, ValidComponent... Rest>
+		template <typename First, typename Second, typename... Rest>
 		void AppendComponents();
 
-		template <ValidComponent C>
+		template <typename C>
 		void AppendComponents();
 
-		int GetUUID() const;
+		ArchetypeID GetUUID() const;
 		size_t ComponentCount() const;
 		uint32_t ComponentArraySize() const;
 		struct EntityID ResolveEntityUUID();
 		void Free(struct EntityID);
 		void Grow();
 		void Resize(std::uint32_t newSize);
-
+		ComponentArray& GetComponentArray(utl::UUID_t);
 	private:
-		Archetype() = default;
-		void InitSortedComponentUUIDs();
+		Archetype(const ArchetypeManager& manager, const uint16_t uuid);
 
-		void InitializeUUID();
-		std::uint16_t UUID = 0;
-		std::vector<utl::UUID_t> componentUUIDs;
-		std::vector<unsigned int> components;
+		template <typename... Cs>
+		static Archetype Make(const ArchetypeManager& manager, const uint16_t uuid);
+		static Archetype Make(const ArchetypeManager& manager, const uint16_t uuid, std::span<utl::UUID_t> componentUUIDs);
 
-		std::vector<utl::UUID_t> sortedComponentUUIDs;
+		ArchetypeID UUID = 0;
+		const ComponentManager& componentManager;
+		const ArchetypeManager& archetypeManager;
+		std::vector<utl::UUID_t> components;
 
 		std::uint32_t bookerPointer = 0;
 		std::uint32_t upperLimit = 0;
 		sul::dynamic_bitset<> booker;
-		std::vector<std::unique_ptr<std::vector<std::byte>>> bufferPtrs;
+		std::vector<ComponentArray> arrays;
 	};
 
 	class ArchetypeManager
@@ -73,49 +62,38 @@ namespace tryn::ecs
 		friend class Archetype;
 
 		// TODO: Access Modes
-		template <ValidComponentWithAccessMode... Cs>
-		std::span<std::tuple<std::span<typename Cs::ComponentType::SubresourceData>...>> GetComponentGroups() const;
 
-		std::span<Archetype*> QueryArchetype(std::span<utl::UUID_t> componentIDs) const;
+		template <typename... Cs>
+		std::span<std::tuple<std::span<Cs>...>> GetComponentGroups();
+		std::span<std::span<ComponentArray*>> GetComponentGroups(std::span<utl::UUID_t> componentUUIDs);
 
-		template <ValidComponent... Cs>
-		std::span<Archetype*> QueryArchetype() const;
+		std::span<ArchetypeID> QueryArchetype(std::span<utl::UUID_t> componentUUIDs) const;
 
-		Archetype* GetArchetype(std::span<utl::UUID_t> components);
+		template <typename... Cs>
+		std::span<ArchetypeID> QueryArchetype() const;
 
+		const Archetype& GetArchetype(std::span<utl::UUID_t> components);
 
-		template <ValidComponent... Cs>
+		template <typename... Cs>
 		Archetype* GetArchetype() const;
 
 		const Archetype& GetArchetype(const int archetypeCounter) const;
 
-		static ArchetypeManager& Get()
-		{
-			static ArchetypeManager singleton(nullptr);
-			return singleton;
-		}
-		template <ValidComponent... Cs>
-		Archetype* AddArchetype();
-		Archetype* AddArchetype(std::span<utl::UUID_t> componentIDs);
+		template <typename... Cs>
+		const Archetype& AddArchetype();
+		const Archetype& AddArchetype(std::span<utl::UUID_t> componentUUIDs);
+
 		ArchetypeManager(ECS* pEcs);
 
-	private:
-		enum ComponentIdentifier
-		{
-			Index,
-			UUID
-		};
-		template <int arraySize, ComponentIdentifier Type, ValidComponent First, ValidComponent Second, ValidComponent... Rest>
-		void ExtractComponentIDs(std::array<utl::UUID_t, arraySize>& componentIDs, int index = 0);
+		[[nodiscard]]mem::ArenaAllocator<>& GetArenaAllocator() const;
 
-		template <int arraySize, ComponentIdentifier Type, ValidComponent C>
-		void ExtractComponentIDs(std::array<utl::UUID_t, arraySize>& componentIDs, int index = 0);
+	private:
 
 		ECS* pEcs = nullptr;
-		int ResolveUUID();
-		int archetypeCounter = 0;
-		// Indexed by componentUUID
-		std::vector<std::vector<Archetype*>> archetypeTable;
+		ArchetypeID ResolveUUID();
+		uint16_t archetypeCounter = 0;
+
+		std::map<utl::UUID_t, std::vector<ArchetypeID>> archetypeTable;
 		std::vector<Archetype> archetypeBuffer = {};
 	};
 }

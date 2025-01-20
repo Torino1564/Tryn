@@ -1,15 +1,12 @@
 #pragma once
-#include "ComponentManager.h"
 #include <Core/src/gfx/PointLightParameters.h>
 #include <Core/src/ecs/cmp/PrintMemberBase.h>
 
 namespace tryn::ecs
 {
-	ZT_DEFINE_COMPONENT(PointLightComponent)
+	struct PointLightComponent
 	{
-		public: struct SubresourceData{ gfx::PointLightParameters parameters; using parameters_t = tryn::utl::CTM::Map_t<gfx::PointLightParameters, "gfx::PointLightParameters", "parameters", sizeof(gfx::PointLightParameters), UUID>; }; const static inline SubresourceData srd = {}; static const unsigned int index;
-		static const std::vector<utl::CTM::ElementData>& GetReflectData_();
-		static const std::vector<utl::CTM::ElementData>& vec;
+		gfx::PointLightParameters parameters;
 	};
 
 	template <> struct ImGuiPrintType<gfx::PointLightParameters>

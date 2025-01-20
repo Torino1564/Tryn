@@ -10,22 +10,22 @@ namespace tryn::ecs
 	ZT_DEFINE_SYSTEM(RenderSystem)
 	{
 	public:
-		RenderSystem(const SystemGraph & pGraph);
+		RenderSystem(const SystemGraph& pGraph, ECS* pEcs);
 		static void InitDependencies(System* self);
 		void Execute() override;
 
 	private:
-		utl::MultiSpan<ModelComponent::SubresourceData> modelArray;
-		utl::MultiSpan<TransformComponent::SubresourceData> transformArray;
-		utl::MultiSpan<ActiveComponent::SubresourceData> activeArray;
+		utl::MultiSpan<ModelComponent> modelArray;
+		utl::MultiSpan<TransformComponent> transformArray;
+		utl::MultiSpan<ActiveComponent> activeArray;
 
-		utl::MultiSpan<ActiveComponent::SubresourceData> activeChildrenArray;
-		utl::MultiSpan<TransformComponent::SubresourceData> transformChildrenArray;
-		utl::MultiSpan<InstancedModelChildComponent::SubresourceData> childrenModelArray;
+		utl::MultiSpan<ActiveComponent> activeChildrenArray;
+		utl::MultiSpan<TransformComponent> transformChildrenArray;
+		utl::MultiSpan<InstancedModelChildComponent> childrenModelArray;
 
-		utl::MultiSpan<ActiveComponent::SubresourceData> activeParentArray;
-		utl::MultiSpan<TransformComponent::SubresourceData> transformParentArray;
-		utl::MultiSpan<InstancedModelParentComponent::SubresourceData> parentModelArray;
+		utl::MultiSpan<ActiveComponent> activeParentArray;
+		utl::MultiSpan<TransformComponent> transformParentArray;
+		utl::MultiSpan<InstancedModelParentComponent> parentModelArray;
 
 		ZT_NATIVE_ARRAY(ActiveComponent) activeSkinnedArray;
 		ZT_NATIVE_ARRAY(TransformComponent) transformSkinnedArray;

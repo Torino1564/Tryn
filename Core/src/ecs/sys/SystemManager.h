@@ -7,7 +7,7 @@
 #include <Core/src/ecs/EcsClass.h>
 
 #define ZT_DEFINE_SYSTEM(x) class x : public tryn::ecs::SystemImpl<x>
-#define ZT_NATIVE_ARRAY(x) private: tryn::utl::MultiSpan<x::SubresourceData>
+#define ZT_NATIVE_ARRAY(x) private: tryn::utl::MultiSpan<x>
 
 namespace tryn::app
 {

@@ -5,29 +5,67 @@
 
 namespace tryn::ecs
 {
-	class IComponentDescriptor
+	struct EntityID;
+	class ComponentArray;
+	class ComponentWrapper
 	{
 	public:
-		virtual ~IComponentDescriptor() = default;
-		virtual const char* Name() const = 0;
-		virtual size_t Size() const = 0;
-		virtual void Construct(void* pData) const = 0;
-		virtual void Destroy(void* pData) const = 0;
-		virtual uint32_t Index() const = 0;
-		virtual void Serialize(ser::StreamWriter& streamWriter, void* data) = 0;
-		virtual void ImGuiPrint(void* data) = 0;
+		template <typename T>
+		static ComponentWrapper Make(const std::string_view name, const uint16_t id)
+		{
+			auto retval = ComponentWrapper();
+			retval.name = name;
+			retval.uuid = ZT_TYPE_UUID(T);
+			retval.componentSize = sizeof(T);
+
+			retval.delete_ = [](void* pData_)
+				{
+					auto pData = static_cast<T*>(pData_);
+					delete pData;
+				};
+
+			retval.new_ = [](void* pData_)
+				{
+					auto pData = static_cast<T*>(pData_);
+					new(pData) T();
+				};
+
+			return retval;
+		}
+
+		std::string_view Name() const;
+		utl::UUID_t Uuid() const;
+		uint16_t ByteSize() const;
+		ComponentArray MakeArray(const uint16_t newSize = 0) const;
+		void Delete(void* pData) const;
+		void New(void* pData) const;
+	private:
+
+		std::string name;
+		utl::UUID_t uuid = 0;
+		std::uint16_t componentSize = 0;
+
+		// callbacks
+
+		void (*delete_)(void*) = nullptr;
+		void (*new_)(void*) = nullptr;
 	};
 
 	class ComponentArray
 	{
 	public:
-		ComponentArray(IComponentDescriptor& descriptor, std::size_t initialSize);
-		void Resize(std::size_t newSize);
-		void* At(std::size_t index);
-		void* operator[](std::size_t index);
+		friend class ComponentWrapper;
 
+		uint32_t ByteSize() const;
+		uint32_t ElementCount() const;
+		void Resize(uint32_t elementCount);
+		std::byte* data();
+		void Delete(EntityID id);
+		std::byte* operator[](std::uint16_t);
 	private:
-		std::unique_ptr<IComponentDescriptor> pDescriptor;
+		explicit ComponentArray(const ComponentWrapper& parent);
 		std::vector<std::byte> buffer;
+		const ComponentWrapper& parentWrapper;
+
 	};
 }
