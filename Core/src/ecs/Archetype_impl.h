@@ -62,16 +62,16 @@ namespace tryn::ecs
 	template <typename ... ACs>
 	inline std::span<std::tuple<std::span<typename ACs::Component>...>> ArchetypeManager::GetComponentGroups()
 	{
-		std::vector<std::tuple<std::span<typename ACs::Component>...>> result;
-
 		const std::span<ArchetypeID> query = QueryArchetype<typename ACs::Component...>();
 
+		auto result = pEcs->GetAllocator().MakeNewArray<std::tuple<std::span<typename ACs::Component>...>>(query.size());
+		auto it = result.begin();
 		for (const auto archetypeID : query)
 		{
 			auto& archetype = archetypeBuffer[archetypeID];
-			result.push_back(std::move(std::tuple<std::span<typename ACs::Component>...>{
+			*it++ = std::move(std::tuple<std::span<typename ACs::Component>...>{
 				archetype.GetComponentData<typename ACs::Component>()...,
-			}));
+			});
 		}
 
 		return result;

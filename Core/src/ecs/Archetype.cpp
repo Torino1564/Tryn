@@ -217,42 +217,39 @@ namespace tryn::ecs
 	std::span<ArchetypeID> ArchetypeManager::QueryArchetype(const std::span<utl::UUID_t> componentIDs)
 	{
 		trynass(componentIDs.size() != 0);
-		std::vector<const std::vector<ArchetypeID>*> pVectors;
-		
-		pVectors.reserve(componentIDs.size());
+		std::vector<ArchetypeID> const* pSmallest = nullptr;
 
-		const std::vector<ArchetypeID>* pSmallest = nullptr;
 		auto currentSize = std::numeric_limits<std::size_t>::infinity();
 		for (const auto uuid : componentIDs)
 		{
-			pVectors.emplace_back(&archetypeTable[uuid]);
-			if (pSmallest == nullptr || pVectors.back()->size() < currentSize)
+			if (const auto pVector = &archetypeTable[uuid]; pSmallest == nullptr || pVector->size() < currentSize)
 			{
-				pSmallest = pVectors.back();
+				pSmallest = pVector;
 				currentSize = pSmallest->size();
 			}
 		}
 
-		std::vector<ArchetypeID> result;
-
+		auto result = pEcs->GetAllocator().MakeNewArray<ArchetypeID>(currentSize);
+		auto it = result.begin();
 		for (const auto archetypeID : *pSmallest)
 		{
-			auto i = 0;
 			bool common = true;
 			for (const auto uuid : componentIDs)
 			{
-				if (auto it = std::ranges::find(*pVectors[i], uuid); it == pVectors[i]->end())
+				const auto componentList = archetypeBuffer[archetypeID].components;
+				if (const auto& it = std::ranges::find(componentList, uuid); it == componentList.end())
 				{
 					common = false;
 					break;
 				}
-				i++;
 			}
 			if (common)
-				result.push_back(archetypeID);
+			{
+				*it++ = archetypeID;
+			}
 		}
 
-		return { result.begin(), result.size() };
+		return { result.begin(), it };
 	}
 
 	Archetype& ArchetypeManager::GetArchetype(const std::span<utl::UUID_t> components)
