@@ -46,7 +46,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 	};
 	pLight->GetComponent<ecs::ScaleComponent>().scale = {1.0f, 1.0f, 1.0f};
 
-	/*entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
+	entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
 		ecs::ActiveComponent,
 		ecs::PositionComponent,
 		ecs::TransformComponent,
@@ -59,7 +59,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 	sponza.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
 	sponza.GetComponent<ecs::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
 	sponza.GetComponent<ecs::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
-	sponza.GetComponent<ecs::ActiveComponent>().active = false;*/
+	sponza.GetComponent<ecs::ActiveComponent>().active = true;
 
 	entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
 		ecs::ActiveComponent,
@@ -72,7 +72,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 	auto& plane = *entities.back();
 
 	plane.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-	plane.GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
+	//plane.GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
 	plane.GetComponent<ecs::ScaleComponent>().scale = { 10.0f, 10.0f, 10.0f };
 	plane.GetComponent<ecs::ActiveComponent>().active = true;
 

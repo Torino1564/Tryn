@@ -10,7 +10,7 @@
 #define ZT_TYPE_OF(x) tryn::utl::type_of<x>()
 
 #ifdef _MSC_VER
-#define BEGIN_OFFSET 84
+#define BEGIN_OFFSET 100
 #define END_OFFSET 7
 #endif
 

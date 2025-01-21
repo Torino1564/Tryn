@@ -43,9 +43,8 @@ namespace tryn::ecs
 		{
 			ImGui::Text(std::format("Entity UUID: {}:{}", UUID.archetype, UUID.ID).c_str());
 			ImGui::Text("Components:");
-			auto& components = pArchetype->components;
 			
-
+			pArchetype->EntityControlWindow(UUID);
 
 			ImGui::End();
 		}

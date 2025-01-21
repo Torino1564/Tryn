@@ -36,6 +36,11 @@ namespace tryn::ecs
 		new_(pData);
 	}
 
+	void ComponentWrapper::ImGuiPrint(void* pData) const
+	{
+		imguiPrint_(pData);
+	}
+
 	uint32_t ComponentArray::ByteSize() const
 	{
 		return buffer.size();

@@ -172,12 +172,13 @@ namespace tryn::ecs
 		return arrays[index];
 	}
 
-	void Archetype::EntityControlWindow(EntityID id)
+	void Archetype::EntityControlWindow(const EntityID id)
 	{
 		for (const auto uuid : components)
 		{
 			auto& wrapper = componentManager.Wrapper(uuid);
-
+			auto& array = GetComponentArray(uuid);
+			wrapper.ImGuiPrint(array[id.ID]);
 		}
 	}
 
