@@ -39,15 +39,15 @@ namespace tryn::ecs
 		void Resize(std::uint32_t newSize);
 		ComponentArray& GetComponentArray(utl::UUID_t);
 	private:
-		Archetype(const ArchetypeManager& manager, const uint16_t uuid);
+		Archetype(ArchetypeManager& manager, const uint16_t uuid);
 
 		template <typename... Cs>
-		static Archetype Make(const ArchetypeManager& manager, const uint16_t uuid);
-		static Archetype Make(const ArchetypeManager& manager, const uint16_t uuid, std::span<utl::UUID_t> componentUUIDs);
+		static Archetype Make(ArchetypeManager& manager, const uint16_t uuid);
+		static Archetype Make(ArchetypeManager& manager, const uint16_t uuid, std::span<utl::UUID_t> componentUUIDs);
 
 		ArchetypeID UUID = 0;
-		const ComponentManager& componentManager;
-		const ArchetypeManager& archetypeManager;
+		ComponentManager& componentManager;
+		ArchetypeManager& archetypeManager;
 		std::vector<utl::UUID_t> components;
 
 		std::uint32_t bookerPointer = 0;
@@ -63,25 +63,24 @@ namespace tryn::ecs
 
 		// TODO: Access Modes
 
-		template <typename... Cs>
-		std::span<std::tuple<std::span<Cs>...>> GetComponentGroups();
+		template <typename... ACs>
+		std::span<std::tuple<std::span<typename ACs::Component>...>> GetComponentGroups();
 		std::span<std::span<ComponentArray*>> GetComponentGroups(std::span<utl::UUID_t> componentUUIDs);
 
-		std::span<ArchetypeID> QueryArchetype(std::span<utl::UUID_t> componentUUIDs) const;
+		std::span<ArchetypeID> QueryArchetype(std::span<utl::UUID_t> componentUUIDs);
 
 		template <typename... Cs>
-		std::span<ArchetypeID> QueryArchetype() const;
-
-		const Archetype& GetArchetype(std::span<utl::UUID_t> components);
+		std::span<ArchetypeID> QueryArchetype();
 
 		template <typename... Cs>
-		Archetype* GetArchetype() const;
+		Archetype& GetArchetype();
 
-		const Archetype& GetArchetype(const int archetypeCounter) const;
+		Archetype& GetArchetype(int archetypeCounter);
+		Archetype& GetArchetype(std::span<utl::UUID_t> componentUUIDs);
 
 		template <typename... Cs>
-		const Archetype& AddArchetype();
-		const Archetype& AddArchetype(std::span<utl::UUID_t> componentUUIDs);
+		Archetype& AddArchetype();
+		Archetype& AddArchetype(std::span<utl::UUID_t> componentUUIDs);
 
 		ArchetypeManager(ECS* pEcs);
 

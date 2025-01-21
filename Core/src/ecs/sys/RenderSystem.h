@@ -2,7 +2,6 @@
 #include "SystemManager.h"
 #include <Core/src/utl/Span.h>
 #include <Core/src/ecs/cmp/Components.h>
-
 #include "AnimationSystem.h"
 
 namespace tryn::ecs
@@ -10,7 +9,7 @@ namespace tryn::ecs
 	ZT_DEFINE_SYSTEM(RenderSystem)
 	{
 	public:
-		RenderSystem(const SystemGraph& pGraph, ECS* pEcs);
+		RenderSystem(const SystemGraph& pGraph);
 		static void InitDependencies(System* self);
 		void Execute() override;
 

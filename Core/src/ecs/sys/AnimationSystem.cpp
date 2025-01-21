@@ -2,10 +2,11 @@
 #include "AnimationSystem.h"
 #include <Core/src/gfx/Animation/Animation.h>
 #include "Core/third/glm/gtc/quaternion.hpp"
+#include <Core/src/ecs/Archetype.h>
 
 namespace tryn::ecs
 {
-	AnimationSystem::AnimationSystem(const SystemGraph& pGraph, const ECS* pEcs): SystemImpl(pGraph, pEcs)
+	AnimationSystem::AnimationSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
 	{}
 
 	void AnimationSystem::InitDependencies(System* self)
@@ -26,10 +27,10 @@ namespace tryn::ecs
 		// declare the data
 
 		auto data = pEcs->GetArchetypeManager().GetComponentGroups<
-			ActiveComponent,
-			BoneTransformsComponent,
-			TransformComponent,
-			AnimatedComponent>();
+			ReadWrite<ActiveComponent>,
+			ReadWrite<BoneTransformsComponent>,
+			ReadWrite<TransformComponent>,
+			ReadWrite<AnimatedComponent>>();
 
 		// clear the arrays
 
@@ -42,10 +43,10 @@ namespace tryn::ecs
 
 		for (auto& queriedData : data)
 		{
-			activeArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(queriedData));
-			animatedArray.PushBack(std::get<std::span<AnimatedComponent::SubresourceData>>(queriedData));
-			boneTransformsArray.PushBack(std::get<std::span<BoneTransformsComponent::SubresourceData>>(queriedData));
-			transformsArray.PushBack(std::get<std::span<TransformComponent::SubresourceData>>(queriedData));
+			activeArray.PushBack(std::get<std::span<ActiveComponent>>(queriedData));
+			animatedArray.PushBack(std::get<std::span<AnimatedComponent>>(queriedData));
+			boneTransformsArray.PushBack(std::get<std::span<BoneTransformsComponent>>(queriedData));
+			transformsArray.PushBack(std::get<std::span<TransformComponent>>(queriedData));
 		}
 
 		// kernel

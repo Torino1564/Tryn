@@ -2,6 +2,8 @@
 #include "Archetype_def.h"
 #include <Core/src/ecs/EcsClass.h>
 
+#include "cmp/ComponentManager.h"
+
 namespace tryn::ecs
 {
 	template <typename C>
@@ -20,7 +22,7 @@ namespace tryn::ecs
 	}
 
 	template <typename... Cs>
-	Archetype Archetype::Make(const ArchetypeManager& manager, const uint16_t uuid)
+	Archetype Archetype::Make(ArchetypeManager& manager, const uint16_t uuid)
 	{
 		Archetype archetype(manager, uuid);
 		archetype.AppendComponents<Cs...>();
@@ -32,7 +34,8 @@ namespace tryn::ecs
 	void Archetype::AppendComponents()
 	{
 		components.push_back(ZT_TYPE_UUID(C));
-		arrays.push_back(componentManager.Wrapper<C>().MakeArray());
+		const auto& wrapper = componentManager.PWrapper<C>();
+		arrays.push_back(std::move(wrapper.MakeArray()));
 	}
 
 	template <typename First, typename Second, typename... Rest>
@@ -44,41 +47,40 @@ namespace tryn::ecs
 
 
 	template <typename... Cs>
-	const Archetype& ArchetypeManager::AddArchetype()
+	Archetype& ArchetypeManager::AddArchetype()
 	{
 		return AddArchetype({ ZT_TYPE_UUID(Cs)... });
 	}
 
 	template <typename... Cs>
-	Archetype* ArchetypeManager::GetArchetype() const
+	Archetype& ArchetypeManager::GetArchetype()
 	{
 		std::array<utl::UUID_t, sizeof...(Cs)> componentIDs = { ZT_TYPE_UUID(Cs)... };
 		return GetArchetype(componentIDs);
 	}
 
-	template <typename ... Cs>
-	std::span<std::tuple<std::span<Cs>...>> ArchetypeManager::GetComponentGroups()
+	template <typename ... ACs>
+	inline std::span<std::tuple<std::span<typename ACs::Component>...>> ArchetypeManager::GetComponentGroups()
 	{
-		std::vector<std::tuple<std::span<Cs>...>> result;
+		std::vector<std::tuple<std::span<typename ACs::Component>...>> result;
 
-		const std::span<ArchetypeID> query = QueryArchetype<Cs...>();
+		const std::span<ArchetypeID> query = QueryArchetype<typename ACs::Component...>();
 
 		for (const auto archetypeID : query)
 		{
 			auto& archetype = archetypeBuffer[archetypeID];
-			result.emplace_back(std::tuple<Cs...>{
-				archetype.GetComponentData<Cs>()...,
-			});
+			result.push_back(std::move(std::tuple<std::span<typename ACs::Component>...>{
+				archetype.GetComponentData<typename ACs::Component>()...,
+			}));
 		}
 
 		return result;
 	}
 
 	template <typename... Cs>
-	std::span<ArchetypeID> ArchetypeManager::QueryArchetype() const
+	std::span<ArchetypeID> ArchetypeManager::QueryArchetype()
 	{
-		return QueryArchetype({ ZT_TYPE_UUID(Cs)... });
+		std::array<utl::UUID_t, sizeof...(Cs)> view = { ZT_TYPE_UUID(Cs)... };
+		return QueryArchetype(std::span<utl::UUID_t>(view));
 	}
-
-
 }

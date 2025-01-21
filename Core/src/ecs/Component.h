@@ -21,7 +21,7 @@ namespace tryn::ecs
 			retval.delete_ = [](void* pData_)
 				{
 					auto pData = static_cast<T*>(pData_);
-					delete pData;
+					pData->~T();
 				};
 
 			retval.new_ = [](void* pData_)
@@ -32,7 +32,6 @@ namespace tryn::ecs
 
 			return retval;
 		}
-
 		std::string_view Name() const;
 		utl::UUID_t Uuid() const;
 		uint16_t ByteSize() const;
@@ -40,7 +39,7 @@ namespace tryn::ecs
 		void Delete(void* pData) const;
 		void New(void* pData) const;
 	private:
-
+		ComponentWrapper() = default;
 		std::string name;
 		utl::UUID_t uuid = 0;
 		std::uint16_t componentSize = 0;

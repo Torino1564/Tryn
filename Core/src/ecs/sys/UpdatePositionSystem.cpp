@@ -1,10 +1,11 @@
 #include "TrynPCH.h"
 #include "UpdatePositionSystem.h"
 #include <Core/src/ecs/cmp/ComponentManager.h>
+#include <Core/src/ecs/Archetype.h>
 
 namespace tryn::ecs
 {
-	UpdatePositionSystem::UpdatePositionSystem(const SystemGraph& pGraph, ECS* pEcs): SystemImpl(pGraph, pEcs)
+	UpdatePositionSystem::UpdatePositionSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
 	{}
 
 	void UpdatePositionSystem::Execute()
@@ -27,8 +28,8 @@ namespace tryn::ecs
 
 		for (auto& entry : data)
 		{
-			positionArray.PushBack(std::get<std::span<PositionComponent::SubresourceData>>(entry));
-			velocityArray.PushBack(std::get<std::span<VelocityComponent::SubresourceData>>(entry));
+			positionArray.PushBack(std::get<std::span<PositionComponent>>(entry));
+			velocityArray.PushBack(std::get<std::span<VelocityComponent>>(entry));
 		}
 
 		// Kernel

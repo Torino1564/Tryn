@@ -4,12 +4,14 @@
 #include <Core/src/ecs/cmp/Components.h>
 #include <Core/src/win/IWindow.h>
 
+#include "Core/src/ecs/sys/SystemManager.h"
+
 TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::shared_ptr<tryn::gfx::IGraphics> pGraphics)
 	: App(pWindow, pGraphics)
 {
 	Gfx().SetRenderGraph(std::make_unique<TrynGameRenderGraph>(Gfx()));
-
-	pPlayer = std::make_unique<Player>("player1", "Game/Resources/Models/PlayerModels/ShinySphere/ShinySphere.obj", Gfx());
+	ECS().GetSystemManager().Finalize();
+	pPlayer = std::make_unique<Player>(ECS(), "player1", "Game/Resources/Models/PlayerModels/ShinySphere/ShinySphere.obj", Gfx());
 
 	pPlayer->GetComponent<ecs::PositionComponent>().position = {10.0f, 10.0f, 10.0f};
 
@@ -17,13 +19,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 	{
 		auto pTestEnt = std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
-		ecs::ActiveComponent,
-		ecs::PositionComponent,
-		ecs::TransformComponent,
-		ecs::ModelComponent,
-		ecs::ScaleComponent,
-		ecs::RotationComponent,
-		ecs::PointLightComponent>("light"));
+		ecs::TransformComponent>(ECS(),"testEntity"));
 	}
 
 	entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
@@ -33,7 +29,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		ecs::ModelComponent,
 		ecs::ScaleComponent,
 		ecs::RotationComponent,
-		ecs::PointLightComponent>("light")));
+		ecs::PointLightComponent>(ECS(), "light")));
 
 	const auto& pLight = entities.back();
 
@@ -50,20 +46,20 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 	};
 	pLight->GetComponent<ecs::ScaleComponent>().scale = {1.0f, 1.0f, 1.0f};
 
-	entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
+	/*entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
 		ecs::ActiveComponent,
 		ecs::PositionComponent,
 		ecs::TransformComponent,
 		ecs::ModelComponent,
 		ecs::ScaleComponent,
-		ecs::RotationComponent>("sponza")));
+		ecs::RotationComponent>(ECS(),"sponza")));
 
 	auto& sponza = *entities.back();
 
 	sponza.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
 	sponza.GetComponent<ecs::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
 	sponza.GetComponent<ecs::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
-	sponza.GetComponent<ecs::ActiveComponent>().active = false;
+	sponza.GetComponent<ecs::ActiveComponent>().active = false;*/
 
 	entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
 		ecs::ActiveComponent,
@@ -71,7 +67,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		ecs::TransformComponent,
 		ecs::ModelComponent,
 		ecs::ScaleComponent,
-		ecs::RotationComponent>("TestPlane")));
+		ecs::RotationComponent>(ECS(),"TestPlane")));
 
 	auto& plane = *entities.back();
 
@@ -94,11 +90,6 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 void TrynGameApp::DoFrame()
 {
-	for (auto& view : ecs::ComponentManager::ComponentViewVector())
-	{
-		view.Func<0>();
-	}
-
 	// Process input
 	auto& playerVelocity = pPlayer->GetComponent<ecs::VelocityComponent>().velocity;
 	playerVelocity = { 0.0f, 0.0f, 0.0f };

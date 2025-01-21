@@ -10,12 +10,12 @@ namespace tryn::ecs
 	ZT_DEFINE_SYSTEM(UpdateVelocitySystem)
 	{
 	public:
-		UpdateVelocitySystem(const SystemGraph & pGraph);
+		UpdateVelocitySystem(const SystemGraph& pGraph);
 		void Execute() override;
 
 	private:
-		utl::MultiSpan<VelocityComponent::SubresourceData> velocityArray;
-		utl::MultiSpan<AccelerationComponent::SubresourceData> accelerationArray;
+		utl::MultiSpan<VelocityComponent> velocityArray;
+		utl::MultiSpan<AccelerationComponent> accelerationArray;
 		utl::Stopwatch sw;
 	};
 }

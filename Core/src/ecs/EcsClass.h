@@ -34,28 +34,28 @@ namespace tryn::ecs
 	template <typename C>
 	struct ReadOnly
 	{
-		using ComponentType = C;
+		using Component = C;
 		static constexpr auto accessMode = AccessMode::ReadOnly;
 	};
 
 	template <typename C>
 	struct ReadWrite
 	{
-		using ComponentType = C;
+		using Component = C;
 		static constexpr auto accessMode = AccessMode::ReadWrite;
 	};
 
 	template <typename C>
 	struct WriteOnly
 	{
-		using ComponentType = C;
+		using Component = C;
 		static constexpr auto accessMode = AccessMode::WriteOnly;
 	};
 
 	template <typename C>
 	struct Discard
 	{
-		using ComponentType = C;
+		using Component = C;
 		static constexpr auto accessMode = AccessMode::Discard;
 	};
 
@@ -75,9 +75,11 @@ namespace tryn::ecs
 		const mem::ArenaAllocator<>& GetAllocator() const;
 		mem::ArenaAllocator<>& GetAllocator();
 		const ComponentManager& GetComponentManager() const;
+		ComponentManager& GetComponentManager() ;
 		const ArchetypeManager& GetArchetypeManager() const;
 		ArchetypeManager& GetArchetypeManager();
 		const SystemManager& GetSystemManager() const;
+		SystemManager& GetSystemManager();
 	private:
 		const app::App* pApp;
 		std::unique_ptr<ComponentManager> pComponentManager;

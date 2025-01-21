@@ -27,11 +27,7 @@ namespace tryn::gfx
 		Resize(upperLimit);
 	}
 
-	InstancedModelParent::InstancedModelParent() = default;
-
 	InstancedModelParent::~InstancedModelParent() = default;
-
-	InstancedModelParent::InstancedModelParent(InstancedModelParent&&) = default;
 
 	void InstancedModelParent::Submit(const glm::mat4& transformation)
 	{

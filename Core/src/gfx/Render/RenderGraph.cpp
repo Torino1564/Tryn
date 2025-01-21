@@ -58,8 +58,6 @@ namespace tryn::gfx
 	}
 	void IRenderGraph::ExecuteFrame(const IGraphics& gfx)
 	{
-		// pPointLights[0]->Bind();
-
 		for (auto& pass : pPasses)
 		{
 			pass->Execute(gfx);

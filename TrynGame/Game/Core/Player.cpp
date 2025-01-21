@@ -5,7 +5,7 @@
 
 using namespace tryn;
 
-Player::Player(std::string name, const std::string& modelPath, gfx::IGraphics& gfx)
+Player::Player(ecs::ECS& ecs, std::string name, const std::string& modelPath, gfx::IGraphics& gfx)
 	:
 	Entity(CreateNew<ecs::PositionComponent,
 		ecs::ActiveComponent,
@@ -13,7 +13,7 @@ Player::Player(std::string name, const std::string& modelPath, gfx::IGraphics& g
 		ecs::ScaleComponent,
 		ecs::VelocityComponent,
 		ecs::TransformComponent,
-		ecs::ModelComponent>(std::move(name)))
+		ecs::ModelComponent>(ecs, std::move(name)))
 {
 	auto& [active] = GetComponent<ecs::ActiveComponent>();
 	auto& [position] = GetComponent<ecs::PositionComponent>();

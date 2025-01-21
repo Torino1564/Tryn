@@ -5,7 +5,7 @@
 #include <Core/src/gfx/Bindables/VertexShader.h>
 #include <Core/src/gfx/Bindables/PixelShader.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>
-
+#include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 #include "Core/src/gfx/Bindables/RenderTargetView.h"
 #include "Core/src/gfx/Bindables/Sampler.h"
 
@@ -43,6 +43,7 @@ namespace tryn::gfx
 
 		pInputLayout = IInputLayout::Resolve(renderGraph.Gfx(), vtxLayout, *pFullscreenVS);
 		pSamplerState = ISampler::Resolve(renderGraph.Gfx());
+		pPTopology = IPrimitiveTopology::Resolve(renderGraph.Gfx());
 	}
 
 	void FullscreenRenderPass::Execute(const IGraphics& gfx)
@@ -63,6 +64,7 @@ namespace tryn::gfx
 		pFullscreenVS->Bind();
 		pFullscreenPS->Bind();
 		pSamplerState->Bind();
+		pPTopology->Bind();
 		gfx.DrawIndexed(6);
 	}
 }

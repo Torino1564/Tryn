@@ -39,6 +39,11 @@ namespace tryn::ecs
 		return *pComponentManager;
 	}
 
+	ComponentManager& ECS::GetComponentManager()
+	{
+		return *pComponentManager;
+	}
+
 	const ArchetypeManager& ECS::GetArchetypeManager() const
 	{
 		return *pArchetypeManager;
@@ -50,6 +55,11 @@ namespace tryn::ecs
 	}
 
 	const SystemManager& ECS::GetSystemManager() const
+	{
+		return *pSystemManager;
+	}
+
+	SystemManager& ECS::GetSystemManager()
 	{
 		return *pSystemManager;
 	}

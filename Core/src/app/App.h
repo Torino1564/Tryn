@@ -30,6 +30,8 @@ namespace tryn::app
 
 		const gfx::IGraphics& Gfx() const;
 		gfx::IGraphics& Gfx();
+		ecs::ECS& ECS();
+		const ecs::ECS& ECS() const;
 
 	protected:
 		std::unique_ptr<ecs::ECS> pEcs;

@@ -60,4 +60,14 @@ namespace tryn::app
 	{
 		return *gfx;
 	}
+
+	ecs::ECS& App::ECS()
+	{
+		return *pEcs;
+	}
+
+	const ecs::ECS& App::ECS() const
+	{
+		return *pEcs;
+	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <chrono>
-
+#undef min
+#undef max
 namespace ch = std::chrono;
 
 namespace tryn::utl

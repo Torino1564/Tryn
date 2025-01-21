@@ -5,10 +5,11 @@
 #include <Core/src/gfx/Model/InstancedModel.h>
 #include <Core/src/gfx/Bindables/IBuffer.h>
 #include <Core/src/gfx/Model/Model.h>
+#include <Core/src/ecs/Archetype.h>
 
 namespace tryn::ecs
 {
-	RenderSystem::RenderSystem(const SystemGraph& pGraph, ECS* pEcs): SystemImpl(pGraph, pEcs)
+	RenderSystem::RenderSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
 	{}
 
 	void RenderSystem::InitDependencies(System* self)
@@ -77,38 +78,38 @@ namespace tryn::ecs
 
 		for (auto& queriedData : data)
 		{
-			transformArray.PushBack(std::get<std::span<TransformComponent::SubresourceData>>(queriedData));
-			modelArray.PushBack(std::get<std::span<ModelComponent::SubresourceData>>(queriedData));
-			activeArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(queriedData));
+			transformArray.PushBack(std::get<std::span<TransformComponent>>(queriedData));
+			modelArray.PushBack(std::get<std::span<ModelComponent>>(queriedData));
+			activeArray.PushBack(std::get<std::span<ActiveComponent>>(queriedData));
 		}
 
 		for (auto& queriedData : dataChildren)
 		{
-			activeChildrenArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(queriedData));
-			transformChildrenArray.PushBack(std::get<std::span<TransformComponent::SubresourceData>>(queriedData));
-			childrenModelArray.PushBack(std::get<std::span<InstancedModelChildComponent::SubresourceData>>(queriedData));
+			activeChildrenArray.PushBack(std::get<std::span<ActiveComponent>>(queriedData));
+			transformChildrenArray.PushBack(std::get<std::span<TransformComponent>>(queriedData));
+			childrenModelArray.PushBack(std::get<std::span<InstancedModelChildComponent>>(queriedData));
 		}
 
 		for (auto& queriedData : dataParents)
 		{
-			activeParentArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(queriedData));
-			parentModelArray.PushBack(std::get<std::span<InstancedModelParentComponent::SubresourceData>>(queriedData));
-			transformParentArray.PushBack(std::get<std::span<TransformComponent::SubresourceData>>(queriedData));
+			activeParentArray.PushBack(std::get<std::span<ActiveComponent>>(queriedData));
+			parentModelArray.PushBack(std::get<std::span<InstancedModelParentComponent>>(queriedData));
+			transformParentArray.PushBack(std::get<std::span<TransformComponent>>(queriedData));
 		}
 
 		for (auto& queriedData : dataSkinned)
 		{
-			activeSkinnedArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(queriedData));
-			boneTransformArray.PushBack(std::get<std::span<BoneTransformsComponent::SubresourceData>>(queriedData));
-			transformSkinnedArray.PushBack(std::get<std::span<TransformComponent::SubresourceData>>(queriedData));
-			skinnedModelArray.PushBack(std::get<std::span<ModelComponent::SubresourceData>>(queriedData));
+			activeSkinnedArray.PushBack(std::get<std::span<ActiveComponent>>(queriedData));
+			boneTransformArray.PushBack(std::get<std::span<BoneTransformsComponent>>(queriedData));
+			transformSkinnedArray.PushBack(std::get<std::span<TransformComponent>>(queriedData));
+			skinnedModelArray.PushBack(std::get<std::span<ModelComponent>>(queriedData));
 		}
 
 		for (auto& pointLightData : dataPointLight)
 		{
-			pointLightArray.PushBack(std::get<std::span<PointLightComponent::SubresourceData>>(pointLightData));
-			pointLightPositionArray.PushBack(std::get<std::span<PositionComponent::SubresourceData>>(pointLightData));
-			pointLightActiveArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(pointLightData));
+			pointLightArray.PushBack(std::get<std::span<PointLightComponent>>(pointLightData));
+			pointLightPositionArray.PushBack(std::get<std::span<PositionComponent>>(pointLightData));
+			pointLightActiveArray.PushBack(std::get<std::span<ActiveComponent>>(pointLightData));
 		}
 
 		// Kernel

@@ -3,12 +3,13 @@
 #include <Core/third/glm/ext.hpp>
 #include <Core/third/glm/gtx/euler_angles.hpp>
 #include <Core/src/ecs/sys/UpdatePositionSystem.h>
+#include <Core/src/ecs/Archetype.h>
 
 #include "Core/src/gfx/CoreGraphics.h"
 
 namespace tryn::ecs
 {
-	TransformSystem::TransformSystem(const SystemGraph& pGraph, ECS* pEcs): SystemImpl(pGraph, PCRYPT_ECC_CMS_SHARED_INFO)
+	TransformSystem::TransformSystem(const SystemGraph& pGraph): SystemImpl(pGraph)
 	{}
 
 	void TransformSystem::InitDependencies(System* self)
@@ -38,11 +39,11 @@ namespace tryn::ecs
 
 		for (auto& queriedData : data)
 		{
-			positionArray.PushBack(std::get<std::span<PositionComponent::SubresourceData>>(queriedData));
-			scaleArray.PushBack(std::get<std::span<ScaleComponent::SubresourceData>>(queriedData));
-			rotationArray.PushBack(std::get<std::span<RotationComponent::SubresourceData>>(queriedData));
-			transformArray.PushBack(std::get<std::span<TransformComponent::SubresourceData>>(queriedData));
-			activeArray.PushBack(std::get<std::span<ActiveComponent::SubresourceData>>(queriedData));
+			positionArray.PushBack(std::get<std::span<PositionComponent>>(queriedData));
+			scaleArray.PushBack(std::get<std::span<ScaleComponent>>(queriedData));
+			rotationArray.PushBack(std::get<std::span<RotationComponent>>(queriedData));
+			transformArray.PushBack(std::get<std::span<TransformComponent>>(queriedData));
+			activeArray.PushBack(std::get<std::span<ActiveComponent>>(queriedData));
 		}
 
 		// Kernel

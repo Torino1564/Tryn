@@ -17,7 +17,7 @@ namespace tryn::ecs
 		}
 	}
 
-	EntityID Archetype::	ResolveEntityUUID()
+	EntityID Archetype::ResolveEntityUUID()
 	{
 		auto nextFree = booker.find_next(bookerPointer);
 		while (nextFree == booker.npos)
@@ -48,7 +48,7 @@ namespace tryn::ecs
 		return archetypeCounter++;
 	}
 
-	const Archetype& ArchetypeManager::AddArchetype(const std::span<utl::UUID_t> componentUUIDs)
+	Archetype& ArchetypeManager::AddArchetype(const std::span<utl::UUID_t> componentUUIDs)
 	{
 		archetypeBuffer.emplace_back(Archetype::Make(*this, ResolveUUID(), componentUUIDs));
 
@@ -70,16 +70,62 @@ namespace tryn::ecs
 		archetypeBuffer.reserve(1000);
 	}
 
-	auto& ArchetypeManager::GetArenaAllocator() const
+	mem::ArenaAllocator<>& ArchetypeManager::GetArenaAllocator() const
 	{
 		return pEcs->GetAllocator();
 	}
 
-	const Archetype& ArchetypeManager::GetArchetype(const int archetypeCounter) const
+	Archetype& ArchetypeManager::GetArchetype(const int archetypeCounter)
 	{
 		trynass(archetypeCounter <= this->archetypeCounter);
 		return archetypeBuffer[archetypeCounter];
 	}
+
+	//const Archetype& ArchetypeManager::GetArchetype(std::span<utl::UUID_t> componentUUIDs)
+	//{
+	//	trynass(componentUUIDs.size() != 0);
+	//	std::vector<const std::vector<ArchetypeID>*> pVectors;
+	//	for (const auto uuid : componentUUIDs)
+	//	{
+	//		auto it = archetypeTable.find(uuid);
+	//		if (it == archetypeTable.end())
+	//		{
+	//			// This path is only reached if the component uuid doesnt have an archetype list
+	//			// This means that the requested archetype does not exist and therefore has to be added
+
+	//			return AddArchetype(componentUUIDs);
+	//		}
+
+	//		pVectors.push_back(&it->second);
+	//	}
+	//	std::vector<ArchetypeID> partialResult = *pVectors.front();
+	//	for (const auto pVector : pVectors)
+	//	{
+	//		for (auto it = partialResult.begin(); it != partialResult.end(); )
+	//		{
+	//			if (std::ranges::find(*pVector, *it ) == pVector->end())
+	//				it = partialResult.erase(it);
+	//			else
+	//				++it;
+	//		}
+	//		if (partialResult.empty())
+	//			break;
+	//	}
+
+	//	// If the archetype doesnt exist, create a new one and return
+	//	if (partialResult.empty())
+	//		return AddArchetype(componentUUIDs);
+
+	//	// Discard archetypes that have more than just the required components
+	//	for (const auto archetypeID : partialResult)
+	//	{
+	//		if (auto& arch = archetypeBuffer[archetypeID]; arch.ComponentCount() == componentUUIDs.size())
+	//			return arch;
+	//	}
+
+	//	// Create a new one if it doesnt exist
+	//	return AddArchetype(componentUUIDs);
+	//}
 
 	ArchetypeID Archetype::GetUUID() const
 	{
@@ -121,12 +167,12 @@ namespace tryn::ecs
 				index++;
 		}
 
-		trynass_msg(index < components.size());
+		trynass(index < components.size());
 
 		return arrays[index];
 	}
 
-	Archetype::Archetype(const ArchetypeManager& manager, const uint16_t uuid)
+	Archetype::Archetype(ArchetypeManager& manager, const uint16_t uuid)
 		:
 	UUID(uuid),
 	componentManager(manager.pEcs->GetComponentManager()),
@@ -134,7 +180,7 @@ namespace tryn::ecs
 	{
 	}
 
-	Archetype Archetype::Make(const ArchetypeManager& manager, const uint16_t uuid_, const std::span<utl::UUID_t> componentUUIDs)
+	Archetype Archetype::Make(ArchetypeManager& manager, const uint16_t uuid_, const std::span<utl::UUID_t> componentUUIDs)
 	{
 		Archetype archetype(manager,uuid_);
 		archetype.components.reserve(componentUUIDs.size());
@@ -166,34 +212,34 @@ namespace tryn::ecs
 		}
 	}
 
-	std::span<ArchetypeID> ArchetypeManager::QueryArchetype(const std::span<utl::UUID_t> componentIDs) const
+	std::span<ArchetypeID> ArchetypeManager::QueryArchetype(const std::span<utl::UUID_t> componentIDs)
 	{
 		trynass(componentIDs.size() != 0);
-		std::vector<const std::vector<ArchetypeID>&> vectors;
+		std::vector<const std::vector<ArchetypeID>*> pVectors;
 		
-		vectors.reserve(componentIDs.size());
+		pVectors.reserve(componentIDs.size());
 
-		auto smallest = &vectors.back();
+		const std::vector<ArchetypeID>* pSmallest = nullptr;
 		auto currentSize = std::numeric_limits<std::size_t>::infinity();
 		for (const auto uuid : componentIDs)
 		{
-			vectors.emplace_back(archetypeTable.at(uuid));
-			if (vectors.back().size() < currentSize)
+			pVectors.emplace_back(&archetypeTable[uuid]);
+			if (pSmallest == nullptr || pVectors.back()->size() < currentSize)
 			{
-				smallest = &vectors.back();
-				currentSize = smallest->size();
+				pSmallest = pVectors.back();
+				currentSize = pSmallest->size();
 			}
 		}
 
 		std::vector<ArchetypeID> result;
 
-		for (const auto archetypeID : *smallest)
+		for (const auto archetypeID : *pSmallest)
 		{
 			auto i = 0;
 			bool common = true;
 			for (const auto uuid : componentIDs)
 			{
-				if (auto it = std::ranges::find(vectors[i], uuid); it == vectors[i].end())
+				if (auto it = std::ranges::find(*pVectors[i], uuid); it == pVectors[i]->end())
 				{
 					common = false;
 					break;
@@ -207,7 +253,7 @@ namespace tryn::ecs
 		return { result.begin(), result.size() };
 	}
 
-	const Archetype& ArchetypeManager::GetArchetype(const std::span<utl::UUID_t> components)
+	Archetype& ArchetypeManager::GetArchetype(const std::span<utl::UUID_t> components)
 	{
 		auto queriedArchetypes = QueryArchetype(components);
 

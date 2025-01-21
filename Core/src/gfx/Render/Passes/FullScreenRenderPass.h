@@ -25,5 +25,6 @@ namespace tryn::gfx
 		std::shared_ptr<IVertexBuffer> pVertexBuffer;
 		std::shared_ptr<class IInputLayout> pInputLayout;
 		std::shared_ptr<ISampler> pSamplerState;
+		std::shared_ptr<class IPrimitiveTopology> pPTopology;
 	};
 }

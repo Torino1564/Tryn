@@ -4,5 +4,5 @@
 
 namespace tryn::ecs
 {
-
+	ModelComponent::~ModelComponent() = default;
 }

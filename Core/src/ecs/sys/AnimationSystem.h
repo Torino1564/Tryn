@@ -9,7 +9,7 @@ namespace tryn::ecs
 	ZT_DEFINE_SYSTEM(AnimationSystem)
 	{
 	public:
-		AnimationSystem(const SystemGraph& pGraph, const ECS* pEcs);
+		AnimationSystem(const SystemGraph& pGraph);
 		static void InitDependencies(System* self);
 		void Execute() override;
 		void Init() override;

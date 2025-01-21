@@ -113,9 +113,9 @@ namespace tryn::ecs
 		return pManager->Gfx();
 	}
 
-	System::System(const SystemGraph& graph, ECS* pEcs)
+	System::System(const SystemGraph& graph)
 		:
-		pEcs(pEcs), pGraph(&graph)
+		pEcs(graph.GetSystemManager().GetECS()), pGraph(&graph)
 	{
 	}
 

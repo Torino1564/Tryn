@@ -7,8 +7,9 @@ namespace tryn::gfx
 
 namespace tryn::ecs
 {
-	class ModelComponent
+	struct ModelComponent
 	{
+		~ModelComponent();
 		std::unique_ptr<gfx::Model> pModel;
 	};
 }

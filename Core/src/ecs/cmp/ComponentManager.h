@@ -14,6 +14,7 @@
 #include <Core/src/utl/TypeName.h>
 #include <unordered_map>
 #include <Core/src/utl/StringHasher.h>
+#include <ranges>
 
 ZT_EX_DEF(ComponentSMPException);
 
@@ -33,7 +34,7 @@ namespace tryn::ecs
 			{
 				trynass(wrapper.Name() != name).msg(L"The component already exists!");
 			}
-			componentWrappers.insert(ComponentWrapper::Make<T>(name, NextFreeAndIncrement()), ZT_STRING_HASH(name));
+			componentWrappers.insert({ZT_TYPE_UUID(T), ComponentWrapper::Make<T>(name, NextFreeAndIncrement())});
 		}
 
 		uint16_t ComponentCount() const;
@@ -44,9 +45,15 @@ namespace tryn::ecs
 			return componentWrappers.at(ZT_TYPE_UUID(T));
 		}
 
-		const ComponentWrapper& Wrapper(const utl::UUID_t componentUUID) const
+		const ComponentWrapper& Wrapper(const utl::UUID_t componentUUID) const;
+
+		template <typename T>
+		const ComponentWrapper& PWrapper()
 		{
-			return componentWrappers.at(componentUUID);
+			if (auto it = componentWrappers.find(ZT_TYPE_UUID(T)); it == componentWrappers.end())
+				RegisterComponent<T>();
+
+			return componentWrappers.at(ZT_TYPE_UUID(T));
 		}
 
 	private:
@@ -54,6 +61,5 @@ namespace tryn::ecs
 		const ECS* pEcs = nullptr;
 		uint16_t componentCount = 0;
 		std::unordered_map<utl::UUID_t, ComponentWrapper> componentWrappers;
-		
 	};
 }

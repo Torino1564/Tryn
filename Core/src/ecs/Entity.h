@@ -28,7 +28,7 @@ namespace tryn::ecs
 		virtual ~Entity();
 
 		template <typename... Cs>
-		static Entity CreateNew(std::string name = "?", const ECS& ecs);
+		static Entity CreateNew(ECS& ecs, std::string name = "?");
 		std::span<utl::UUID_t> GetComponents();
 
 		template <typename C>
@@ -56,10 +56,10 @@ namespace tryn::ecs
 	};
 
 	template<typename ...Cs>
-	inline Entity Entity::CreateNew(std::string name, const ECS& ecs)
+	inline Entity Entity::CreateNew(ECS& ecs, std::string name)
 	{
 		Entity ent(std::move(name));
-		ent.pArchetype = ecs.GetArchetypeManager().GetArchetype<Cs...>();
+		ent.pArchetype = &ecs.GetArchetypeManager().GetArchetype<Cs...>();
 		ent.UUID = ent.pArchetype->ResolveEntityUUID();
 		return ent;
 	}

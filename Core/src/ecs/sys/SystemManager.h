@@ -39,7 +39,7 @@ namespace tryn::ecs
 		SystemGraph(SystemManager& manager);
 
 		template <ValidSystem S>
-		void RegisterSystem(const SystemManager* pManager)
+		void RegisterSystem()
 		{
 			// assert not finalized
 			trynass_msg(!finalized, L"Cannot register new systems into a finalized system graph!");
@@ -55,13 +55,17 @@ namespace tryn::ecs
 				return;
 			}
 			// registers the system
-			pSystems[S::UID.id] = std::make_unique<S>(*this, pManager);
+			pSystems[S::UID.id] = std::make_unique<S>(*this);
 		}
 
 		void Finalize();
 		void Execute() const;
 		const gfx::IGraphics& Gfx() const;
 		gfx::IGraphics& Gfx();
+		auto& GetSystemManager() const
+		{
+			return *pManager;
+		}
 	private:
 
 		SystemManager* pManager = nullptr;
@@ -80,7 +84,7 @@ namespace tryn::ecs
 	{
 		friend class SystemGraph;
 	public:
-		System(const SystemGraph& graph, ECS* pEcs);
+		System(const SystemGraph& graph);
 		virtual ~System() = default;
 		virtual void Execute() = 0;
 		virtual void Init() = 0;
@@ -122,7 +126,7 @@ namespace tryn::ecs
 	class SystemImpl : public System
 	{
 	public:
-		SystemImpl(const SystemGraph& graph, ECS* pEcs) : System(graph, pEcs)
+		SystemImpl(const SystemGraph& graph) : System(graph)
 		{
 			T::InitDependencies(this);	
 		}
@@ -141,10 +145,14 @@ namespace tryn::ecs
 		template <ValidSystem S>
 		void RegisterSystem()
 		{
-			graph.RegisterSystem<S>(this);
+			graph.RegisterSystem<S>();
 		}
 		void Finalize();
 		const gfx::IGraphics& Gfx() const;
+		auto GetECS() const
+		{
+			return pEcs;
+		}
 	private:
 		ECS* pEcs = nullptr;
 		SystemGraph graph;

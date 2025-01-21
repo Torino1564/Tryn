@@ -1,10 +1,11 @@
 #include "TrynPCH.h"
 #include "UpdateVelocitySystem.h"
 #include <Core/src/ecs/cmp/ComponentManager.h>
+#include <Core/src/ecs/Archetype.h>
 
 namespace tryn::ecs
 {
-	UpdateVelocitySystem::UpdateVelocitySystem(const SystemGraph& pGraph): SystemImpl(pGraph)
+	UpdateVelocitySystem::UpdateVelocitySystem(const SystemGraph& pGraph) : SystemImpl(pGraph)
 	{}
 
 	void UpdateVelocitySystem::Execute()
@@ -27,8 +28,8 @@ namespace tryn::ecs
 
 		for (auto& entry : data)
 		{
-			velocityArray.PushBack(std::get<std::span<VelocityComponent::SubresourceData>>(entry));
-			accelerationArray.PushBack(std::get<std::span<AccelerationComponent::SubresourceData>>(entry));
+			velocityArray.PushBack(std::get<std::span<VelocityComponent>>(entry));
+			accelerationArray.PushBack(std::get<std::span<AccelerationComponent>>(entry));
 		}
 
 		// Kernel
