@@ -196,7 +196,7 @@ namespace tryn::ecs
 	std::span<std::span<ComponentArray*>> ArchetypeManager::GetComponentGroups(
 		const std::span<utl::UUID_t> componentUUIDs)
 	{
-		const auto query = QueryArchetype(componentUUIDs);
+		/*const auto query = QueryArchetype(componentUUIDs);
 		std::vector<std::vector<ComponentArray*>> result;
 		result.reserve(query.size());
 
@@ -209,7 +209,9 @@ namespace tryn::ecs
 			{
 				back.emplace_back(&archetype.GetComponentArray(uuid));
 			}
-		}
+		}*/
+
+		return {};
 	}
 
 	std::span<ArchetypeID> ArchetypeManager::QueryArchetype(const std::span<utl::UUID_t> componentIDs)

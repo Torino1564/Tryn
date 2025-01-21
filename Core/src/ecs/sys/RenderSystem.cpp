@@ -20,33 +20,35 @@ namespace tryn::ecs
 
 	void RenderSystem::Execute()
 	{
+		auto& archetypeManager = pEcs->GetArchetypeManager();
+
 		// Request data
 
-		auto data = pEcs->GetArchetypeManager().GetComponentGroups<
+		auto data = archetypeManager.GetComponentGroups<
 			ReadOnly<TransformComponent>,
 			ReadOnly<ActiveComponent>,
 			WriteOnly<ModelComponent>
 		>();
 
-		auto dataChildren = pEcs->GetArchetypeManager().GetComponentGroups<
+		auto dataChildren = archetypeManager.GetComponentGroups<
 			WriteOnly<InstancedModelChildComponent>,
 			ReadOnly<TransformComponent>,
 			ReadOnly<ActiveComponent>>();
 
-		auto dataParents = pEcs->GetArchetypeManager().GetComponentGroups<
+		auto dataParents = archetypeManager.GetComponentGroups<
 			WriteOnly<InstancedModelParentComponent>,
 			ReadOnly<TransformComponent>,
 			ReadOnly<ActiveComponent>
 		>();
 
-		auto dataSkinned = pEcs->GetArchetypeManager().GetComponentGroups<
+		auto dataSkinned = archetypeManager.GetComponentGroups<
 			ReadOnly<ActiveComponent>,
 			ReadOnly<TransformComponent>,
 			ReadOnly<BoneTransformsComponent>,
 			ReadWrite<ModelComponent>
 		>();
 
-		auto dataPointLight = pEcs->GetArchetypeManager().GetComponentGroups<
+		auto dataPointLight = archetypeManager.GetComponentGroups<
 			ReadOnly<ActiveComponent>,
 			ReadOnly<PositionComponent>,
 			ReadOnly<PointLightComponent>
