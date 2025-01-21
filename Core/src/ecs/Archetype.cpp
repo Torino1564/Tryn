@@ -172,6 +172,15 @@ namespace tryn::ecs
 		return arrays[index];
 	}
 
+	void Archetype::EntityControlWindow(EntityID id)
+	{
+		for (const auto uuid : components)
+		{
+			auto& wrapper = componentManager.Wrapper(uuid);
+
+		}
+	}
+
 	Archetype::Archetype(ArchetypeManager& manager, const uint16_t uuid)
 		:
 	UUID(uuid),

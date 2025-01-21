@@ -38,6 +38,9 @@ namespace tryn::ecs
 		void Grow();
 		void Resize(std::uint32_t newSize);
 		ComponentArray& GetComponentArray(utl::UUID_t);
+
+		void EntityControlWindow(struct EntityID id);
+
 	private:
 		Archetype(ArchetypeManager& manager, const uint16_t uuid);
 

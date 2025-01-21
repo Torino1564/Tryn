@@ -43,16 +43,10 @@ namespace tryn::ecs
 		{
 			ImGui::Text(std::format("Entity UUID: {}:{}", UUID.archetype, UUID.ID).c_str());
 			ImGui::Text("Components:");
-			auto& componentIndices = pArchetype->components;
+			auto& components = pArchetype->components;
 			
-			for (auto [index, selected] : std::ranges::enumerate_view(selectedComponents))
-			{
-				if (!selected)
-				{
-					continue;
-				}
-				//ComponentManager::IterateComponentMembers<PrintImGuiMemberVariable>(sortedComponentUUIDs[index], this->UUID);
-			}
+
+
 			ImGui::End();
 		}
 	}

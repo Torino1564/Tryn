@@ -49,10 +49,6 @@ namespace tryn::ecs
 		std::string name;
 		EntityID UUID = {};
 		Archetype* pArchetype = nullptr;
-
-	// Component selection stuff
-	private:
-		std::vector<std::uint8_t> selectedComponents;
 	};
 
 	template<typename ...Cs>

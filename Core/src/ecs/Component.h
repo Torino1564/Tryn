@@ -2,6 +2,7 @@
 #include <Core/src/ecs/EcsClass.h>
 #include <Core/src/ser/Serializer.h>
 #include <Core/third/dynamic_bitset.hpp>
+#include <Core/src/gfx/ImguiManager.h>
 
 namespace tryn::ecs
 {
@@ -30,6 +31,12 @@ namespace tryn::ecs
 					new(pData) T();
 				};
 
+				retval.imguiPrint_ = [](void* pData_)
+				{
+					auto pData = static_cast<T*>(pData_);
+					ImGui::Text(ZT_TYPE_OF(T).data());
+				};
+
 			return retval;
 		}
 		std::string_view Name() const;
@@ -38,6 +45,7 @@ namespace tryn::ecs
 		ComponentArray MakeArray(const uint16_t newSize = 0) const;
 		void Delete(void* pData) const;
 		void New(void* pData) const;
+		void ImGuiPrint(void* pData) const;
 	private:
 		ComponentWrapper() = default;
 		std::string name;
@@ -48,6 +56,7 @@ namespace tryn::ecs
 
 		void (*delete_)(void*) = nullptr;
 		void (*new_)(void*) = nullptr;
+		void (*imguiPrint_)(void*) = nullptr;
 	};
 
 	class ComponentArray
