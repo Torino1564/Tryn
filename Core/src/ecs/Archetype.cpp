@@ -12,7 +12,7 @@ namespace tryn::ecs
 
 		for (auto [index, componentUUID] : std::views::enumerate(components))
 		{
-			auto pData = arrays[index][entityID.ID - 1];
+			auto pData = arrays[index][entityID.ID];
 			componentManager.Wrapper(componentUUID).Delete(pData);
 		}
 	}

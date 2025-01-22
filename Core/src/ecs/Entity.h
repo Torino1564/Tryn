@@ -24,7 +24,11 @@ namespace tryn::ecs
 	{
 	public:
 		Entity() = delete;
+		Entity(const Entity&) = delete;
+		Entity& operator=(const Entity&) = delete;
 
+		Entity(Entity&&);
+		Entity& operator=(Entity&&);
 		virtual ~Entity();
 
 		template <typename... Cs>

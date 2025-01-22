@@ -17,9 +17,27 @@ namespace tryn::ecs
 
 	}
 
+	Entity::Entity(Entity&& e)
+	{
+		name = std::move(e.name);
+		UUID = std::move(e.UUID);
+		pArchetype = e.pArchetype;
+		e.pArchetype = nullptr;
+	}
+
+	Entity& Entity::operator=(Entity&& e)
+	{
+		name = std::move(e.name);
+		UUID = std::move(e.UUID);
+		pArchetype = e.pArchetype;
+		e.pArchetype = nullptr;
+		return *this;
+	}
+
 	Entity::~Entity()
 	{
-		pArchetype->Free(UUID);
+		if (pArchetype != nullptr)
+			pArchetype->Free(UUID);
 	}
 
 	std::span<utl::UUID_t> Entity::GetComponents()

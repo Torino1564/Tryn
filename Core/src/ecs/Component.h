@@ -31,11 +31,11 @@ namespace tryn::ecs
 					new(pData) T();
 				};
 
-				retval.imguiPrint_ = [](void* pData_)
-				{
-					auto pData = static_cast<T*>(pData_);
-					ImGui::Text(ZT_TYPE_OF(T).data());
-				};
+			retval.imguiPrint_ = [](void* pData_)
+			{
+				auto pData = static_cast<T*>(pData_);
+				ImGui::Text(ZT_TYPE_OF(T).data());
+			};
 
 			return retval;
 		}
