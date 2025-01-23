@@ -14,9 +14,9 @@ namespace tryn::gfx
 	{
 	public:
 		Node(int id, std::string_view name, std::vector<uint16_t> meshIds, glm::mat4 transform, bool isSkeleton = false);
-		void Submit(const IGraphics& gfx, glm::mat4 accumulatedTransform);
+		void Submit(const IGraphics& gfx, const glm::mat4& accumulatedTransform);
 		void Submit(const IGraphics& gfx, std::span<const glm::mat4> accumulatedTransforms, InstancedModelParent& parent);
-		void Submit(const IGraphics& gfx, glm::mat4 accumulatedTransform, std::span<const glm::mat4> boneTransforms);
+		void Submit(const IGraphics& gfx, const glm::mat4& accumulatedTransform, std::span<const glm::mat4> boneTransforms);
 		void AddChild(Node);
 		void SetMeshSpan(std::span<std::shared_ptr<Mesh>> meshSpan);
 		std::vector<Node>& GetChildren();
