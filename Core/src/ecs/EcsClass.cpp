@@ -9,7 +9,7 @@ namespace tryn::ecs
 {
 	ECS::ECS(const app::App* pApp)
 	:
-		pComponentManager(std::make_unique<ComponentManager>(this)), pArchetypeManager(std::make_unique<ArchetypeManager>(this)), pSystemManager(std::make_unique<SystemManager>(this)), pApp(pApp)
+		pApp(pApp), pComponentManager(std::make_unique<ComponentManager>(this)), pArchetypeManager(std::make_unique<ArchetypeManager>(this)), pSystemManager(std::make_unique<SystemManager>(this))
 	{}
 
 	ECS::~ECS() = default;
@@ -62,5 +62,10 @@ namespace tryn::ecs
 	SystemManager& ECS::GetSystemManager()
 	{
 		return *pSystemManager;
+	}
+
+	void ECS::ExecuteSystems() const
+	{
+		pSystemManager->ExecuteSystems();
 	}
 }

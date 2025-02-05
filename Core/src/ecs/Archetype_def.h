@@ -3,7 +3,6 @@
 #include <vector>
 #include <map>
 #include <set>
-#include "EcsClass.h"
 #include "Core/src/ser/Serializer.h"
 #include "Core/src/ser/StreamIO.h"
 #include <Core/src/utl/StringHasher.h>
@@ -13,6 +12,7 @@
 
 namespace tryn::ecs
 {
+	class ECS;
 	using ArchetypeID = std::uint16_t;
 	class Archetype
 	{
@@ -49,7 +49,7 @@ namespace tryn::ecs
 		static Archetype Make(ArchetypeManager& manager, const uint16_t uuid, std::span<utl::UUID_t> componentUUIDs);
 
 		ArchetypeID UUID = 0;
-		ComponentManager& componentManager;
+		class ComponentManager& componentManager;
 		ArchetypeManager& archetypeManager;
 		std::vector<utl::UUID_t> components;
 

@@ -2,7 +2,6 @@
 #include <type_traits>
 #include "Core/src/utl/StatefulMeta/TemplateData.h"
 #include <Core/src/mem/ArenaAllocator.h>
-
 #include "Core/src/utl/StringHasher.h"
 
 namespace tryn::gfx
@@ -80,6 +79,7 @@ namespace tryn::ecs
 		ArchetypeManager& GetArchetypeManager();
 		const SystemManager& GetSystemManager() const;
 		SystemManager& GetSystemManager();
+		void ExecuteSystems() const;
 	private:
 		const app::App* pApp;
 		std::unique_ptr<ComponentManager> pComponentManager;

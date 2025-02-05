@@ -48,11 +48,13 @@
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_CXX23_ALIGNED_STORAGE_DEPRECATION_WARNING</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>%(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -67,7 +69,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_CXX23_ALIGNED_STORAGE_DEPRECATION_WARNING</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>%(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -86,10 +88,29 @@
   <ItemGroup>
     <ClCompile Include="src\App\EditorApp.cpp" />
     <ClCompile Include="src\App\EntryPoint.cpp" />
+    <ClCompile Include="third\imgui-node-editor-0.9.3\crude_json.cpp" />
+    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_canvas.cpp" />
+    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_node_editor.cpp" />
+    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\App\EditorApp.h" />
     <ClInclude Include="src\Engine\Engine.h" />
+    <ClInclude Include="third\imgui-node-editor-0.9.3\crude_json.h" />
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_bezier_math.h" />
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_canvas.h" />
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_extra_math.h" />
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_node_editor.h" />
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_node_editor_internal.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="third\imgui-node-editor-0.9.3\imgui_bezier_math.inl" />
+    <None Include="third\imgui-node-editor-0.9.3\imgui_extra_math.inl" />
+    <None Include="third\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl" />
+    <None Include="third\imgui-node-editor-0.9.3\LICENSE" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

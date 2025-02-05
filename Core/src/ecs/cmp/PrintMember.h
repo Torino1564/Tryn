@@ -6,7 +6,7 @@
 
 namespace tryn::ecs
 {
-	template <> struct ImGuiPrintType<glm::vec3>
+	/*template <> struct ImGuiPrintType<glm::vec3>
 	{
 		template <typename MapElement>
 		static void ImGuiPrint(glm::vec3* pData)
@@ -19,5 +19,5 @@ namespace tryn::ecs
 
 			ImGui::SliderFloat3(std::format("{}: {}", typeNameFunc(), varNameFunc()).c_str(), (float*)pData, -100.0f, 100.0f);
 		}
-	};
+	};*/
 }

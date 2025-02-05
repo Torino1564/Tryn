@@ -32,6 +32,8 @@ namespace tryn::ecs
 		std::derived_from<T, SystemImpl<T>>;
 	};
 
+	class ECS;
+
 	class SystemGraph
 	{
 	public:

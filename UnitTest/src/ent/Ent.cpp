@@ -2,56 +2,6 @@
 
 namespace tryn::ecs
 {
-	ZT_DEFINE_COMPONENT(TestComponent1)
-	{
-		ZT_COMPONENT_FIELDS(
-			bool onFire = false;
-		);
-	};
-
-	const unsigned int TestComponent1::index = ComponentManager::RegisterComponent<TestComponent1>();
-
-	const std::vector<utl::CTM::ElementData>& TestComponent1::GetReflectData_()
-	{
-		static const std::vector<tryn::utl::CTM::ElementData> singleton = tryn::ecs::CreateElementDataVector<ComponentType>();
-		return singleton;
-	}
-
-	ZT_DEFINE_COMPONENT(TestComponent2)
-	{
-		ZT_COMPONENT_FIELDS(
-			std::string_view text;
-			bool onFire;
-			float fireIntensity;
-		);
-	};
-
-	const unsigned int TestComponent2::index = ComponentManager::RegisterComponent<TestComponent2>();
-
-	const std::vector<utl::CTM::ElementData>& TestComponent2::GetReflectData_()
-	{
-		static const std::vector<tryn::utl::CTM::ElementData> singleton = tryn::ecs::CreateElementDataVector<ComponentType>();
-		return singleton;
-	}
-
-	ZT_DEFINE_COMPONENT(TestComponent3)
-	{
-		ZT_COMPONENT_FIELDS(
-			float velocity_x = .0f;
-			float velocity_y = .0f;
-			float velocity_z = .0f;
-			float whatever = .0f;
-		);
-	};
-
-	const unsigned int TestComponent3::index = ComponentManager::RegisterComponent<TestComponent3>();
-
-	const std::vector<utl::CTM::ElementData>& TestComponent3::GetReflectData_()
-	{
-		static const std::vector<tryn::utl::CTM::ElementData> singleton = tryn::ecs::CreateElementDataVector<ComponentType>();
-		return singleton;
-	}
-
 	ZT_DEFINE_SYSTEM(System1)
 	{
 	public:
@@ -105,31 +55,7 @@ namespace tryn::ecs
 		}
 		TEST_METHOD(ArchetypeTests)
 		{
-			auto ent1 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>("ent1");
-			std::vector<Entity> entityVec1;
-			entityVec1.resize(100);
-			ent1.Instanciate({ entityVec1.begin(), entityVec1.size() });
-			auto ent2 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>();
-			{
-				auto ent5 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>();
-				auto ent6 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>();
-			}
-			auto ent7 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>();
-			auto ent8 = Entity::CreateNew<TestComponent1, TestComponent2, TestComponent3>();
 
-			auto ent3 = Entity::CreateNew<TestComponent2, TestComponent3>();
-			auto ent4 = Entity::CreateNew<TestComponent1, TestComponent2>();
-			auto ent9 = Entity::CreateNew<TestComponent1, TestComponent2>();
-			auto ent10 = Entity::CreateNew<TestComponent1, TestComponent2>();
-			auto ent11 = Entity::CreateNew<TestComponent1, TestComponent2>();
-
-			ECS::Get().allocator.Wipe();
-
-			std::vector<Entity> entityVec2;
-			entityVec2.resize(100000);
-			ent3.Instanciate({ entityVec2.begin(), entityVec2.size() });
-
-			auto data = ArchetypeManager::Get().GetComponentGroups<ReadOnly<TestComponent2>, WriteOnly<TestComponent1>, ReadOnly<TestComponent3>>();
 		}
 		TEST_METHOD(SystemTests)
 		{

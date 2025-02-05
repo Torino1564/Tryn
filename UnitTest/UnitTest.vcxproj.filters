@@ -57,6 +57,9 @@
     <ClCompile Include="src\ser\Ser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\scr\Scr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TrynCppUnitTest.h">

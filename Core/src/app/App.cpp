@@ -47,7 +47,7 @@ namespace tryn::app
 	void App::PostFrame()
 	{
 		pEcs->WipeAllocator();
-		pEcs->GetSystemManager().ExecuteSystems();
+		pEcs->ExecuteSystems();
 		gfx->EndFrame();
 	}
 

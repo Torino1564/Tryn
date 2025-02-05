@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Core\Core.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTest.vcxproj", "{67C36A9A-A169-400E-AF57-B3C51B36766C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestApp", "WindowSandbox\WindowSandbox.vcxproj", "{44A10958-F1D2-4830-9488-D0D5DDC6EE4E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7C5306AC-242B-49D8-896E-212CEB74775B}"
 	ProjectSection(SolutionItems) = preProject
 		vcpkg.json = vcpkg.json
@@ -20,31 +18,21 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TrynEditor", "TrynEditor\Tr
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug_MEMSAN|x64 = Debug_MEMSAN|x64
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9001E248-3C25-4435-AF4B-A4013077196E}.Debug_MEMSAN|x64.ActiveCfg = Debug_MEMSAN|x64
-		{9001E248-3C25-4435-AF4B-A4013077196E}.Debug_MEMSAN|x64.Build.0 = Debug_MEMSAN|x64
 		{9001E248-3C25-4435-AF4B-A4013077196E}.Debug|x64.ActiveCfg = Debug|x64
 		{9001E248-3C25-4435-AF4B-A4013077196E}.Debug|x64.Build.0 = Debug|x64
 		{9001E248-3C25-4435-AF4B-A4013077196E}.Release|x64.ActiveCfg = Release|x64
 		{9001E248-3C25-4435-AF4B-A4013077196E}.Release|x64.Build.0 = Release|x64
-		{67C36A9A-A169-400E-AF57-B3C51B36766C}.Debug_MEMSAN|x64.ActiveCfg = Debug_MEMSAN|x64
 		{67C36A9A-A169-400E-AF57-B3C51B36766C}.Debug|x64.ActiveCfg = Debug|x64
 		{67C36A9A-A169-400E-AF57-B3C51B36766C}.Release|x64.ActiveCfg = Release|x64
-		{44A10958-F1D2-4830-9488-D0D5DDC6EE4E}.Debug_MEMSAN|x64.ActiveCfg = Debug_MEMSAN|x64
-		{44A10958-F1D2-4830-9488-D0D5DDC6EE4E}.Debug|x64.ActiveCfg = Debug|x64
-		{44A10958-F1D2-4830-9488-D0D5DDC6EE4E}.Release|x64.ActiveCfg = Release|x64
-		{F395D1F7-FC2B-4F79-B94D-032770A36C81}.Debug_MEMSAN|x64.ActiveCfg = Debug|x64
-		{F395D1F7-FC2B-4F79-B94D-032770A36C81}.Debug_MEMSAN|x64.Build.0 = Debug|x64
+		{67C36A9A-A169-400E-AF57-B3C51B36766C}.Release|x64.Build.0 = Release|x64
 		{F395D1F7-FC2B-4F79-B94D-032770A36C81}.Debug|x64.ActiveCfg = Debug|x64
 		{F395D1F7-FC2B-4F79-B94D-032770A36C81}.Debug|x64.Build.0 = Debug|x64
 		{F395D1F7-FC2B-4F79-B94D-032770A36C81}.Release|x64.ActiveCfg = Release|x64
 		{F395D1F7-FC2B-4F79-B94D-032770A36C81}.Release|x64.Build.0 = Release|x64
-		{F1FDB82E-DDD4-476A-BAAB-0419F30EE34A}.Debug_MEMSAN|x64.ActiveCfg = Debug|x64
-		{F1FDB82E-DDD4-476A-BAAB-0419F30EE34A}.Debug_MEMSAN|x64.Build.0 = Debug|x64
 		{F1FDB82E-DDD4-476A-BAAB-0419F30EE34A}.Debug|x64.ActiveCfg = Debug|x64
 		{F1FDB82E-DDD4-476A-BAAB-0419F30EE34A}.Debug|x64.Build.0 = Debug|x64
 		{F1FDB82E-DDD4-476A-BAAB-0419F30EE34A}.Release|x64.ActiveCfg = Release|x64

@@ -3,6 +3,7 @@
 #include <Core/src/ser/Serializer.h>
 #include <Core/third/dynamic_bitset.hpp>
 #include <Core/src/gfx/ImguiManager.h>
+#include <Core/src/utl/StringHasher.h>
 
 namespace tryn::ecs
 {
@@ -46,12 +47,12 @@ namespace tryn::ecs
 		void Delete(void* pData) const;
 		void New(void* pData) const;
 		void ImGuiPrint(void* pData) const;
-	private:
+		virtual ~ComponentWrapper() = default;
+	protected:
 		ComponentWrapper() = default;
 		std::string name;
 		utl::UUID_t uuid = 0;
 		std::uint16_t componentSize = 0;
-
 		// callbacks
 
 		void (*delete_)(void*) = nullptr;
@@ -75,5 +76,33 @@ namespace tryn::ecs
 		std::vector<std::byte> buffer;
 		const ComponentWrapper& parentWrapper;
 
+	};
+
+	class SingletonWrapper final : public ComponentWrapper
+	{
+	public:
+		void* GetData();
+		template <typename T>
+		static SingletonWrapper Make(const std::string_view name, const uint16_t id, T&& singleton)
+		{
+			SingletonWrapper temp(std::move(ComponentWrapper::Make<T>(name, id)));
+			temp.pData.resize(sizeof(T));
+			T* tPointer = static_cast<T*>(temp.GetData());
+			*tPointer = std::move(singleton);
+
+			temp.pDestructor = [](SingletonWrapper& thisRef)
+				{
+					T* tPointer_ = static_cast<T*>(thisRef.GetData());
+					tPointer_->~T();
+				};
+
+			return temp;
+		}
+
+		~SingletonWrapper() override;
+	private:
+		explicit SingletonWrapper(ComponentWrapper&&);
+		std::vector<std::byte> pData;
+		void (*pDestructor)(SingletonWrapper& thisRef) = nullptr;
 	};
 }

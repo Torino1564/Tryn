@@ -77,4 +77,20 @@ namespace tryn::ecs
 	ComponentArray::ComponentArray(const ComponentWrapper& parent):
 		parentWrapper(parent)
 	{}
+
+	void* SingletonWrapper::GetData()
+	{
+		return (void*)pData.data();
+	}
+
+	SingletonWrapper::~SingletonWrapper()
+	{
+		pDestructor(*this);
+	}
+
+	SingletonWrapper::SingletonWrapper(ComponentWrapper&& rhs)
+		:
+	ComponentWrapper(std::move(rhs))
+	{
+	}
 }

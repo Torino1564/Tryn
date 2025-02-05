@@ -9,6 +9,12 @@
       "features": [
         "docking-experimental"
       ]
+    },
+    {
+      "name": "llvm",
+      "features": [
+        "tools"
+      ]
     }
   ]
 }

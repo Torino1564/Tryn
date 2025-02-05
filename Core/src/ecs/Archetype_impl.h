@@ -1,7 +1,7 @@
 #pragma once
 #include "Archetype_def.h"
 #include <Core/src/ecs/EcsClass.h>
-
+#include <ranges>
 #include "cmp/ComponentManager.h"
 
 namespace tryn::ecs

@@ -23,7 +23,7 @@ app::App* app::CreateApp(int argc, char** argv)
 
 	auto gfx = ioc::Get().Resolve<gfx::IGraphics>(gfx::IGraphics::IocParams{ window->GetClientDimensions().width, window->GetClientDimensions().height, window->GetHandle() });
 
-	auto pApp = new edit::TrynEditorApp(window, gfx);
+	auto pApp = new ed::TrynEditorApp(window, gfx);
 
 	return pApp;
 }

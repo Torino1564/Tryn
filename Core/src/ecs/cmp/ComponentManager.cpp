@@ -9,7 +9,7 @@ namespace tryn::ecs
 {
 	uint16_t ComponentManager::ComponentCount() const
 	{
-		return componentWrappers.size();
+		return componentCount;
 	}
 
 	const ComponentWrapper& ComponentManager::Wrapper(const utl::UUID_t componentUUID) const

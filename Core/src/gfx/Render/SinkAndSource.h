@@ -51,6 +51,7 @@ namespace tryn::gfx
 	class Sink : public ISink
 	{
 	public:
+		virtual ~Sink() = default;
 		Sink() = delete;
 		Sink(Dependencies&&... ins)
 		{
@@ -165,6 +166,7 @@ namespace tryn::gfx
 	class Source : public ISource
 	{
 	public:
+		~Source() = default;
 		Source() = delete;
 		Source(Exposures&&... outs)
 		{
