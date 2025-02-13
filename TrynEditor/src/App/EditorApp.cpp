@@ -7,11 +7,35 @@ namespace tryn::ed
 {
 	struct PinInfo;
 
-    struct LinkInfo
+	struct PinInfo
+    {
+        unsigned long long parentId;
+        std::string name;
+        ned::PinKind kind;
+        ned::PinId id;
+    };
+
+    struct Link
     {
         ned::LinkId Id;
         ned::PinId  InputId;
         ned::PinId  OutputId;
+
+        Link(const ned::LinkId id, const PinInfo pin1, const PinInfo pin2)
+	        :
+        Id(id)
+        {
+	        if (pin1.kind == ned::PinKind::Input)
+	        {
+		        InputId = pin1.id;
+                OutputId = pin2.id;
+	        }
+            else
+            {
+	            InputId = pin2.id;
+                OutputId = pin1.id;
+            }
+        }
     };
 
     void ImGuiEx_BeginColumn()
@@ -31,19 +55,11 @@ namespace tryn::ed
         ImGui::EndGroup();
     }
 
-    struct PinInfo
-    {
-        unsigned long long parentId;
-        std::string name;
-        ned::PinKind kind;
-        ned::PinId id;
-    };
-
     struct Node
     {
         unsigned long long uniqueId;
         std::vector<PinInfo> pins;
-        std::vector<Node*> children;
+        std::vector<uint16_t> childrenIds;
         std::string_view name;
         Node() = delete;
         void Submit()
@@ -76,34 +92,61 @@ namespace tryn::ed
         Node(const unsigned long long id, const std::string_view name) : uniqueId(id), name(name) {}
     };
 
-    Node TrynEditorApp::CreateNewNode(const std::string_view name, const int numberInputs, const int numberOutputs)
+    Node& TrynEditorApp::CreateNewNode(const std::string_view name, const int numberInputs, const int numberOutputs)
     {
-        Node retval(uniqueId++, name);
+        Node newVal(uniqueId++, name);
 
         for (int i = 0 ; i < numberInputs; i++)
         {
-            PinInfo info{ .parentId = retval.uniqueId, .name = "", .kind = ned::PinKind::Input, .id = uniqueId };
+            PinInfo info{ .parentId = newVal.uniqueId, .name = "", .kind = ned::PinKind::Input, .id = uniqueId };
             pinIdToNodeId.insert({ uniqueId, info });
-            retval.pins.push_back(info);
+            newVal.pins.push_back(info);
             uniqueId++;
         }
 
         for (int i = 0; i < numberOutputs; i++)
         {
-            PinInfo info{ .parentId = retval.uniqueId, .name = "", .kind = ned::PinKind::Output, .id = uniqueId };
+            PinInfo info{ .parentId = newVal.uniqueId, .name = "", .kind = ned::PinKind::Output, .id = uniqueId };
             pinIdToNodeId.insert({ uniqueId, info });
-            retval.pins.push_back(info);
+            newVal.pins.push_back(info);
             uniqueId++;
         }
 
-        return retval;
+        nodes.push_back(newVal);
+        nodeIdToNodeIndex.insert({newVal.uniqueId, static_cast<uint16_t>(nodes.size() - 1)});
+
+        return nodes.back();
+    }
+
+    void TrynEditorApp::CreateNewLink(ax::NodeEditor::LinkId id, const PinInfo pin1, const PinInfo pin2)
+    {
+	    m_Links.emplace_back(id, pin1, pin2);
+
+        if (pin1.kind == ned::PinKind::Input)
+        {
+	        auto& outputNode = nodes[nodeIdToNodeIndex[pin2.parentId]];
+    		auto& inputNode = nodes[nodeIdToNodeIndex[pin1.parentId]];
+
+    		outputNode.childrenIds.push_back(nodeIdToNodeIndex[pin1.parentId]);
+        }
+        else
+        {
+	        auto& outputNode = nodes[nodeIdToNodeIndex[pin2.parentId]];
+    		auto& inputNode = nodes[nodeIdToNodeIndex[pin1.parentId]];
+
+    		outputNode.childrenIds.push_back(nodeIdToNodeIndex[pin1.parentId]);
+        }
+    	
+
     }
 
     TrynEditorApp::TrynEditorApp(const std::shared_ptr<win::IWindow>& pWnd, const std::shared_ptr<gfx::IGraphics>& pGfx)
         : App(pWnd, pGfx), pContext(ned::CreateEditor())
     {
-        nodes.push_back(CreateNewNode("A", 3, 3));
-        nodes.push_back(CreateNewNode("B", 1, 2));
+        CreateNewNode("A", 3, 3);
+        CreateNewNode("B", 1, 2);
+
+        ECS().GetSystemManager().Finalize();
     }
 
     void TrynEditorApp::DoFrame()
@@ -170,7 +213,7 @@ namespace tryn::ed
                         if (accepted)
                         {
 	                        // Since we accepted new link, lets add one to our list of links.
-                        	m_Links.push_back({ ned::LinkId(m_NextLinkId++), inputPinId, outputPinId });
+                        	m_Links.push_back({ ned::LinkId(m_NextLinkId++), inputPinInfo, outputPinInfo });
                         }
                     }
 
@@ -197,7 +240,7 @@ namespace tryn::ed
                     for (auto& link : m_Links)
                     {
                         if (link.Id == deletnedLinkId)
-                        {
+                        { 
                             m_Links.erase(&link);
                             break;
                         }

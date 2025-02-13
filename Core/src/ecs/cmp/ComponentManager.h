@@ -14,6 +14,7 @@
 #include <Core/src/utl/TypeName.h>
 #include <unordered_map>
 #include <Core/src/utl/StringHasher.h>
+#include <Core/src/log/Log.h>
 
 ZT_EX_DEF(ComponentSMPException);
 
@@ -33,7 +34,12 @@ namespace tryn::ecs
 			static constexpr auto uuid = ZT_TYPE_UUID(T);
 			// assert duplicate
 			const auto it = componentWrappers.find(uuid);
-			trynass(it != componentWrappers.end()).msg(L"The component already exists!");
+
+			if (it == componentWrappers.end())
+			{
+				trylog.warn(L"The component already exists!");
+				return;
+			}
 
 			componentWrappers.insert({uuid, ComponentWrapper::Make<T>(name, NextFreeAndIncrement())});
 		}
