@@ -103,6 +103,25 @@ namespace tryn::ed
         Node(TrynEditorApp* pEditor, const std::string_view name) : uniqueId(pEditor->uniqueId++), name(name), pEditorApp(pEditor) {}
     };
 
+    struct EntryNode : public Node
+    {
+	    EntryNode(TrynEditorApp* pEditor, const std::string& name)
+		    : Node (pEditor, name)
+	    {
+            // Output Pins
+            {
+                PinInfo info{ .parentId = this->uniqueId, .name = "Out", .kind = ned::PinKind::Output, .id = pEditor->uniqueId++ };
+                pEditor->pinIdToNodeId.insert({ info.id.Get(), info });
+                pins.push_back(std::move(info));
+            }
+	    }
+
+        unsigned long long Execute() override
+	    {
+            return pins[0].linked ? pins[0].linkedId : uniqueId;
+	    }
+    };
+
     template <typename T>
     struct SetVarNode : public Node
     {
@@ -144,17 +163,17 @@ namespace tryn::ed
         }
         T& GetVar()
         {
-            return std::any_cast<T>(pEditorApp->variables[varIndex].var);
+            return std::any_cast<T&>(pEditorApp->variables[varIndex].var);
         }
         void SetVar()
         {
-	        std::any_cast<T>(pEditorApp->variables[varIndex].var) = value;
+	        std::any_cast<T&>(pEditorApp->variables[varIndex].var) = value;
         }
 
         unsigned long long Execute() override
         {
 			SetVar();
-            return pins[0].linked ? pins[0].linkedId : uniqueId;
+            return pins[1].linked ? pins[1].linkedId : uniqueId;
         }
 
     private:
@@ -282,6 +301,17 @@ namespace tryn::ed
         uint16_t falsePin = 0;
     };
 
+    struct WaitNode : public Node
+    {
+	    WaitNode(TrynEditorApp* pEditor, const std::string& name, float timeInSeconds)
+		    :
+        Node(pEditor, name)
+	    {
+		    // Implement
+	    }
+    };
+
+
     Node& TrynEditorApp::CreateNewNode(const std::string_view name, const int numberInputs, const int numberOutputs)
     {
         Node newVal(this, name);
@@ -339,11 +369,10 @@ namespace tryn::ed
     TrynEditorApp::TrynEditorApp(const std::shared_ptr<win::IWindow>& pWnd, const std::shared_ptr<gfx::IGraphics>& pGfx)
         : App(pWnd, pGfx), pContext(ned::CreateEditor())
     {
-        CreateNewNode("A", 3, 3);
-        CreateNewNode("B", 1, 2);
         CreateNewNode(std::make_unique<SetVarNode<int>>(this, "SetFunnyNumberTo69", "funnyNumber", 69));
         CreateNewNode(std::make_unique<StateNode>(this, "Logical Button - Secondary Fire", std::vector<std::string>{"RMBDown", "RMBUp"}));
         CreateNewNode(std::make_unique<ConditionalNode>(std::move(ConditionalNode::Make(this, "IsReadyToShootRocket", "RocketReady", true))));
+        CreateNewNode(std::make_unique<EntryNode>(this, "Entry"));
         ECS().GetSystemManager().Finalize();
     }
 
