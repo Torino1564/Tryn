@@ -29,6 +29,10 @@ namespace tryn::ser
 			{
 				return TypeSerializer<T>::Write(*this, data, binary, name);
 			}
+			if constexpr (HasFunctionSerializer<T>)
+			{
+				return SerializeWrite(*this, data, binary, name);
+			}
 			if constexpr (std::is_trivially_copyable_v<T>)
 			{
 				if (binary)
@@ -64,6 +68,10 @@ namespace tryn::ser
 			else if constexpr (HasTypeSerializer<T>)
 			{
 				return TypeSerializer<T>::Read(*this, binary, pExtraData);
+			}
+			else if constexpr (HasFunctionSerializer<T>)
+			{
+				return SerializeRead<T>(*this, binary, pExtraData);
 			}
 			else {
 				if (binary)

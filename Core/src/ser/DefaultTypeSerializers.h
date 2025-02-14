@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/src/ser/StreamIO.h>
 #include <vector>
+#include <unordered_map>
 
 namespace tryn::ser
 {
@@ -101,6 +102,60 @@ namespace tryn::ser
 			streamReader.GetStringStream().read(newString.data(), numChars);
 
 			return newString;
+		}
+	};
+
+	template <Serializable T, Serializable K>
+	struct TypeSerializer<std::unordered_map<T, K>>
+	{
+		static void Write(const StreamWriter& streamWriter, const std::unordered_map<T, K>& data, const bool binary = true, const std::string& name = "")
+		{
+			streamWriter.GetStringStream() << std::format("UMAP:{:0>16}", data.size());
+
+			unsigned int i = 0;
+			for (const auto& [key, value] : data)
+			{
+				streamWriter.Serialize(key, binary, std::to_string(i) + ":");
+				streamWriter.Serialize(value, binary, std::to_string(i) + ":");
+				i++;
+			}
+		}
+
+		template <typename Data = void>
+		static std::unordered_map<T, K> Read(const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+		{
+			static std::vector<char> charBuffer;
+			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
+			streamReader.ExtractExpression("UMAP:", charBuffer);
+
+			auto numElements = std::stoi(charBuffer.data(), nullptr, 10);
+
+			std::unordered_map<T, K> newUMap;
+			newUMap.reserve(numElements);
+
+			for (int i = 0; i < numElements; i++)
+			{
+				newUMap.emplace_back({streamReader.ReadSerialized<T>(binary, pExtraData), streamReader.ReadSerialized<K>(binary, pExtraData)});
+			}
+
+			return newUMap;
+		}
+
+		template <typename Data = void>
+		static void Read(std::unordered_map<T, K>& data, const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+		{
+			static std::vector<char> charBuffer;
+			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
+			streamReader.ExtractExpression("UMAP:", charBuffer);
+
+			auto numElements = std::stoi(charBuffer.data(), nullptr, 10);
+
+			data.reserve(numElements);
+
+			for (int i = 0; i < numElements; i++)
+			{
+				data.emplace_back({streamReader.ReadSerialized<T>(binary, pExtraData), streamReader.ReadSerialized<K>(binary, pExtraData)});
+			}
 		}
 	};
 }

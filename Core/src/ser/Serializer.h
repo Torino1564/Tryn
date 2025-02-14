@@ -66,5 +66,12 @@ namespace tryn::ser
 	};
 
 	template <typename T>
-	concept Serializable = HasSerializer<T> || HasTypeSerializer<T> || std::is_trivially_copyable_v<T>;
+	concept HasFunctionSerializer = requires (const class StreamWriter& sw, const class StreamReader& sr, const T& data, const bool binary, const std::string& name, const class ExtraDataPack* pExtraData)
+	{
+		{ SerializeWrite(sw, data, binary, name) } -> std::same_as<void>;
+		{ SerializeRead<T>(sr, binary, pExtraData) } -> std::same_as<T>;
+	};
+
+	template <typename T>
+	concept Serializable = HasSerializer<T> || HasTypeSerializer<T> || std::is_trivially_copyable_v<T> || HasFunctionSerializer<T>;
 }

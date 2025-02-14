@@ -1,12 +1,39 @@
 #include "EditorApp.h"
 #include <TrynEditor/third/imgui-node-editor-0.9.3/imgui_node_editor.h>
 #include <functional>
+#include <TrynEditor/third/reflect.hpp>
 
 namespace ned = ax::NodeEditor;
 
+template <typename T, typename = void> struct IsMemberOfEd : std::false_type {};
+template <typename T> struct IsMemberOfEd<T, decltype(AdlIsMemberOfEd_impl_(std::declval<T>()))> : std::true_type {};
+
+template <typename T>
+concept EdNamespace = IsMemberOfEd<T>::value;
+
 namespace tryn::ed
 {
+    template <typename T>
+    auto AdlIsMemberOfEd_impl_(T&&) -> void;
+
 	struct PinInfo;
+    struct ScriptGraph;
+
+	struct ScriptGraph
+    {
+    	Node& CreateNewNode(std::unique_ptr<Node>&& newVal);
+		void CreateNewLink(ax::NodeEditor::LinkId id, PinInfo& pin1, PinInfo& pin2);
+
+    	std::vector<Link> m_Links;                                                  // List of live links
+		int m_NextLinkId = 100;                                                     // Counter to help generate link ids. In real application this will probably based on pointer to user data structure.
+		std::unordered_map<unsigned long long, PinInfo> pinIdToInfo;
+		std::unordered_map<unsigned long long, std::uint16_t> nodeIdToNodeIndex;
+		std::vector<Variable> variables;
+		std::vector<std::unique_ptr<Node>> nodes;
+		unsigned int uniqueId = 1;
+		std::optional<unsigned int> entryId;
+        std::string name;
+    };
 
 	struct PinInfo
     {
@@ -23,48 +50,39 @@ namespace tryn::ed
         ned::LinkId Id;
         ned::PinId  InputId;
         ned::PinId  OutputId;
-        TrynEditorApp* pEditor = nullptr;
+        ScriptGraph* pGraph = nullptr;
 
-        Link(const ned::LinkId id, const PinInfo pin1, const PinInfo pin2, TrynEditorApp* pEditor)
-	        :
-        Id(id), pEditor(pEditor)
+        Link(ned::LinkId id, PinInfo& pin1, PinInfo& pin2, ScriptGraph* pGraph);
+        Link& operator=(Link&& rhs) noexcept
         {
-	        if (pin1.kind == ned::PinKind::Input)
-	        {
-		        InputId = pin1.id;
-                OutputId = pin2.id;
-	        }
-            else
-            {
-	            InputId = pin2.id;
-                OutputId = pin1.id;
-            }
+            Link temp(std::move(rhs));
+
+            std::swap(Id, temp.Id);
+            std::swap(InputId, temp.InputId);
+            std::swap(OutputId, temp.OutputId);
+            std::swap(pGraph, temp.pGraph);
+
+            return *this;
+        }
+        Link(Link&& rhs) noexcept
+        {
+	        Id = rhs.Id;
+            InputId = rhs.InputId;
+            OutputId = rhs.OutputId;
+        	pGraph = std::exchange(rhs.pGraph, nullptr);
+
         }
         ~Link();
+
+    private:
+        Link() = default;
     };
-
-    void ImGuiEx_BeginColumn()
-    {
-        ImGui::BeginGroup();
-    }
-
-    void ImGuiEx_NextColumn()
-    {
-        ImGui::EndGroup();
-        ImGui::SameLine();
-        ImGui::BeginGroup();
-    }
-
-    void ImGuiEx_EndColumn()
-    {
-        ImGui::EndGroup();
-    }
 
     struct Node
     {
         virtual ~Node() = default;
         unsigned long long uniqueId;
-        std::vector<PinInfo> pins;
+        std::vector<uint16_t> pinIds;
         std::vector<uint16_t> childrenIds;
         std::string name;
         Node() = delete;
@@ -78,13 +96,14 @@ namespace tryn::ed
             ned::BeginNode(uniqueId);
             ImGui::Text(std::format("Node {}", name.data()).c_str());
 
-            for (auto& pin : pins)
+            for (auto& pinId : pinIds)
             {
-                ned::BeginPin(pin.id, pin.kind);
-                if (pin.kind == ned::PinKind::Input)
-                    ImGui::Text(std::format("Input Pin {}", pin.name).c_str());  
+                auto& pinInfo = pGraph->pinIdToInfo[pinId];
+                ned::BeginPin(pinInfo.id, pinInfo.kind);
+                if (pinInfo.kind == ned::PinKind::Input)
+                    ImGui::Text(std::format("Input Pin {}", pinInfo.name).c_str());  
                 else
-                    ImGui::Text(std::format("Output Pin {}", pin.name).c_str());
+                    ImGui::Text(std::format("Output Pin {}", pinInfo.name).c_str());
 
                 ned::EndPin();
             }
@@ -92,7 +111,7 @@ namespace tryn::ed
             ned::EndNode();
         }
         bool placed = false;
-        TrynEditorApp* pEditorApp;
+        ScriptGraph* pGraph;
 
         virtual unsigned long long Execute() { return uniqueId; }
 
@@ -100,35 +119,40 @@ namespace tryn::ed
         friend class TrynEditorApp;
         Node(Node&&) = default;
     protected:
-        Node(TrynEditorApp* pEditor, const std::string_view name) : uniqueId(pEditor->uniqueId++), name(name), pEditorApp(pEditor) {}
+        Node(ScriptGraph* pGraph, const std::string_view name) : uniqueId(pGraph->uniqueId++), name(name), pGraph(pGraph) {}
     };
 
     struct EntryNode : public Node
     {
-	    EntryNode(TrynEditorApp* pEditor, const std::string& name)
-		    : Node (pEditor, name)
+	    EntryNode(ScriptGraph* pGraph, const std::string& name)
+		    : Node (pGraph, name)
 	    {
             // Output Pins
             {
-                PinInfo info{ .parentId = this->uniqueId, .name = "Out", .kind = ned::PinKind::Output, .id = pEditor->uniqueId++ };
-                pEditor->pinIdToNodeId.insert({ info.id.Get(), info });
-                pins.push_back(std::move(info));
+                PinInfo info{ .parentId = this->uniqueId, .name = "Out", .kind = ned::PinKind::Output, .id = pGraph->uniqueId++ };
+                pGraph->pinIdToInfo.insert({ info.id.Get(), info });
+                pinIds.push_back(info.id.Get());
             }
+
+            trynass(!pGraph->entryId.has_value()).msg(L"The script already has an Entry Node!");
+
+            pGraph->entryId.emplace(uniqueId);
 	    }
 
         unsigned long long Execute() override
 	    {
-            return pins[0].linked ? pins[0].linkedId : uniqueId;
+            const auto& info = pGraph->pinIdToInfo[pinIds[0]];
+            return info.linked ? info.linkedId : uniqueId;
 	    }
     };
 
     template <typename T>
     struct SetVarNode : public Node
     {
-        SetVarNode(TrynEditorApp* editorApp, const std::string& name, const std::string& varname, T&& value) : Node(editorApp, name), varName(varname), value(std::forward<T>(value))
+        SetVarNode(ScriptGraph* editorApp, const std::string& name, const std::string& varname, T&& value) : Node(editorApp, name), varName(varname), value(std::forward<T>(value))
         {
             bool foundVar = false;
-            for (auto [index, variable] : std::ranges::views::enumerate(pEditorApp->variables))
+            for (auto [index, variable] : std::ranges::views::enumerate(pGraph->variables))
             {
 	            if (variable.name == varname)
 	            {
@@ -141,39 +165,40 @@ namespace tryn::ed
             if (!foundVar)
             {
 	            // Add new variable
-                pEditorApp->variables.push_back(Variable{.var = std::make_any<T>(), .name = varname});
-                varIndex = static_cast<uint16_t>(pEditorApp->variables.size() - 1);
+                pGraph->variables.push_back(Variable{.var = std::make_any<T>(), .name = varname});
+                varIndex = static_cast<uint16_t>(pGraph->variables.size() - 1);
             }
 
             // Input Pin
 
 	        {
 		        PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = ned::PinKind::Input, .id = editorApp->uniqueId++ };
-            	editorApp->pinIdToNodeId.insert({info.id.Get(), info});
-            	pins.push_back(std::move(info));
+            	editorApp->pinIdToInfo.insert({info.id.Get(), info});
+            	pinIds.push_back(info.id.Get());
 	        }
 
             // Output Pin
 	        {
 		        PinInfo info{ .parentId = this->uniqueId, .name = "Out", .kind = ned::PinKind::Output, .id = editorApp->uniqueId++ };
-            	editorApp->pinIdToNodeId.insert({info.id.Get(), info});
-            	pins.push_back(std::move(info));
+            	editorApp->pinIdToInfo.insert({info.id.Get(), info});
+            	pinIds.push_back(info.id.Get());
 	        }
 
         }
         T& GetVar()
         {
-            return std::any_cast<T&>(pEditorApp->variables[varIndex].var);
+            return std::any_cast<T&>(pGraph->variables[varIndex].var);
         }
         void SetVar()
         {
-	        std::any_cast<T&>(pEditorApp->variables[varIndex].var) = value;
+	        std::any_cast<T&>(pGraph->variables[varIndex].var) = value;
         }
 
         unsigned long long Execute() override
         {
 			SetVar();
-            return pins[1].linked ? pins[1].linkedId : uniqueId;
+            const auto& info = pGraph->pinIdToInfo[pinIds[1]];
+            return info.linked ? info.linkedId : uniqueId;
         }
 
     private:
@@ -184,7 +209,7 @@ namespace tryn::ed
 
     struct StateNode : public Node
     {
-        StateNode(TrynEditorApp* editorApp, const std::string& name, std::vector<std::string> states_)
+        StateNode(ScriptGraph* editorApp, const std::string& name, std::vector<std::string> states_)
 	        :
         Node(editorApp, name), numStates((uint16_t)states.size()), states(std::move(states_))
         {
@@ -193,8 +218,8 @@ namespace tryn::ed
 
             {
 		        PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = ned::PinKind::Input, .id = editorApp->uniqueId++ };
-            	editorApp->pinIdToNodeId.insert({info.id.Get(), info});
-            	pins.push_back(std::move(info));
+            	editorApp->pinIdToInfo.insert({info.id.Get(), info});
+            	pinIds.push_back(info.id.Get());
 	        }
 
             // Output Pins
@@ -202,18 +227,19 @@ namespace tryn::ed
             for (const auto& state : states)
             {
 	            PinInfo info{ .parentId = this->uniqueId, .name = "Out " + state, .kind = ned::PinKind::Output, .id = editorApp->uniqueId++ };
-            	editorApp->pinIdToNodeId.insert({info.id.Get(), info});
-            	pins.push_back(std::move(info));
+            	editorApp->pinIdToInfo.insert({info.id.Get(), info});
+            	pinIds.push_back(info.id.Get());
             }
         }
 
         unsigned long long Execute() override
         {
-	        return pins[currentState].linked ? pins[currentState].linkedId : uniqueId;
+            const auto& info = pGraph->pinIdToInfo[pinIds[currentState]];
+	        return info.linked ? info.linkedId : uniqueId;
         }
     private:
         uint16_t numStates = 0;
-        uint16_t currentState = 0;
+        uint16_t currentState = 1;
         std::vector<std::string> states;
     };
 
@@ -221,9 +247,9 @@ namespace tryn::ed
     {
     public:
         template <typename T>
-        static constexpr ConditionalNode Make(TrynEditorApp* pEditor, const std::string& name, const std::string& varName, T&& value_)
+        static constexpr ConditionalNode Make(ScriptGraph* pGraph, const std::string& name, const std::string& varName, T&& value_)
         {
-	        ConditionalNode retval(pEditor, name, varName);
+	        ConditionalNode retval(pGraph, name, varName);
 
             retval.checkFunc = [value_ = std::forward<T&&>(value_)](const std::any& value) -> bool
             {
@@ -234,7 +260,7 @@ namespace tryn::ed
             };
 
         	bool foundVar = false;
-            for (auto [index, variable] : std::ranges::views::enumerate(pEditor->variables))
+            for (auto [index, variable] : std::ranges::views::enumerate(pGraph->variables))
             {
 	            if (variable.name == varName)
 	            {
@@ -247,8 +273,8 @@ namespace tryn::ed
             if (!foundVar)
             {
 	            // Add new variable
-                pEditor->variables.push_back(Variable{.var = std::make_any<T>(), .name = varName});
-                retval.varIndex = static_cast<uint16_t>(pEditor->variables.size() - 1);
+                pGraph->variables.push_back(Variable{.var = std::make_any<T>(), .name = varName});
+                retval.varIndex = static_cast<uint16_t>(pGraph->variables.size() - 1);
             }
 
             return retval;
@@ -256,38 +282,40 @@ namespace tryn::ed
 
         unsigned long long Execute() override
         {
-	        if (const auto& value = pEditorApp->variables[varIndex].var; checkFunc(value))
+	        if (const auto& value = pGraph->variables[varIndex].var; checkFunc(value))
             {
-	            return pins[truePin].linked ? pins[truePin].linkedId : uniqueId;
+				const auto& info = pGraph->pinIdToInfo[pinIds[truePin]];
+	            return info.linked ? info.linkedId : uniqueId;
             }
             else
             {
-	            return pins[falsePin].linked ? pins[falsePin].linkedId : uniqueId;
+				const auto& info = pGraph->pinIdToInfo[pinIds[falsePin]];
+	            return info.linked ? info.linkedId : uniqueId;
             }
         }
 
     protected:
-	    ConditionalNode(TrynEditorApp* pEditor, const std::string& name, const std::string& varName) : Node(pEditor, name), varName(varName)
+	    ConditionalNode(ScriptGraph* pGraph, const std::string& name, const std::string& varName) : Node(pGraph, name), varName(varName)
 	    {
 		    // Input Pin
 	        {
-		        PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = ned::PinKind::Input, .id = pEditor->uniqueId++ };
-            	pEditor->pinIdToNodeId.insert({info.id.Get(), info});
-            	pins.push_back(std::move(info));
+		        PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = ned::PinKind::Input, .id = pGraph->uniqueId++ };
+            	pGraph->pinIdToInfo.insert({info.id.Get(), info});
+            	pinIds.push_back(info.id.Get());
 	        }
 
             // Output Pins
 	        {
-		        PinInfo info{ .parentId = this->uniqueId, .name = "True", .kind = ned::PinKind::Output, .id = pEditor->uniqueId++ };
-            	pEditor->pinIdToNodeId.insert({info.id.Get(), info});
-            	pins.push_back(std::move(info));
-                truePin = pins.size() - 1;
+		        PinInfo info{ .parentId = this->uniqueId, .name = "True", .kind = ned::PinKind::Output, .id = pGraph->uniqueId++ };
+            	pGraph->pinIdToInfo.insert({info.id.Get(), info});
+            	pinIds.push_back(info.id.Get());
+                truePin = pinIds.size() - 1;
 	        }
             {
-		        PinInfo info{ .parentId = this->uniqueId, .name = "False", .kind = ned::PinKind::Output, .id = pEditor->uniqueId++ };
-            	pEditor->pinIdToNodeId.insert({info.id.Get(), info});
-            	pins.push_back(std::move(info));
-                falsePin = pins.size() - 1;
+		        PinInfo info{ .parentId = this->uniqueId, .name = "False", .kind = ned::PinKind::Output, .id = pGraph->uniqueId++ };
+            	pGraph->pinIdToInfo.insert({info.id.Get(), info});
+            	pinIds.push_back(info.id.Get());
+                falsePin = pinIds.size() - 1;
 	        }
 	    }
 
@@ -303,77 +331,24 @@ namespace tryn::ed
 
     struct WaitNode : public Node
     {
-	    WaitNode(TrynEditorApp* pEditor, const std::string& name, float timeInSeconds)
+	    WaitNode(ScriptGraph* pGraph, const std::string& name, float timeInSeconds)
 		    :
-        Node(pEditor, name)
+        Node(pGraph, name)
 	    {
 		    // Implement
 	    }
     };
 
-
-    Node& TrynEditorApp::CreateNewNode(const std::string_view name, const int numberInputs, const int numberOutputs)
-    {
-        Node newVal(this, name);
-
-        for (int i = 0 ; i < numberInputs; i++)
-        {
-            PinInfo info{ .parentId = newVal.uniqueId, .name = "", .kind = ned::PinKind::Input, .id = uniqueId };
-            pinIdToNodeId.insert({ uniqueId, info });
-            newVal.pins.push_back(info);
-            uniqueId++;
-        }
-
-        for (int i = 0; i < numberOutputs; i++)
-        {
-            PinInfo info{ .parentId = newVal.uniqueId, .name = "", .kind = ned::PinKind::Output, .id = uniqueId };
-            pinIdToNodeId.insert({ uniqueId, info });
-            newVal.pins.push_back(info);
-            uniqueId++;
-        }
-
-        nodes.push_back(std::move(std::make_unique<Node>(std::move(newVal))));
-        nodeIdToNodeIndex.insert({newVal.uniqueId, static_cast<uint16_t>(nodes.size() - 1)});
-
-        return *nodes.back();
-    }
-
-    Node& TrynEditorApp::CreateNewNode(std::unique_ptr<Node>&& newVal)
-    {
-    	nodes.push_back(std::forward<std::unique_ptr<Node>>(newVal));
-        nodeIdToNodeIndex.insert({nodes.back()->uniqueId, static_cast<uint16_t>(nodes.size() - 1)});
-
-        return *nodes.back();
-    }
-
-    void TrynEditorApp::CreateNewLink(ax::NodeEditor::LinkId id, const PinInfo pin1, const PinInfo pin2)
-    {
-	    m_Links.emplace_back(id, pin1, pin2, this);
-
-        if (pin1.kind == ned::PinKind::Input)
-        {
-	        auto& outputNode = *nodes[nodeIdToNodeIndex[pin2.parentId]];
-    		auto& inputNode = *nodes[nodeIdToNodeIndex[pin1.parentId]];
-
-    		outputNode.childrenIds.push_back(nodeIdToNodeIndex[pin1.parentId]);
-        }
-        else
-        {
-	        auto& outputNode = *nodes[nodeIdToNodeIndex[pin2.parentId]];
-    		auto& inputNode = *nodes[nodeIdToNodeIndex[pin1.parentId]];
-
-    		outputNode.childrenIds.push_back(nodeIdToNodeIndex[pin1.parentId]);
-        }
-    }
-
     TrynEditorApp::TrynEditorApp(const std::shared_ptr<win::IWindow>& pWnd, const std::shared_ptr<gfx::IGraphics>& pGfx)
         : App(pWnd, pGfx), pContext(ned::CreateEditor())
     {
-        CreateNewNode(std::make_unique<SetVarNode<int>>(this, "SetFunnyNumberTo69", "funnyNumber", 69));
-        CreateNewNode(std::make_unique<StateNode>(this, "Logical Button - Secondary Fire", std::vector<std::string>{"RMBDown", "RMBUp"}));
-        CreateNewNode(std::make_unique<ConditionalNode>(std::move(ConditionalNode::Make(this, "IsReadyToShootRocket", "RocketReady", true))));
-        CreateNewNode(std::make_unique<EntryNode>(this, "Entry"));
+        pGraph = std::make_unique<ScriptGraph>();
+        pGraph->CreateNewNode(std::make_unique<SetVarNode<int>>(pGraph.get(), "SetFunnyNumberTo69", "funnyNumber", 69));
+        pGraph->CreateNewNode(std::make_unique<StateNode>(pGraph.get(), "Logical Button - Secondary Fire", std::vector<std::string>{"RMBDown", "RMBUp"}));
+        pGraph->CreateNewNode(std::make_unique<ConditionalNode>(std::move(ConditionalNode::Make(pGraph.get(), "IsReadyToShootRocket", "RocketReady", true))));
+        pGraph->CreateNewNode(std::make_unique<EntryNode>(pGraph.get(), "Entry"));
         ECS().GetSystemManager().Finalize();
+
     }
 
     void TrynEditorApp::DoFrame()
@@ -384,6 +359,23 @@ namespace tryn::ed
 
         ImGui::Separator();
 
+        if (debugging || ImGui::ColorButton("Debug Script", {150, 150, 0, 1},0, {25, 25}))
+        {
+            if (!debugging)
+            {
+	            currentNodeId = pGraph->entryId.value();
+                debugging = true;
+            }
+
+            currentNodeId = pGraph->nodes[pGraph->nodeIdToNodeIndex[currentNodeId]]->Execute();
+        }
+
+        if (ImGui::ColorButton("Stop Debugging", {0, 150, 150, 1},0, {25, 25}))
+        {
+            debugging = false;
+            currentNodeId = pGraph->entryId.value();
+        }
+
         ned::SetCurrentEditor(pContext);
 
         // Start interaction with editor.
@@ -393,13 +385,36 @@ namespace tryn::ed
         // 1) Commit known data to editor
         //
 
-        for (auto& node : nodes)
+    	static constexpr float rounding = 10.0f;
+    	static constexpr float padding  = 12.0f;
+
+        for (auto& node : pGraph->nodes)
         {
+            if (node->uniqueId == currentNodeId)
+				ned::PushStyleColor(ned::StyleColor_NodeBg,        ImColor(229, 129, 129, 200));
+            else
+				ned::PushStyleColor(ned::StyleColor_NodeBg,        ImColor(59, 59, 59, 200));
+
+        	ned::PushStyleColor(ned::StyleColor_NodeBorder,    ImColor(125, 125, 125, 200));
+        	ned::PushStyleColor(ned::StyleColor_PinRect,       ImColor(229, 229, 229, 60));
+        	ned::PushStyleColor(ned::StyleColor_PinRectBorder, ImColor(125, 125, 125, 60));
+
+            ned::PushStyleVar(ned::StyleVar_NodePadding,  ImVec4(0, 0, 0, 0));
+            ned::PushStyleVar(ned::StyleVar_NodeRounding, rounding);
+            ned::PushStyleVar(ned::StyleVar_SourceDirection, ImVec2(0.0f,  1.0f));
+            ned::PushStyleVar(ned::StyleVar_TargetDirection, ImVec2(0.0f, -1.0f));
+            ned::PushStyleVar(ned::StyleVar_LinkStrength, 0.0f);
+            ned::PushStyleVar(ned::StyleVar_PinBorderWidth, 1.0f);
+            ned::PushStyleVar(ned::StyleVar_PinRadius, 6.0f);
+
             node->Submit();
+
+            ned::PopStyleVar(7);
+        	ned::PopStyleColor(4);
         }
 
         // Submit Links
-        for (auto& linkInfo : m_Links)
+        for (auto& linkInfo : pGraph->m_Links)
             ned::Link(linkInfo.Id, linkInfo.InputId, linkInfo.OutputId);
 
         //
@@ -429,18 +444,21 @@ namespace tryn::ed
                     // ned::AcceptNewItem() return true when user release mouse button.
                     if (ned::AcceptNewItem())
                     {
-                        const auto& inputPinInfo = pinIdToNodeId[inputPinId.Get()];
-                        const auto& outputPinInfo = pinIdToNodeId[outputPinId.Get()];
+                        auto& inputPinInfo = pGraph->pinIdToInfo[inputPinId.Get()];
+                        auto& outputPinInfo = pGraph->pinIdToInfo[outputPinId.Get()];
 
                         bool accepted = true;
 
                         if (inputPinInfo.kind == outputPinInfo.kind)
                             accepted = false;
 
+                        if (inputPinInfo.linked || outputPinInfo.linked)
+                            accepted = false;
+
                         if (accepted)
                         {
 	                        // Since we accepted new link, lets add one to our list of links.
-                            CreateNewLink(m_NextLinkId++, inputPinInfo, outputPinInfo);
+                            pGraph->m_Links.emplace_back(pGraph->m_NextLinkId++, inputPinInfo, outputPinInfo, pGraph.get());
                         }
                     }
 
@@ -464,11 +482,11 @@ namespace tryn::ed
                 if (ned::AcceptDeletedItem())
                 {
                     // Then remove link from your data.
-                    for (auto it = m_Links.begin(); it < m_Links.end(); it++)
+                    for (auto it = pGraph->m_Links.begin(); it < pGraph->m_Links.end(); it++)
                     {
                         if (it->Id == deletnedLinkId)
                         { 
-                            m_Links.erase(it);
+                            pGraph->m_Links.erase(it);
                             break;
                         }
                     }
@@ -495,20 +513,130 @@ namespace tryn::ed
     	//ImGui::ShowMetricsWindow();
     }
 
+    Link::Link(const ned::LinkId id, PinInfo& pin1, PinInfo& pin2, ScriptGraph* pGraph)
+        :
+        Id(id), pGraph(pGraph)
+        {
+            auto& nodes = pGraph->nodes;
+            auto& nodeIdToNodeIndex = pGraph->nodeIdToNodeIndex;
+
+		    if (pin1.kind == ned::PinKind::Input)
+		    {
+		        auto& outputNode = *nodes[nodeIdToNodeIndex[pin2.parentId]];
+    			auto& inputNode = *nodes[nodeIdToNodeIndex[pin1.parentId]];
+
+    			outputNode.childrenIds.push_back(inputNode.uniqueId);
+
+                InputId = pin1.id;
+                OutputId = pin2.id;
+		    }
+		    else
+		    {
+		        auto& outputNode = *nodes[nodeIdToNodeIndex[pin1.parentId]];
+    			auto& inputNode = *nodes[nodeIdToNodeIndex[pin2.parentId]];
+
+    			outputNode.childrenIds.push_back(inputNode.uniqueId);
+
+                InputId = pin2.id;
+                OutputId = pin1.id;
+		    }
+            pin1.linked = true;
+			pin2.linked = true;
+			pin1.linkedId = pin2.parentId;
+			pin2.linkedId = pin1.parentId;
+        }
+
 	Link::~Link()
     {
-        trynass(pEditor);
+        if (!pGraph)
+            return;
 
-        auto& children = pEditor->nodes[pEditor->nodeIdToNodeIndex[OutputId.Get()]]->childrenIds;
+    	auto& inputPinInfo = pGraph->pinIdToInfo[InputId.Get()];
+        auto& outputPinInfo = pGraph->pinIdToInfo[OutputId.Get()];
+
+        auto& children = pGraph->nodes[pGraph->nodeIdToNodeIndex[outputPinInfo.parentId]]->childrenIds;
 
         for (auto it = children.begin(); it < children.end(); it++)
         {
-	        if (*it == InputId.Get())
+	        if (*it == inputPinInfo.parentId)
 	        {
 		        children.erase(it);
                 break;
 	        }
         }
+
+        inputPinInfo.linked = false;
+        outputPinInfo.linked = false;
     }
 
+	Node& ScriptGraph::CreateNewNode(std::unique_ptr<Node>&& newVal)
+	{
+    	nodes.push_back(std::forward<std::unique_ptr<Node>>(newVal));
+        nodeIdToNodeIndex.insert({nodes.back()->uniqueId, static_cast<uint16_t>(nodes.size() - 1)});
+
+        return *nodes.back();
+	}
+
+    void ScriptGraph::CreateNewLink(ax::NodeEditor::LinkId id, PinInfo& pin1, PinInfo& pin2)
+		{
+			m_Links.emplace_back(id, pin1, pin2, this);
+
+		    if (pin1.kind == ned::PinKind::Input)
+		    {
+		        auto& outputNode = *nodes[nodeIdToNodeIndex[pin2.parentId]];
+    			auto& inputNode = *nodes[nodeIdToNodeIndex[pin1.parentId]];
+
+    			outputNode.childrenIds.push_back(nodeIdToNodeIndex[pin1.parentId]);
+		    }
+		    else
+		    {
+		        auto& outputNode = *nodes[nodeIdToNodeIndex[pin2.parentId]];
+    			auto& inputNode = *nodes[nodeIdToNodeIndex[pin1.parentId]];
+
+    			outputNode.childrenIds.push_back(nodeIdToNodeIndex[pin1.parentId]);
+		    }
+		}
+
+    struct TestStruct
+    {
+	    int matias;
+        float marcelo;
+        double bast;
+    };
 }
+
+namespace tryn::ser
+{
+	template <EdNamespace T>
+	void SerializeWrite(const StreamWriter& sw, const T& data, const bool binary, const std::string& name)
+	{
+		reflect::for_each(
+            [&](const auto I)
+            {
+                sw.Serialize(reflect::get<I>(data), binary);
+            }, data
+        );
+	}
+
+	template <EdNamespace T>
+    T SerializeRead(const StreamReader& sr, const bool binary, const ExtraDataPack* pExtraData)
+	{
+        T retval;
+		reflect::for_each(
+            [&](const auto I)
+            {
+                sr.ReadSerialized(reflect::get<I>(retval), binary, pExtraData);
+            }, retval
+        );
+
+        return retval;
+	}
+	
+}
+
+void ed::TrynEditorApp::SerializeGraph()
+{
+    ed::TestStruct test;
+    writer.Serialize(test, true, "graphTest");
+}
+
