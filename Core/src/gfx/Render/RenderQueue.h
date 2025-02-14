@@ -31,7 +31,7 @@ namespace tryn::gfx
 		template <typename Job, typename... Args>
 		void Push(Args&&...args)
 		{
-			anyVector.PushBack(std::move(Job(std::forward<Args>(args)..., anyVector.Size())));
+			anyVector.PushBack(std::move(Job(std::forward<Args>(args)..., (uint16_t)anyVector.Size())));
 		}
 		utl::AnyVector& GetAnyVector();
 	private:

@@ -1,5 +1,6 @@
 #include "EditorApp.h"
 #include <TrynEditor/third/imgui-node-editor-0.9.3/imgui_node_editor.h>
+#include <functional>
 
 namespace ned = ax::NodeEditor;
 
@@ -10,9 +11,11 @@ namespace tryn::ed
 	struct PinInfo
     {
         unsigned long long parentId;
+        unsigned long long linkedId;
         std::string name;
         ned::PinKind kind;
         ned::PinId id;
+        bool linked = false;
     };
 
     struct Link
@@ -20,10 +23,11 @@ namespace tryn::ed
         ned::LinkId Id;
         ned::PinId  InputId;
         ned::PinId  OutputId;
+        TrynEditorApp* pEditor = nullptr;
 
-        Link(const ned::LinkId id, const PinInfo pin1, const PinInfo pin2)
+        Link(const ned::LinkId id, const PinInfo pin1, const PinInfo pin2, TrynEditorApp* pEditor)
 	        :
-        Id(id)
+        Id(id), pEditor(pEditor)
         {
 	        if (pin1.kind == ned::PinKind::Input)
 	        {
@@ -36,6 +40,7 @@ namespace tryn::ed
                 OutputId = pin1.id;
             }
         }
+        ~Link();
     };
 
     void ImGuiEx_BeginColumn()
@@ -57,10 +62,11 @@ namespace tryn::ed
 
     struct Node
     {
+        virtual ~Node() = default;
         unsigned long long uniqueId;
         std::vector<PinInfo> pins;
         std::vector<uint16_t> childrenIds;
-        std::string_view name;
+        std::string name;
         Node() = delete;
         void Submit()
         {
@@ -86,15 +92,199 @@ namespace tryn::ed
             ned::EndNode();
         }
         bool placed = false;
+        TrynEditorApp* pEditorApp;
+
+        virtual unsigned long long Execute() { return uniqueId; }
+
 
         friend class TrynEditorApp;
+        Node(Node&&) = default;
+    protected:
+        Node(TrynEditorApp* pEditor, const std::string_view name) : uniqueId(pEditor->uniqueId++), name(name), pEditorApp(pEditor) {}
+    };
+
+    template <typename T>
+    struct SetVarNode : public Node
+    {
+        SetVarNode(TrynEditorApp* editorApp, const std::string& name, const std::string& varname, T&& value) : Node(editorApp, name), varName(varname), value(std::forward<T>(value))
+        {
+            bool foundVar = false;
+            for (auto [index, variable] : std::ranges::views::enumerate(pEditorApp->variables))
+            {
+	            if (variable.name == varname)
+	            {
+		            varIndex = index;
+                    foundVar = true;
+                    break;
+	            }
+            }
+
+            if (!foundVar)
+            {
+	            // Add new variable
+                pEditorApp->variables.push_back(Variable{.var = std::make_any<T>(), .name = varname});
+                varIndex = static_cast<uint16_t>(pEditorApp->variables.size() - 1);
+            }
+
+            // Input Pin
+
+	        {
+		        PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = ned::PinKind::Input, .id = editorApp->uniqueId++ };
+            	editorApp->pinIdToNodeId.insert({info.id.Get(), info});
+            	pins.push_back(std::move(info));
+	        }
+
+            // Output Pin
+	        {
+		        PinInfo info{ .parentId = this->uniqueId, .name = "Out", .kind = ned::PinKind::Output, .id = editorApp->uniqueId++ };
+            	editorApp->pinIdToNodeId.insert({info.id.Get(), info});
+            	pins.push_back(std::move(info));
+	        }
+
+        }
+        T& GetVar()
+        {
+            return std::any_cast<T>(pEditorApp->variables[varIndex].var);
+        }
+        void SetVar()
+        {
+	        std::any_cast<T>(pEditorApp->variables[varIndex].var) = value;
+        }
+
+        unsigned long long Execute() override
+        {
+			SetVar();
+            return pins[0].linked ? pins[0].linkedId : uniqueId;
+        }
+
     private:
-        Node(const unsigned long long id, const std::string_view name) : uniqueId(id), name(name) {}
+        uint16_t varIndex;
+        std::string varName;
+        T value;
+    };
+
+    struct StateNode : public Node
+    {
+        StateNode(TrynEditorApp* editorApp, const std::string& name, std::vector<std::string> states_)
+	        :
+        Node(editorApp, name), numStates((uint16_t)states.size()), states(std::move(states_))
+        {
+
+            // Input Pin
+
+            {
+		        PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = ned::PinKind::Input, .id = editorApp->uniqueId++ };
+            	editorApp->pinIdToNodeId.insert({info.id.Get(), info});
+            	pins.push_back(std::move(info));
+	        }
+
+            // Output Pins
+
+            for (const auto& state : states)
+            {
+	            PinInfo info{ .parentId = this->uniqueId, .name = "Out " + state, .kind = ned::PinKind::Output, .id = editorApp->uniqueId++ };
+            	editorApp->pinIdToNodeId.insert({info.id.Get(), info});
+            	pins.push_back(std::move(info));
+            }
+        }
+
+        unsigned long long Execute() override
+        {
+	        return pins[currentState].linked ? pins[currentState].linkedId : uniqueId;
+        }
+    private:
+        uint16_t numStates = 0;
+        uint16_t currentState = 0;
+        std::vector<std::string> states;
+    };
+
+    struct ConditionalNode : public Node
+    {
+    public:
+        template <typename T>
+        static constexpr ConditionalNode Make(TrynEditorApp* pEditor, const std::string& name, const std::string& varName, T&& value_)
+        {
+	        ConditionalNode retval(pEditor, name, varName);
+
+            retval.checkFunc = [value_ = std::forward<T&&>(value_)](const std::any& value) -> bool
+            {
+	            static const auto ref = value_;
+                const auto& val = std::any_cast<const T>(value);
+
+                return val == ref;
+            };
+
+        	bool foundVar = false;
+            for (auto [index, variable] : std::ranges::views::enumerate(pEditor->variables))
+            {
+	            if (variable.name == varName)
+	            {
+		            retval.varIndex = index;
+                    foundVar = true;
+                    break;
+	            }
+            }
+
+            if (!foundVar)
+            {
+	            // Add new variable
+                pEditor->variables.push_back(Variable{.var = std::make_any<T>(), .name = varName});
+                retval.varIndex = static_cast<uint16_t>(pEditor->variables.size() - 1);
+            }
+
+            return retval;
+        }
+
+        unsigned long long Execute() override
+        {
+	        if (const auto& value = pEditorApp->variables[varIndex].var; checkFunc(value))
+            {
+	            return pins[truePin].linked ? pins[truePin].linkedId : uniqueId;
+            }
+            else
+            {
+	            return pins[falsePin].linked ? pins[falsePin].linkedId : uniqueId;
+            }
+        }
+
+    protected:
+	    ConditionalNode(TrynEditorApp* pEditor, const std::string& name, const std::string& varName) : Node(pEditor, name), varName(varName)
+	    {
+		    // Input Pin
+	        {
+		        PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = ned::PinKind::Input, .id = pEditor->uniqueId++ };
+            	pEditor->pinIdToNodeId.insert({info.id.Get(), info});
+            	pins.push_back(std::move(info));
+	        }
+
+            // Output Pins
+	        {
+		        PinInfo info{ .parentId = this->uniqueId, .name = "True", .kind = ned::PinKind::Output, .id = pEditor->uniqueId++ };
+            	pEditor->pinIdToNodeId.insert({info.id.Get(), info});
+            	pins.push_back(std::move(info));
+                truePin = pins.size() - 1;
+	        }
+            {
+		        PinInfo info{ .parentId = this->uniqueId, .name = "False", .kind = ned::PinKind::Output, .id = pEditor->uniqueId++ };
+            	pEditor->pinIdToNodeId.insert({info.id.Get(), info});
+            	pins.push_back(std::move(info));
+                falsePin = pins.size() - 1;
+	        }
+	    }
+
+        std::function<bool(const std::any&)> checkFunc;
+        uint16_t varIndex = 0;
+        std::string varName;
+
+        // pins
+
+        uint16_t truePin = 0;
+        uint16_t falsePin = 0;
     };
 
     Node& TrynEditorApp::CreateNewNode(const std::string_view name, const int numberInputs, const int numberOutputs)
     {
-        Node newVal(uniqueId++, name);
+        Node newVal(this, name);
 
         for (int i = 0 ; i < numberInputs; i++)
         {
@@ -112,32 +302,38 @@ namespace tryn::ed
             uniqueId++;
         }
 
-        nodes.push_back(newVal);
+        nodes.push_back(std::move(std::make_unique<Node>(std::move(newVal))));
         nodeIdToNodeIndex.insert({newVal.uniqueId, static_cast<uint16_t>(nodes.size() - 1)});
 
-        return nodes.back();
+        return *nodes.back();
+    }
+
+    Node& TrynEditorApp::CreateNewNode(std::unique_ptr<Node>&& newVal)
+    {
+    	nodes.push_back(std::forward<std::unique_ptr<Node>>(newVal));
+        nodeIdToNodeIndex.insert({nodes.back()->uniqueId, static_cast<uint16_t>(nodes.size() - 1)});
+
+        return *nodes.back();
     }
 
     void TrynEditorApp::CreateNewLink(ax::NodeEditor::LinkId id, const PinInfo pin1, const PinInfo pin2)
     {
-	    m_Links.emplace_back(id, pin1, pin2);
+	    m_Links.emplace_back(id, pin1, pin2, this);
 
         if (pin1.kind == ned::PinKind::Input)
         {
-	        auto& outputNode = nodes[nodeIdToNodeIndex[pin2.parentId]];
-    		auto& inputNode = nodes[nodeIdToNodeIndex[pin1.parentId]];
+	        auto& outputNode = *nodes[nodeIdToNodeIndex[pin2.parentId]];
+    		auto& inputNode = *nodes[nodeIdToNodeIndex[pin1.parentId]];
 
     		outputNode.childrenIds.push_back(nodeIdToNodeIndex[pin1.parentId]);
         }
         else
         {
-	        auto& outputNode = nodes[nodeIdToNodeIndex[pin2.parentId]];
-    		auto& inputNode = nodes[nodeIdToNodeIndex[pin1.parentId]];
+	        auto& outputNode = *nodes[nodeIdToNodeIndex[pin2.parentId]];
+    		auto& inputNode = *nodes[nodeIdToNodeIndex[pin1.parentId]];
 
     		outputNode.childrenIds.push_back(nodeIdToNodeIndex[pin1.parentId]);
         }
-    	
-
     }
 
     TrynEditorApp::TrynEditorApp(const std::shared_ptr<win::IWindow>& pWnd, const std::shared_ptr<gfx::IGraphics>& pGfx)
@@ -145,7 +341,9 @@ namespace tryn::ed
     {
         CreateNewNode("A", 3, 3);
         CreateNewNode("B", 1, 2);
-
+        CreateNewNode(std::make_unique<SetVarNode<int>>(this, "SetFunnyNumberTo69", "funnyNumber", 69));
+        CreateNewNode(std::make_unique<StateNode>(this, "Logical Button - Secondary Fire", std::vector<std::string>{"RMBDown", "RMBUp"}));
+        CreateNewNode(std::make_unique<ConditionalNode>(std::move(ConditionalNode::Make(this, "IsReadyToShootRocket", "RocketReady", true))));
         ECS().GetSystemManager().Finalize();
     }
 
@@ -168,7 +366,7 @@ namespace tryn::ed
 
         for (auto& node : nodes)
         {
-            node.Submit();
+            node->Submit();
         }
 
         // Submit Links
@@ -213,7 +411,7 @@ namespace tryn::ed
                         if (accepted)
                         {
 	                        // Since we accepted new link, lets add one to our list of links.
-                        	m_Links.push_back({ ned::LinkId(m_NextLinkId++), inputPinInfo, outputPinInfo });
+                            CreateNewLink(m_NextLinkId++, inputPinInfo, outputPinInfo);
                         }
                     }
 
@@ -237,11 +435,11 @@ namespace tryn::ed
                 if (ned::AcceptDeletedItem())
                 {
                     // Then remove link from your data.
-                    for (auto& link : m_Links)
+                    for (auto it = m_Links.begin(); it < m_Links.end(); it++)
                     {
-                        if (link.Id == deletnedLinkId)
+                        if (it->Id == deletnedLinkId)
                         { 
-                            m_Links.erase(&link);
+                            m_Links.erase(it);
                             break;
                         }
                     }
@@ -267,4 +465,21 @@ namespace tryn::ed
 
     	//ImGui::ShowMetricsWindow();
     }
+
+	Link::~Link()
+    {
+        trynass(pEditor);
+
+        auto& children = pEditor->nodes[pEditor->nodeIdToNodeIndex[OutputId.Get()]]->childrenIds;
+
+        for (auto it = children.begin(); it < children.end(); it++)
+        {
+	        if (*it == InputId.Get())
+	        {
+		        children.erase(it);
+                break;
+	        }
+        }
+    }
+
 }
