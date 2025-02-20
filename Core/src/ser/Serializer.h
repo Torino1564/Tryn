@@ -66,10 +66,10 @@ namespace tryn::ser
 	};
 
 	template <typename T>
-	concept HasFunctionSerializer = requires (const class StreamWriter& sw, const class StreamReader& sr, const T& data, const bool binary, const std::string& name, const class ExtraDataPack* pExtraData)
+	concept HasFunctionSerializer = requires (const class StreamWriter& sw, const class StreamReader& sr, const T& data, T& data_, const bool binary, const std::string& name, const class ExtraDataPack* pExtraData)
 	{
 		{ SerializeWrite(sw, data, binary, name) } -> std::same_as<void>;
-		{ SerializeRead<T>(sr, binary, pExtraData) } -> std::same_as<T>;
+		{ SerializeRead(sr, data_, binary, pExtraData) } -> std::same_as<void>;
 	};
 
 	template <typename T>

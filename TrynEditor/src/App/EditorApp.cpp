@@ -1,15 +1,8 @@
 #include "EditorApp.h"
 #include <TrynEditor/third/imgui-node-editor-0.9.3/imgui_node_editor.h>
 #include <functional>
-#include <TrynEditor/third/reflect.hpp>
 
 namespace ned = ax::NodeEditor;
-
-template <typename T, typename = void> struct IsMemberOfEd : std::false_type {};
-template <typename T> struct IsMemberOfEd<T, decltype(AdlIsMemberOfEd_impl_(std::declval<T>()))> : std::true_type {};
-
-template <typename T>
-concept EdNamespace = IsMemberOfEd<T>::value;
 
 namespace tryn::ed
 {
@@ -74,6 +67,7 @@ namespace tryn::ed
         }
         ~Link();
 
+        friend Link ser::SerializeRead(const ser::StreamReader& sr, const bool binary, const ser::ExtraDataPack* pExtraData);
     private:
         Link() = default;
     };
@@ -596,47 +590,112 @@ namespace tryn::ed
     			outputNode.childrenIds.push_back(nodeIdToNodeIndex[pin1.parentId]);
 		    }
 		}
-
-    struct TestStruct
-    {
-	    int matias;
-        float marcelo;
-        double bast;
-    };
 }
 
 namespace tryn::ser
 {
-	template <EdNamespace T>
-	void SerializeWrite(const StreamWriter& sw, const T& data, const bool binary, const std::string& name)
+	void SerializeWrite(const StreamWriter& sw, const ed::ScriptGraph& data, const bool binary, const std::string& name)
 	{
-		reflect::for_each(
-            [&](const auto I)
-            {
-                sw.Serialize(reflect::get<I>(data), binary);
-            }, data
-        );
+        sw.Serialize(data.m_Links, binary);
+        sw.Serialize(data.nodes, binary);
+        sw.Serialize(data.entryId, binary);
+        sw.Serialize(data.pinIdToInfo, binary);
+        sw.Serialize(data.variables, binary);
+        sw.Serialize(data.uniqueId, binary);
+        sw.Serialize(data.m_NextLinkId, binary);
+        sw.Serialize(data.name, binary);
+
 	}
 
-	template <EdNamespace T>
-    T SerializeRead(const StreamReader& sr, const bool binary, const ExtraDataPack* pExtraData)
+    void SerializeRead(const StreamReader& sr, ed::ScriptGraph& data, const bool binary, const ExtraDataPack* pExtraData)
 	{
-        T retval;
-		reflect::for_each(
-            [&](const auto I)
-            {
-                sr.ReadSerialized(reflect::get<I>(retval), binary, pExtraData);
-            }, retval
-        );
-
-        return retval;
+        sr.ReadSerialized(data.m_Links, binary, pExtraData);
+        sr.ReadSerialized(data.nodes, binary, pExtraData);
+        sr.ReadSerialized(data.entryId, binary, pExtraData);
+        sr.ReadSerialized(data.pinIdToInfo, binary, pExtraData);
+        sr.ReadSerialized(data.variables, binary, pExtraData);
+        sr.ReadSerialized(data.uniqueId, binary, pExtraData);
+        sr.ReadSerialized(data.m_NextLinkId, binary, pExtraData);
+        sr.ReadSerialized(data.name, binary, pExtraData);
 	}
+
+    void SerializeWrite(const StreamWriter& sw, const ed::Link& data, const bool binary, const std::string& name)
+	{
+        sw.Serialize(data.Id, binary);
+        sw.Serialize(data.InputId, binary);
+        sw.Serialize(data.OutputId, binary);
+	}
+
+    void SerializeRead(const StreamReader& sr, ed::Link& data_, const bool binary, const ExtraDataPack* pExtraData = nullptr)
+    {
+        pExtraData->Get("pEditor").Get((const void**)&data_.pGraph);
+        sr.ReadSerialized(data_.Id, binary);
+        sr.ReadSerialized(data_.InputId, binary);
+        sr.ReadSerialized(data_.OutputId, binary);
+    }
+
+    void SerializeWrite(const StreamWriter& sw, const ed::Node& data, const bool binary, const std::string& name)
+    {
+        sw.Serialize(data.uniqueId, binary);
+        sw.Serialize(data.pinIds, binary);
+        sw.Serialize(data.childrenIds, binary);
+        sw.Serialize(data.name, binary);
+    }
+
+    void SerializeRead(const StreamReader& sr, ed::Node& data, const bool binary, const ExtraDataPack* pExtraData = nullptr)
+    {
+        pExtraData->Get("pEditor").Get((const void**)data.pGraph);
+        sr.ReadSerialized(data.uniqueId, binary, pExtraData);
+        sr.ReadSerialized(data.pinIds, binary, pExtraData);
+        sr.ReadSerialized(data.childrenIds, binary, pExtraData);
+        sr.ReadSerialized(data.name, binary, pExtraData);
+    }
+
+    unsigned long long parentId;
+    unsigned long long linkedId;
+    std::string name;
+    ned::PinKind kind;
+    ned::PinId id;
+    bool linked = false;
+
+    void SerializeWrite(const StreamWriter& sw, const ed::PinInfo& data, const bool binary, const std::string& name)
+    {
+        sw.Serialize(data.parentId, binary);
+        sw.Serialize(data.linkedId, binary);
+        sw.Serialize(data.name, binary);
+        sw.Serialize(data.kind, binary);
+        sw.Serialize(data.id, binary);
+        sw.Serialize(data.linked, binary);
+    }
+
+    void SerializeRead(const StreamReader& sr, ed::PinInfo& data, const bool binary, const ExtraDataPack* pExtraData = nullptr)
+    {
+        sr.ReadSerialized(data.parentId, binary, pExtraData);
+        sr.ReadSerialized(data.linkedId, binary, pExtraData);
+        sr.ReadSerialized(data.name, binary, pExtraData);
+        sr.ReadSerialized(data.kind, binary, pExtraData);
+        sr.ReadSerialized(data.id, binary, pExtraData);
+        sr.ReadSerialized(data.linked, binary, pExtraData);
+    }
+
+    void SerializeWrite(const StreamWriter& sw, const ed::Variable& data, const bool binary, const std::string& name)
+    {
+        sw.Serialize(data.name, binary);
+        sw.Serialize(data.var, binary);
+    }
+
+    void SerializeRead(const StreamReader& sr, ed::Variable& data, const bool binary, const ExtraDataPack* pExtraData = nullptr)
+    {
+        sr.ReadSerialized(data.name, binary, pExtraData);
+        sr.ReadSerialized(data.var, binary, pExtraData);
+    }
+
+    static_assert(Serializable<ed::PinInfo>);
 	
 }
 
 void ed::TrynEditorApp::SerializeGraph()
 {
-    ed::TestStruct test;
-    writer.Serialize(test, true, "graphTest");
+    writer.Serialize(*pGraph, true, "graphTest");
 }
 

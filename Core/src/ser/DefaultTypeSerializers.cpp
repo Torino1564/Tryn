@@ -13,4 +13,19 @@ namespace tryn::ser
 
 		streamWriter.GetStringStream() << data;
 	}
+
+	void TypeSerializer<std::string>::Read(std::string& data, const StreamReader& sr, const bool binary,
+		const ExtraDataPack* pExtraData)
+	{
+		std::size_t numChars = 0;
+
+		char sizeStr[(sizeof(std::size_t) * 2) + 1] = { 0 };
+		sr.GetStringStream().read(sizeStr, sizeof(std::size_t) * 2);
+
+		numChars = std::strtoul(sizeStr, nullptr, 16);
+
+		data.resize(numChars);
+
+		sr.GetStringStream().read(data.data(), numChars);
+	}
 }

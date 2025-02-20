@@ -103,6 +103,8 @@ namespace tryn::ser
 
 			return newString;
 		}
+
+		static void Read(std::string& data, const StreamReader& sr, const bool binary = true, const ExtraDataPack* pExtraData = nullptr);
 	};
 
 	template <Serializable T, Serializable K>
