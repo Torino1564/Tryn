@@ -12,6 +12,45 @@ namespace tryn::ed
 	struct PinInfo;
     struct ScriptGraph;
 
+    class TypeRegister
+    {
+	    template <typename T>
+        void RegisterType()
+        {
+            static constexpr auto uuid = ZT_TYPE_UUID(T);
+            const auto it = std::ranges::find_if(functionPtrs, [&](const auto pair)
+            {
+	           return pair.first ==  uuid;
+            });
+
+            if (it == functionPtrs.end())
+            {
+	            functionPtrs.insert({uuid, [](std::any& anyRef)
+	            {
+		            anyRef.emplace<T>();
+	            }});
+            }
+
+            trylog.info(std::format("The type \"{}\" with UUID: {} is already registered", ZT_TYPE_OF(T), uuid));
+        }
+
+        void ConstructAny(std::any& anyRef, utl::UUID_t uuid)
+	    {
+            const auto it = std::ranges::find_if(functionPtrs, [&](const auto pair)
+            {
+	           return pair.first ==  uuid;
+            });
+
+            trynass(it != functionPtrs.end()).msg(L"Unknown type requested!");
+
+            anyRef.reset();
+
+            it->second(anyRef);
+	    }
+
+        std::vector<std::pair<utl::UUID_t, void(*)(std::any&)>> functionPtrs;
+    };
+
 	struct ScriptGraph
     {
     	Node& CreateNewNode(std::unique_ptr<Node>&& newVal);
@@ -67,7 +106,7 @@ namespace tryn::ed
         }
         ~Link();
 
-        friend Link ser::SerializeRead(const ser::StreamReader& sr, const bool binary, const ser::ExtraDataPack* pExtraData);
+        //friend Link ser::SerializeRead(const ser::StreamReader& sr, const bool binary, const ser::ExtraDataPack* pExtraData);
     private:
         Link() = default;
     };
@@ -594,7 +633,7 @@ namespace tryn::ed
 
 namespace tryn::ser
 {
-	void SerializeWrite(const StreamWriter& sw, const ed::ScriptGraph& data, const bool binary, const std::string& name)
+	/*void SerializeWrite(const StreamWriter& sw, const ed::ScriptGraph& data, const bool binary, const std::string& name)
 	{
         sw.Serialize(data.m_Links, binary);
         sw.Serialize(data.nodes, binary);
@@ -651,13 +690,6 @@ namespace tryn::ser
         sr.ReadSerialized(data.name, binary, pExtraData);
     }
 
-    unsigned long long parentId;
-    unsigned long long linkedId;
-    std::string name;
-    ned::PinKind kind;
-    ned::PinId id;
-    bool linked = false;
-
     void SerializeWrite(const StreamWriter& sw, const ed::PinInfo& data, const bool binary, const std::string& name)
     {
         sw.Serialize(data.parentId, binary);
@@ -688,14 +720,13 @@ namespace tryn::ser
     {
         sr.ReadSerialized(data.name, binary, pExtraData);
         sr.ReadSerialized(data.var, binary, pExtraData);
-    }
+    }*/
 
-    static_assert(Serializable<ed::PinInfo>);
 	
 }
 
 void ed::TrynEditorApp::SerializeGraph()
 {
-    writer.Serialize(*pGraph, true, "graphTest");
+    //writer.Serialize(*pGraph, true, "graphTest");
 }
 

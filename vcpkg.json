@@ -10,13 +10,6 @@
         "docking-experimental"
       ]
     },
-    {
-      "name": "llvm",
-      "default-features": false,
-      "features": [
-        "tools"
-      ]
-    },
     "glaze"
   ]
 }
