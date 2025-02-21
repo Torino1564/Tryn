@@ -45,5 +45,7 @@ namespace tryn::ed
 		std::istringstream iss;
 		ser::StreamWriter writer = ser::StreamWriter(oss);
 		ser::StreamReader reader = ser::StreamReader(iss);
+
+		std::unique_ptr<class Compiler> pCompiler;
 	};
 }

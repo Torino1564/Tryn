@@ -5,7 +5,8 @@ namespace tryn::ed
 {
 	class Compiler
 	{
-		void CompileToDLL(const std::filesystem::path& path, std::string_view fileName);
-	};	
+	public:
+		void CompileToDLL(const std::string& sourceFile, const std::string& objectFile);
+	};
 }
 

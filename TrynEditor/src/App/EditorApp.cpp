@@ -5,6 +5,8 @@
 #include <sstream>
 #include <fstream>
 #include "TypeRegister.h"
+#include <TrynEditor/src/dll/Compiler.h>
+
 
 namespace ned = ax::NodeEditor;
 
@@ -18,6 +20,7 @@ namespace tryn::ed
 
 	struct ScriptGraph
     {
+        ScriptGraph(std::string_view name) : name(name) {};
     	Node& CreateNewNode(std::unique_ptr<Node>&& newVal);
 		void CreateNewLink(ax::NodeEditor::LinkId id, PinInfo& pin1, PinInfo& pin2);
 
@@ -338,13 +341,14 @@ namespace tryn::ed
     TrynEditorApp::TrynEditorApp(const std::shared_ptr<win::IWindow>& pWnd, const std::shared_ptr<gfx::IGraphics>& pGfx)
         : App(pWnd, pGfx), pContext(ned::CreateEditor())
     {
-        pGraph = std::make_unique<ScriptGraph>();
+        pGraph = std::make_unique<ScriptGraph>("TestGraph");
         pGraph->CreateNewNode(std::make_unique<SetVarNode<int>>(pGraph.get(), "SetFunnyNumberTo69", "funnyNumber", 69));
         pGraph->CreateNewNode(std::make_unique<StateNode>(pGraph.get(), "Logical Button - Secondary Fire", std::vector<std::string>{"RMBDown", "RMBUp"}));
         pGraph->CreateNewNode(std::make_unique<ConditionalNode>(std::move(ConditionalNode::Make(pGraph.get(), "IsReadyToShootRocket", "RocketReady", true))));
         pGraph->CreateNewNode(std::make_unique<EntryNode>(pGraph.get(), "Entry"));
         ECS().GetSystemManager().Finalize();
 
+        pCompiler = std::make_unique<Compiler>();
     }
 
     void TrynEditorApp::DoFrame()
@@ -737,7 +741,6 @@ namespace tryn::ser
 void ed::TrynEditorApp::SerializeGraph()
 {
     writer.Serialize(*pGraph, true, "graphTest");
-
-    static constexpr auto test = ZT_TYPE_OF(int);
+    pCompiler->CompileToDLL(pGraph->name + ".cpp", pGraph->name);
 }
 
