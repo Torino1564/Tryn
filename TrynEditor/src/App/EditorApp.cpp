@@ -1,6 +1,10 @@
 #include "EditorApp.h"
 #include <TrynEditor/third/imgui-node-editor-0.9.3/imgui_node_editor.h>
 #include <functional>
+#include <filesystem>
+#include <sstream>
+#include <fstream>
+#include "TypeRegister.h"
 
 namespace ned = ax::NodeEditor;
 
@@ -11,45 +15,6 @@ namespace tryn::ed
 
 	struct PinInfo;
     struct ScriptGraph;
-
-    class TypeRegister
-    {
-	    template <typename T>
-        void RegisterType()
-        {
-            static constexpr auto uuid = ZT_TYPE_UUID(T);
-            const auto it = std::ranges::find_if(functionPtrs, [&](const auto pair)
-            {
-	           return pair.first ==  uuid;
-            });
-
-            if (it == functionPtrs.end())
-            {
-	            functionPtrs.insert({uuid, [](std::any& anyRef)
-	            {
-		            anyRef.emplace<T>();
-	            }});
-            }
-
-            trylog.info(std::format("The type \"{}\" with UUID: {} is already registered", ZT_TYPE_OF(T), uuid));
-        }
-
-        void ConstructAny(std::any& anyRef, utl::UUID_t uuid)
-	    {
-            const auto it = std::ranges::find_if(functionPtrs, [&](const auto pair)
-            {
-	           return pair.first ==  uuid;
-            });
-
-            trynass(it != functionPtrs.end()).msg(L"Unknown type requested!");
-
-            anyRef.reset();
-
-            it->second(anyRef);
-	    }
-
-        std::vector<std::pair<utl::UUID_t, void(*)(std::any&)>> functionPtrs;
-    };
 
 	struct ScriptGraph
     {
@@ -106,8 +71,6 @@ namespace tryn::ed
         }
         ~Link();
 
-        //friend Link ser::SerializeRead(const ser::StreamReader& sr, const bool binary, const ser::ExtraDataPack* pExtraData);
-    private:
         Link() = default;
     };
 
@@ -118,7 +81,6 @@ namespace tryn::ed
         std::vector<uint16_t> pinIds;
         std::vector<uint16_t> childrenIds;
         std::string name;
-        Node() = delete;
         void Submit()
         {
             if (!placed)
@@ -150,6 +112,7 @@ namespace tryn::ed
 
 
         friend class TrynEditorApp;
+        Node() = default;
         Node(Node&&) = default;
     protected:
         Node(ScriptGraph* pGraph, const std::string_view name) : uniqueId(pGraph->uniqueId++), name(name), pGraph(pGraph) {}
@@ -198,7 +161,7 @@ namespace tryn::ed
             if (!foundVar)
             {
 	            // Add new variable
-                pGraph->variables.push_back(Variable{.var = std::make_any<T>(), .name = varname});
+                pGraph->variables.push_back(Variable{.var = std::make_any<T>(),.uuid = ZT_TYPE_UUID(T), .name = varname, .typeName = ZT_TYPE_OF(T).data()});
                 varIndex = static_cast<uint16_t>(pGraph->variables.size() - 1);
             }
 
@@ -306,7 +269,7 @@ namespace tryn::ed
             if (!foundVar)
             {
 	            // Add new variable
-                pGraph->variables.push_back(Variable{.var = std::make_any<T>(), .name = varName});
+                pGraph->variables.push_back(Variable{.var = std::make_any<T>(), .uuid = ZT_TYPE_UUID(T), .name = varName, .typeName = ZT_TYPE_OF(T).data()});
                 retval.varIndex = static_cast<uint16_t>(pGraph->variables.size() - 1);
             }
 
@@ -407,6 +370,11 @@ namespace tryn::ed
         {
             debugging = false;
             currentNodeId = pGraph->entryId.value();
+        }
+
+        if (ImGui::ColorButton("Save", { 150, 150, 0, 1 }, 0, { 25, 25 }))
+        {
+            SerializeGraph();
         }
 
         ned::SetCurrentEditor(pContext);
@@ -633,31 +601,6 @@ namespace tryn::ed
 
 namespace tryn::ser
 {
-	/*void SerializeWrite(const StreamWriter& sw, const ed::ScriptGraph& data, const bool binary, const std::string& name)
-	{
-        sw.Serialize(data.m_Links, binary);
-        sw.Serialize(data.nodes, binary);
-        sw.Serialize(data.entryId, binary);
-        sw.Serialize(data.pinIdToInfo, binary);
-        sw.Serialize(data.variables, binary);
-        sw.Serialize(data.uniqueId, binary);
-        sw.Serialize(data.m_NextLinkId, binary);
-        sw.Serialize(data.name, binary);
-
-	}
-
-    void SerializeRead(const StreamReader& sr, ed::ScriptGraph& data, const bool binary, const ExtraDataPack* pExtraData)
-	{
-        sr.ReadSerialized(data.m_Links, binary, pExtraData);
-        sr.ReadSerialized(data.nodes, binary, pExtraData);
-        sr.ReadSerialized(data.entryId, binary, pExtraData);
-        sr.ReadSerialized(data.pinIdToInfo, binary, pExtraData);
-        sr.ReadSerialized(data.variables, binary, pExtraData);
-        sr.ReadSerialized(data.uniqueId, binary, pExtraData);
-        sr.ReadSerialized(data.m_NextLinkId, binary, pExtraData);
-        sr.ReadSerialized(data.name, binary, pExtraData);
-	}
-
     void SerializeWrite(const StreamWriter& sw, const ed::Link& data, const bool binary, const std::string& name)
 	{
         sw.Serialize(data.Id, binary);
@@ -713,20 +656,88 @@ namespace tryn::ser
     void SerializeWrite(const StreamWriter& sw, const ed::Variable& data, const bool binary, const std::string& name)
     {
         sw.Serialize(data.name, binary);
-        sw.Serialize(data.var, binary);
+        sw.Serialize(data.typeName, binary);
+        sw.Serialize(data.uuid, binary);
     }
 
     void SerializeRead(const StreamReader& sr, ed::Variable& data, const bool binary, const ExtraDataPack* pExtraData = nullptr)
     {
+        ed::TypeRegister* pTypeRegister = nullptr;
+        pExtraData->Get("pTypeRegister").Get((const void**)&pTypeRegister);
         sr.ReadSerialized(data.name, binary, pExtraData);
-        sr.ReadSerialized(data.var, binary, pExtraData);
-    }*/
+        sr.ReadSerialized(data.typeName, binary, pExtraData);
+        sr.ReadSerialized(data.uuid, binary, pExtraData);
 
-	
+        pTypeRegister->ConstructAny(data.var, data.uuid);
+    }
+
+    void SerializeWrite(const StreamWriter& sw, const ed::ScriptGraph& data, const bool binary, const std::string& name)
+    {
+        sw.Serialize(data.m_Links, binary);
+        sw.Serialize(data.nodes, binary);
+        sw.Serialize(data.entryId, binary);
+        sw.Serialize(data.pinIdToInfo, binary);
+        sw.Serialize(data.variables, binary);
+        sw.Serialize(data.uniqueId, binary);
+        sw.Serialize(data.m_NextLinkId, binary);
+        sw.Serialize(data.name, binary);
+
+        // Create dll with type register
+        static auto workingDir = std::filesystem::current_path();
+        std::filesystem::path templatePath = workingDir / "src" / "dll" / "TypeRegisterTemplate.cpp";
+
+        templatePath = std::filesystem::absolute(templatePath);
+
+        if (!std::filesystem::exists(templatePath))
+        {
+            trylog.fatal(L"File not found");
+        }
+
+        std::ifstream file(templatePath);
+        std::stringstream buffer;
+
+        std::string line;
+        while (std::getline(file, line)) {
+            buffer << line << '\n';
+            if (line.find("// Begin type registering") != std::string::npos) {
+                break; // Stop reading after this line
+            }
+        }
+
+        for (auto& variable : data.variables)
+        {
+            buffer << std::format("reg.RegisterType<{}>();", variable.typeName) << "\n";
+        }
+
+        // Append the rest of the file
+        while (std::getline(file, line)) {
+            buffer << line << '\n';
+        }
+
+        std::ofstream outfile(data.name + ".cpp");
+
+        outfile << buffer.str();
+    }
+
+    static_assert(Serializable<ed::Variable>);
+
+    void SerializeRead(const StreamReader& sr, ed::ScriptGraph& data, const bool binary, const ExtraDataPack* pExtraData)
+    {
+        sr.ReadSerialized(data.m_Links, binary, pExtraData);
+        sr.ReadSerialized(data.nodes, binary, pExtraData);
+        sr.ReadSerialized(data.entryId, binary, pExtraData);
+        sr.ReadSerialized(data.pinIdToInfo, binary, pExtraData);
+        sr.ReadSerialized(data.variables, binary, pExtraData);
+        sr.ReadSerialized(data.uniqueId, binary, pExtraData);
+        sr.ReadSerialized(data.m_NextLinkId, binary, pExtraData);
+        sr.ReadSerialized(data.name, binary, pExtraData);
+    }
 }
 
 void ed::TrynEditorApp::SerializeGraph()
 {
-    //writer.Serialize(*pGraph, true, "graphTest");
+    writer.Serialize(*pGraph, true, "graphTest");
+
+    static constexpr auto test = ZT_TYPE_OF(int);
 }
 

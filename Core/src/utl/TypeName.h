@@ -10,7 +10,7 @@
 #define ZT_TYPE_OF(x) tryn::utl::type_of<x>()
 
 #ifdef _MSC_VER
-#define BEGIN_OFFSET 100
+#define BEGIN_OFFSET 95
 #define END_OFFSET 7
 #endif
 
@@ -67,12 +67,17 @@ namespace tryn::utl
     template <typename T>
     struct GetTypeNameString
     {
-        constexpr std::string operator()()
-        {
-            std::string functionName = func_name<T>().data();
-            
-	        return {functionName.begin() + BEGIN_OFFSET, functionName.end() - END_OFFSET};
-        }
+		constexpr std::string operator()()
+		{
+			auto extraOffset = 0;
+			if constexpr (std::is_class_v<T>)
+			{
+				extraOffset += 6;
+			}
+			std::string functionName = func_name<T>().data();
+
+			return { functionName.begin() + BEGIN_OFFSET + extraOffset, functionName.end() - END_OFFSET };
+		}
     };
 
     template <typename T>
@@ -85,6 +90,11 @@ namespace tryn::utl
     constexpr std::string_view type_of(T&& arg)
     {
         return to_string_view(GetTypeNameString<T>());
+    }
+
+	template <> constexpr std::string_view type_of<bool>()
+    {
+		return "bool";
     }
 
 	static constexpr auto name = type_of<float>();

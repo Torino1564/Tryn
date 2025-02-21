@@ -2,6 +2,7 @@
 #include <Core/src/ser/StreamIO.h>
 #include <vector>
 #include <unordered_map>
+#include "ExtraDataPack.h"
 
 namespace tryn::ser
 {
@@ -13,19 +14,28 @@ namespace tryn::ser
 			streamWriter.GetStringStream() << "UP:";
 			streamWriter.Serialize(*pData, binary, name);
 		}
-		template <typename Data = void>
-		static std::unique_ptr<T> Read(const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+		static std::unique_ptr<T> Read(const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr)
 		{
-			streamReader.ExtractExpression("UP:");
-			return std::make_unique<T>(streamReader.ReadSerialized<T>(binary, pExtraData));
+			std::unique_ptr<T> uptr;
+			
+			Read(uptr, streamReader, binary, pExtraData);
+
+			return uptr;
 		}
 
-		template <typename Data = void>
-		static void Read(std::unique_ptr<T>& data, const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+		static void Read(std::unique_ptr<T>& data, const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr)
 		{
 			streamReader.ExtractExpression("UP:");
 			data.release();
-			data = std::unique_ptr<T>(new T(std::move(streamReader.ReadSerialized<T>(binary, pExtraData))));
+			if constexpr (HasFunctionSerializer<T>)
+			{
+				data = std::make_unique<T>();
+				streamReader.ReadSerialized(*data, binary, pExtraData);
+			}
+			else
+			{
+				data = std::unique_ptr<T>(new T(std::move(streamReader.ReadSerialized<T>(binary, pExtraData))));
+			}
 		}
 	};
 
@@ -43,28 +53,16 @@ namespace tryn::ser
 			}
 		}
 
-		template <typename Data = void>
-		static std::vector<T> Read(const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+		static std::vector<T> Read(const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr)
 		{
-			static std::vector<char> charBuffer;
-			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
-			streamReader.ExtractExpression("VEC:", charBuffer);
-
-			auto numElements = std::stoi(charBuffer.data(), nullptr, 10);
-
 			std::vector<T> newVector;
-			newVector.reserve(numElements);
 
-			for (int i = 0; i < numElements; i++)
-			{
-				newVector.emplace_back(streamReader.ReadSerialized<T>(binary, pExtraData));
-			}
+			Read(newVector, streamReader, binary, pExtraData);
 
 			return newVector;
 		}
 
-		template <typename Data = void>
-		static void Read(std::vector<T>& data, const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+		static void Read(std::vector<T>& data, const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr)
 		{
 			static std::vector<char> charBuffer;
 			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
@@ -76,7 +74,15 @@ namespace tryn::ser
 
 			for (int i = 0; i < numElements; i++)
 			{
-				data.emplace_back(streamReader.ReadSerialized<T>(binary, pExtraData));
+				if constexpr (HasFunctionSerializer<T>)
+				{
+					data.emplace_back();
+					streamReader.ReadSerialized(data.back(), binary, pExtraData);
+				}
+				else
+				{
+					data.emplace_back(streamReader.ReadSerialized<T>(binary, pExtraData));
+				}
 			}
 		}
 	};
@@ -86,23 +92,7 @@ namespace tryn::ser
 	{
 		static void Write(const StreamWriter& streamWriter, const std::string& data, const bool binary = true, const std::string& name = "");
 
-		template <typename Data = void>
-		static std::string Read(const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
-		{
-			std::size_t numChars = 0;
-
-			char sizeStr[(sizeof(std::size_t) * 2) + 1] = {0};
-			streamReader.GetStringStream().read(sizeStr, sizeof(std::size_t) * 2);
-
-			numChars = std::strtoul(sizeStr, nullptr, 16);
-
-			std::string newString;
-			newString.resize(numChars);
-
-			streamReader.GetStringStream().read(newString.data(), numChars);
-
-			return newString;
-		}
+		static std::string Read(const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr);
 
 		static void Read(std::string& data, const StreamReader& sr, const bool binary = true, const ExtraDataPack* pExtraData = nullptr);
 	};
@@ -123,28 +113,17 @@ namespace tryn::ser
 			}
 		}
 
-		template <typename Data = void>
-		static std::unordered_map<T, K> Read(const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+		static std::unordered_map<T, K> Read(const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr)
 		{
-			static std::vector<char> charBuffer;
-			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
-			streamReader.ExtractExpression("UMAP:", charBuffer);
-
-			auto numElements = std::stoi(charBuffer.data(), nullptr, 10);
 
 			std::unordered_map<T, K> newUMap;
-			newUMap.reserve(numElements);
-
-			for (int i = 0; i < numElements; i++)
-			{
-				newUMap.emplace_back({streamReader.ReadSerialized<T>(binary, pExtraData), streamReader.ReadSerialized<K>(binary, pExtraData)});
-			}
+			
+			Read(newUMap, streamReader, binary, pExtraData);
 
 			return newUMap;
 		}
 
-		template <typename Data = void>
-		static void Read(std::unordered_map<T, K>& data, const StreamReader& streamReader, const bool binary = true, const Data* pExtraData = nullptr)
+		static void Read(std::unordered_map<T, K>& data, const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr)
 		{
 			static std::vector<char> charBuffer;
 			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
@@ -156,7 +135,26 @@ namespace tryn::ser
 
 			for (int i = 0; i < numElements; i++)
 			{
-				data.emplace_back({streamReader.ReadSerialized<T>(binary, pExtraData), streamReader.ReadSerialized<K>(binary, pExtraData)});
+				if constexpr (HasFunctionSerializer<T> && HasFunctionSerializer<K>)
+				{
+					const auto it = data.insert({T{}, K{}});
+					streamReader.ReadSerialized(it.first, binary, pExtraData);
+					streamReader.ReadSerialized(it.second, binary, pExtraData);
+				}
+				else if constexpr (HasFunctionSerializer<T>)
+				{
+					const auto it = data.insert({ T{}, streamReader.ReadSerialized<K>(binary, pExtraData) });
+					streamReader.ReadSerialized(it.first, binary, pExtraData);
+				}
+				else if constexpr (HasFunctionSerializer<K>)
+				{
+					const auto it = data.insert({ streamReader.ReadSerialized<T>(binary, pExtraData), K{}});
+					streamReader.ReadSerialized(it.second, binary, pExtraData);
+				}
+				else
+				{
+					const auto it = data.insert({ streamReader.ReadSerialized<T>(binary, pExtraData), streamReader.ReadSerialized<K>(binary, pExtraData) });
+				}
 			}
 		}
 	};

@@ -22,7 +22,9 @@ namespace tryn::ed
 	struct Variable
 	{
 		std::any var;
+		utl::UUID_t uuid;
 		std::string name;
+		std::string typeName;
 	};
 
 	class TrynEditorApp final : public app::App

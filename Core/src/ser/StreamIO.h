@@ -58,7 +58,7 @@ namespace tryn::ser
 		explicit StreamReader(std::istringstream& iss) : iss(iss){}
 
 		template <typename T>
-		requires Serializable<T>
+		requires Serializable<T> && !HasFunctionSerializer<T>
 		T ReadSerialized(const bool binary = true, const ExtraDataPack* pExtraData = nullptr) const
 		{
 			if constexpr (HasSerializer<T>)
@@ -68,10 +68,6 @@ namespace tryn::ser
 			else if constexpr (HasTypeSerializer<T>)
 			{
 				return TypeSerializer<T>::Read(*this, binary, pExtraData);
-			}
-			else if constexpr (HasFunctionSerializer<T>)
-			{
-				return SerializeRead<T>(*this, binary, pExtraData);
 			}
 			else {
 				if (binary)
@@ -88,7 +84,7 @@ namespace tryn::ser
 		}
 
 		template <typename T>
-		requires (HasSerializer<T> && HasRefReader<T>) || std::is_trivially_copyable_v<T> || (HasTypeSerializer<T> && HasTypeRefReader<T>) 
+		requires Serializable<T>
 		void ReadSerialized(T& data, const bool binary = true, const ExtraDataPack* pExtraData = nullptr) const
 		{
 			if constexpr (HasSerializer<T>)
@@ -98,6 +94,10 @@ namespace tryn::ser
 			else if constexpr (HasTypeSerializer<T>)
 			{
 				return TypeSerializer<T>::Read(data, *this, binary, pExtraData);
+			}
+			else if constexpr (HasFunctionSerializer<T>)
+			{
+				return SerializeRead(*this, data, binary, pExtraData);
 			}
 			else
 			{
