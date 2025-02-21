@@ -23,7 +23,7 @@ namespace tryn::ed
 
             if (it == functionPtrs.end())
             {
-                functionPtrs.insert({ uuid, [](std::any& anyRef)
+                functionPtrs.push_back({ uuid, [](std::any& anyRef)
                 {
                     anyRef.emplace<T>();
                 } });

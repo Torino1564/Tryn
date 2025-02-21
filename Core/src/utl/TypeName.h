@@ -1,11 +1,10 @@
 #pragma once
+
 #include <array>
 #include <string>
 #include <algorithm>
 #include <source_location>
 #include <memory>
-
-#include "StatefulMeta/TemplateData.h"
 
 #define ZT_TYPE_OF(x) tryn::utl::type_of<x>()
 
@@ -14,8 +13,8 @@
 #define END_OFFSET 7
 #endif
 
-#ifdef __GNUC__
-#define BEGIN_OFFSET 22
+#if  __clang__
+#define BEGIN_OFFSET 33
 #define END_OFFSET 1
 #endif
 
@@ -70,10 +69,12 @@ namespace tryn::utl
 		constexpr std::string operator()()
 		{
 			auto extraOffset = 0;
+            #ifdef _MSC_VER
 			if constexpr (std::is_class_v<T>)
 			{
 				extraOffset += 6;
 			}
+            #endif
 			std::string functionName = func_name<T>().data();
 
 			return { functionName.begin() + BEGIN_OFFSET + extraOffset, functionName.end() - END_OFFSET };

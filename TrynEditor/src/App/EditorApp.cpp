@@ -741,6 +741,6 @@ namespace tryn::ser
 void ed::TrynEditorApp::SerializeGraph()
 {
     writer.Serialize(*pGraph, true, "graphTest");
-    pCompiler->CompileToDLL(pGraph->name + ".cpp", pGraph->name);
+    pCompiler->CompileToDLL((std:: filesystem::current_path() /  (pGraph->name + ".cpp")).string(), pGraph->name);
 }
 
