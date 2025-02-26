@@ -58,6 +58,7 @@ namespace tryn::ed
         clang::CompilerInstance compiler;
 
         // Setup diagnostics
+        
         clang::IntrusiveRefCntPtr<clang::DiagnosticOptions> diagOpts = new clang::DiagnosticOptions();
 
         diagOpts->DiagnosticLogFile = "diagFile.txt";
