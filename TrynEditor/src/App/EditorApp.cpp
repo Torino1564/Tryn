@@ -6,7 +6,7 @@
 #include <fstream>
 #include "TypeRegister.h"
 #include <TrynEditor/src/dll/Compiler.h>
-
+#include <glaze/glaze.hpp>
 
 namespace ned = ax::NodeEditor;
 
@@ -710,7 +710,7 @@ namespace tryn::ser
 
         for (auto& variable : data.variables)
         {
-            buffer << std::format("reg.RegisterType<{}>();", variable.typeName) << "\n";
+            buffer << std::format("pReg->RegisterType<{}>();", variable.typeName) << "\n";
         }
 
         // Append the rest of the file
@@ -742,5 +742,10 @@ void ed::TrynEditorApp::SerializeGraph()
 {
     writer.Serialize(*pGraph, true, "graphTest");
     pCompiler->CompileToDLL((std:: filesystem::current_path() /  (pGraph->name + ".cpp")).string(), pGraph->name);
+}
+
+void ed::TrynEditorApp::LoadConfigs()
+{
+    
 }
 

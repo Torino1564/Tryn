@@ -2,12 +2,13 @@
 
 using namespace tryn::ed;
 
-__declspec(dllexport) TypeRegister& GetRegister()
+__declspec(dllexport) bool GetRegister(TypeRegister* pReg)
 {
-	thread_local TypeRegister reg;
+	if (!pReg)
+		return false;
 
 	// Begin type registering
 	// End type registering
 
-	return reg;
+	return true;
 }

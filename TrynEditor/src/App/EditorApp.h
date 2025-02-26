@@ -34,7 +34,9 @@ namespace tryn::ed
 		TrynEditorApp(const std::shared_ptr<win::IWindow>&, const std::shared_ptr<gfx::IGraphics>&);
 		void DoFrame() override;
 		void SerializeGraph();
-		
+
+		void LoadConfigs();
+
 		ax::NodeEditor::EditorContext* pContext;
 		bool m_FirstFrame = true;    // Flag set for first frame only, some action need to be executed once.
 		std::unique_ptr<ScriptGraph> pGraph;
@@ -47,5 +49,11 @@ namespace tryn::ed
 		ser::StreamReader reader = ser::StreamReader(iss);
 
 		std::unique_ptr<class Compiler> pCompiler;
+
+		struct
+		{
+			std::string x64NativeToolsPath;
+			std::string outputDirectory;
+		} Configs;
 	};
 }

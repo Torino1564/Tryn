@@ -10,6 +10,7 @@
         "docking-experimental"
       ]
     },
+    "tiny-process-library",
     "glaze"
   ]
 }
