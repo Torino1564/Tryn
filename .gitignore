@@ -364,3 +364,7 @@ MigrationBackup/
 FodyWeavers.xsd
 vcpkg_installed/*
 /TrynGame/imgui.ini
+
+# Binaries
+*.lib
+/TrynEditor/TestGraph.lib

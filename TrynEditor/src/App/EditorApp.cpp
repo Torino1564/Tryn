@@ -6,7 +6,6 @@
 #include <fstream>
 #include "TypeRegister.h"
 #include <TrynEditor/src/dll/Compiler.h>
-#include <glaze/glaze.hpp>
 
 namespace ned = ax::NodeEditor;
 
@@ -741,7 +740,7 @@ namespace tryn::ser
 void ed::TrynEditorApp::SerializeGraph()
 {
     writer.Serialize(*pGraph, true, "graphTest");
-    pCompiler->CompileToDLL((std:: filesystem::current_path() /  (pGraph->name + ".cpp")).string(), pGraph->name);
+    pCompiler->CompileToDLL((std:: filesystem::current_path() /  (pGraph->name + ".cpp")).string());
 }
 
 void ed::TrynEditorApp::LoadConfigs()

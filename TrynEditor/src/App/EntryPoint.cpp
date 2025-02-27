@@ -1,6 +1,9 @@
 #include <TrynEditor/src/Engine/Engine.h>
 
 #include <TrynEditor/src/App/EditorApp.h>
+
+#define CONSOLE_ONLY
+
 #include <Core/src/app/EntryPoint.h>
 
 using namespace tryn;
