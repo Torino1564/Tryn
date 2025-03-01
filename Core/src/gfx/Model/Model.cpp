@@ -387,19 +387,19 @@ namespace tryn::gfx
 	}
 
 	Model Model::Serializer::Read(const tryn::ser::StreamReader& streamReader, const bool binary,
-	                              const ser::ExtraDataPack* pExtraData)
+	                              ser::ExtraDataPack* pExtraData)
 	{
 		trynass(pExtraData).msg(L"The SerializeReadComponentField functor requires extra data named pGfx!");
 
 		const IGraphics* pGfx = nullptr;
-		pExtraData->Get("pGfx")((const void**)&pGfx);
+		pExtraData->Get("pGfx")((void**)&pGfx);
 
 		const auto name = streamReader.ReadSerialized<std::string>(binary, pExtraData);
 		return Model(name, *pGfx);
 	}
 
 	void Model::Serializer::Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary,
-		const ser::ExtraDataPack* pExtraData)
+		ser::ExtraDataPack* pExtraData)
 	{
 		// TODO
 	}

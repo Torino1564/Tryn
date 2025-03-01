@@ -52,9 +52,9 @@ namespace tryn::gfx
 			static void Write(const tryn::ser::StreamWriter& streamWriter, const InstancedModelChild& data, const bool binary = true,
 			                  const std::string& name = "");
 
-			static InstancedModelChild Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr);
+			static InstancedModelChild Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, ser::ExtraDataPack* pExtraData = nullptr);
 
-			static void Read(InstancedModelChild& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr);
+			static void Read(InstancedModelChild& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, ser::ExtraDataPack* pExtraData = nullptr);
 		};
 	};
 }
@@ -79,8 +79,8 @@ namespace tryn::ser
 	struct TypeSerializer<std::unique_ptr<gfx::InstancedModelParent>>
 	{
 		static void Write(const StreamWriter& streamWriter, const std::unique_ptr<gfx::InstancedModelParent>& pData, const bool binary = true, const std::string& name = "");
-		static std::unique_ptr<gfx::InstancedModelParent> Read(const StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr);
+		static std::unique_ptr<gfx::InstancedModelParent> Read(const StreamReader& streamReader, const bool binary = true, ser::ExtraDataPack* pExtraData = nullptr);
 
-		static void Read(std::unique_ptr<gfx::InstancedModelParent>& data, const StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* = nullptr);
+		static void Read(std::unique_ptr<gfx::InstancedModelParent>& data, const StreamReader& streamReader, const bool binary = true, ser::ExtraDataPack* = nullptr);
 	};
 }

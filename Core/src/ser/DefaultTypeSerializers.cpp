@@ -15,7 +15,7 @@ namespace tryn::ser
 	}
 
 	std::string TypeSerializer<std::string>::Read(const StreamReader& streamReader, const bool binary,
-		const ExtraDataPack* pExtraData)
+		ExtraDataPack* pExtraData)
 	{
 		std::size_t numChars = 0;
 
@@ -33,7 +33,7 @@ namespace tryn::ser
 	}
 
 	void TypeSerializer<std::string>::Read(std::string& data, const StreamReader& sr, const bool binary,
-	                                       const ExtraDataPack* pExtraData)
+	                                       ExtraDataPack* pExtraData)
 	{
 		std::size_t numChars = 0;
 

@@ -17,6 +17,12 @@ namespace tryn::ser
 		explicit StreamWriter(std::ostringstream& oss)
 			: oss(oss) {}
 
+		explicit StreamWriter(StreamWriter&&) noexcept : oss(oss) {}
+		StreamWriter& operator=(StreamWriter&& rhs) noexcept
+		{
+			oss = std::move(rhs.oss);
+			return *this;
+		}
 		template <typename T>
 		requires Serializable<T>
 		void Serialize(const T& data,const bool binary = true, const std::string& name = "") const
@@ -56,10 +62,15 @@ namespace tryn::ser
 	{
 	public:
 		explicit StreamReader(std::istringstream& iss) : iss(iss){}
-
+		explicit StreamReader(StreamReader&&) noexcept : iss(iss) {}
+		StreamReader& operator=(StreamReader&& rhs) noexcept
+		{
+			iss = std::move(rhs.iss);
+			return *this;
+		}
 		template <typename T>
 		requires Serializable<T> && !HasFunctionSerializer<T>
-		T ReadSerialized(const bool binary = true, const ExtraDataPack* pExtraData = nullptr) const
+		T ReadSerialized(const bool binary = true, ExtraDataPack* pExtraData = nullptr) const
 		{
 			if constexpr (HasSerializer<T>)
 			{
@@ -85,7 +96,7 @@ namespace tryn::ser
 
 		template <typename T>
 		requires Serializable<T>
-		void ReadSerialized(T& data, const bool binary = true, const ExtraDataPack* pExtraData = nullptr) const
+		void ReadSerialized(T& data, const bool binary = true, ExtraDataPack* pExtraData = nullptr) const
 		{
 			if constexpr (HasSerializer<T>)
 			{

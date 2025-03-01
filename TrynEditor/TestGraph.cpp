@@ -2,7 +2,7 @@
 
 using namespace tryn::ed;
 
-__declspec(dllexport) bool GetRegister(TypeRegister* pReg)
+extern "C" __declspec(dllexport) bool GetRegister(TypeRegister* pReg)
 {
 	if (!pReg)
 		return false;

@@ -14,7 +14,7 @@ namespace tryn::ser
 			streamWriter.GetStringStream() << "UP:";
 			streamWriter.Serialize(*pData, binary, name);
 		}
-		static std::unique_ptr<T> Read(const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr)
+		static std::unique_ptr<T> Read(const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr)
 		{
 			std::unique_ptr<T> uptr;
 			
@@ -23,7 +23,7 @@ namespace tryn::ser
 			return uptr;
 		}
 
-		static void Read(std::unique_ptr<T>& data, const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr)
+		static void Read(std::unique_ptr<T>& data, const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr)
 		{
 			streamReader.ExtractExpression("UP:");
 			data.release();
@@ -53,7 +53,7 @@ namespace tryn::ser
 			}
 		}
 
-		static std::vector<T> Read(const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr)
+		static std::vector<T> Read(const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr)
 		{
 			std::vector<T> newVector;
 
@@ -62,7 +62,7 @@ namespace tryn::ser
 			return newVector;
 		}
 
-		static void Read(std::vector<T>& data, const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr)
+		static void Read(std::vector<T>& data, const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr)
 		{
 			static std::vector<char> charBuffer;
 			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
@@ -92,9 +92,9 @@ namespace tryn::ser
 	{
 		static void Write(const StreamWriter& streamWriter, const std::string& data, const bool binary = true, const std::string& name = "");
 
-		static std::string Read(const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr);
+		static std::string Read(const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr);
 
-		static void Read(std::string& data, const StreamReader& sr, const bool binary = true, const ExtraDataPack* pExtraData = nullptr);
+		static void Read(std::string& data, const StreamReader& sr, const bool binary = true, ExtraDataPack* pExtraData = nullptr);
 	};
 
 	template <Serializable T, Serializable K>
@@ -113,7 +113,7 @@ namespace tryn::ser
 			}
 		}
 
-		static std::unordered_map<T, K> Read(const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr)
+		static std::unordered_map<T, K> Read(const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr)
 		{
 
 			std::unordered_map<T, K> newUMap;
@@ -123,7 +123,7 @@ namespace tryn::ser
 			return newUMap;
 		}
 
-		static void Read(std::unordered_map<T, K>& data, const StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr)
+		static void Read(std::unordered_map<T, K>& data, const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr)
 		{
 			static std::vector<char> charBuffer;
 			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
@@ -143,13 +143,13 @@ namespace tryn::ser
 				}
 				else if constexpr (HasFunctionSerializer<T>)
 				{
-					const auto it = data.insert({ T{}, streamReader.ReadSerialized<K>(binary, pExtraData) });
-					streamReader.ReadSerialized(it.first, binary, pExtraData);
+					const auto [it, success] = data.insert({ T{}, streamReader.ReadSerialized<K>(binary, pExtraData) });
+					streamReader.ReadSerialized(it->first, binary, pExtraData);
 				}
 				else if constexpr (HasFunctionSerializer<K>)
 				{
-					const auto it = data.insert({ streamReader.ReadSerialized<T>(binary, pExtraData), K{}});
-					streamReader.ReadSerialized(it.second, binary, pExtraData);
+					const auto [it, success] = data.insert({ streamReader.ReadSerialized<T>(binary, pExtraData), K{}});
+					streamReader.ReadSerialized(it->second, binary, pExtraData);
 				}
 				else
 				{

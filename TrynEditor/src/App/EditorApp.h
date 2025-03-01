@@ -36,6 +36,7 @@ namespace tryn::ed
 		TrynEditorApp(const std::shared_ptr<win::IWindow>&, const std::shared_ptr<gfx::IGraphics>&);
 		void DoFrame() override;
 		void SerializeGraph();
+		void LoadGraph();
 
 		void LoadConfigs();
 		void RMBMenu(ImVec2 pos);
@@ -46,10 +47,8 @@ namespace tryn::ed
 
 		bool debugging = false;
 		uint16_t currentNodeId = 0;
-		std::ostringstream oss;
-		std::istringstream iss;
-		ser::StreamWriter writer = ser::StreamWriter(oss);
-		ser::StreamReader reader = ser::StreamReader(iss);
+		std::unique_ptr<ser::StreamWriter> pWriter;
+		std::unique_ptr<ser::StreamReader> pReader;
 
 		std::unique_ptr<class Compiler> pCompiler;
 

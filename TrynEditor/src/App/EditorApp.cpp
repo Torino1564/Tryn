@@ -8,6 +8,8 @@
 #include <TrynEditor/src/dll/Compiler.h>
 #include <imgui_stdlib.h>
 
+#include <dylib.hpp>
+
 namespace ned = ax::NodeEditor;
 
 namespace tryn::ed
@@ -20,6 +22,7 @@ namespace tryn::ed
 
 	struct ScriptGraph
     {
+        ScriptGraph() = default;
         ScriptGraph(std::string_view name) : name(name) {};
     	Node& CreateNewNode(std::unique_ptr<Node>&& newVal);
 		void CreateNewLink(ax::NodeEditor::LinkId id, PinInfo& pin1, PinInfo& pin2);
@@ -33,6 +36,8 @@ namespace tryn::ed
 		unsigned int uniqueId = 1;
 		std::optional<unsigned int> entryId;
         std::string name;
+        std::unique_ptr<TypeRegister> pRegister;
+        Compiler* pCompiler = nullptr;
     };
 
 	struct PinInfo
@@ -477,6 +482,11 @@ namespace tryn::ed
             SerializeGraph();
         }
 
+        if (ImGui::ColorButton("Load", { 150, 50, 150, 1 }, 0, { 25, 25 }))
+        {
+            LoadGraph();
+        }
+
         ned::SetCurrentEditor(pContext);
 
         // Start interaction with editor.
@@ -719,7 +729,7 @@ namespace tryn::ser
         sw.Serialize(data.OutputId, binary);
 	}
 
-    void SerializeRead(const StreamReader& sr, ed::Link& data_, const bool binary, const ExtraDataPack* pExtraData = nullptr)
+    void SerializeRead(const StreamReader& sr, ed::Link& data_, const bool binary, ExtraDataPack* pExtraData = nullptr)
     {
         pExtraData->Get("pEditor").Get((const void**)&data_.pGraph);
         sr.ReadSerialized(data_.Id, binary);
@@ -735,9 +745,9 @@ namespace tryn::ser
         sw.Serialize(data.name, binary);
     }
 
-    void SerializeRead(const StreamReader& sr, ed::Node& data, const bool binary, const ExtraDataPack* pExtraData = nullptr)
+    void SerializeRead(const StreamReader& sr, ed::Node& data, const bool binary, ExtraDataPack* pExtraData = nullptr)
     {
-        pExtraData->Get("pEditor").Get((const void**)data.pGraph);
+        pExtraData->Get("pGraph").Get((void**)&data.pGraph);
         sr.ReadSerialized(data.uniqueId, binary, pExtraData);
         sr.ReadSerialized(data.pinIds, binary, pExtraData);
         sr.ReadSerialized(data.childrenIds, binary, pExtraData);
@@ -750,17 +760,17 @@ namespace tryn::ser
         sw.Serialize(data.linkedId, binary);
         sw.Serialize(data.name, binary);
         sw.Serialize(data.kind, binary);
-        sw.Serialize(data.id, binary);
+        sw.Serialize(data.id.Get(), binary);
         sw.Serialize(data.linked, binary);
     }
 
-    void SerializeRead(const StreamReader& sr, ed::PinInfo& data, const bool binary, const ExtraDataPack* pExtraData = nullptr)
+    void SerializeRead(const StreamReader& sr, ed::PinInfo& data, const bool binary, ExtraDataPack* pExtraData = nullptr)
     {
         sr.ReadSerialized(data.parentId, binary, pExtraData);
         sr.ReadSerialized(data.linkedId, binary, pExtraData);
         sr.ReadSerialized(data.name, binary, pExtraData);
         sr.ReadSerialized(data.kind, binary, pExtraData);
-        sr.ReadSerialized(data.id, binary, pExtraData);
+        data.id = ned::PinId(sr.ReadSerialized<unsigned long long>(binary, pExtraData));
         sr.ReadSerialized(data.linked, binary, pExtraData);
     }
 
@@ -771,10 +781,10 @@ namespace tryn::ser
         sw.Serialize(data.uuid, binary);
     }
 
-    void SerializeRead(const StreamReader& sr, ed::Variable& data, const bool binary, const ExtraDataPack* pExtraData = nullptr)
+    void SerializeRead(const StreamReader& sr, ed::Variable& data, const bool binary, ExtraDataPack* pExtraData = nullptr)
     {
         ed::TypeRegister* pTypeRegister = nullptr;
-        pExtraData->Get("pTypeRegister").Get((const void**)&pTypeRegister);
+        pExtraData->Get("pTypeRegister").Get((void**)&pTypeRegister);
         sr.ReadSerialized(data.name, binary, pExtraData);
         sr.ReadSerialized(data.typeName, binary, pExtraData);
         sr.ReadSerialized(data.uuid, binary, pExtraData);
@@ -788,7 +798,6 @@ namespace tryn::ser
         sw.Serialize(data.nodes, binary);
         sw.Serialize(data.entryId, binary);
         sw.Serialize(data.pinIdToInfo, binary);
-        sw.Serialize(data.variables, binary);
         sw.Serialize(data.uniqueId, binary);
         sw.Serialize(data.m_NextLinkId, binary);
         sw.Serialize(data.name, binary);
@@ -828,27 +837,68 @@ namespace tryn::ser
         std::ofstream outfile(data.name + ".cpp");
 
         outfile << buffer.str();
+
+        outfile.close();
+
+        const auto dllPath = (workingDir / data.name).string();
+        data.pCompiler->CompileToDLL((workingDir / (data.name + ".cpp")).string(), true);
+
+        sw.Serialize(dllPath);
+        sw.Serialize(data.variables, binary);
     }
 
     static_assert(Serializable<ed::Variable>);
 
-    void SerializeRead(const StreamReader& sr, ed::ScriptGraph& data, const bool binary, const ExtraDataPack* pExtraData)
+    void SerializeRead(const StreamReader& sr, ed::ScriptGraph& data, const bool binary, ExtraDataPack* pExtraData)
     {
         sr.ReadSerialized(data.m_Links, binary, pExtraData);
         sr.ReadSerialized(data.nodes, binary, pExtraData);
         sr.ReadSerialized(data.entryId, binary, pExtraData);
         sr.ReadSerialized(data.pinIdToInfo, binary, pExtraData);
-        sr.ReadSerialized(data.variables, binary, pExtraData);
         sr.ReadSerialized(data.uniqueId, binary, pExtraData);
         sr.ReadSerialized(data.m_NextLinkId, binary, pExtraData);
         sr.ReadSerialized(data.name, binary, pExtraData);
+
+        const auto dllPath = sr.ReadSerialized<std::string>(binary, pExtraData);
+
+        std::filesystem::path path(dllPath);
+
+        const auto lib = dylib(path.parent_path(), path.filename().string());
+
+        const auto pFunc = lib.get_function<bool(ed::TypeRegister*)>("GetRegister");
+        data.pRegister = std::make_unique<ed::TypeRegister>();
+        auto pRegister = data.pRegister.get();
+        const auto er = pFunc(pRegister);
+
+        pExtraData->AddElement(ElementDataView(data.pRegister.get(), "pTypeRegister"));
+        sr.ReadSerialized(data.variables, binary, pExtraData);
     }
 }
 
 void ed::TrynEditorApp::SerializeGraph()
 {
-    writer.Serialize(*pGraph, true, "graphTest");
-    pCompiler->CompileToDLL((std:: filesystem::current_path() /  (pGraph->name + ".cpp")).string());
+    std::ostringstream oss;
+    pWriter = std::make_unique<ser::StreamWriter>(oss);
+    pWriter->Serialize(*pGraph, true, "graphTest");
+
+    std::ofstream file("serialize.txt");
+    file << pWriter->GetStringStream().str();
+    file.close();
+}
+
+void ed::TrynEditorApp::LoadGraph()
+{
+    std::ifstream file("serialize.txt");
+    const auto buf = file.rdbuf();
+    std::stringstream ss; ss << buf;
+    std::istringstream iss(ss.str());
+
+    pReader = std::make_unique<ser::StreamReader>(iss);
+
+    ScriptGraph newGraph;
+    ser::ExtraDataPack extraData = {};
+    extraData.AddElement(ser::ElementDataView(&newGraph, "pGraph"));
+    pReader->ReadSerialized(newGraph, true, &extraData);
 }
 
 void ed::TrynEditorApp::LoadConfigs()

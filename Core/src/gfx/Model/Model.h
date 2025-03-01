@@ -74,9 +74,9 @@ namespace tryn::gfx
 			static void Write(const tryn::ser::StreamWriter& streamWriter, const Model& data, const bool binary = true,
 			                  const std::string& name = "");
 
-			static Model Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr);
+			static Model Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, ser::ExtraDataPack* pExtraData = nullptr);
 
-			static void Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const ser::ExtraDataPack* pExtraData = nullptr);
+			static void Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, ser::ExtraDataPack* pExtraData = nullptr);
 		};
 	};
 

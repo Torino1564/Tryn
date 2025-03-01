@@ -12,7 +12,7 @@ using namespace std::string_literals;
 
 namespace tryn::ed
 {
-	void Compiler::CompileToDLL(const std::string& sourceFile)
+	void Compiler::CompileToDLL(const std::string& sourceFile, bool debug)
 	{
 	//      OPENFILENAMEA fileName;
 		
@@ -40,7 +40,7 @@ namespace tryn::ed
 		cmdProcess.write( "\"" + std::string(R"(C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat)") + "\"");
 		cmdProcess.write("\n");
 		Sleep(100);
-		cmdProcess.write(std::format("cl.exe /std:c++latest /O2 /LD /I {} \"{}\" /link /DLL", "../", sourceFile ));
+		cmdProcess.write(std::format("cl.exe /std:c++latest {} /LD /I {} \"{}\" /link /DLL {}", debug ? "/Od /Zi /MDd" : "/O2 /MD", "../",  sourceFile, debug ? "/DEBUG" : ""));
 		cmdProcess.write("\n");
 		Sleep(100);
 		cmdProcess.write("exit\n");

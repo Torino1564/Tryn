@@ -42,6 +42,6 @@ namespace tryn::ed
             it->second(anyRef);
         }
 
-        std::vector<std::pair<utl::UUID_t, void(*)(std::any&)>> functionPtrs;
+        std::vector<std::pair<utl::UUID_t, void(*)(std::any&)>> functionPtrs = {};
     };
 }

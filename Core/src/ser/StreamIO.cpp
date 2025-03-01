@@ -7,10 +7,7 @@ namespace tryn::ser
 	{
 		static std::string charBuffer;
 
-		if (expression.size() > charBuffer.size())
-		{
-			charBuffer.resize(expression.size());
-		}
+		charBuffer.resize(expression.size());
 
 		std::memset(charBuffer.data(), '0', charBuffer.size());
 
