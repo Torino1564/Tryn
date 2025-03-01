@@ -14,20 +14,20 @@ namespace tryn::ed
 {
 	void Compiler::CompileToDLL(const std::string& sourceFile)
 	{
-  //      OPENFILENAMEA fileName;
-
-		//char filename[ MAX_PATH ];
+	//      OPENFILENAMEA fileName;
+		
+	//char filename[ MAX_PATH ];
 
 		//OPENFILENAMEA ofn;
-  //      ZeroMemory( &filename, sizeof( filename ) );
-  //      ZeroMemory( &ofn,      sizeof( ofn ) );
-  //      ofn.lStructSize  = sizeof( ofn );
-  //      ofn.hwndOwner    = nullptr;  // If you have a window to center over, put its HANDLE here
-  //      ofn.lpstrFilter  = "Executable Files\0*.txt\0Any File\0*.*\0";
-  //      ofn.lpstrFile    = filename;
-  //      ofn.nMaxFile     = MAX_PATH;
-  //      ofn.lpstrTitle   = "Select a File, yo!";
-  //      ofn.Flags        = OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST;
+	//      ZeroMemory( &filename, sizeof( filename ) );
+	//      ZeroMemory( &ofn,      sizeof( ofn ) );
+	//      ofn.lStructSize  = sizeof( ofn );
+	//      ofn.hwndOwner    = nullptr;  // If you have a window to center over, put its HANDLE here
+	//      ofn.lpstrFilter  = "Executable Files\0*.txt\0Any File\0*.*\0";
+	//      ofn.lpstrFile    = filename;
+	//      ofn.nMaxFile     = MAX_PATH;
+	//      ofn.lpstrTitle   = "Select a File, yo!";
+	//      ofn.Flags        = OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST;
 
 	 //   GetOpenFileNameA( &ofn );
 

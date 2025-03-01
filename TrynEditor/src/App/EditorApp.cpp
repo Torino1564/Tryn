@@ -6,6 +6,7 @@
 #include <fstream>
 #include "TypeRegister.h"
 #include <TrynEditor/src/dll/Compiler.h>
+#include <imgui_stdlib.h>
 
 namespace ned = ax::NodeEditor;
 
@@ -112,6 +113,9 @@ namespace tryn::ed
 
         virtual unsigned long long Execute() { return uniqueId; }
 
+        static void ImGuiCreate(ScriptGraph* graph, TrynEditorApp* pEditor)
+        {
+        }
 
         friend class TrynEditorApp;
         Node() = default;
@@ -122,6 +126,7 @@ namespace tryn::ed
 
     struct EntryNode : public Node
     {
+        EntryNode() = default;
 	    EntryNode(ScriptGraph* pGraph, const std::string& name)
 		    : Node (pGraph, name)
 	    {
@@ -147,6 +152,7 @@ namespace tryn::ed
     template <typename T>
     struct SetVarNode : public Node
     {
+        SetVarNode() = default;
         SetVarNode(ScriptGraph* editorApp, const std::string& name, const std::string& varname, T&& value) : Node(editorApp, name), varName(varname), value(std::forward<T>(value))
         {
             bool foundVar = false;
@@ -207,6 +213,7 @@ namespace tryn::ed
 
     struct StateNode : public Node
     {
+        StateNode() = default;
         StateNode(ScriptGraph* editorApp, const std::string& name, std::vector<std::string> states_)
 	        :
         Node(editorApp, name), numStates((uint16_t)states.size()), states(std::move(states_))
@@ -230,6 +237,48 @@ namespace tryn::ed
             }
         }
 
+        static void ImGuiCreate(ScriptGraph* graph, TrynEditorApp* pEditor)
+        {
+            if(ImGui::Begin("StateNodeCreate"))
+            {
+                static std::string name;
+                if (ImGui::InputText("Node Name", &name)) {}
+
+                static auto stateCount = 1;
+                if (ImGui::InputInt("Number of States", &stateCount, 1, 3))
+                {
+                    if (stateCount <= 0)
+                    {
+                    	trylog.warn(L"The state count cannot be 0 or negative");
+                        stateCount = 1;
+                    }
+                    if (stateCount >= 50)
+                    {
+	                    trylog.warn(L"The state count cannot exceed 50");
+                        stateCount = 49;
+                    }
+                }
+                static std::vector<std::string> states;
+                states.resize(stateCount);
+                ImGui::Text("States:");
+                for (int i = 0; i < stateCount; i++)
+                {
+	                ImGui::InputText(std::to_string(i).c_str(), &states[i]);
+                }
+
+                if (ImGui::Button("Create"))
+                {
+	                graph->CreateNewNode(std::make_unique<StateNode>(graph, std::string{name}, std::vector<std::string>{states}));
+                    name = {};
+                    states = {};
+                    pEditor->createFunc = nullptr;
+                }
+
+	            ImGui::End();
+            }
+
+        }
+
         unsigned long long Execute() override
         {
             const auto& info = pGraph->pinIdToInfo[pinIds[currentState]];
@@ -244,6 +293,7 @@ namespace tryn::ed
     struct ConditionalNode : public Node
     {
     public:
+        ConditionalNode() = default;
         template <typename T>
         static constexpr ConditionalNode Make(ScriptGraph* pGraph, const std::string& name, const std::string& varName, T&& value_)
         {
@@ -329,12 +379,48 @@ namespace tryn::ed
 
     struct WaitNode : public Node
     {
+        WaitNode() = default;
 	    WaitNode(ScriptGraph* pGraph, const std::string& name, float timeInSeconds)
 		    :
         Node(pGraph, name)
 	    {
 		    // Implement
 	    }
+    };
+
+    struct NodeRegister
+    {
+        struct NodeTypeInfo
+        {
+	        const char* name = nullptr;
+            void (*pCreate)(ScriptGraph*, TrynEditorApp* pEditor) = nullptr;
+        };
+
+        // returns false if the type could not be added
+        template <typename T>
+        bool RegisterNodeType()
+        {
+        	static constexpr auto uuid = ZT_TYPE_UUID(T);
+
+            if (const auto it = map.find(uuid); it != map.end())
+                return false;
+
+            map.insert({uuid, NodeTypeInfo{.name = ZT_TYPE_OF(T).data(), .pCreate = &T::ImGuiCreate}});
+            return true;
+        }
+	    static NodeRegister& Get()
+	    {
+		    static NodeRegister singleton;
+            return singleton;
+	    }
+        auto& Map()
+        {
+	        return map;
+        }
+    private:
+
+        NodeRegister() = default;
+        std::unordered_map<utl::UUID_t, NodeTypeInfo> map;
     };
 
     TrynEditorApp::TrynEditorApp(const std::shared_ptr<win::IWindow>& pWnd, const std::shared_ptr<gfx::IGraphics>& pGfx)
@@ -348,10 +434,21 @@ namespace tryn::ed
         ECS().GetSystemManager().Finalize();
 
         pCompiler = std::make_unique<Compiler>();
+
+        NodeRegister::Get().RegisterNodeType<EntryNode>();
+        NodeRegister::Get().RegisterNodeType<ConditionalNode>();
+        NodeRegister::Get().RegisterNodeType<WaitNode>();
+        NodeRegister::Get().RegisterNodeType<StateNode>();
+
+        NodeRegister::Get().RegisterNodeType<SetVarNode<int>>();
+        NodeRegister::Get().RegisterNodeType<SetVarNode<float>>();
+        NodeRegister::Get().RegisterNodeType<SetVarNode<bool>>();
     }
 
     void TrynEditorApp::DoFrame()
 	{
+        bool open = true;
+        ImGui::ShowDemoWindow(&open);
         auto& io = ImGui::GetIO();
 
         ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
@@ -385,6 +482,17 @@ namespace tryn::ed
         // Start interaction with editor.
         ned::Begin("Node Editor", ImVec2(0.0, 0.0f));
 
+        static ImVec2 rmbPos = {};
+
+        ned::Suspend();
+    	if (ned::ShowBackgroundContextMenu())
+    	{
+    		ImGui::OpenPopup("Right Click Menu");
+            rmbPos = ImGui::GetMousePos();
+    	}
+        ned::Resume();
+        RMBMenu(rmbPos);
+        NodeCreateMenu();
         //
         // 1) Commit known data to editor
         //
@@ -746,5 +854,38 @@ void ed::TrynEditorApp::SerializeGraph()
 void ed::TrynEditorApp::LoadConfigs()
 {
     
+}
+
+void ed::TrynEditorApp::RMBMenu(ImVec2 pos)
+{
+    ImGui::SetNextWindowPos(pos);
+    ned::Suspend();
+    if (ImGui::BeginPopup("Right Click Menu"))
+    {
+		ImGui::SeparatorText("Right click menu");
+	    if (ImGui::BeginMenu("Create Node"))
+	    {
+	    	for (const auto& [uuid, nodeInfo] : NodeRegister::Get().Map())
+	    	{
+	    		if (ImGui::Selectable(nodeInfo.name))
+	    		{
+	    			createFunc = nodeInfo.pCreate;
+	    		}
+	    	}
+	    	ImGui::EndMenu();
+	    }
+        ImGui::EndPopup();
+    }
+    ned::Resume();
+}
+
+void ed::TrynEditorApp::NodeCreateMenu()
+{
+    ned::Suspend();
+
+    if (createFunc)
+        createFunc(pGraph.get(), this);
+
+    ned::Resume();
 }
 

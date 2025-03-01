@@ -19,6 +19,8 @@ namespace tryn::ed
 	struct Node;
 	struct ScriptGraph;
 
+	static constexpr auto MAX_NAME_SIZE = 128;
+
 	struct Variable
 	{
 		std::any var;
@@ -36,7 +38,8 @@ namespace tryn::ed
 		void SerializeGraph();
 
 		void LoadConfigs();
-
+		void RMBMenu(ImVec2 pos);
+		void NodeCreateMenu();
 		ax::NodeEditor::EditorContext* pContext;
 		bool m_FirstFrame = true;    // Flag set for first frame only, some action need to be executed once.
 		std::unique_ptr<ScriptGraph> pGraph;
@@ -55,5 +58,7 @@ namespace tryn::ed
 			std::string x64NativeToolsPath;
 			std::string outputDirectory;
 		} Configs;
+
+		void(*createFunc) (ScriptGraph* graph, TrynEditorApp* pEditor) = nullptr;
 	};
 }

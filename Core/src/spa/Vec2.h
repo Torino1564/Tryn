@@ -41,7 +41,7 @@ namespace tryn::spa
 			return x == rhs.x && y == rhs.y;
 		}
 		// data
-		T x, y;
+		T x = 0, y = 0;
 	};
 
 	using Vec2F = Vec2T<float>;
