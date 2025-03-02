@@ -27,8 +27,8 @@ namespace tryn::ed
     	Node& CreateNewNode(std::unique_ptr<Node>&& newVal);
 		void CreateNewLink(ax::NodeEditor::LinkId id, PinInfo& pin1, PinInfo& pin2);
 
-    	std::vector<Link> m_Links;                                                  // List of live links
-		int m_NextLinkId = 100;                                                     // Counter to help generate link ids. In real application this will probably based on pointer to user data structure.
+    	std::vector<Link> m_Links;
+		int m_NextLinkId = 100;
 		std::unordered_map<unsigned long long, PinInfo> pinIdToInfo;
 		std::unordered_map<unsigned long long, std::uint16_t> nodeIdToNodeIndex;
 		std::vector<Variable> variables;
@@ -38,6 +38,10 @@ namespace tryn::ed
         std::string name;
         std::unique_ptr<TypeRegister> pRegister;
         Compiler* pCompiler = nullptr;
+
+        // execution stuff
+        void ExecuteStep();
+        unsigned long long currentNodeId = 0;
     };
 
 	struct PinInfo
@@ -152,20 +156,36 @@ namespace tryn::ed
             const auto& info = pGraph->pinIdToInfo[pinIds[0]];
             return info.linked ? info.linkedId : uniqueId;
 	    }
+
+        static void ImGuiCreate(ScriptGraph* graph, TrynEditorApp* pEditor)
+        {
+            if(ImGui::Begin("EntryNodeCreate"))
+            {
+                static std::string name;
+                if (ImGui::InputText("Node Name", &name)) {}
+
+	            ImGui::End();
+            }
+
+        }
     };
 
-    template <typename T>
     struct SetVarNode : public Node
     {
         SetVarNode() = default;
-        SetVarNode(ScriptGraph* editorApp, const std::string& name, const std::string& varname, T&& value) : Node(editorApp, name), varName(varname), value(std::forward<T>(value))
+
+        template <typename T>
+        static SetVarNode Make(ScriptGraph* editorApp, const std::string& name, const std::string& varname, T&& value_)
         {
-            bool foundVar = false;
-            for (auto [index, variable] : std::ranges::views::enumerate(pGraph->variables))
+	        SetVarNode retval(editorApp, name, varname);
+
+
+        	bool foundVar = false;
+            for (auto [index, variable] : std::ranges::views::enumerate(retval.pGraph->variables))
             {
 	            if (variable.name == varname)
 	            {
-		            varIndex = index;
+		            retval.varIndex = index;
                     foundVar = true;
                     break;
 	            }
@@ -174,12 +194,179 @@ namespace tryn::ed
             if (!foundVar)
             {
 	            // Add new variable
-                pGraph->variables.push_back(Variable{.var = std::make_any<T>(),.uuid = ZT_TYPE_UUID(T), .name = varname, .typeName = ZT_TYPE_OF(T).data()});
-                varIndex = static_cast<uint16_t>(pGraph->variables.size() - 1);
+                retval.pGraph->variables.push_back(Variable{.var = std::make_any<T>(),.uuid = ZT_TYPE_UUID(T), .name = varname, .typeName = ZT_TYPE_OF(T).data()});
+                retval.varIndex = static_cast<uint16_t>(retval.pGraph->variables.size() - 1);
             }
 
-            // Input Pin
+            retval.pSetVarFunc = [](SetVarNode& node, std::any& anyRef)
+            {
+	            node.GetVar<T>() = std::any_cast<T>(anyRef);
+            };
+            return retval;
+        }
 
+    	template <typename T>
+        T& GetVar()
+        {
+            return std::any_cast<T&>(pGraph->variables[varIndex].var);
+        }
+        void SetVar()
+        {
+            pSetVarFunc(*this, value);
+        }
+
+        unsigned long long Execute() override
+        {
+			SetVar();
+            const auto& info = pGraph->pinIdToInfo[pinIds[1]];
+            return info.linked ? info.linkedId : uniqueId;
+        }
+
+        static void ImGuiCreate(ScriptGraph* graph, TrynEditorApp* pEditor)
+        {
+            if(ImGui::Begin("SetVarNodeCreate"))
+            {
+                static std::string name;
+                if (ImGui::InputText("Node Name", &name)) {}
+
+                static std::string varname;
+                if (ImGui::InputText("Variable Name", &varname, ImGuiInputTextFlags_::ImGuiInputTextFlags_CharsNoBlank)) {}
+                static bool addNew = false;
+                static bool checked = false;
+                static auto s_it = graph->variables.end();
+                if (ImGui::Button("Check"))
+                {
+                    checked = true;
+	                const auto it = std::ranges::find_if(graph->variables, [](const auto& var)
+	                {
+		                return var.name == varname;
+	                } );
+
+                    if (it == graph->variables.end())
+                    {
+	                    // Add new variable
+                        addNew = true;
+                        s_it = graph->variables.end();
+                    }
+                    else
+                    {
+	                    addNew = false;
+						s_it = it;
+                    }
+                }
+                if (checked)
+	            {
+		            if(addNew)
+		            {
+		            	ImGui::Text("Variable not found in the script. Adding new variable.");
+		            	static int currentElement = 0;
+		            }
+		            else
+		            {
+		            	ImGui::Text(std::format("Found existing variable: {} - Type: {}", s_it->name, s_it->typeName).c_str());
+		            }
+	            }
+
+                ImGui::Text("Value to be set:");
+                
+                static std::variant<int, float, double, bool> inputBuffer = inputBuffer.emplace<int>();
+                static const std::array items = {"int", "float", "double", "bool"};
+                static int currentElement = 0;
+                if (ImGui::Combo("Input Type", &currentElement, items.data(), items.size()))
+                {
+                	switch(currentElement)
+	                {
+	                case 0:
+		                {
+	                        inputBuffer = {};
+	                        inputBuffer.emplace<int>();
+			                break;
+		                }
+					case 1:
+		                {
+	                        inputBuffer = {};
+                			inputBuffer.emplace<float>();
+			                break;
+		                }
+					case 2:
+		                {
+	                        inputBuffer = {};
+	                        inputBuffer.emplace<double>();
+			                break;
+		                }
+					case 3:
+		                {
+	                        inputBuffer = {};
+	                        inputBuffer.emplace<bool>();
+			                break;
+		                }
+	                }
+                }
+
+                switch(currentElement)
+                {
+                case 0:
+	                {
+                        ImGui::InputInt("Int", &std::get<int>(inputBuffer));
+		                break;
+	                }
+				case 1:
+	                {
+                        ImGui::InputFloat("Float", &std::get<float>(inputBuffer));
+		                break;
+	                }
+				case 2:
+	                {
+                        ImGui::InputDouble("Double", &std::get<double>(inputBuffer));
+		                break;
+	                }
+				case 3:
+	                {
+                        ImGui::Checkbox("True", &std::get<bool>(inputBuffer));
+		                break;
+	                }
+                }
+
+                if (ImGui::Button("Create"))
+                {
+	                switch(currentElement)
+	                {
+	                case 0:
+		                {
+	                        graph->CreateNewNode(std::make_unique<SetVarNode>(std::move(Make<int>(graph, {name}, {varname}, std::move(std::get<int>(inputBuffer))))));
+			                break;
+		                }
+					case 1:
+		                {
+                			graph->CreateNewNode(std::make_unique<SetVarNode>(std::move(Make<float>(graph, {name}, {varname}, std::move(std::get<float>(inputBuffer))))));
+			                break;
+		                }
+					case 2:
+		                {
+                			graph->CreateNewNode(std::make_unique<SetVarNode>(std::move(Make<double>(graph, {name}, {varname}, std::move(std::get<double>(inputBuffer))))));
+			                break;
+		                }
+					case 3:
+		                {
+                			graph->CreateNewNode(std::make_unique<SetVarNode>(std::move(Make<bool>(graph, {name}, {varname}, std::move(std::get<bool>(inputBuffer))))));
+			                break;
+		                }
+	                }
+
+                	name = {};
+                    varname = {};
+                    pEditor->createFunc = nullptr;
+                    checked = false;
+                    addNew = false;
+                }
+	            ImGui::End();
+            }
+        }
+
+    private:
+        SetVarNode(ScriptGraph* editorApp, const std::string& name, const std::string& varname) : Node(editorApp, name), varName(varname)
+        {
+            // Input Pin
 	        {
 		        PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = ned::PinKind::Input, .id = editorApp->uniqueId++ };
             	editorApp->pinIdToInfo.insert({info.id.Get(), info});
@@ -194,26 +381,11 @@ namespace tryn::ed
 	        }
 
         }
-        T& GetVar()
-        {
-            return std::any_cast<T&>(pGraph->variables[varIndex].var);
-        }
-        void SetVar()
-        {
-	        std::any_cast<T&>(pGraph->variables[varIndex].var) = value;
-        }
 
-        unsigned long long Execute() override
-        {
-			SetVar();
-            const auto& info = pGraph->pinIdToInfo[pinIds[1]];
-            return info.linked ? info.linkedId : uniqueId;
-        }
-
-    private:
         uint16_t varIndex;
         std::string varName;
-        T value;
+        void(*pSetVarFunc)(SetVarNode&, std::any&) = nullptr;
+        std::any value;
     };
 
     struct StateNode : public Node
@@ -431,11 +603,8 @@ namespace tryn::ed
     TrynEditorApp::TrynEditorApp(const std::shared_ptr<win::IWindow>& pWnd, const std::shared_ptr<gfx::IGraphics>& pGfx)
         : App(pWnd, pGfx), pContext(ned::CreateEditor())
     {
-        pGraph = std::make_unique<ScriptGraph>("TestGraph");
-        pGraph->CreateNewNode(std::make_unique<SetVarNode<int>>(pGraph.get(), "SetFunnyNumberTo69", "funnyNumber", 69));
-        pGraph->CreateNewNode(std::make_unique<StateNode>(pGraph.get(), "Logical Button - Secondary Fire", std::vector<std::string>{"RMBDown", "RMBUp"}));
-        pGraph->CreateNewNode(std::make_unique<ConditionalNode>(std::move(ConditionalNode::Make(pGraph.get(), "IsReadyToShootRocket", "RocketReady", true))));
-        pGraph->CreateNewNode(std::make_unique<EntryNode>(pGraph.get(), "Entry"));
+        LoadGraph();
+
         ECS().GetSystemManager().Finalize();
 
         pCompiler = std::make_unique<Compiler>();
@@ -445,9 +614,9 @@ namespace tryn::ed
         NodeRegister::Get().RegisterNodeType<WaitNode>();
         NodeRegister::Get().RegisterNodeType<StateNode>();
 
-        NodeRegister::Get().RegisterNodeType<SetVarNode<int>>();
-        NodeRegister::Get().RegisterNodeType<SetVarNode<float>>();
-        NodeRegister::Get().RegisterNodeType<SetVarNode<bool>>();
+        NodeRegister::Get().RegisterNodeType<SetVarNode>();
+        NodeRegister::Get().RegisterNodeType<SetVarNode>();
+        NodeRegister::Get().RegisterNodeType<SetVarNode>();
     }
 
     void TrynEditorApp::DoFrame()
@@ -718,6 +887,13 @@ namespace tryn::ed
     			outputNode.childrenIds.push_back(nodeIdToNodeIndex[pin1.parentId]);
 		    }
 		}
+
+    void ScriptGraph::ExecuteStep()
+    {
+        const auto currentNodeIndex = this->nodeIdToNodeIndex[currentNodeId];
+
+        currentNodeId = nodes[currentNodeIndex]->Execute();
+    }
 }
 
 namespace tryn::ser
@@ -731,7 +907,7 @@ namespace tryn::ser
 
     void SerializeRead(const StreamReader& sr, ed::Link& data_, const bool binary, ExtraDataPack* pExtraData = nullptr)
     {
-        pExtraData->Get("pEditor").Get((const void*&)data_.pGraph);
+        pExtraData->Get("pGraph").Get((void*&)data_.pGraph);
         sr.ReadSerialized(data_.Id, binary);
         sr.ReadSerialized(data_.InputId, binary);
         sr.ReadSerialized(data_.OutputId, binary);
@@ -895,10 +1071,12 @@ void ed::TrynEditorApp::LoadGraph()
 
     pReader = std::make_unique<ser::StreamReader>(iss);
 
-    ScriptGraph newGraph;
+    ScriptGraph* pNewGraph = new ScriptGraph;
     ser::ExtraDataPack extraData = {};
-    extraData.AddElement(ser::ElementDataView(newGraph, "pGraph"));
-    pReader->ReadSerialized(newGraph, true, &extraData);
+    extraData.AddElement(ser::ElementDataView(*pNewGraph, "pGraph"));
+    pReader->ReadSerialized(*pNewGraph, true, &extraData);
+
+    pGraph.reset(pNewGraph);
 }
 
 void ed::TrynEditorApp::LoadConfigs()

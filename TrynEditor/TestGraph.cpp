@@ -10,6 +10,7 @@ extern "C" __declspec(dllexport) bool GetRegister(TypeRegister* pReg)
 	// Begin type registering
 pReg->RegisterType<int>();
 pReg->RegisterType<bool>();
+pReg->RegisterType<double>();
 	// End type registering
 
 	return true;
