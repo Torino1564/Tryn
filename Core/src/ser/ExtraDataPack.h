@@ -2,6 +2,8 @@
 #include <vector>
 
 #include "Core/src/utl/Assert.h"
+#include <variant>
+#include <Core/src/log/Log.h>
 
 namespace tryn::ser
 {
@@ -10,56 +12,70 @@ namespace tryn::ser
 	public:
 		template <typename C>
 		explicit ElementDataView(C& data, const std::string_view name)
-			: pElement(&data), name(name)
 		{
-			funcPtr = [](void* pData, void** ppFill){
-				auto pCasted = reinterpret_cast<C>(pData);
-				auto ppFillCasted = reinterpret_cast<C*>(ppFill);
-				*ppFillCasted = pCasted;
-			};
+			if constexpr(std::is_const_v<C>)
+			{
+				dataStruct.emplace<ConstData>(nullptr, nullptr);
+				isConst = true;
+				auto& info = std::get<ConstData>(dataStruct);
+				info.funcPtr = [](const void* pData, const void*& pFillRef) {
+					auto pCasted = reinterpret_cast<const C*>(pData);
+					auto& pFillCastedRef = reinterpret_cast<const C*&>(pFillRef);
+					pFillCastedRef = pCasted;
+					};
+				info.pElement = &data;
+			}
+			else
+			{
+				dataStruct.emplace<Data>(nullptr, nullptr);
+				isConst = false;
+				auto& info = std::get<Data>(dataStruct);
+				info.funcPtr = [](void* pData, void*& pFillRef) {
+					auto pCasted = reinterpret_cast<C*>(pData);
+					auto& pFillCastedRef = reinterpret_cast<C*&>(pFillRef);
+					pFillCastedRef = pCasted;
+					};
+				info.pElement = &data;
+			}
+			this->name = name;
 		}
 
-		void Get(void** ppFill) const
+		void Get(void*& pFillRef) const
 		{
-			funcPtr(pElement, ppFill);
+			if (isConst)
+			{
+				pFillRef = nullptr;
+				trylog.warn(L"Invalid pointer qualifier. Should pass a const pointer to retrieve the variable.");
+				return;
+			}
+			else
+			{
+				const auto& [pElement, funcPtr] = std::get<Data>(dataStruct);
+				funcPtr(pElement, pFillRef);
+			}
 		}
 
-		void operator()(void** ppFill) const
+		void Get(const void*& pFillRef) const
 		{
-			Get(ppFill);
+			auto& data = std::get<ConstData>(dataStruct);
+			data.funcPtr(data.pElement, pFillRef);
 		}
 
-		void* pElement;
-		void (*funcPtr)(void*, void**) = nullptr;
-		std::string name;
-	};
-
-	class ConstElementDataView
-	{
-	public:
-		template <typename C>
-		explicit ConstElementDataView(C& data, const std::string_view name)
-			: pElement(&data), name(name)
+		struct Data
 		{
-			funcPtr = [](const void* pData, const void** ppFill) {
-				auto pCasted = reinterpret_cast<const C>(pData);
-				auto ppFillCasted = reinterpret_cast<const C*>(ppFill);
-				*ppFillCasted = pCasted;
-				};
-		}
+			void* pElement;
+			void (*funcPtr)(void*, void*&) = nullptr;
+		};
 
-		void Get(const void** ppFill) const
+		struct ConstData
 		{
-			funcPtr(pElement, ppFill);
-		}
+			const void* pElement;
+			void (*funcPtr)(const void*, const void*&) = nullptr;
+		};
 
-		void operator()(const void** ppFill) const
-		{
-			Get(ppFill);
-		}
+		std::variant<Data, ConstData> dataStruct;
 
-		const void* pElement;
-		void (*funcPtr)(const void*, const void**) = nullptr;
+		bool isConst = false;
 		std::string name;
 	};
 
@@ -70,12 +86,8 @@ namespace tryn::ser
 		{
 			elements.push_back(element);
 		}
-		void AddElement(const ConstElementDataView& element)
-		{
-			elements.push_back(element);
-		}
 
-		const void Get(const std::string_view name, ) const
+		ElementDataView Get(const std::string_view name) const
 		{
 			const auto it = std::ranges::find_if(elements, [&](const ElementDataView& view)
 			{
@@ -88,7 +100,6 @@ namespace tryn::ser
 		}
 
 		std::vector<ElementDataView> elements;
-		std::vector<ConstElementDataView> constElements;
 	};
 
 

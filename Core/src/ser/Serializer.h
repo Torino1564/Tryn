@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 #define ZT_DEFINE_SERIALIZER(x) struct Serializer : public tryn::ser::Serializer<x>
 

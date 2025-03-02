@@ -392,7 +392,7 @@ namespace tryn::gfx
 		trynass(pExtraData).msg(L"The SerializeReadComponentField functor requires extra data named pGfx!");
 
 		const IGraphics* pGfx = nullptr;
-		pExtraData->Get("pGfx")((void**)&pGfx);
+		pExtraData->Get("pGfx").Get((const void*&)pGfx);
 
 		const auto name = streamReader.ReadSerialized<std::string>(binary, pExtraData);
 		return Model(name, *pGfx);

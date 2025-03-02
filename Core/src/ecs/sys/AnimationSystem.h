@@ -3,6 +3,7 @@
 #include <Core/src/ecs/cmp/Components.h>
 #include <Core/src/ecs/sys/TransformSystem.h>
 #include <chrono>
+#include <Core/src/utl/Span.h>
 
 namespace tryn::ecs
 {
@@ -19,9 +20,9 @@ namespace tryn::ecs
 		std::chrono::high_resolution_clock::time_point previous;
 		double deltaTime = 0;
 		// data
-		ZT_NATIVE_ARRAY(AnimatedComponent) animatedArray;
-		ZT_NATIVE_ARRAY(BoneTransformsComponent) boneTransformsArray;
-		ZT_NATIVE_ARRAY(TransformComponent) transformsArray;
-		ZT_NATIVE_ARRAY(ActiveComponent) activeArray;
+		private: tryn::utl::MultiSpan<AnimatedComponent> animatedArray;
+		private: tryn::utl::MultiSpan<BoneTransformsComponent> boneTransformsArray;
+		private: tryn::utl::MultiSpan<TransformComponent> transformsArray;
+		private: tryn::utl::MultiSpan<ActiveComponent> activeArray;
 	};
 }

@@ -148,7 +148,7 @@ InstancedModelParent>>::Read(const StreamReader& streamReader, const bool binary
 	trynass(pExtraData).msg(L"The SerializeReadComponentField functor requires extra data named pGfx!");
 
 	const class IGraphics* pGfx = nullptr;
-	pExtraData->Get("pGfx")((const void**)&pGfx);
+	pExtraData->Get("pGfx").Get((const void*&)pGfx);
 
 	return {nullptr};
 }

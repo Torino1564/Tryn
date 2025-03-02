@@ -731,7 +731,7 @@ namespace tryn::ser
 
     void SerializeRead(const StreamReader& sr, ed::Link& data_, const bool binary, ExtraDataPack* pExtraData = nullptr)
     {
-        pExtraData->Get("pEditor").Get((const void**)&data_.pGraph);
+        pExtraData->Get("pEditor").Get((const void*&)data_.pGraph);
         sr.ReadSerialized(data_.Id, binary);
         sr.ReadSerialized(data_.InputId, binary);
         sr.ReadSerialized(data_.OutputId, binary);
@@ -747,7 +747,7 @@ namespace tryn::ser
 
     void SerializeRead(const StreamReader& sr, ed::Node& data, const bool binary, ExtraDataPack* pExtraData = nullptr)
     {
-        pExtraData->Get("pGraph").Get((void**)&data.pGraph);
+        pExtraData->Get("pGraph").Get((void*&)data.pGraph);
         sr.ReadSerialized(data.uniqueId, binary, pExtraData);
         sr.ReadSerialized(data.pinIds, binary, pExtraData);
         sr.ReadSerialized(data.childrenIds, binary, pExtraData);
@@ -784,7 +784,7 @@ namespace tryn::ser
     void SerializeRead(const StreamReader& sr, ed::Variable& data, const bool binary, ExtraDataPack* pExtraData = nullptr)
     {
         ed::TypeRegister* pTypeRegister = nullptr;
-        pExtraData->Get("pTypeRegister").Get((void**)&pTypeRegister);
+        pExtraData->Get("pTypeRegister").Get((void*&)pTypeRegister);
         sr.ReadSerialized(data.name, binary, pExtraData);
         sr.ReadSerialized(data.typeName, binary, pExtraData);
         sr.ReadSerialized(data.uuid, binary, pExtraData);
@@ -870,7 +870,7 @@ namespace tryn::ser
         auto pRegister = data.pRegister.get();
         const auto er = pFunc(pRegister);
 
-        pExtraData->AddElement(ElementDataView(data.pRegister.get(), "pTypeRegister"));
+        pExtraData->AddElement(ElementDataView(*data.pRegister, "pTypeRegister"));
         sr.ReadSerialized(data.variables, binary, pExtraData);
     }
 }
@@ -897,7 +897,7 @@ void ed::TrynEditorApp::LoadGraph()
 
     ScriptGraph newGraph;
     ser::ExtraDataPack extraData = {};
-    extraData.AddElement(ser::ElementDataView(&newGraph, "pGraph"));
+    extraData.AddElement(ser::ElementDataView(newGraph, "pGraph"));
     pReader->ReadSerialized(newGraph, true, &extraData);
 }
 
