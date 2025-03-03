@@ -24,7 +24,7 @@ namespace tryn::ed
     {
         ScriptGraph() = default;
         ScriptGraph(std::string_view name) : name(name) {};
-    	Node& CreateNewNode(std::unique_ptr<Node>&& newVal);
+    	Node& CreateNewNode(std::unique_ptr<Node>&& newVal, std::optional<spa::Vec2I> pos = std::nullopt);
 		void CreateNewLink(ax::NodeEditor::LinkId id, PinInfo& pin1, PinInfo& pin2);
 
     	std::vector<Link> m_Links;
@@ -97,7 +97,8 @@ namespace tryn::ed
         {
             if (!placed)
             {
-                ned::SetNodePosition(uniqueId, ImVec2(10 + 50 * uniqueId, 10));
+                ned::SetNodePosition(uniqueId, ned::ScreenToCanvas(ImVec2(position.x, position.y)));
+                
                 placed = true;
             }
             ned::BeginNode(uniqueId);
@@ -119,7 +120,7 @@ namespace tryn::ed
         }
         bool placed = false;
         ScriptGraph* pGraph;
-
+        spa::Vec2I position = {};
         virtual unsigned long long Execute() { return uniqueId; }
 
         static void ImGuiCreate(ScriptGraph* graph, TrynEditorApp* pEditor)
@@ -130,7 +131,7 @@ namespace tryn::ed
         Node() = default;
         Node(Node&&) = default;
     protected:
-        Node(ScriptGraph* pGraph, const std::string_view name) : uniqueId(pGraph->uniqueId++), name(name), pGraph(pGraph) {}
+        Node(ScriptGraph* pGraph, const std::string_view name, spa::Vec2I position = {}) : uniqueId(pGraph->uniqueId++), name(name), pGraph(pGraph), position(position) {}
     };
 
     struct EntryNode : public Node
@@ -163,6 +164,13 @@ namespace tryn::ed
             {
                 static std::string name;
                 if (ImGui::InputText("Node Name", &name)) {}
+
+                if (ImGui::Button("Create"))
+                {
+	                graph->CreateNewNode(std::move(std::make_unique<EntryNode>(graph, std::string{name})), pEditor->lastRightClickPos);
+                    pEditor->createFunc = nullptr;
+                    name = {};
+                }
 
 	            ImGui::End();
             }
@@ -333,22 +341,22 @@ namespace tryn::ed
 	                {
 	                case 0:
 		                {
-	                        graph->CreateNewNode(std::make_unique<SetVarNode>(std::move(Make<int>(graph, {name}, {varname}, std::move(std::get<int>(inputBuffer))))));
+	                        graph->CreateNewNode(std::make_unique<SetVarNode>(std::move(Make<int>(graph, {name}, {varname}, std::move(std::get<int>(inputBuffer))))), pEditor->lastRightClickPos);
 			                break;
 		                }
 					case 1:
 		                {
-                			graph->CreateNewNode(std::make_unique<SetVarNode>(std::move(Make<float>(graph, {name}, {varname}, std::move(std::get<float>(inputBuffer))))));
+                			graph->CreateNewNode(std::make_unique<SetVarNode>(std::move(Make<float>(graph, {name}, {varname}, std::move(std::get<float>(inputBuffer))))), pEditor->lastRightClickPos);
 			                break;
 		                }
 					case 2:
 		                {
-                			graph->CreateNewNode(std::make_unique<SetVarNode>(std::move(Make<double>(graph, {name}, {varname}, std::move(std::get<double>(inputBuffer))))));
+                			graph->CreateNewNode(std::make_unique<SetVarNode>(std::move(Make<double>(graph, {name}, {varname}, std::move(std::get<double>(inputBuffer))))), pEditor->lastRightClickPos);
 			                break;
 		                }
 					case 3:
 		                {
-                			graph->CreateNewNode(std::make_unique<SetVarNode>(std::move(Make<bool>(graph, {name}, {varname}, std::move(std::get<bool>(inputBuffer))))));
+                			graph->CreateNewNode(std::make_unique<SetVarNode>(std::move(Make<bool>(graph, {name}, {varname}, std::move(std::get<bool>(inputBuffer))))), pEditor->lastRightClickPos);
 			                break;
 		                }
 	                }
@@ -445,7 +453,7 @@ namespace tryn::ed
 
                 if (ImGui::Button("Create"))
                 {
-	                graph->CreateNewNode(std::make_unique<StateNode>(graph, std::string{name}, std::vector<std::string>{states}));
+	                graph->CreateNewNode(std::make_unique<StateNode>(graph, std::string{name}, std::vector<std::string>{states}), pEditor->lastRightClickPos);
                     name = {};
                     states = {};
                     pEditor->createFunc = nullptr;
@@ -517,6 +525,164 @@ namespace tryn::ed
 				const auto& info = pGraph->pinIdToInfo[pinIds[falsePin]];
 	            return info.linked ? info.linkedId : uniqueId;
             }
+        }
+
+        static void ImGuiCreate(ScriptGraph* graph, TrynEditorApp* pEditor)
+        {
+	        if(ImGui::Begin("ConditionalNodeCreate"))
+			{
+			    static std::string name;
+			    if (ImGui::InputText("Node Name", &name)) {}
+
+			    static std::string varname;
+			    if (ImGui::InputText("Variable Name", &varname, ImGuiInputTextFlags_::ImGuiInputTextFlags_CharsNoBlank)) {}
+			    static bool addNew = false;
+			    static bool checked = false;
+			    static auto s_it = graph->variables.end();
+			    if (ImGui::Button("Check"))
+			    {
+			        checked = true;
+			        const auto it = std::ranges::find_if(graph->variables, [](const auto& var)
+			        {
+			            return var.name == varname;
+			        } );
+
+			        if (it == graph->variables.end())
+			        {
+			            // Add new variable
+			            addNew = true;
+			            s_it = graph->variables.end();
+			        }
+			        else
+			        {
+			            addNew = false;
+						s_it = it;
+			        }
+			    }
+			    if (checked)
+			    {
+			        if(addNew)
+			        {
+        				ImGui::Text("Variable not found in the script. Adding new variable.");
+        				static int currentElement = 0;
+			        }
+			        else
+			        {
+        				ImGui::Text(std::format("Found existing variable: {} - Type: {}", s_it->name, s_it->typeName).c_str());
+			        }
+			    }
+
+			    ImGui::Text("Value to compare:");
+			    
+			    static std::variant<int, float, double, bool, std::string> inputBuffer = inputBuffer.emplace<int>();
+			    static const std::array items = {"int", "float", "double", "bool", "string"};
+			    static int currentElement = 0;
+			    if (ImGui::Combo("Input Type", &currentElement, items.data(), items.size()))
+			    {
+       				switch(currentElement)
+			        {
+			        case 0:
+			            {
+			                inputBuffer = {};
+			                inputBuffer.emplace<int>();
+			                break;
+			            }
+					case 1:
+			            {
+			                inputBuffer = {};
+			        		inputBuffer.emplace<float>();
+			                break;
+			            }
+					case 2:
+			            {
+			                inputBuffer = {};
+			                inputBuffer.emplace<double>();
+			                break;
+			            }
+					case 3:
+			            {
+			                inputBuffer = {};
+			                inputBuffer.emplace<bool>();
+			                break;
+			            }
+       				case 4:
+			            {
+			                inputBuffer = {};
+			                inputBuffer.emplace<std::string>();
+			                break;
+			            }
+			        }
+
+			    }
+
+			    switch(currentElement)
+			    {
+			    case 0:
+			        {
+			            ImGui::InputInt("Int", &std::get<int>(inputBuffer));
+			            break;
+			        }
+				case 1:
+			        {
+			            ImGui::InputFloat("Float", &std::get<float>(inputBuffer));
+			            break;
+			        }
+				case 2:
+			        {
+			            ImGui::InputDouble("Double", &std::get<double>(inputBuffer));
+			            break;
+			        }
+				case 3:
+			        {
+			            ImGui::Checkbox("True", &std::get<bool>(inputBuffer));
+			            break;
+			        }
+				case 4:
+			        {
+			            ImGui::InputText("True", &std::get<std::string>(inputBuffer));
+			            break;
+			        }
+			    }
+
+			    if (ImGui::Button("Create"))
+			    {
+			        switch(currentElement)
+			        {
+			        case 0:
+			            {
+			                graph->CreateNewNode(std::make_unique<ConditionalNode>(std::move(Make<int>(graph, {name}, {varname}, std::move(std::get<int>(inputBuffer))))), pEditor->lastRightClickPos);
+			                break;
+			            }
+					case 1:
+			            {
+			        		graph->CreateNewNode(std::make_unique<ConditionalNode>(std::move(Make<float>(graph, {name}, {varname}, std::move(std::get<float>(inputBuffer))))), pEditor->lastRightClickPos);
+			                break;
+			            }
+					case 2:
+			            {
+			        		graph->CreateNewNode(std::make_unique<ConditionalNode>(std::move(Make<double>(graph, {name}, {varname}, std::move(std::get<double>(inputBuffer))))), pEditor->lastRightClickPos);
+			                break;
+			            }
+					case 3:
+			            {
+			        		graph->CreateNewNode(std::make_unique<ConditionalNode>(std::move(Make<bool>(graph, {name}, {varname}, std::move(std::get<bool>(inputBuffer))))), pEditor->lastRightClickPos);
+			                break;
+			            }
+					case 4:
+			            {
+			        		graph->CreateNewNode(std::make_unique<ConditionalNode>(std::move(Make<std::string>(graph, {name}, {varname}, std::move(std::get<std::string>(inputBuffer))))), pEditor->lastRightClickPos);
+			                break;
+			            }
+			        }
+
+       				name = {};
+			        varname = {};
+			        pEditor->createFunc = nullptr;
+			        checked = false;
+			        addNew = false;
+			    }
+			    ImGui::End();
+			}
         }
 
     protected:
@@ -668,6 +834,7 @@ namespace tryn::ed
     	{
     		ImGui::OpenPopup("Right Click Menu");
             rmbPos = ImGui::GetMousePos();
+            lastRightClickPos = {(int)rmbPos.x, (int)rmbPos.y};
     	}
         ned::Resume();
         RMBMenu(rmbPos);
@@ -860,10 +1027,15 @@ namespace tryn::ed
         outputPinInfo.linked = false;
     }
 
-	Node& ScriptGraph::CreateNewNode(std::unique_ptr<Node>&& newVal)
+	Node& ScriptGraph::CreateNewNode(std::unique_ptr<Node>&& newVal, const std::optional<spa::Vec2I> pos)
 	{
     	nodes.push_back(std::forward<std::unique_ptr<Node>>(newVal));
         nodeIdToNodeIndex.insert({nodes.back()->uniqueId, static_cast<uint16_t>(nodes.size() - 1)});
+
+        if (pos.has_value())
+        {
+	        nodes.back()->position = pos.value();
+        }
 
         return *nodes.back();
 	}
@@ -919,6 +1091,7 @@ namespace tryn::ser
         sw.Serialize(data.pinIds, binary);
         sw.Serialize(data.childrenIds, binary);
         sw.Serialize(data.name, binary);
+        sw.Serialize(data.position, binary);
     }
 
     void SerializeRead(const StreamReader& sr, ed::Node& data, const bool binary, ExtraDataPack* pExtraData = nullptr)
@@ -928,6 +1101,7 @@ namespace tryn::ser
         sr.ReadSerialized(data.pinIds, binary, pExtraData);
         sr.ReadSerialized(data.childrenIds, binary, pExtraData);
         sr.ReadSerialized(data.name, binary, pExtraData);
+        sr.ReadSerialized(data.position, binary, pExtraData);
     }
 
     void SerializeWrite(const StreamWriter& sw, const ed::PinInfo& data, const bool binary, const std::string& name)
@@ -1023,8 +1197,6 @@ namespace tryn::ser
         sw.Serialize(data.variables, binary);
     }
 
-    static_assert(Serializable<ed::Variable>);
-
     void SerializeRead(const StreamReader& sr, ed::ScriptGraph& data, const bool binary, ExtraDataPack* pExtraData)
     {
         sr.ReadSerialized(data.m_Links, binary, pExtraData);
@@ -1065,6 +1237,14 @@ void ed::TrynEditorApp::SerializeGraph()
 void ed::TrynEditorApp::LoadGraph()
 {
     std::ifstream file("serialize.txt");
+
+    if (!file.is_open())
+    {
+	    pGraph.reset();
+        pGraph = std::make_unique<ScriptGraph>("TestGraph");
+        return;
+    }
+
     const auto buf = file.rdbuf();
     std::stringstream ss; ss << buf;
     std::istringstream iss(ss.str());

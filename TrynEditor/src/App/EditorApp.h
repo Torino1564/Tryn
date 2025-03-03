@@ -58,6 +58,7 @@ namespace tryn::ed
 			std::string outputDirectory;
 		} Configs;
 
+		spa::Vec2I lastRightClickPos = {};
 		void(*createFunc) (ScriptGraph* graph, TrynEditorApp* pEditor) = nullptr;
 	};
 }
