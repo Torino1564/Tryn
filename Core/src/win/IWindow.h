@@ -34,7 +34,10 @@ namespace tryn::win
 		void EnableCursor();
 		void DisableCursor();
 		virtual std::future<void> Resize(spa::DimensionsI newDimensions) = 0;
+		virtual std::future<void> SetResizableFlag(bool value) = 0;
 		virtual void NewFrame() = 0;
+		bool HasSizeChanged() const;
+		void AcknowledgeSizeChange();
 	public:
 		Keyboard keyboard;
 		Mouse mouse;
@@ -72,5 +75,7 @@ namespace tryn::win
 		void DisableImGuiMouse();
 		virtual void ConfineCursor() = 0;
 		virtual void FreeCursor() = 0;
+
+		bool sizeChanged = false;
 	};
 }

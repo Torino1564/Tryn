@@ -6,6 +6,7 @@
 #include <Core/src/log/Log.h>
 #include <Core/src/utl/String.h>
 #include "imgui_impl_win32.h"
+#include "Core/third/backward.hpp"
 
 namespace tryn::win
 {
@@ -285,9 +286,42 @@ namespace tryn::win
 				}
 
 			/********************** END MOUSE MESSAGES *******************/
+			/********************* CUSTOM TASK MESSAGES ******************/
 			case CustomTaskMessageId:
 				tasks_.PopExecute();
 				break;
+			/********************* CUSTOM TASK MESSAGES ******************/
+			/*********************** RESIZING MESSAGES ********************/
+			case WM_SIZE:
+				{
+					widthCache = LOWORD(lParam);
+					heightCache = HIWORD(lParam);
+					break;
+				}
+			case WM_SIZING:
+				{
+					sizing = true;
+					break;
+				}
+			case WM_EXITSIZEMOVE:
+				{
+					if (sizing)
+					{
+						Resize_({(int)widthCache, (int)heightCache});
+						sizing = false;
+					}
+					break;
+				}
+			case WM_SYSCOMMAND:
+				{
+					if ((wParam & 0xFFF0) == SC_MAXIMIZE || (wParam & 0xFFF0) == SC_RESTORE)
+					{
+						sizeChanged = true;
+					}
+					break;
+				}
+			/*********************** RESIZING MESSAGES ********************/
+
 			}
 		}
 		catch (const std::exception& e) {
@@ -305,12 +339,19 @@ namespace tryn::win
 
 	std::future<void> Window::Resize(const spa::DimensionsI newDimensions)
 	{
+		return Dispatch_([=, this] {
+				Resize_(newDimensions);
+			});
+	}
+
+	std::future<void> Window::SetResizableFlag(const bool value)
+	{
 		WINDOWINFO windowInfo = {};
 		GetWindowInfo((HWND)hWnd_, &windowInfo);
-		clientDimensions = ClientToWindowDimensions(newDimensions, windowInfo.dwStyle);
+		const auto newStyle = WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 		return Dispatch_([=, this] {
-			if (!SetWindowPos((HWND)hWnd_, nullptr, 0, 0, newDimensions.width, newDimensions.height, SWP_NOMOVE | SWP_FRAMECHANGED)) {
-				trylog.warn(L"Failed resizing the window!").hr();
+			if (!SetWindowLongPtr((HWND)hWnd_, GWL_STYLE, value ? (windowInfo.dwStyle | newStyle) : (windowInfo.dwStyle & ~newStyle))) {
+				trylog.warn(L"Failed changing the resize flag!").hr();
 			}
 			});
 	}
@@ -351,6 +392,18 @@ namespace tryn::win
 	{
 		ClipCursor(nullptr);
 	}
+
+	void Window::Resize_(const spa::DimensionsI newDimensions)
+	{
+		sizeChanged = true;
+		WINDOWINFO windowInfo = {};
+		GetWindowInfo((HWND)hWnd_, &windowInfo);
+		clientDimensions = ClientToWindowDimensions(newDimensions, windowInfo.dwStyle);
+		if (!SetWindowPos((HWND)hWnd_, nullptr, 0, 0, newDimensions.width, newDimensions.height, SWP_NOMOVE | SWP_FRAMECHANGED)) {
+			trylog.warn(L"Failed resizing the window!").hr();
+		}
+	}
+
 	void Window::MessageKernel_() noexcept
 	{
 		startSignal_.acquire();

@@ -781,6 +781,7 @@ namespace tryn::ed
         ECS().GetSystemManager().Finalize();
         pCompiler = std::make_unique<Compiler>();
         Resize({1920, 1080});
+        wnd->SetResizableFlag(true);
         NodeRegister::Get().RegisterNodeType<EntryNode>();
         NodeRegister::Get().RegisterNodeType<ConditionalNode>();
         NodeRegister::Get().RegisterNodeType<WaitNode>();

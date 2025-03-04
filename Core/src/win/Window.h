@@ -36,6 +36,7 @@ namespace tryn::win
 			return future;
 		}
 		std::future<void> Resize(spa::DimensionsI newDimensions) override;
+		std::future<void> SetResizableFlag(bool value) override;
 		void NotifyTaskDispatch_() const;
 		void NewFrame() override;
 		void HideCursor() override;
@@ -49,5 +50,11 @@ namespace tryn::win
 		std::thread kernelThread_;
 		WindowHandle hWnd_ = nullptr;
 		std::atomic<bool> closing_ = false;
+
+	private:
+		void Resize_( spa::DimensionsI newDimensions);
+		UINT widthCache = 0;
+		UINT heightCache = 0;
+		bool sizing = false;
 	};
 }

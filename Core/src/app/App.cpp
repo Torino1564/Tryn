@@ -49,6 +49,11 @@ namespace tryn::app
 		pEcs->WipeAllocator();
 		pEcs->ExecuteSystems();
 		gfx->EndFrame();
+		if (wnd->HasSizeChanged())
+		{
+			gfx->Resize();
+			wnd->AcknowledgeSizeChange();
+		}
 	}
 
 	const gfx::IGraphics& App::Gfx() const

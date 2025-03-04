@@ -112,5 +112,15 @@ namespace tryn::win
 		ConfineCursor();
 		mouse.EnableRaw();
 	}
+
+	bool IWindow::HasSizeChanged() const
+	{
+		return sizeChanged;
+	}
+
+	void IWindow::AcknowledgeSizeChange()
+	{
+		sizeChanged = false;
+	}
 }
 
