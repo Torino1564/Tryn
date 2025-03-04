@@ -33,6 +33,7 @@ namespace tryn::win
 		bool IsCursorEnabled() const;
 		void EnableCursor();
 		void DisableCursor();
+		virtual std::future<void> Resize(spa::DimensionsI newDimensions) = 0;
 		virtual void NewFrame() = 0;
 	public:
 		Keyboard keyboard;

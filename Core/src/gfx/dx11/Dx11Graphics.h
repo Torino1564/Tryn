@@ -34,6 +34,8 @@ namespace tryn::gfx::dx11
 		constexpr const char* GetAPIString() const override;
 		std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() const override;
 		std::shared_ptr<IGenericDepthStencil> GetDepthStencilView() const override;
+		void Resize() override;
+
 
 		static constexpr DXGI_FORMAT MapDXGIFormat(const VertexFormat format)
 		{

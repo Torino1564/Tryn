@@ -1,4 +1,5 @@
 #pragma once
+#include <Core/src/spa/Dimensions.h>
 
 namespace tryn::gfx
 {
@@ -32,7 +33,7 @@ namespace tryn::app
 		gfx::IGraphics& Gfx();
 		ecs::ECS& ECS();
 		const ecs::ECS& ECS() const;
-
+		void Resize(spa::DimensionsI newDimensions) const;
 	protected:
 		std::unique_ptr<ecs::ECS> pEcs;
 		std::shared_ptr<win::IWindow> wnd;

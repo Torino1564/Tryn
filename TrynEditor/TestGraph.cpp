@@ -8,7 +8,8 @@ extern "C" __declspec(dllexport) bool GetRegister(TypeRegister* pReg)
 		return false;
 
 	// Begin type registering
-pReg->RegisterType<bool>();
+pReg->RegisterType<int>();
+pReg->RegisterType<int>();
 	// End type registering
 
 	return true;

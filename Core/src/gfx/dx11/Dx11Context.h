@@ -20,6 +20,9 @@ namespace tryn::gfx::dx11
 		void Submit(const IGraphics& gfx) override;
 		void DrawIndexed(int count) const override;
 		void DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) const override;
+		void UpdateContextDimensions(const IGraphics& gfx) override;
+		void Flush() override;
+		void ClearState() override;
 	private:
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pView;

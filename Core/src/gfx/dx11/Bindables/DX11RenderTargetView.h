@@ -24,15 +24,19 @@ namespace tryn::gfx::dx11
 		ID3D11RenderTargetView* const* GetAddressOf() const;
 		ID3D11RenderTargetView** GetAddressOf();
 		void Clear() const override;
+		void Release();
+
+		void RegenerateResources(const spa::DimensionsI dimensions);
+		void RegenerateResources(ID3D11Texture2D* pTextureIn);
 
 	private:
 		void RTVCreation(const Graphics& gfx, const spa::DimensionsI dimensions);
-		void RTVCreation(ID3D11Texture2D* pTexture_in);
+		void RTVCreation(ID3D11Texture2D* pTextureIn);
 		void SRVCreation(const Graphics& gfx, uint16_t slot)
 			requires (Type == BufferResourceType::ShaderResource);
 
+
 		const Graphics& gfx;
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRTV;
 		[[no_unique_address]] std::conditional_t<Type == BufferResourceType::ShaderResource, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, utl::empty_t> pSRV;
 	};

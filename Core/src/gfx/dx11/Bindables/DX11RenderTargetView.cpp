@@ -113,6 +113,36 @@ namespace tryn::gfx::dx11
 	}
 
 	template <BufferResourceType Type>
+	void DX11RenderTargetView<Type>::Release()
+	{
+		pRTV->Release();
+		if constexpr (Type == BufferResourceType::ShaderResource)
+		{
+			pSRV->Release();
+		}
+	}
+
+	template <BufferResourceType Type>
+	void DX11RenderTargetView<Type>::RegenerateResources(const spa::DimensionsI dimensions)
+	{
+		RTVCreation(gfx, dimensions);
+		if constexpr (Type == BufferResourceType::ShaderResource)
+		{
+			SRVCreation(gfx, this->slot);
+		}
+	}
+
+	template <BufferResourceType Type>
+	void DX11RenderTargetView<Type>::RegenerateResources(ID3D11Texture2D* pTextureIn)
+	{
+		RTVCreation(pTextureIn);
+		if constexpr (Type == BufferResourceType::ShaderResource)
+		{
+			SRVCreation(gfx, this->slot);
+		}
+	}
+
+	template <BufferResourceType Type>
 	void DX11RenderTargetView<Type>::RTVCreation(const Graphics& gfx, const spa::DimensionsI dimensions)
 	{
 		// RTV Creation
@@ -129,8 +159,10 @@ namespace tryn::gfx::dx11
 		textureDesc.CPUAccessFlags = 0;
 		textureDesc.MiscFlags = 0;
 
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
+
 		gfx.GetDevice().CreateTexture2D(
-			&textureDesc, nullptr, &pTexture
+			&textureDesc, nullptr, pTexture.GetAddressOf()
 		) >> chk;
 
 		// create the target view on the texture
@@ -139,17 +171,16 @@ namespace tryn::gfx::dx11
 		rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
 		gfx.GetDevice().CreateRenderTargetView(
-			pTexture.Get(), &rtvDesc, &pRTV
+			pTexture.Get(), &rtvDesc, pRTV.GetAddressOf()
 		) >> chk;
 	}
 
 	template <BufferResourceType Type>
-	void DX11RenderTargetView<Type>::RTVCreation(ID3D11Texture2D* pTexture_in)
+	void DX11RenderTargetView<Type>::RTVCreation(ID3D11Texture2D* pTextureIn)
 	{
-		this->pTexture = {pTexture_in};
 		// get information from texture about dimensions
 		D3D11_TEXTURE2D_DESC textureDesc;
-		pTexture->GetDesc(&textureDesc);
+		pTextureIn->GetDesc(&textureDesc);
 		this->dimensions.width = textureDesc.Width;
 		this->dimensions.height = textureDesc.Height;
 
@@ -161,7 +192,7 @@ namespace tryn::gfx::dx11
 		rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
 
 		gfx.GetDevice().CreateRenderTargetView(
-			pTexture.Get(), &rtvDesc, &pRTV
+			pTextureIn, &rtvDesc, pRTV.GetAddressOf()
 		) >> chk;
 	}
 
@@ -170,20 +201,17 @@ namespace tryn::gfx::dx11
 		requires (Type == BufferResourceType::ShaderResource)
 	{
 		// SRV Creation
-		Microsoft::WRL::ComPtr<ID3D11Resource> pRes;
-		pRTV->GetResource(&pRes);
-
-		D3D11_TEXTURE2D_DESC textureDesc;
-		pTexture->GetDesc(&textureDesc);
+		Microsoft::WRL::ComPtr<ID3D11Resource> pTexture;
+		this->pRTV->GetResource(&pTexture);
 
 		// create the resource view on the texture
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = textureDesc.Format;
+		srvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;
 		gfx.GetDevice().CreateShaderResourceView(
-			pRes.Get(), &srvDesc, &pSRV
+			pTexture.Get(), &srvDesc, pSRV.GetAddressOf()
 		) >> chk;
 
 		this->slot = slot;

@@ -19,12 +19,15 @@ namespace tryn::gfx::dx11
 		void Bind() override;
 		void Bind(const class IContext& ctx) override;
 		void Clear() const override;
+		void Release();
 
+		void RegenerateResource(const spa::DimensionsI dimensions);
 	private:
 		void DSVCreation(const Graphics& gfx, const spa::DimensionsI dimensions, ComparissonMode mode, bool isShaderResource);
 		void SRVCreation(const Graphics& gfx, const uint16_t slot)
 			requires (Type == BufferResourceType::ShaderResource);
 
+		ComparissonMode mode = ComparissonMode::Less;
 		const Graphics& gfx;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 		[[no_unique_address]] std::conditional_t<Type == BufferResourceType::ShaderResource, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, utl::empty_t> pSRV;

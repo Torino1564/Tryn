@@ -78,6 +78,7 @@ namespace tryn::gfx
 		void SetProjection(glm::mat4 projection);
 		const spa::DimensionsI& GetDimensions() const;
 		virtual constexpr GraphicAPI GetType() const = 0;
+		virtual void Resize() = 0;
 		virtual std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() const = 0;
 		virtual std::shared_ptr<IGenericDepthStencil> GetDepthStencilView() const = 0;
 		static const std::vector<std::string>& GetApiArray()

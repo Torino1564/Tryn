@@ -35,6 +35,7 @@ namespace tryn::win
 			NotifyTaskDispatch_();
 			return future;
 		}
+		std::future<void> Resize(spa::DimensionsI newDimensions) override;
 		void NotifyTaskDispatch_() const;
 		void NewFrame() override;
 		void HideCursor() override;

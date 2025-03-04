@@ -23,10 +23,18 @@ namespace tryn::ed
 	struct ScriptGraph
     {
         ScriptGraph() = default;
-        ScriptGraph(std::string_view name) : name(name) {};
+        ScriptGraph(std::string_view name) : name(name) {}
     	Node& CreateNewNode(std::unique_ptr<Node>&& newVal, std::optional<spa::Vec2I> pos = std::nullopt);
 		void CreateNewLink(ax::NodeEditor::LinkId id, PinInfo& pin1, PinInfo& pin2);
+        ~ScriptGraph()
+        {
+	        m_Links.clear();
+            nodes.clear();
+            variables.clear();
 
+            nodeIdToNodeIndex.clear();
+            pinIdToInfo.clear();
+        }
     	std::vector<Link> m_Links;
 		int m_NextLinkId = 100;
 		std::unordered_map<unsigned long long, PinInfo> pinIdToInfo;
@@ -770,11 +778,9 @@ namespace tryn::ed
         : App(pWnd, pGfx), pContext(ned::CreateEditor())
     {
         LoadGraph();
-
         ECS().GetSystemManager().Finalize();
-
         pCompiler = std::make_unique<Compiler>();
-
+        Resize({1920, 1080});
         NodeRegister::Get().RegisterNodeType<EntryNode>();
         NodeRegister::Get().RegisterNodeType<ConditionalNode>();
         NodeRegister::Get().RegisterNodeType<WaitNode>();
@@ -871,6 +877,15 @@ namespace tryn::ed
         	ned::PopStyleColor(4);
         }
 
+        
+        const auto hoveredNodeId = ned::GetHoveredNode();
+        auto it = pGraph->nodeIdToNodeIndex.find(hoveredNodeId.Get());
+        if (it != pGraph->nodeIdToNodeIndex.end())
+        {
+            const auto pos = ned::GetNodePosition(hoveredNodeId);
+            pGraph->nodes[it->second]->position = {(int)pos.x, (int)pos.y}; 
+        }
+
         // Submit Links
         for (auto& linkInfo : pGraph->m_Links)
             ned::Link(linkInfo.Id, linkInfo.InputId, linkInfo.OutputId);
@@ -955,8 +970,6 @@ namespace tryn::ed
             }
         }
         ned::EndDelete(); // Wrap up deletion action
-
-
 
         // End of interaction with editor.
         ned::End();
@@ -1148,6 +1161,7 @@ namespace tryn::ser
         sw.Serialize(data.nodes, binary);
         sw.Serialize(data.entryId, binary);
         sw.Serialize(data.pinIdToInfo, binary);
+        sw.Serialize(data.nodeIdToNodeIndex, binary);
         sw.Serialize(data.uniqueId, binary);
         sw.Serialize(data.m_NextLinkId, binary);
         sw.Serialize(data.name, binary);
@@ -1203,6 +1217,7 @@ namespace tryn::ser
         sr.ReadSerialized(data.nodes, binary, pExtraData);
         sr.ReadSerialized(data.entryId, binary, pExtraData);
         sr.ReadSerialized(data.pinIdToInfo, binary, pExtraData);
+        sr.ReadSerialized(data.nodeIdToNodeIndex, binary, pExtraData);
         sr.ReadSerialized(data.uniqueId, binary, pExtraData);
         sr.ReadSerialized(data.m_NextLinkId, binary, pExtraData);
         sr.ReadSerialized(data.name, binary, pExtraData);

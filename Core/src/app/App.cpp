@@ -70,4 +70,11 @@ namespace tryn::app
 	{
 		return *pEcs;
 	}
+
+	void App::Resize(spa::DimensionsI newDimensions) const
+	{
+		auto future = wnd->Resize(newDimensions);
+		gfx->Resize();
+		future.get();
+	}
 }

@@ -12,10 +12,8 @@ namespace tryn::gfx::dx11
 		// Create context
 		gfx.GetDevice().CreateDeferredContext(0u, pContext.GetAddressOf());
 		deferred = true;
-		// Set Render Target
-		pContext->OMSetRenderTargets(1u, gfx.pTarget->GetAddressOf(), gfx.pDSV->Get());
-		// Set Viewport
-		pContext->RSSetViewports(1u, &gfx.viewport);
+
+		DX11Context::UpdateContextDimensions(gfx);
 
 		// Init Constant Buffer
 		{
@@ -54,6 +52,28 @@ namespace tryn::gfx::dx11
 	void DX11Context::DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) const
 	{
 		pContext->DrawIndexedInstanced(indexCount, instanceCount, startIndexLocation, baseVertexLocation, startIndexLocation);
+	}
+
+	void DX11Context::UpdateContextDimensions(const IGraphics& gfx)
+	{
+		gfx.AssertContextCoherence(*this);
+
+		const auto& castedGfx = static_cast<const Graphics&>(gfx);
+
+		// Set Render Target
+		pContext->OMSetRenderTargets(1u, castedGfx.pTarget->GetAddressOf(), castedGfx.pDSV->Get());
+		// Set Viewport
+		pContext->RSSetViewports(1u, &castedGfx.viewport);
+	}
+
+	void DX11Context::Flush()
+	{
+		pContext->Flush();
+	}
+
+	void DX11Context::ClearState()
+	{
+		pContext->ClearState();
 	}
 }
 

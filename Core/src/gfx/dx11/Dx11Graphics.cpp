@@ -184,6 +184,41 @@ namespace tryn::gfx::dx11
 	{
 		return pDSV;
 	}
+
+	void Graphics::Resize()
+	{
+		auto future = Dispatch_([&] {
+			// Release resources
+			pTarget->Release();
+			pDSV->Release();
+
+			pContext->ClearState();
+			pContext->Flush();
+
+			pSwap->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0) >> chk;
+
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
+			pSwap->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer) >> chk;
+			D3D11_TEXTURE2D_DESC tDesc = {};
+			pBackBuffer->GetDesc(&tDesc);
+			dimensions = {.width = (int)tDesc.Width, .height = (int)tDesc.Height};
+
+			pTarget->RegenerateResources(pBackBuffer.Get());
+			pDSV->RegenerateResource(dimensions);
+
+			//viewport
+			viewport.Width = static_cast<float>(dimensions.width);
+			viewport.Height = static_cast<float>(dimensions.height);
+			viewport.MinDepth = 0.0f;
+			viewport.MaxDepth = 1.0f;
+			viewport.TopLeftX = 0.0f;
+			viewport.TopLeftY = 0.0f;
+
+			pContext->UpdateContextDimensions(*this);
+		});
+		return future.get();
+	}
+
 	void Graphics::DrawIndexedInstanced(int indexCount, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) const
 	{
 		pContext->DrawIndexedInstanced(indexCount, instanceCount, startIndexLocation, baseVertexLocation, startInstanceLocation);

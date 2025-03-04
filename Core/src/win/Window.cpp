@@ -302,6 +302,19 @@ namespace tryn::win
 
 		return DefWindowProcW(hWnd, msg, wParam, lParam);
 	}
+
+	std::future<void> Window::Resize(const spa::DimensionsI newDimensions)
+	{
+		WINDOWINFO windowInfo = {};
+		GetWindowInfo((HWND)hWnd_, &windowInfo);
+		clientDimensions = ClientToWindowDimensions(newDimensions, windowInfo.dwStyle);
+		return Dispatch_([=, this] {
+			if (!SetWindowPos((HWND)hWnd_, nullptr, 0, 0, newDimensions.width, newDimensions.height, SWP_NOMOVE | SWP_FRAMECHANGED)) {
+				trylog.warn(L"Failed resizing the window!").hr();
+			}
+			});
+	}
+
 	void Window::NotifyTaskDispatch_() const
 	{
 		if (!PostMessageW((HWND)hWnd_, CustomTaskMessageId, 0, 0)) {

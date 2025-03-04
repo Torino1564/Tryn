@@ -18,7 +18,7 @@ namespace tryn::gfx::dx11
 	template <BufferResourceType Type>
 	DX11DepthStencil<Type>::DX11DepthStencil(const Graphics& gfx, const spa::DimensionsI dimensions,
 		ComparissonMode mode) requires (Type == BufferResourceType::OutputOnly):
-		gfx(gfx)
+		gfx(gfx), mode(mode)
 	{
 		this->type = GraphicAPI::DX11;
 		DSVCreation(gfx, dimensions, mode, (Type == BufferResourceType::ShaderResource));
@@ -27,7 +27,7 @@ namespace tryn::gfx::dx11
 	template <BufferResourceType Type>
 	DX11DepthStencil<Type>::DX11DepthStencil(const Graphics& gfx, const spa::DimensionsI dimensions,
 		const uint16_t slot, ComparissonMode mode) requires (Type == BufferResourceType::ShaderResource):
-		gfx(gfx)
+		gfx(gfx), mode(mode)
 	{
 		this->type = GraphicAPI::DX11;
 		DSVCreation(gfx, dimensions, mode, (Type == BufferResourceType::ShaderResource));
@@ -70,6 +70,26 @@ namespace tryn::gfx::dx11
 	}
 
 	template <BufferResourceType Type>
+	void DX11DepthStencil<Type>::Release()
+	{
+		pDSV->Release();
+		if constexpr (Type == BufferResourceType::ShaderResource)
+		{
+			pSRV->Release();
+		}
+	}
+
+	template <BufferResourceType Type>
+	void DX11DepthStencil<Type>::RegenerateResource(const spa::DimensionsI dimensions)
+	{
+		DSVCreation(gfx, dimensions, mode, Type == BufferResourceType::ShaderResource);
+		if constexpr (Type == BufferResourceType::ShaderResource)
+		{
+			SRVCreation(gfx, this->slot);
+		}
+	}
+
+	template <BufferResourceType Type>
 	void DX11DepthStencil<Type>::DSVCreation(const Graphics& gfx, const spa::DimensionsI dimensions,
 		ComparissonMode mode, bool isShaderResource)
 	{
@@ -93,13 +113,13 @@ namespace tryn::gfx::dx11
 		td.SampleDesc.Quality = 0u;
 		td.Usage = D3D11_USAGE_DEFAULT;
 		td.BindFlags = D3D11_BIND_DEPTH_STENCIL | (isShaderResource ? D3D11_BIND_SHADER_RESOURCE : 0);
-		gfx.GetDevice().CreateTexture2D(&td, nullptr, &pDepthStencil) >> chk;
+		gfx.GetDevice().CreateTexture2D(&td, nullptr, pDepthStencil.GetAddressOf()) >> chk;
 
 		D3D11_DEPTH_STENCIL_VIEW_DESC dsvd = {};
 		dsvd.Format = DXGI_FORMAT_UNKNOWN;
 		dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		dsvd.Texture2D.MipSlice = 0u;
-		gfx.GetDevice().CreateDepthStencilView(pDepthStencil.Get(), &dsvd, &pDSV) >> chk;
+		gfx.GetDevice().CreateDepthStencilView(pDepthStencil.Get(), &dsvd, pDSV.GetAddressOf()) >> chk;
 	}
 
 	template <BufferResourceType Type>
@@ -117,7 +137,7 @@ namespace tryn::gfx::dx11
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;
 		gfx.GetDevice().CreateShaderResourceView(
-			pRes.Get(), &srvDesc, &this->pSRV
+			pRes.Get(), &srvDesc, this->pSRV.GetAddressOf()
 		) >> chk;
 
 		this->slot = slot;
