@@ -1,5 +1,4 @@
 #pragma once
-#include "TrynWin.h"
 #include <future>
 #include <string>
 #include <optional>
@@ -46,7 +45,7 @@ namespace tryn::win
 		spa::DimensionsI clientDimensions;
 		std::vector<char> rawBufer;
 	protected:
-		virtual LRESULT HandleMessage_(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept = 0;
+		virtual uintptr_t HandleMessage_(WindowHandle hWnd, unsigned int msg, uintptr_t  wParam, uintptr_t  lParam) noexcept = 0;
 
 		// Keyboard Window Interface
 		void OnKeyPress(uint8_t keyCode);
@@ -78,4 +77,9 @@ namespace tryn::win
 
 		bool sizeChanged = false;
 	};
+
+	// free utility functions
+
+	std::pair<bool, std::filesystem::path> SelectDirectory();
+	std::pair<bool, std::filesystem::path> SelectFile(std::vector<std::string> extensions = {});
 }

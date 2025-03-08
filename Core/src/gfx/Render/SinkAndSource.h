@@ -9,6 +9,7 @@
 #include <Core/src/utl/Assert.h>
 #include <bitset>
 #include <Core/src/utl/String.h>
+#include <Core/src/log/Log.h>
 
 #define ZT_DECLARE_EXPOSURES(x) decltype(Source(x)) source = Source(x)
 #define ZT_DECLARE_DEPENDENCIES(x) decltype(Sink(x)) sink = Sink(x)
@@ -226,6 +227,11 @@ namespace tryn::gfx
 		template <unsigned N = 0>
 		std::pair<std::shared_ptr<IBindable>**, unsigned> GetExposurePtrAndIndexImpl_(const std::string& exposureName)
 		{
+			if (const auto it = std::ranges::find(names, exposureName); it == names.end())
+			{
+				trylog.error(utl::ToWide(std::format("Could not find the requested exposure [{}]", exposureName)));
+				std::unreachable();
+			}
 			if (exposureName == names[N])
 			{
 				return { reinterpret_cast<std::shared_ptr<IBindable>**>(&std::get<N>(exposureTuple)), N };

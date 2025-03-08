@@ -1204,7 +1204,7 @@ namespace backward {
 					break;
 				}
 			}
-
+#undef min
 			_stacktrace.resize(std::min(_stacktrace.size(), skip_n_firsts() + depth));
 			return size();
 		}

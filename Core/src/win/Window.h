@@ -1,6 +1,5 @@
 #pragma once
 #include "IWindow.h"
-#include "WindowClass.h"
 #include <string>
 #include <thread>
 #include <semaphore>
@@ -15,7 +14,7 @@ namespace tryn::win
 	class Window : public IWindow
 	{
 	public:
-		Window(std::shared_ptr<IWindowClass> pWindowClass, std::wstring title,
+		Window(std::shared_ptr<class IWindowClass> pWindowClass, std::wstring title,
 			spa::DimensionsI clientAreaSize, std::optional<spa::Vec2I> position = std::nullopt);
 		WindowHandle GetHandle() const override;
 		bool IsClosing() const override;
@@ -24,10 +23,10 @@ namespace tryn::win
 		~Window() override;
 	protected:
 		// constants
-		static constexpr UINT CustomTaskMessageId = WM_USER + 0;
+		static constexpr unsigned int CustomTaskMessageId = 0x0400 + 0;
 		// functions
 		virtual void MessageKernel_() noexcept;
-		LRESULT HandleMessage_(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept override;
+		uintptr_t  HandleMessage_(WindowHandle hWnd, unsigned int msg, uintptr_t  wParam, uintptr_t  lParam) noexcept override;
 		template<std::invocable F>
 		auto Dispatch_(F&& f) const
 		{
@@ -44,7 +43,7 @@ namespace tryn::win
 		void ConfineCursor() override;
 		void FreeCursor() override;
 		// data
-		std::shared_ptr<IWindowClass> pWindowClass_;
+		std::shared_ptr<class IWindowClass> pWindowClass_;
 		mutable ccr::GenericTaskQueue tasks_;
 		std::binary_semaphore startSignal_{ 0 };
 		std::thread kernelThread_;
@@ -53,8 +52,8 @@ namespace tryn::win
 
 	private:
 		void Resize_( spa::DimensionsI newDimensions);
-		UINT widthCache = 0;
-		UINT heightCache = 0;
+		unsigned int widthCache = 0;
+		unsigned int heightCache = 0;
 		bool sizing = false;
 	};
 }

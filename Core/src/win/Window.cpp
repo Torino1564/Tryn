@@ -1,12 +1,15 @@
 #include "TrynPCH.h"
+#include <Windows.h>
 #include "Window.h"
 #include "Utilities.h"
 #include "Exception.h"
 #include <format>
+#include <imgui.h>
 #include <Core/src/log/Log.h>
 #include <Core/src/utl/String.h>
 #include "imgui_impl_win32.h"
 #include "Core/third/backward.hpp"
+#include "WindowClass.h"
 
 namespace tryn::win
 {
@@ -83,11 +86,11 @@ namespace tryn::win
 			});
 		kernelThread_.join();
 	}
-	LRESULT Window::HandleMessage_(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+	uintptr_t  Window::HandleMessage_(WindowHandle hWnd, unsigned int msg, uintptr_t  wParam, uintptr_t  lParam) noexcept
 	{
 		try {
 			extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-			if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+			if (ImGui_ImplWin32_WndProcHandler((HWND)hWnd, msg, wParam, lParam))
 			{
 				return true;
 			}
@@ -193,7 +196,7 @@ namespace tryn::win
 					OnMouseMove(pt.x, pt.y);
 					if (!mouse.IsInWindow())
 					{
-						SetCapture(hWnd);
+						SetCapture((HWND)hWnd);
 						OnMouseEnter();
 					}
 				}
@@ -334,7 +337,7 @@ namespace tryn::win
 			trylog.error(L"Uncaught annonymous exception in Windows message handler");
 		}
 
-		return DefWindowProcW(hWnd, msg, wParam, lParam);
+		return DefWindowProcW((HWND)hWnd, msg, wParam, lParam);
 	}
 
 	std::future<void> Window::Resize(const spa::DimensionsI newDimensions)
@@ -414,5 +417,56 @@ namespace tryn::win
 			TranslateMessage(&msg);
 			DispatchMessageW(&msg);
 		}
+	}
+
+#include <shlobj_core.h>
+	std::pair<bool, std::filesystem::path> SelectDirectory()
+	{
+		BROWSEINFOA browseInfo = {};
+
+		const auto rv = SHBrowseForFolderA(&browseInfo);
+		if (rv == nullptr)
+		{
+			return {false, {}};
+		}
+		char buffer[MAX_PATH] = {};
+		if (SHGetPathFromIDListA(rv, buffer))
+		{
+			return {true, {buffer}};
+		}
+		else
+		{
+			return {false, {}};
+		}
+	}
+
+#include <commdlg.h>
+	std::pair<bool, std::filesystem::path> SelectFile(std::vector<std::string> extensions)
+	{
+		char filename[ MAX_PATH ];
+
+		std::string extensionString;
+		for (const auto ext : extensions)
+		{
+			extensionString += '*' + ext + '\0'; 
+		}
+
+		OPENFILENAMEA ofn;
+		ZeroMemory( &filename, sizeof( filename ) );
+		ZeroMemory( &ofn,      sizeof( ofn ) );
+		ofn.lStructSize  = sizeof( ofn );
+		ofn.hwndOwner    = nullptr;  // If you have a window to center over, put its HANDLE here
+		ofn.lpstrFilter  = extensionString.c_str();
+		ofn.lpstrFile    = filename;
+		ofn.nMaxFile     = MAX_PATH;
+		ofn.lpstrTitle   = "Select a File, yo!";
+		ofn.Flags        = 0x02000000 | 0x00001000;
+
+	    if (GetOpenFileNameA( &ofn ))
+	    {
+		    return {true, {filename}};
+	    }
+
+		return {false, {}};
 	}
 }

@@ -9,7 +9,7 @@ namespace tryn::win
 {
 	LRESULT IWindowClass::ForwardMessage_(IWindow* pWnd, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 	{
-		return pWnd->HandleMessage_(hWnd, msg, wParam, lParam);
+		return pWnd->HandleMessage_((WindowHandle)hWnd, msg, wParam, lParam);
 	}
 
 	WindowClass::WindowClass(const std::wstring& className)
