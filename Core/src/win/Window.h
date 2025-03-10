@@ -54,6 +54,8 @@ namespace tryn::win
 		void Resize_( spa::DimensionsI newDimensions);
 		unsigned int widthCache = 0;
 		unsigned int heightCache = 0;
+
+		bool wasMinimized = false;
 		bool sizing = false;
 	};
 }

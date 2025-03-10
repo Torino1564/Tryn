@@ -317,9 +317,25 @@ namespace tryn::win
 				}
 			case WM_SYSCOMMAND:
 				{
-					if ((wParam & 0xFFF0) == SC_MAXIMIZE || (wParam & 0xFFF0) == SC_RESTORE)
+					if ((wParam & 0xFFF0) == SC_MAXIMIZE)
 					{
 						sizeChanged = true;
+						wasMinimized = false;
+					}
+					if ((wParam & 0xFFF0) == SC_RESTORE)
+					{
+						if (!wasMinimized)
+						{
+							sizeChanged = true;
+						}
+						else
+						{
+							wasMinimized = false;
+						}
+					}
+					if ((wParam & 0xFFF0) == SC_MINIMIZE)
+					{
+						wasMinimized = true;
 					}
 					break;
 				}
