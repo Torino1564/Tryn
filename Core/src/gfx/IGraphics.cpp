@@ -53,6 +53,16 @@ namespace tryn::gfx
 		this->projection = std::move(projection);
 	}
 
+	bool IGraphics::GetVsyncFlag() const
+	{
+		return vsync;
+	}
+
+	void IGraphics::SetVsyncFlag(const bool vsync_)
+	{
+		vsync = vsync_;
+	}
+
 	const spa::DimensionsI& IGraphics::GetDimensions() const
 	{
 		return dimensions;

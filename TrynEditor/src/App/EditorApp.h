@@ -37,7 +37,7 @@ namespace tryn::ed
 		void DoFrame() override;
 		void SerializeGraph();
 		void LoadGraph();
-
+		void BackGroundImGuiWindow();
 		void LoadConfigs();
 		void RMBMenu(ImVec2 pos);
 		void NodeCreateMenu();

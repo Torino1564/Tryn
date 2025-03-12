@@ -7,7 +7,7 @@
 #include <imgui.h>
 #include <Core/src/log/Log.h>
 #include <Core/src/utl/String.h>
-#include "imgui_impl_win32.h"
+#include <imgui_impl_win32.h>
 #include "Core/third/backward.hpp"
 #include "WindowClass.h"
 
@@ -297,46 +297,7 @@ namespace tryn::win
 			/*********************** RESIZING MESSAGES ********************/
 			case WM_SIZE:
 				{
-					widthCache = LOWORD(lParam);
-					heightCache = HIWORD(lParam);
-					break;
-				}
-			case WM_SIZING:
-				{
-					sizing = true;
-					break;
-				}
-			case WM_EXITSIZEMOVE:
-				{
-					if (sizing)
-					{
-						Resize_({(int)widthCache, (int)heightCache});
-						sizing = false;
-					}
-					break;
-				}
-			case WM_SYSCOMMAND:
-				{
-					if ((wParam & 0xFFF0) == SC_MAXIMIZE)
-					{
-						sizeChanged = true;
-						wasMinimized = false;
-					}
-					if ((wParam & 0xFFF0) == SC_RESTORE)
-					{
-						if (!wasMinimized)
-						{
-							sizeChanged = true;
-						}
-						else
-						{
-							wasMinimized = false;
-						}
-					}
-					if ((wParam & 0xFFF0) == SC_MINIMIZE)
-					{
-						wasMinimized = true;
-					}
+					sizeChanged = true;
 					break;
 				}
 			/*********************** RESIZING MESSAGES ********************/

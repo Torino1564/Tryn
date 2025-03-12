@@ -773,7 +773,6 @@ namespace tryn::ed
     TrynEditorApp::TrynEditorApp(const std::shared_ptr<win::IWindow>& pWnd, const std::shared_ptr<gfx::IGraphics>& pGfx)
         : App(pWnd, pGfx), pContext(ned::CreateEditor())
     {
-        LoadGraph();
         ECS().GetSystemManager().Finalize();
         pCompiler = std::make_unique<Compiler>();
         Resize({1920, 1080});
@@ -782,17 +781,24 @@ namespace tryn::ed
         NodeRegister::Get().RegisterNodeType<ConditionalNode>();
         NodeRegister::Get().RegisterNodeType<WaitNode>();
         NodeRegister::Get().RegisterNodeType<StateNode>();
-
         NodeRegister::Get().RegisterNodeType<SetVarNode>();
-        NodeRegister::Get().RegisterNodeType<SetVarNode>();
-        NodeRegister::Get().RegisterNodeType<SetVarNode>();
+        gfx->SetVsyncFlag(true);
     }
 
     void TrynEditorApp::DoFrame()
 	{
-        bool open = true;
-        ImGui::ShowDemoWindow(&open);
+        ImGui::SetNextWindowSize({ (float)gfx->GetDimensions().width - 1, (float)gfx->GetDimensions().height - 1 });
+        ImGui::SetNextWindowPos({0.0f, 0.0f}, 0);
+
+        static bool flag = true;
+        ImGui::Begin("MainWindow", &flag, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav);
+
         auto& io = ImGui::GetIO();
+
+        ImGui::ShowDemoWindow();
+
+        ImGui::Begin("ScriptEditor");
+
 
         ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
 
@@ -987,6 +993,9 @@ namespace tryn::ed
         m_FirstFrame = false;
 
     	//ImGui::ShowMetricsWindow();
+
+        ImGui::End();
+        ImGui::End();
     }
 
     Link::Link(const ned::LinkId id, PinInfo& pin1, PinInfo& pin2, ScriptGraph* pGraph)
@@ -1283,6 +1292,11 @@ void ed::TrynEditorApp::LoadGraph()
     pReader->ReadSerialized(*pNewGraph, true, &extraData);
 
     pGraph.reset(pNewGraph);
+}
+
+void ed::TrynEditorApp::BackGroundImGuiWindow()
+{
+
 }
 
 void ed::TrynEditorApp::LoadConfigs()

@@ -76,6 +76,8 @@ namespace tryn::gfx
 		glm::mat4& GetProjectionMatrix();
 		const glm::mat4& GetProjectionMatrix() const;
 		void SetProjection(glm::mat4 projection);
+		bool GetVsyncFlag() const;
+		void SetVsyncFlag(bool vsync);
 		const spa::DimensionsI& GetDimensions() const;
 		virtual constexpr GraphicAPI GetType() const = 0;
 		virtual void Resize() = 0;
@@ -138,7 +140,6 @@ namespace tryn::gfx
 		virtual std::unique_ptr<ITransformCBuf>						CreateTransformCBuf() const = 0;
 		virtual std::unique_ptr<RenderWorker>						CreateRenderWorker(ccr::Master*) const = 0;
 
-
 	protected:
 		void InitDefaults();
 		virtual void InitDefaultRenderGraph();
@@ -171,6 +172,7 @@ namespace tryn::gfx
 		}
 		std::unique_ptr<IContext> pContext;
 
+		bool vsync = false;
 	protected:
 		// Instaced Parents:
 		std::unordered_map<std::string, std::shared_ptr<class InstancedModelParent>> rogueInstancedModelParentMap;

@@ -17,7 +17,7 @@
 #include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11RenderTargetView.h>
 #include <Core/src/gfx/dx11/Bindables/DX11DepthStencil.h>
-#include "imgui_impl_dx11.h"
+#include <imgui_impl_dx11.h>
 #include <Core/src/win/Window.h>
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/win/TrynWin.h>
@@ -133,13 +133,17 @@ namespace tryn::gfx::dx11
 	{
 		auto future = Dispatch_([=] {
 			ExecuteFrame();
-			ImGui::EndFrame();
 			ImGui::Render();
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
 			auto dd = ImGui::GetDrawData();
 			ImGui_ImplDX11_RenderDrawData(dd);
-			pSwap->Present(0u, 0u) >> chk;
+			pSwap->Present(vsync ? 1u : 0u, 0u) >> chk;
+
+			if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+			}
+
 			});
 
 		future.get();

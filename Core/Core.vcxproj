@@ -67,7 +67,6 @@
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Sampler.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11Texture.cpp" />
     <ClCompile Include="src\gfx\dx11\Dx11Context.cpp" />
-    <ClCompile Include="src\gfx\dx11\imgui_impl_dx11.cpp" />
     <ClCompile Include="src\gfx\IGraphics.cpp" />
     <ClCompile Include="src\gfx\Material.cpp" />
     <ClCompile Include="src\gfx\Bindables\TransformCBuf.cpp" />
@@ -144,7 +143,6 @@
     <ClCompile Include="src\utl\Exception.cpp" />
     <ClCompile Include="src\utl\StackTrace.cpp" />
     <ClCompile Include="src\utl\String.cpp" />
-    <ClCompile Include="src\win\imgui_impl_win32.cpp" />
     <ClCompile Include="src\win\Win.cpp" />
     <ClCompile Include="src\win\IWindow.cpp" />
     <ClCompile Include="src\win\Keyboard.cpp" />
@@ -265,7 +263,6 @@
     <ClInclude Include="src\gfx\dx11\DX11BufferFwd.h" />
     <ClInclude Include="src\gfx\dx11\Dx11Context.h" />
     <ClInclude Include="src\gfx\dx11\Dx11RenderWorker.h" />
-    <ClInclude Include="src\gfx\dx11\imgui_impl_dx11.h" />
     <ClInclude Include="src\gfx\GraphicAPI.h" />
     <ClInclude Include="src\gfx\IBufferFwd.h" />
     <ClInclude Include="src\gfx\Model\InstancedModel.h" />
@@ -365,7 +362,6 @@
     <ClInclude Include="src\utl\StringHasher.h" />
     <ClInclude Include="src\utl\Timer.h" />
     <ClInclude Include="src\utl\UUID.h" />
-    <ClInclude Include="src\win\imgui_impl_win32.h" />
     <ClInclude Include="src\win\Win.h" />
     <ClInclude Include="src\win\Exception.h" />
     <ClInclude Include="src\win\IWindow.h" />
