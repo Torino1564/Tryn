@@ -7,7 +7,7 @@
 #include "TypeRegister.h"
 #include <TrynEditor/src/dll/Compiler.h>
 #include <imgui_stdlib.h>
-
+#include <imgui_internal.h>
 #include <dylib.hpp>
 
 namespace ned = ax::NodeEditor;
