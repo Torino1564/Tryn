@@ -84,6 +84,8 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 	player.SetPitch(75.0f);
 	player.SetYaw(45.0f);
 	player.GetPosition() = { 0.0f, 22.5f, 0.0f };
+
+	wnd->SetResizableFlag(true);
 }
 
 void TrynGameApp::DoFrame()
@@ -247,6 +249,6 @@ void TrynGameApp::ShowStateInfo()
 				ImGui::Text("Mouse");
 				break;
 		}
-		ImGui::End();
 	}
+	ImGui::End();
 }

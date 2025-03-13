@@ -3,12 +3,7 @@
 #include <vector>
 #include "Core/src/utl/StringHasher.h"
 
-namespace tryn::utl
-{
-    using UUID_t = uint64_t;
-}
-
-namespace tryn::ed
+namespace tryn::scr
 {
     struct TypeRegister
     {

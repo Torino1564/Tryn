@@ -118,7 +118,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\App\EditorApp.h" />
-    <ClInclude Include="src\App\TypeRegister.h" />
     <ClInclude Include="src\dll\Compiler.h" />
     <ClInclude Include="src\Engine\Engine.h" />
     <ClInclude Include="third\imgui-node-editor-0.9.3\crude_json.h" />

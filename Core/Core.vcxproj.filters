@@ -396,7 +396,37 @@
     <ClCompile Include="src\scr\ScriptGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scr\Compiler\ScriptCompiler.cpp">
+    <ClCompile Include="third\imgui-node-editor-0.9.3\crude_json.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_canvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_node_editor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scr\Nodes\EntryNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scr\Link.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scr\Nodes\SetVarNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scr\Nodes\StateNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scr\Nodes\ConditionalNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scr\PinInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scr\Variable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2162,7 +2192,49 @@
     <ClInclude Include="src\scr\VariableManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scr\Compiler\ScriptCompiler.h">
+    <ClInclude Include="src\scr\Link.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scr\Variable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scr\TypeRegister.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\imgui-node-editor-0.9.3\crude_json.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_bezier_math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_canvas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_extra_math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_node_editor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_node_editor_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scr\Nodes\EntryNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scr\PinInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scr\Nodes\SetVarNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scr\Nodes\ConditionalNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scr\Nodes\WaitNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scr\NodeRegister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2607,6 +2679,15 @@
     <None Include="src\gfx\dx11\PS\LightVector.hlsli" />
     <None Include="src\gfx\dx11\PS\Operations.hlsli" />
     <None Include="src\gfx\dx11\VS\BoneTransform.hlsli" />
+    <None Include="third\imgui-node-editor-0.9.3\imgui_bezier_math.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="third\imgui-node-editor-0.9.3\imgui_extra_math.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="third\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\gfx\dx11\PS\PixelShader.hlsl" />

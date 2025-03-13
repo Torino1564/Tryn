@@ -63,8 +63,7 @@ namespace tryn::ecs
 			ImGui::Text("Components:");
 			
 			pArchetype->EntityControlWindow(UUID);
-
-			ImGui::End();
 		}
+		ImGui::End();
 	}
 }

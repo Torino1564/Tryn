@@ -1,5 +1,7 @@
 #include <TrynCppUnitTest.h>
 
+#include "Core/src/win/WindowClass.h"
+
 using namespace tryn;
 
 namespace Gfx

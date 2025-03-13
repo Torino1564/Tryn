@@ -70,9 +70,8 @@ namespace tryn::gfx
             ImGui::Text("X: %f", direction.x);
             ImGui::Text("Y: %f", direction.y);
             ImGui::Text("Z: %f", direction.z);
-            ImGui::End();
         }
-
+    	ImGui::End();
     }
     void Camera::ShowControls()
     {
@@ -83,8 +82,8 @@ namespace tryn::gfx
             {
                 Reset();
             }
-            ImGui::End();
         }
+    	ImGui::End();
     }
     void Camera::SetYaw(const float yaw)
     {

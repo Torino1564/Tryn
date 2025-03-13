@@ -1,4 +1,5 @@
 #include <TrynCppUnitTest.h>
+#include <Core/src/win/WindowClass.h>
 
 namespace tryn::ecs
 {

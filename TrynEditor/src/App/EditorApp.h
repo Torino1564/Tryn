@@ -6,28 +6,25 @@
 
 #include <Core/src/ser/StreamIO.h>
 
+#include "Core/src/scr/ScriptNode.h"
+
 namespace ax::NodeEditor
 {
 	struct EditorContext;
 	struct LinkId;
 }
 
-namespace tryn::ed
+namespace tryn::scr
 {
 	struct PinInfo;
 	struct Link;
-	struct Node;
+	struct ScriptNode;
 	struct ScriptGraph;
+}
 
+namespace tryn::ed
+{
 	static constexpr auto MAX_NAME_SIZE = 128;
-
-	struct Variable
-	{
-		std::any var;
-		utl::UUID_t uuid;
-		std::string name;
-		std::string typeName;
-	};
 
 	class TrynEditorApp final : public app::App
 	{
@@ -43,7 +40,7 @@ namespace tryn::ed
 		void NodeCreateMenu();
 		ax::NodeEditor::EditorContext* pContext;
 		bool m_FirstFrame = true;    // Flag set for first frame only, some action need to be executed once.
-		std::unique_ptr<ScriptGraph> pGraph;
+		std::unique_ptr<scr::ScriptGraph> pGraph;
 
 		bool debugging = false;
 		uint16_t currentNodeId = 0;
@@ -59,6 +56,7 @@ namespace tryn::ed
 		} Configs;
 
 		spa::Vec2I lastRightClickPos = {};
-		void(*createFunc) (ScriptGraph* graph, TrynEditorApp* pEditor) = nullptr;
+		void(*createFunc) (scr::ScriptGraph* graph, spa::Vec2I screenPos, std::function<void()>&) = nullptr;
+		std::function<void(scr::ScriptNode&)> submitBehaviour;
 	};
 }

@@ -35,7 +35,7 @@ namespace tryn::ecs
 			// assert duplicate
 			const auto it = componentWrappers.find(uuid);
 
-			if (it == componentWrappers.end())
+			if (it != componentWrappers.end())
 			{
 				trylog.warn(L"The component already exists!");
 				return;

@@ -38,14 +38,16 @@ namespace tryn::gfx
 	}
 	void PointLight::ShowControls()
 	{
-		ImGui::Begin("PointLight Parameters");
-		ImGui::SliderFloat3("Position", reinterpret_cast<float*>(&position), -20.0f, 20.0f);
-		ImGui::ColorEdit3("Diffuse Color", reinterpret_cast<float*>(&parameters.diffuseColor));
-		ImGui::ColorEdit3("Ambient Color", reinterpret_cast<float*>(&parameters.ambient));
-		ImGui::SliderFloat("Diffuse Intensity", &parameters.diffuseIntensity, 0.0f, 1.0f);
-		ImGui::SliderFloat("Constant Attenuation", &parameters.constantAtt, 0.0f, 1.0f);
-		ImGui::SliderFloat("Linear Attenuation", &parameters.linearAtt, 0.0f, 1.0f);
-		ImGui::SliderFloat("Quadratic Attenuation", &parameters.quadraticAtt, 0.0f, 1.0f);
+		if(ImGui::Begin("PointLight Parameters"))
+		{
+			ImGui::SliderFloat3("Position", reinterpret_cast<float*>(&position), -20.0f, 20.0f);
+			ImGui::ColorEdit3("Diffuse Color", reinterpret_cast<float*>(&parameters.diffuseColor));
+			ImGui::ColorEdit3("Ambient Color", reinterpret_cast<float*>(&parameters.ambient));
+			ImGui::SliderFloat("Diffuse Intensity", &parameters.diffuseIntensity, 0.0f, 1.0f);
+			ImGui::SliderFloat("Constant Attenuation", &parameters.constantAtt, 0.0f, 1.0f);
+			ImGui::SliderFloat("Linear Attenuation", &parameters.linearAtt, 0.0f, 1.0f);
+			ImGui::SliderFloat("Quadratic Attenuation", &parameters.quadraticAtt, 0.0f, 1.0f);
+		}
 		ImGui::End();
 	}
 	void PointLight::Reset()

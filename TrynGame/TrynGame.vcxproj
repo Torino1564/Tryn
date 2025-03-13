@@ -122,7 +122,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\GameApp.h" />
-    <ClInclude Include="Editor\ComponentEditor.h" />
     <ClInclude Include="Engine\CustomSystems.h" />
     <ClInclude Include="Engine\CustomComponents.h" />
     <ClInclude Include="Engine\CustomImGuiPrintTypes.h" />

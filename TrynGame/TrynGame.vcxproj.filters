@@ -53,8 +53,5 @@
     <ClInclude Include="Engine\Render\RenderGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Editor\ComponentEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

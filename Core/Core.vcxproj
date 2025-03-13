@@ -11,7 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\scr\Compiler\ScriptCompiler.cpp" />
+    <ClCompile Include="src\scr\Link.cpp" />
+    <ClCompile Include="src\scr\Nodes\ConditionalNode.cpp" />
+    <ClCompile Include="src\scr\Nodes\EntryNode.cpp" />
+    <ClCompile Include="src\scr\Nodes\SetVarNode.cpp" />
+    <ClCompile Include="src\scr\Nodes\StateNode.cpp" />
+    <ClCompile Include="src\scr\PinInfo.cpp" />
     <ClCompile Include="src\scr\ScriptGraph.cpp" />
     <ClCompile Include="src\scr\ScriptNode.cpp" />
     <ClCompile Include="src\app\EntryMain.cpp" />
@@ -117,8 +122,13 @@
     <ClCompile Include="src\gfx\dx11\GraphicsError.cpp" />
     <ClCompile Include="src\scr\ScriptVariable.cpp" />
     <ClCompile Include="src\scr\VariableManager.cpp" />
+    <ClCompile Include="src\scr\Variable.cpp" />
     <ClCompile Include="src\ser\StreamIO.cpp" />
     <ClCompile Include="src\utl\TypeData.cpp" />
+    <ClCompile Include="third\imgui-node-editor-0.9.3\crude_json.cpp" />
+    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_canvas.cpp" />
+    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_node_editor.cpp" />
+    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp" />
     <ClCompile Include="third\TrynPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TrynPCH.h</PrecompiledHeaderFile>
@@ -155,12 +165,20 @@
     <ClInclude Include="src\gfx\Shape.h" />
     <ClInclude Include="src\gfx\StbImageManager.h" />
     <ClInclude Include="src\gfx\Terrain\Plane.h" />
-    <ClInclude Include="src\scr\Compiler\ScriptCompiler.h" />
+    <ClInclude Include="src\scr\Link.h" />
+    <ClInclude Include="src\scr\NodeRegister.h" />
+    <ClInclude Include="src\scr\Nodes\ConditionalNode.h" />
+    <ClInclude Include="src\scr\Nodes\EntryNode.h" />
+    <ClInclude Include="src\scr\Nodes\SetVarNode.h" />
     <ClInclude Include="src\scr\Nodes\StateNode.h" />
+    <ClInclude Include="src\scr\Nodes\WaitNode.h" />
+    <ClInclude Include="src\scr\PinInfo.h" />
     <ClInclude Include="src\scr\ScriptGraph.h" />
     <ClInclude Include="src\scr\ScriptInstance.h" />
     <ClInclude Include="src\scr\ScriptNode.h" />
     <ClInclude Include="src\scr\ScriptVariable.h" />
+    <ClInclude Include="src\scr\TypeRegister.h" />
+    <ClInclude Include="src\scr\Variable.h" />
     <ClInclude Include="src\scr\VariableManager.h" />
     <ClInclude Include="src\ser\ExtraDataPack.h" />
     <ClInclude Include="src\utl\TypeData.h" />
@@ -168,6 +186,12 @@
     <ClInclude Include="src\win\WinCore.h" />
     <ClInclude Include="src\win\WindowHandle.h" />
     <ClInclude Include="third\field_reflection.hpp" />
+    <ClInclude Include="third\imgui-node-editor-0.9.3\crude_json.h" />
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_bezier_math.h" />
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_canvas.h" />
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_extra_math.h" />
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_node_editor.h" />
+    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_node_editor_internal.h" />
     <ClInclude Include="third\TrynPCH.h" />
   </ItemGroup>
   <ItemGroup>
@@ -888,6 +912,9 @@
     <None Include="third\glm\gtx\vector_angle.inl" />
     <None Include="third\glm\gtx\vector_query.inl" />
     <None Include="third\glm\gtx\wrap.inl" />
+    <None Include="third\imgui-node-editor-0.9.3\imgui_bezier_math.inl" />
+    <None Include="third\imgui-node-editor-0.9.3\imgui_extra_math.inl" />
+    <None Include="third\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\gfx\dx11\PS\DefaultFullscreen_PS.hlsl">
