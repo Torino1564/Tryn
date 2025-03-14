@@ -384,16 +384,7 @@
     <ClCompile Include="src\ecs\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scr\ScriptNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\scr\ScriptVariable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\scr\VariableManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\scr\ScriptGraph.cpp">
+    <ClCompile Include="src\gph\TNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="third\imgui-node-editor-0.9.3\crude_json.cpp">
@@ -411,7 +402,7 @@
     <ClCompile Include="src\scr\Nodes\EntryNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scr\Link.cpp">
+    <ClCompile Include="src\gph\TLink.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\scr\Nodes\SetVarNode.cpp">
@@ -423,10 +414,19 @@
     <ClCompile Include="src\scr\Nodes\ConditionalNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scr\PinInfo.cpp">
+    <ClCompile Include="src\gph\PinInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\scr\Variable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gph\TGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scr\ScriptGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scr\ScriptNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2177,7 +2177,7 @@
     <ClInclude Include="src\scr\ScriptGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scr\ScriptNode.h">
+    <ClInclude Include="src\gph\TNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\scr\Nodes\StateNode.h">
@@ -2186,19 +2186,13 @@
     <ClInclude Include="src\scr\ScriptInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scr\ScriptVariable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\scr\VariableManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\scr\Link.h">
+    <ClInclude Include="src\gph\TLink.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\scr\Variable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scr\TypeRegister.h">
+    <ClInclude Include="src\gph\TTypeRegister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="third\imgui-node-editor-0.9.3\crude_json.h">
@@ -2222,7 +2216,7 @@
     <ClInclude Include="src\scr\Nodes\EntryNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scr\PinInfo.h">
+    <ClInclude Include="src\gph\PinInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\scr\Nodes\SetVarNode.h">
@@ -2234,7 +2228,13 @@
     <ClInclude Include="src\scr\Nodes\WaitNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scr\NodeRegister.h">
+    <ClInclude Include="src\gph\TNodeRegister.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gph\TGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scr\ScriptNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

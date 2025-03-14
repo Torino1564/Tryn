@@ -2,9 +2,9 @@
 #include "EntryNode.h"
 
 #include <imgui.h>
-#include <Core/src/scr/PinInfo.h>
+#include <Core/src/gph/PinInfo.h>
 #include <Core/src/scr/ScriptGraph.h>
-#include "Core/src/utl/Assert.h"
+#include "Core/src/utl/Assert.h"w
 #include <imgui_stdlib.h>
 
 namespace tryn::scr
@@ -13,7 +13,7 @@ namespace tryn::scr
 	{
 		// Output Pins
 		{
-			PinInfo info{ .parentId = this->uniqueId, .name = "Out", .kind = PinKind::Output, .id = pGraph->uniqueId++ };
+			gph::PinInfo info{ .parentId = this->uniqueId, .name = "Out", .kind = gph::PinKind::Output, .id = pGraph->uniqueId++ };
 			pGraph->pinIdToInfo.insert({ info.id, info });
 			pinIds.push_back(info.id);
 		}

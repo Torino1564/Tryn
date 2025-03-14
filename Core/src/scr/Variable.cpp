@@ -2,7 +2,7 @@
 #include "Variable.h"
 #include <Core/src/ser/StreamIO.h>
 
-#include "TypeRegister.h"
+#include <Core/src/gph/TTypeRegister.h>
 
 namespace tryn::ser
 {
@@ -15,7 +15,7 @@ namespace tryn::ser
 
 	void SerializeRead(const StreamReader& sr, scr::Variable& data, const bool binary, ExtraDataPack* pExtraData)
 	{
-		scr::TypeRegister* pTypeRegister = nullptr;
+		gph::TTypeRegister* pTypeRegister = nullptr;
 		pExtraData->Get("pTypeRegister").Get((void*&)pTypeRegister);
 		sr.ReadSerialized(data.name, binary, pExtraData);
 		sr.ReadSerialized(data.typeName, binary, pExtraData);

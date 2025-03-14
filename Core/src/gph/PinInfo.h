@@ -2,7 +2,7 @@
 
 namespace tryn
 {
-	namespace scr
+	namespace gph
 	{
 		enum class PinKind
 		{
@@ -23,8 +23,8 @@ namespace tryn
 
 	namespace ser
 	{
-	    void SerializeWrite(const class StreamWriter& sw, const scr::PinInfo& data, const bool binary, const std::string& name);
+	    void SerializeWrite(const class StreamWriter& sw, const gph::PinInfo& data, const bool binary, const std::string& name);
 
-	    void SerializeRead(const class StreamReader& sr, scr::PinInfo& data, const bool binary, class ExtraDataPack* pExtraData = nullptr);
+	    void SerializeRead(const class StreamReader& sr, gph::PinInfo& data, const bool binary, class ExtraDataPack* pExtraData = nullptr);
 	}
 }

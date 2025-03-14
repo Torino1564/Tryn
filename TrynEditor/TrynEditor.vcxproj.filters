@@ -48,6 +48,9 @@
     <ClCompile Include="third\TinyProcessLib\process_unix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\App\ScriptEditor\ScriptEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\Engine.h">
@@ -81,6 +84,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="third\TinyProcessLib\process.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\App\ScriptEditor\ScriptEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\App\Applet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,14 +1,14 @@
 #include "TrynPCH.h"
-#include "Link.h"
-#include <Core/src/scr/ScriptGraph.h>
-#include <Core/src/scr/ScriptNode.h>
+#include "TLink.h"
+#include "TGraph.h"
+#include <Core/src/gph/TNode.h>
 #include <Core/src/ser/StreamIO.h>
 
-namespace tryn::scr
+namespace tryn::gph
 {
-	Link& Link::operator=(Link&& rhs) noexcept
+	TLink& TLink::operator=(TLink&& rhs) noexcept
     {
-        Link temp(std::move(rhs));
+        TLink temp(std::move(rhs));
 
         std::swap(Id, temp.Id);
         std::swap(InputId, temp.InputId);
@@ -18,7 +18,7 @@ namespace tryn::scr
         return *this;
     }
 
-	Link::Link(Link&& rhs) noexcept
+	TLink::TLink(TLink&& rhs) noexcept
 	{
 		Id = rhs.Id;
 		InputId = rhs.InputId;
@@ -27,7 +27,7 @@ namespace tryn::scr
 
 	}
 
-	Link::Link(const unsigned long long id, PinInfo& pin1, PinInfo& pin2, ScriptGraph* pGraph)
+	TLink::TLink(const unsigned long long id, PinInfo& pin1, PinInfo& pin2, TGraph* pGraph)
         :
         Id(id), pGraph(pGraph)
         {
@@ -60,7 +60,7 @@ namespace tryn::scr
 			pin2.linkedId = pin1.parentId;
         }
 
-	Link::~Link()
+	TLink::~TLink()
     {
         if (!pGraph)
             return;
@@ -86,7 +86,7 @@ namespace tryn::scr
 
 namespace tryn::ser
 {
-	void SerializeWrite(const StreamWriter& sw, const scr::Link& data, const bool binary,
+	void SerializeWrite(const StreamWriter& sw, const gph::TLink& data, const bool binary,
 	   const std::string& name)
 	{
 		sw.Serialize(data.Id, binary);
@@ -94,7 +94,7 @@ namespace tryn::ser
 		sw.Serialize(data.OutputId, binary);
 	}
 
-	void SerializeRead(const StreamReader& sr, scr::Link& data_, const bool binary, ExtraDataPack* pExtraData)
+	void SerializeRead(const StreamReader& sr, gph::TLink& data_, const bool binary, const ExtraDataPack* pExtraData)
 	{
 		pExtraData->Get("pGraph").Get((void*&)data_.pGraph);
 		sr.ReadSerialized(data_.Id, binary);

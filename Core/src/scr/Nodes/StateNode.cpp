@@ -1,6 +1,6 @@
 #include "TrynPCH.h"
 #include "StateNode.h"
-#include "Core/src/scr/PinInfo.h"
+#include "Core/src/gph/PinInfo.h"
 #include <Core/src/scr/ScriptGraph.h>
 #include <imgui.h>
 #include <imgui_stdlib.h>
@@ -13,7 +13,7 @@ namespace tryn::scr
 	{
 		// Input Pin
 		{
-			PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = PinKind::Input, .id = editorApp->uniqueId++ };
+			gph::PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = gph::PinKind::Input, .id = editorApp->uniqueId++ };
 			editorApp->pinIdToInfo.insert({info.id, info});
 			pinIds.push_back(info.id);
 		}
@@ -21,7 +21,7 @@ namespace tryn::scr
 		// Output Pins
 		for (const auto& state : states)
 		{
-			PinInfo info{ .parentId = this->uniqueId, .name = "Out " + state, .kind = PinKind::Output, .id = editorApp->uniqueId++ };
+			gph::PinInfo info{ .parentId = this->uniqueId, .name = "Out " + state, .kind = gph::PinKind::Output, .id = editorApp->uniqueId++ };
 			editorApp->pinIdToInfo.insert({info.id, info});
 			pinIds.push_back(info.id);
 		}

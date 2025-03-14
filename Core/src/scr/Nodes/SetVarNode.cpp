@@ -158,14 +158,14 @@ namespace tryn::scr
 	{
 		// Input Pin
 		{
-			PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = PinKind::Input, .id = editorApp->uniqueId++ };
+			gph::PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = gph::PinKind::Input, .id = editorApp->uniqueId++ };
 			editorApp->pinIdToInfo.insert({info.id, info});
 			pinIds.push_back(info.id);
 		}
 
 		// Output Pin
 		{
-			PinInfo info{ .parentId = this->uniqueId, .name = "Out", .kind = PinKind::Output, .id = editorApp->uniqueId++ };
+			gph::PinInfo info{ .parentId = this->uniqueId, .name = "Out", .kind = gph::PinKind::Output, .id = editorApp->uniqueId++ };
 			editorApp->pinIdToInfo.insert({info.id, info});
 			pinIds.push_back(info.id);
 		}

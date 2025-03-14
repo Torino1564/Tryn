@@ -11,14 +11,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\scr\Link.cpp" />
+    <ClCompile Include="src\gph\TGraph.cpp" />
+    <ClCompile Include="src\gph\TLink.cpp" />
     <ClCompile Include="src\scr\Nodes\ConditionalNode.cpp" />
     <ClCompile Include="src\scr\Nodes\EntryNode.cpp" />
     <ClCompile Include="src\scr\Nodes\SetVarNode.cpp" />
     <ClCompile Include="src\scr\Nodes\StateNode.cpp" />
-    <ClCompile Include="src\scr\PinInfo.cpp" />
-    <ClCompile Include="src\scr\ScriptGraph.cpp" />
-    <ClCompile Include="src\scr\ScriptNode.cpp" />
+    <ClCompile Include="src\gph\PinInfo.cpp" />
+    <ClCompile Include="src\gph\TNode.cpp" />
     <ClCompile Include="src\app\EntryMain.cpp" />
     <ClCompile Include="src\app\Initialization.cpp" />
     <ClCompile Include="src\ccr\Master.cpp" />
@@ -120,8 +120,8 @@
     <ClCompile Include="src\gfx\Gfx.cpp" />
     <ClCompile Include="src\gfx\dx11\Dx11Graphics.cpp" />
     <ClCompile Include="src\gfx\dx11\GraphicsError.cpp" />
-    <ClCompile Include="src\scr\ScriptVariable.cpp" />
-    <ClCompile Include="src\scr\VariableManager.cpp" />
+    <ClCompile Include="src\scr\ScriptGraph.cpp" />
+    <ClCompile Include="src\scr\ScriptNode.cpp" />
     <ClCompile Include="src\scr\Variable.cpp" />
     <ClCompile Include="src\ser\StreamIO.cpp" />
     <ClCompile Include="src\utl\TypeData.cpp" />
@@ -165,21 +165,21 @@
     <ClInclude Include="src\gfx\Shape.h" />
     <ClInclude Include="src\gfx\StbImageManager.h" />
     <ClInclude Include="src\gfx\Terrain\Plane.h" />
-    <ClInclude Include="src\scr\Link.h" />
-    <ClInclude Include="src\scr\NodeRegister.h" />
+    <ClInclude Include="src\gph\TGraph.h" />
+    <ClInclude Include="src\gph\TLink.h" />
+    <ClInclude Include="src\gph\TNodeRegister.h" />
     <ClInclude Include="src\scr\Nodes\ConditionalNode.h" />
     <ClInclude Include="src\scr\Nodes\EntryNode.h" />
     <ClInclude Include="src\scr\Nodes\SetVarNode.h" />
     <ClInclude Include="src\scr\Nodes\StateNode.h" />
     <ClInclude Include="src\scr\Nodes\WaitNode.h" />
-    <ClInclude Include="src\scr\PinInfo.h" />
+    <ClInclude Include="src\gph\PinInfo.h" />
     <ClInclude Include="src\scr\ScriptGraph.h" />
     <ClInclude Include="src\scr\ScriptInstance.h" />
+    <ClInclude Include="src\gph\TNode.h" />
+    <ClInclude Include="src\gph\TTypeRegister.h" />
     <ClInclude Include="src\scr\ScriptNode.h" />
-    <ClInclude Include="src\scr\ScriptVariable.h" />
-    <ClInclude Include="src\scr\TypeRegister.h" />
     <ClInclude Include="src\scr\Variable.h" />
-    <ClInclude Include="src\scr\VariableManager.h" />
     <ClInclude Include="src\ser\ExtraDataPack.h" />
     <ClInclude Include="src\utl\TypeData.h" />
     <ClInclude Include="src\utl\TypeName.h" />

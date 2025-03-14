@@ -177,24 +177,24 @@ namespace tryn::scr
 		ImGui::End();
 	}
 
-	ConditionalNode::ConditionalNode(ScriptGraph* pGraph, const std::string& name, const std::string& varName): ScriptNode(pGraph, name), varName(varName)
+	ConditionalNode::ConditionalNode(ScriptGraph* pGraph, const std::string& name, const std::string& varName) : ScriptNode(pGraph, name), varName(varName)
 	{
 		// Input Pin
 		{
-			PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = PinKind::Input, .id = pGraph->uniqueId++ };
+			gph::PinInfo info{ .parentId = this->uniqueId, .name = "In", .kind = gph::PinKind::Input, .id = pGraph->uniqueId++ };
 			pGraph->pinIdToInfo.insert({info.id, info});
 			pinIds.push_back(info.id);
 		}
 
 		// Output Pins
 		{
-			PinInfo info{ .parentId = this->uniqueId, .name = "True", .kind = PinKind::Output, .id = pGraph->uniqueId++ };
+			gph::PinInfo info{ .parentId = this->uniqueId, .name = "True", .kind = gph::PinKind::Output, .id = pGraph->uniqueId++ };
 			pGraph->pinIdToInfo.insert({info.id, info});
 			pinIds.push_back(info.id);
 			truePin = pinIds.size() - 1;
 		}
 		{
-			PinInfo info{ .parentId = this->uniqueId, .name = "False", .kind = PinKind::Output, .id = pGraph->uniqueId++ };
+			gph::PinInfo info{ .parentId = this->uniqueId, .name = "False", .kind = gph::PinKind::Output, .id = pGraph->uniqueId++ };
 			pGraph->pinIdToInfo.insert({info.id, info});
 			pinIds.push_back(info.id);
 			falsePin = pinIds.size() - 1;

@@ -3,9 +3,9 @@
 #include <vector>
 #include "Core/src/utl/StringHasher.h"
 
-namespace tryn::scr
+namespace tryn::gph
 {
-    struct TypeRegister
+    struct TTypeRegister
     {
         template <typename T>
         void RegisterType()
