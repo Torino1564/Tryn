@@ -58,6 +58,8 @@ namespace tryn::ed
         };
 	}
 
+    ScriptEditor::~ScriptEditor() = default;
+
 	void ScriptEditor::DoFrame()
 	{
 		ImGui::Begin("ScriptEditor");

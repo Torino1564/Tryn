@@ -24,7 +24,42 @@ namespace tryn::ed
 
         auto& io = ImGui::GetIO();
 
+        if (ImGui::BeginMainMenuBar())
+        {
+            if (ImGui::BeginMenu("File"))
+            {
+
+
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Edit"))
+            {
+
+
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Tools"))
+            {
+                for (auto [uuid, typeInfo] : appletRegister.infoTable)
+                {
+	                if (ImGui::MenuItem(typeInfo.name))
+	                {
+                        pApplets.emplace_back();
+                        appletRegister.Construct(&*pApplets.back(), uuid);
+	                }
+                }
+
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
+
         ImGui::ShowDemoWindow();
+
+        for (auto& pApplet : pApplets)
+        {
+            pApplet->DoFrame();
+        }
 
         ImGui::End();
     }

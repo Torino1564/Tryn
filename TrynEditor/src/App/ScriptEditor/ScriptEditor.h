@@ -18,6 +18,7 @@ namespace tryn::ed
 	{
 	public:
 		ScriptEditor();
+		~ScriptEditor();
 		void DoFrame() override;
 		void SerializeGraph();
 		void LoadGraph();

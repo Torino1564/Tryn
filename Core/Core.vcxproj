@@ -181,6 +181,7 @@
     <ClInclude Include="src\scr\ScriptNode.h" />
     <ClInclude Include="src\scr\Variable.h" />
     <ClInclude Include="src\ser\ExtraDataPack.h" />
+    <ClInclude Include="src\utl\ITypeRegister.h" />
     <ClInclude Include="src\utl\TypeData.h" />
     <ClInclude Include="src\utl\TypeName.h" />
     <ClInclude Include="src\win\WinCore.h" />

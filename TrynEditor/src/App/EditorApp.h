@@ -1,6 +1,6 @@
 #pragma once
 #include <TrynEditor/src/Engine/Engine.h>
-
+#include <Core/src/utl/ITypeRegister.h>
 #include "Applet.h"
 
 namespace tryn::ed
@@ -14,13 +14,13 @@ namespace tryn::ed
 		void DoFrame() override;
 
 		template <typename T>
-			requires std::derived_from<T, Applet>
 		void RegisterApplet()
 		{
-			pApplets.push_back(std::move(std::make_unique<T>()));
+			appletRegister.RegisterType<T>();
 		}
 
 	private:
+		utl::ITypeRegister<ed::Applet> appletRegister;
 		std::vector<std::unique_ptr<ed::Applet>> pApplets;
 	};
 }
