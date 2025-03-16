@@ -13,6 +13,7 @@ concept TechniqueClass = std::derived_from<T, class tryn::gfx::TechniqueBase>;
 
 struct aiMaterial;
 struct aiMesh;
+struct aiScene;
 
 namespace tryn::gfx
 {
@@ -64,9 +65,12 @@ namespace tryn::gfx
 			}
 			return;
 		}
+		aiScene* pScene = nullptr;
+
 	private:
 		VertexLayout vLayout;
 		std::vector<std::shared_ptr<TechniqueBase>> pTechniques;
 		std::string name;
+
 	};
 }

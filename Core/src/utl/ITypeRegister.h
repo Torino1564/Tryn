@@ -11,7 +11,7 @@ namespace tryn::utl
         struct TypeInfo
         {
             const char* name = nullptr;
-            void(*createFunc)(Interface*) = nullptr;
+            void(*createFunc)(Interface**) = nullptr;
             std::size_t size;
         };
 
@@ -30,16 +30,15 @@ namespace tryn::utl
                 infoTable.push_back({ uuid,
                     TypeInfo{
                         .name = ZT_TYPE_OF(T).data(),
-						.createFunc =   [](Interface* pInt)
+						.createFunc =   [](Interface** ppInt)
 	                                    {
 	                                        if constexpr (std::same_as<Interface, std::any>)
 	                                        {
-	                                            pInt->template emplace<T>();
+	                                            *ppInt->template emplace<T>();
 	                                        }
 	                                        else
 	                                        {
-                                                auto castedP = static_cast<T*>(pInt);
-	                                            castedP = new T();
+	                                            *ppInt = new T();
 	                                        }
 	                                    },
                         .size = sizeof(T)
@@ -58,21 +57,8 @@ namespace tryn::utl
 
             if constexpr (std::same_as<Interface, std::any>)
                 iRef.reset();
-
-            it->second.createFunc(&iRef);
-        }
-
-        void ConstructAt(Interface* pInt, UUID_t uuid)
-        {
-            const auto it = std::ranges::find_if(infoTable, [&](const auto pair)
-                {
-                    return pair.first == uuid;
-                });
-
-            if constexpr (std::same_as<Interface, std::any>)
-                pInt->reset();
-
-            it->second.createFunc(pInt);
+            auto pRef = &iRef;
+            it->second.createFunc(&pRef);
         }
 
         void ConstructAndFill(Interface** ppInt, UUID_t uuid)
@@ -82,7 +68,7 @@ namespace tryn::utl
                     return pair.first == uuid;
                 });
 
-            it->second.createFunc(*ppInt);
+            it->second.createFunc(ppInt);
         }
 
         TypeInfo GetTypeInfo(UUID_t uuid)

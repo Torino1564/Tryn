@@ -19,8 +19,7 @@ namespace tryn::gfx::ani
 	{
 		friend class AnimationManager;
 	public:
-		Animation(const std::string& path, const uint32_t id, const aiAnimation& anim);
-		void Animate(AnimationSkeletonInterface& animInterface, double timePoint, std::span<glm::mat4> boneTransforms);
+		Animation(const std::string& path, uint32_t id, const aiAnimation& anim);
 		std::span<const AnimationNode> GetNodes() const;
 		double durationInTicks;
 		double ticksPerSecond;

@@ -53,7 +53,17 @@ namespace tryn::gfx
 				isTextured = true;
 				shaderCode += "Tex";
 				vLayout.AppendElement(VertexLayout::UV);
-				auto tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 0);
+				std::shared_ptr<ITexture> tex;
+				{
+					if (auto texture = material.pScene->GetEmbeddedTexture(tempFileName.C_Str()))
+					{
+						tex = ITexture::Resolve(gfx, texture, 0);
+					}
+					else
+					{
+						tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 0);
+					}
+				}
 				if (tex->HasAlpha())
 				{
 					hasAlpha = true;

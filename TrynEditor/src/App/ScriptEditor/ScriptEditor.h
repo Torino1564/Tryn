@@ -19,7 +19,7 @@ namespace tryn::ed
 	public:
 		ScriptEditor();
 		~ScriptEditor();
-		void DoFrame() override;
+		void Kernel() override;
 		void SerializeGraph();
 		void LoadGraph();
 		void BackGroundImGuiWindow();

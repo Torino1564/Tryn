@@ -10,6 +10,7 @@ namespace tryn::gfx
 	public:
 		static std::string GenerateID(const IGraphics& gfx, const std::filesystem::path& path, uint8_t slot);
 		static std::shared_ptr<ITexture> Resolve(const IGraphics& gfx, const std::filesystem::path& path, uint8_t slot);
+		static std::shared_ptr<ITexture> Resolve(const IGraphics& gfx, const class aiTexture&, uint8_t slot);
 		bool HasAlpha() const;
 		const Texture& GetTextureResource() const;
 

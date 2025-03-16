@@ -137,11 +137,11 @@ namespace tryn::ecs
 	graph(*this)
 	{
 		// Register default systems
-		RegisterSystem<ecs::TransformSystem>();
-		RegisterSystem<ecs::RenderSystem>();
-		RegisterSystem<ecs::UpdatePositionSystem>();
-		RegisterSystem<ecs::UpdateVelocitySystem>();
-		RegisterSystem<ecs::AnimationSystem>();
+		RegisterSystem<TransformSystem>();
+		RegisterSystem<RenderSystem>();
+		RegisterSystem<UpdatePositionSystem>();
+		RegisterSystem<UpdateVelocitySystem>();
+		RegisterSystem<AnimationSystem>();
 	}
 
 	void SystemManager::ExecuteSystems() const

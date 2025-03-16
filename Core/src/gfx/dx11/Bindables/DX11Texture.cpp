@@ -48,6 +48,13 @@ namespace tryn::gfx
 		gfx.GetContext().GenerateMips(pTextureView.Get());
 	}
 
+	dx11::DX11Texture::DX11Texture(const Graphics& gfx, const aiTexture& tex, uint8_t slot)
+		:
+	gfx(gfx)
+	{
+
+	}
+
 	void dx11::DX11Texture::Bind()
 	{
 		gfx.GetContext().PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());

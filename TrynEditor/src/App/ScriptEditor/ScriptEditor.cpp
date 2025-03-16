@@ -56,17 +56,15 @@ namespace tryn::ed
 
 			ned::EndNode();
         };
+
+        this->name = "ScriptEditor";
 	}
 
     ScriptEditor::~ScriptEditor() = default;
 
-	void ScriptEditor::DoFrame()
+	void ScriptEditor::Kernel()
 	{
-		ImGui::Begin("ScriptEditor");
-
         const auto& io = ImGui::GetIO();
-
-        ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
 
         ImGui::Separator();
 
@@ -258,8 +256,6 @@ namespace tryn::ed
         ned::SetCurrentEditor(nullptr);
 
         firstFrame = false;
-
-        ImGui::End();
 	}
 
 	void ScriptEditor::SerializeGraph()

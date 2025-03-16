@@ -71,11 +71,6 @@ namespace tryn::gfx
 			}
 		}
 
-		for (auto i = 0; i < pScene->mNumAnimations; i++)
-		{
-			ani::AnimationManager::Get().New(name, *pScene->mAnimations[i]);
-		}
-
 		int nextId = 0;
 		root = std::make_unique<Node>(ParseNode(nextId, *pScene->mRootNode, scale, true));
 

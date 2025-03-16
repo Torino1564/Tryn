@@ -20,17 +20,14 @@ namespace tryn::ed
         ImGui::SetNextWindowPos({0.0f, 0.0f}, 0);
 
         static bool flag = true;
-    	if (ImGui::Begin("MainWindow", &flag, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav));
-
-        auto& io = ImGui::GetIO();
-
+    	if (ImGui::Begin("MainWindow", &flag, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	    {
 		    if (ImGui::BeginMainMenuBar())
 		    {
 		    	if (ImGui::BeginMenu("File"))
 		    	{
 
-
+					 
 		    		ImGui::EndMenu();
 		    	}
 		    	if (ImGui::BeginMenu("Edit"))
@@ -45,9 +42,7 @@ namespace tryn::ed
 		    		{
 		    			if (ImGui::MenuItem(typeInfo.name))
 		    			{
-		    				Applet* pNewApplet = nullptr;
-		    				appletRegister.ConstructAndFill(&pNewApplet, uuid);
-		    				pApplets.emplace_back(pNewApplet);
+		    				CreateApplet(uuid);
 		    			}
 		    		}
 
@@ -65,6 +60,14 @@ namespace tryn::ed
 	    }
 
         ImGui::End();
+    }
+
+    void TrynEditorApp::CreateApplet(utl::UUID_t uuid)
+    {
+		Applet* pNewApplet = nullptr;
+    	appletRegister.ConstructAndFill(&pNewApplet, uuid);
+		pNewApplet->instanceID = appletIdCounter++;
+    	pApplets.emplace_back(pNewApplet);
     }
 }
 

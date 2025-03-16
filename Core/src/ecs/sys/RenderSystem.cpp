@@ -7,6 +7,8 @@
 #include <Core/src/gfx/Model/Model.h>
 #include <Core/src/ecs/Archetype.h>
 
+#include "TransformSystem.h"
+
 namespace tryn::ecs
 {
 	RenderSystem::RenderSystem(const SystemGraph& pGraph): SystemImpl(pGraph)

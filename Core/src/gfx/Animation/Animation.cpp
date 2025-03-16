@@ -47,10 +47,6 @@ namespace tryn::gfx::ani
 			}
 		}
 	}
-	void Animation::Animate(AnimationSkeletonInterface& animInterface, double timePoint, std::span<glm::mat4> boneTransforms)
-	{
-
-	}
 	std::span<const AnimationNode> Animation::GetNodes() const
 	{
 		return { nodes };

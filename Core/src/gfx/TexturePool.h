@@ -25,26 +25,10 @@ namespace tryn::gfx
 		};
 
 	public:
-		static std::shared_ptr<Texture> Resolve(const std::filesystem::path path, std::optional<glm::vec3> scale = std::nullopt)
-		{
-			auto id = Texture::GenerateID(path, scale);
+		static std::shared_ptr<Texture> Resolve(const std::filesystem::path path, std::optional<glm::vec3> scale = std::nullopt);
 
-			const auto it = Get().pool.find(id);
+		static std::shared_ptr<Texture> Resolve(const class aiTexture& tex, std::optional<glm::vec3> scale = std::nullopt);
 
-			if (it == Get().pool.end() || it != Get().pool.end() && it->second.expired())
-			{
-				auto ptr = std::shared_ptr<Texture>(new Texture(path, scale), Remover{});
-
-				Get().pool[id] = std::weak_ptr<Texture>(ptr);
-				return ptr;
-			}
-			else
-			{
-				return std::shared_ptr{ it->second.lock() };
-				return std::shared_ptr<Texture>(it->second.lock().get(),
-					Remover{});
-			}
-		}
 	private:
 		static TexturePool& Get()
 		{

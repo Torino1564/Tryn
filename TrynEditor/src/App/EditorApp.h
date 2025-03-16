@@ -19,8 +19,13 @@ namespace tryn::ed
 			appletRegister.RegisterType<T>();
 		}
 
+		void CreateApplet(utl::UUID_t uuid);
+
 	private:
+
+		// Applets
 		utl::ITypeRegister<ed::Applet> appletRegister;
 		std::vector<std::unique_ptr<ed::Applet>> pApplets;
+		uint16_t appletIdCounter = 0;
 	};
 }

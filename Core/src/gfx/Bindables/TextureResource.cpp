@@ -21,6 +21,11 @@ namespace tryn::gfx
 		return BindablePool::Resolve<ITexture>(gfx, path, slot);
 	}
 
+	std::shared_ptr<ITexture> ITexture::Resolve(const IGraphics& gfx, const aiTexture& tex, uint8_t slot)
+	{
+		return BindablePool::Resolve<ITexture>(gfx, tex, slot);
+	}
+
 	bool ITexture::HasAlpha() const
 	{
 		return pTextureResource->HasAlpha();

@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\gfx\TexturePool.cpp" />
     <ClCompile Include="src\gph\TGraph.cpp" />
     <ClCompile Include="src\gph\TLink.cpp" />
     <ClCompile Include="src\scr\Nodes\ConditionalNode.cpp" />

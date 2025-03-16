@@ -95,6 +95,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\App\Applet.cpp" />
     <ClCompile Include="src\App\ScriptEditor\ScriptEditor.cpp" />
     <ClCompile Include="src\dll\Compiler.cpp" />
     <ClCompile Include="src\App\EditorApp.cpp" />

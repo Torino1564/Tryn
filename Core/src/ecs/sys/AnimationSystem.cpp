@@ -3,6 +3,7 @@
 #include <Core/src/gfx/Animation/Animation.h>
 #include "Core/third/glm/gtc/quaternion.hpp"
 #include <Core/src/ecs/Archetype.h>
+#include "TransformSystem.h"
 
 namespace tryn::ecs
 {
@@ -70,6 +71,7 @@ namespace tryn::ecs
 				transformArray[j] = glm::identity<glm::mat4>();
 				localTransforms[j] = glm::identity<glm::mat4>();
 			}
+
 			auto& previousKey = animatedArray[i].previousKey;
 			for (int j = 0; j < skAnInterface.indexPairs.size(); j++)
 			{

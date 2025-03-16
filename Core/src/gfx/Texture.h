@@ -5,13 +5,18 @@
 #include <format>
 #include <Core/src/gfx/StbImageManager.h>
 
+struct aiTexture;
+
 namespace tryn::gfx
 {
+	class Deleter;
+
 	class Texture
 	{
-		
+
 	public:
 		Texture(const std::filesystem::path& path, std::optional<glm::vec3> scale = std::nullopt);
+		Texture(const aiTexture& tex, std::optional<glm::vec3> scale = std::nullopt);
 		static constexpr std::string GenerateID(const std::filesystem::path& path, std::optional<glm::vec3> scale = std::nullopt);
 		std::string GetID() const noexcept;
 		const std::byte* Data() const noexcept;
@@ -20,6 +25,7 @@ namespace tryn::gfx
 		int GetNumChannels() const noexcept;
 		int GetRowPitch() const noexcept;
 		bool HasAlpha() const noexcept;
+
 	private:
 		// Data
 		std::string path;
@@ -27,8 +33,9 @@ namespace tryn::gfx
 		spa::DimensionsI dimensions;
 		int numChannels = 0;
 		bool hasAlpha = false;
+
 		// Bytes
-		std::unique_ptr<std::byte, STBI_Close> buffer;
+		std::unique_ptr<std::byte, Deleter> buffer;
 	};
 
 	constexpr std::string Texture::GenerateID(const std::filesystem::path& path, std::optional<glm::vec3> scale)

@@ -8,6 +8,7 @@ namespace tryn::gfx::dx11
 	{
 	public:
 		DX11Texture(const Graphics& gfx, const std::filesystem::path& path, uint8_t slot);
+		DX11Texture(const Graphics& gfx, const class aiTexture& tex, uint8_t slot);
 		void Bind() override;
 		void Bind(const IContext&) override;
 	private:
