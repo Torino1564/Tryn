@@ -33,7 +33,7 @@ namespace tryn::gfx
 		{
 			this->scale = scale;
 		}
-		Deleter deleter([](std::byte* bytes) -> void
+		static Deleter deleter([](std::byte* bytes) -> void
 		{
 			STBI_Close::Get().operator()(bytes);
 		});
