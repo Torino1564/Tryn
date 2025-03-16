@@ -38,7 +38,8 @@ namespace tryn::utl
 	                                        }
 	                                        else
 	                                        {
-	                                            *pInt = T();
+                                                auto castedP = static_cast<T*>(pInt);
+	                                            castedP = new T();
 	                                        }
 	                                    },
                         .size = sizeof(T)
@@ -48,7 +49,7 @@ namespace tryn::utl
             }
         }
 
-        void Construct(Interface& iRef, UUID_t uuid)
+        void ConstructAt(Interface& iRef, UUID_t uuid)
         {
             const auto it = std::ranges::find_if(infoTable, [&](const auto pair)
                 {
@@ -61,7 +62,7 @@ namespace tryn::utl
             it->second.createFunc(&iRef);
         }
 
-        void Construct(Interface* pInt, UUID_t uuid)
+        void ConstructAt(Interface* pInt, UUID_t uuid)
         {
             const auto it = std::ranges::find_if(infoTable, [&](const auto pair)
                 {
@@ -72,6 +73,16 @@ namespace tryn::utl
                 pInt->reset();
 
             it->second.createFunc(pInt);
+        }
+
+        void ConstructAndFill(Interface** ppInt, UUID_t uuid)
+        {
+            const auto it = std::ranges::find_if(infoTable, [&](const auto pair)
+                {
+                    return pair.first == uuid;
+                });
+
+            it->second.createFunc(*ppInt);
         }
 
         TypeInfo GetTypeInfo(UUID_t uuid)

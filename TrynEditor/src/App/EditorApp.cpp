@@ -20,46 +20,49 @@ namespace tryn::ed
         ImGui::SetNextWindowPos({0.0f, 0.0f}, 0);
 
         static bool flag = true;
-        ImGui::Begin("MainWindow", &flag, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav);
+    	if (ImGui::Begin("MainWindow", &flag, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav));
 
         auto& io = ImGui::GetIO();
 
-        if (ImGui::BeginMainMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
+	    {
+		    if (ImGui::BeginMainMenuBar())
+		    {
+		    	if (ImGui::BeginMenu("File"))
+		    	{
 
 
-                ImGui::EndMenu();
-            }
-            if (ImGui::BeginMenu("Edit"))
-            {
+		    		ImGui::EndMenu();
+		    	}
+		    	if (ImGui::BeginMenu("Edit"))
+		    	{
 
 
-                ImGui::EndMenu();
-            }
-            if (ImGui::BeginMenu("Tools"))
-            {
-                for (auto [uuid, typeInfo] : appletRegister.infoTable)
-                {
-	                if (ImGui::MenuItem(typeInfo.name))
-	                {
-                        pApplets.emplace_back();
-                        appletRegister.Construct(&*pApplets.back(), uuid);
-	                }
-                }
+		    		ImGui::EndMenu();
+		    	}
+		    	if (ImGui::BeginMenu("Tools"))
+		    	{
+		    		for (auto [uuid, typeInfo] : appletRegister.infoTable)
+		    		{
+		    			if (ImGui::MenuItem(typeInfo.name))
+		    			{
+		    				Applet* pNewApplet = nullptr;
+		    				appletRegister.ConstructAndFill(&pNewApplet, uuid);
+		    				pApplets.emplace_back(pNewApplet);
+		    			}
+		    		}
 
-                ImGui::EndMenu();
-            }
-            ImGui::EndMainMenuBar();
-        }
+		    		ImGui::EndMenu();
+		    	}
+		    	ImGui::EndMainMenuBar();
+		    }
 
-        ImGui::ShowDemoWindow();
+        	ImGui::ShowDemoWindow();
 
-        for (auto& pApplet : pApplets)
-        {
-            pApplet->DoFrame();
-        }
+        	for (auto& pApplet : pApplets)
+        	{
+        		pApplet->DoFrame();
+        	}
+	    }
 
         ImGui::End();
     }

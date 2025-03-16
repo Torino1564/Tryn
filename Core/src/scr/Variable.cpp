@@ -21,6 +21,6 @@ namespace tryn::ser
 		sr.ReadSerialized(data.typeName, binary, pExtraData);
 		sr.ReadSerialized(data.uuid, binary, pExtraData);
 
-		pTypeRegister->Construct(data.var, data.uuid);
+		pTypeRegister->ConstructAt(data.var, data.uuid);
 	}
 }
