@@ -5,14 +5,14 @@
 #include <Core/src/gfx/Assimp.h>
 namespace tryn::gfx::ani
 {
-    uint32_t AnimationManager::New(const std::string& path, aiAnimation& anim)
+    std::shared_ptr<Animation> AnimationManager::New(const std::string& path, aiAnimation& anim)
     {
         // New Animation
         auto id = ResolveID();
-        animationPtrArray[id] = std::make_shared<Animation>(path, id, anim);
-        return id;
+    	animationPtrArray[id] = std::make_shared<Animation>(path, id, anim);
+        return animationPtrArray[id];
     }
-    std::vector<uint32_t> AnimationManager::New(const std::string& path)
+    std::vector<std::shared_ptr<Animation>> AnimationManager::New(const std::string& path)
     {
         auto& imp = AssimpManager::Get();
         const auto pScene = imp.ReadFile(path,
@@ -23,7 +23,7 @@ namespace tryn::gfx::ani
             aiProcess_CalcTangentSpace
         );
 
-        std::vector<uint32_t> keys = {};
+        std::vector<std::shared_ptr<Animation>> keys = {};
         keys.reserve(pScene->mNumAnimations);
 
         for (int i = 0; i < pScene->mNumAnimations; i++)

@@ -33,7 +33,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		const auto& pLight = entities.back();
 
 		pLight->GetComponent<ecs::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
-		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::FlatBase>(Gfx(), "Game/Resources/Models/sphere.obj");
+		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat>(Gfx(), "Game/Resources/Models/sphere.obj");
 		pLight->GetComponent<ecs::ActiveComponent>().active = true;
 		pLight->GetComponent<ecs::PointLightComponent>().parameters = gfx::PointLightParameters{
 			.ambient = {0.1f, 0.1f, 0.1f},
@@ -75,7 +75,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		auto& plane = *entities.back();
 
 		plane.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-		plane.GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
+		plane.GetComponent<ecs::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
 		plane.GetComponent<ecs::ScaleComponent>().scale = { 10.0f, 10.0f, 10.0f };
 		plane.GetComponent<ecs::ActiveComponent>().active = true;
 	}
@@ -88,12 +88,14 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		   ecs::ModelComponent,
 		   ecs::ScaleComponent,
 		   ecs::AnimatedComponent,
+		   ecs::BoneTransformsComponent,
 		   ecs::RotationComponent>(ECS(),"AnimationTest")));
 
 		auto& ent = *entities.back();
 
 		ent.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-		ent.GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make(Gfx(), "Game/Resources/Models/WarrockTaunt.fbx");
+		ent.GetComponent<ecs::ModelComponent>().pModel =  std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/WarrockTaunt.fbx");
+		ent.GetComponent<ecs::AnimatedComponent>().pAnimationSkeletonInterface = ent.GetComponent<ecs::ModelComponent>().pModel->GetMainMesh()->GetAnimationInterface();
 		ent.GetComponent<ecs::ScaleComponent>().scale = { 10.0f, 10.0f, 10.0f };
 		ent.GetComponent<ecs::ActiveComponent>().active = true;
 	}

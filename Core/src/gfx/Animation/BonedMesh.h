@@ -12,7 +12,7 @@ namespace tryn::gfx::ani
 		[[nodiscard]] MeshType Type() const override;
 		void Submit(const IGraphics& gfx, const glm::mat4 finalTransform, std::span<const glm::mat4> boneTransforms);
 		void AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string& name);
-		AnimationSkeletonInterface* GetAnimationInterface(const std::string& name);
+		AnimationSkeletonInterface* GetAnimationInterface(const std::string& name = "?");
 	private:
 		void inline ExtraSubmitBehavior() override;
 		Skeleton& skeleton;

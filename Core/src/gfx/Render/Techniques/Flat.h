@@ -7,16 +7,10 @@ namespace tryn::gfx
 {
 	class IGraphics;
 
-	template <bool Instanced = false, bool Skinned = false>
-	class FlatBase : public Technique<FlatBase, "FlatBase", Instanced, Skinned>
+	class Flat : public Technique<Flat>
 	{
 	public:
-		FlatBase(const std::string& name);
-		FlatBase(class Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path);
+		Flat(const std::string& name);
+		Flat(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& path, bool skinned = false, bool instanced = false);
 	};
-
-	using Flat =		FlatBase<false, false>;
-	using FlatInst =	FlatBase<true, false>;
-	using FlatSkn =		FlatBase<false, true>;
-	using FlatInstSkn = FlatBase<true, true>;
 }

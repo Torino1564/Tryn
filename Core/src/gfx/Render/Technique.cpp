@@ -6,12 +6,20 @@
 
 namespace tryn::gfx
 {
-	//bool TechniquePool::RegisterTechnique(const utl::UUID_t UUID)
-	//{
-	//	//auto [iterator, result] = Get().techniqueMap.insert({UUID, std::move(pTechnique)});
-	//	return true;
-	//	//return result;
-	//}
+	std::shared_ptr<TechniqueBase> TechniquePool::ConstructTechnique(utl::UUID_t techniqueUUID, Material& material,
+		const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced,
+		const bool skeleton)
+	{
+		auto it = Get().techniqueMap.find(techniqueUUID);
+		trynass(it != Get().techniqueMap.end()).msg(utl::ToWide(std::format("Did not find technique with UUID: {}", techniqueUUID))).lvl(log::Level::Error).ex();
+		return it->second->ConstructDerived(material, aiMaterial, gfx, path, instanced, skeleton);
+	}
+
+	TechniquePool& TechniquePool::Get()
+	{
+		static TechniquePool singleton;
+		return singleton;
+	}
 
 	TechniqueBase::TechniqueBase(const std::string& name)
 	{
@@ -21,7 +29,7 @@ namespace tryn::gfx
 	{
 		steps.push_back(std::move(step));
 	}
-	void TechniqueBase::Draw(const IGraphics& gfx, Drawable* parent)
+	void TechniqueBase::Draw(const IGraphics& gfx, Drawable* parent) const
 	{
 		for (auto& step : steps)
 		{

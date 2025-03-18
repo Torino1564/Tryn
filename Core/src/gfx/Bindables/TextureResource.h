@@ -3,14 +3,17 @@
 #include <filesystem>
 #include <Core/src/gfx/Texture.h>
 
+struct aiTexture;
+
 namespace tryn::gfx
 {
 	class ITexture : public IBindable
 	{
 	public:
 		static std::string GenerateID(const IGraphics& gfx, const std::filesystem::path& path, uint8_t slot);
+		static std::string GenerateID(const IGraphics& gfx, const aiTexture& tex, uint8_t slot);
 		static std::shared_ptr<ITexture> Resolve(const IGraphics& gfx, const std::filesystem::path& path, uint8_t slot);
-		static std::shared_ptr<ITexture> Resolve(const IGraphics& gfx, const class aiTexture&, uint8_t slot);
+		static std::shared_ptr<ITexture> Resolve(const IGraphics& gfx, const aiTexture& texture, uint8_t slot);
 		bool HasAlpha() const;
 		const Texture& GetTextureResource() const;
 

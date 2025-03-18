@@ -109,6 +109,17 @@ namespace tryn::gfx::ani
 	}
 	AnimationSkeletonInterface* BonedMesh::GetAnimationInterface(const std::string& name)
 	{
+		if (name == "?")
+		{
+			trylog.warn(L"Defaulted to first animation");
+
+			if (interfaces.size() == 0)
+			{
+				trylog.warn(L"No animations found!");
+				return nullptr;
+			}
+			return &interfaces[0];
+		}
 		return &interfaces[animationNameMapper.at(name)];
 	}
 	inline void BonedMesh::ExtraSubmitBehavior()

@@ -18,6 +18,12 @@ namespace tryn::gfx
 		return (std::byte*)stbi_load(path.data(), &dimensions.width, &dimensions.height, &numChannels, desiredChannels);
 	}
 
+	std::byte* StbImageManager::Load(std::span<std::byte> buffer, spa::DimensionsI& dimensions, int& numChannels,
+		int desiredChannels)
+	{
+		return (std::byte*)stbi_load_from_memory((stbi_uc*)buffer.data(), buffer.size() ,&dimensions.width, &dimensions.height, &numChannels, desiredChannels);
+	}
+
 	int StbImageManager::RGB_ALPHA()
 	{
 		return STBI_rgb_alpha;

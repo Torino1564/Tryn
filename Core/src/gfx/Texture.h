@@ -9,7 +9,17 @@ struct aiTexture;
 
 namespace tryn::gfx
 {
-	class Deleter;
+	class Deleter
+	{
+	public:
+		Deleter(void(*pDeleter)(std::byte*)) : pDeleter(pDeleter) {}
+		Deleter() = default;
+		void operator()(std::byte* bytes) const
+		{
+			pDeleter(bytes);
+		}
+		void(*pDeleter)(std::byte*) = nullptr;
+	};
 
 	class Texture
 	{

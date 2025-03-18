@@ -20,6 +20,8 @@
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
 
+struct aiTexture;
+
 namespace tryn::app
 {
 	class App;
@@ -131,7 +133,7 @@ namespace tryn::gfx
 		virtual std::shared_ptr<IPxConstantBufferNCach>				CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") const = 0;
 		virtual std::unique_ptr<IInstanceBuffer>					CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot = 2) const = 0;
 		virtual std::shared_ptr<ITexture>							CreateTexture(std::filesystem::path path, int slot = 0) const = 0;
-		virtual std::shared_ptr<ITexture>							CreateTexture(const class aiTexture& tex, int slot = 0) const = 0;
+		virtual std::shared_ptr<ITexture>							CreateTexture(const aiTexture& tex, int slot = 0) const = 0;
 		virtual std::shared_ptr<IRasterizer>						CreateRasterizer(const bool twoSided = true) const = 0;
 		virtual std::shared_ptr<ISampler>							CreateSampler(SamplerType type, bool reflect, int slot) const = 0;
 		virtual std::shared_ptr<IOutputOnlyRenderTargetView>		CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions) const = 0;

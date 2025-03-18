@@ -13,8 +13,8 @@ namespace tryn::gfx::ani
 			static AnimationManager singleton;
 			return singleton;
 		}
-		uint32_t New(const std::string& path, struct aiAnimation& anim);
-		std::vector<uint32_t> New(const std::string& path);
+		std::shared_ptr<Animation> New(const std::string& path, aiAnimation& anim);
+		std::vector<std::shared_ptr<Animation>> New(const std::string& path);
 		std::shared_ptr<Animation> Resolve(const uint32_t key);
 		std::shared_ptr<Animation> Resolve(const std::string& key);
 	private:

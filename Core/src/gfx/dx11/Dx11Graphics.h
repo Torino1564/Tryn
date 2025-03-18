@@ -81,7 +81,7 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<IPxConstantBufferNCach>				CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") const override;
 		std::unique_ptr<IInstanceBuffer>					CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot = 2) const override;
 		std::shared_ptr<ITexture>							CreateTexture(std::filesystem::path path, int slot = 0) const override;
-		std::shared_ptr<ITexture>							CreateTexture(const class aiTexture& tex, int slot = 0) const override;
+		std::shared_ptr<ITexture>							CreateTexture(const aiTexture& tex, int slot = 0) const override;
 		std::shared_ptr<IRasterizer>						CreateRasterizer(const bool twoSided = true) const override;
 		std::shared_ptr<ISampler>							CreateSampler(SamplerType type, bool reflect, int slot) const override;
 		std::shared_ptr<IOutputOnlyRenderTargetView>		CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions) const override;

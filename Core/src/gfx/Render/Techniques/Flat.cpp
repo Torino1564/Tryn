@@ -15,17 +15,15 @@
 
 namespace tryn::gfx
 {
-	template <bool Instanced, bool Skinned>
-	FlatBase<Instanced, Skinned>::FlatBase(const std::string& name)
+	Flat::Flat(const std::string& name)
 		:
-	Technique<FlatBase, "FlatBase", Instanced, Skinned>(name)
+	Technique(name)
 	{
 	}
 
-	template <bool Instanced, bool Skinned>
-	FlatBase<Instanced, Skinned>::FlatBase(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& path)
+	Flat::Flat(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& path, bool skinned, bool instanced)
 		:
-		Technique<FlatBase, "FlatBase", Instanced, Skinned>(Skinned&& Instanced ? "FlatInstSkn" : (Skinned ? "FlatSkn" : (Instanced ? "FlatInst" : "Flat")))
+		Technique("Flat")
 	{
 		auto shaderRootPath = gfx.GetShaderRootPath();
 
@@ -56,12 +54,12 @@ namespace tryn::gfx
 		}
 
 		{
-			if (Skinned)
+			if (skinned)
 			{
 				vLayout.AppendElement(VertexLayout::BoneIds);
 				vLayout.AppendElement(VertexLayout::BoneWeights);
 			}
-			auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (Instanced ? "Inst" : "") + (Skinned ? "Skn" : "") + "_VS.cso");
+			auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (instanced ? "Inst" : "") + (skinned ? "Skn" : "") + "_VS.cso");
 			step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 			step.AddBindable(std::move(pvs));
 			step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
@@ -100,13 +98,4 @@ namespace tryn::gfx
 
 		this->AddStep(std::move(step));
 	}
-
-
-
-
-	// explicit template specialization
-	template FlatBase<false, false>;
-	template FlatBase<true, false>;
-	template FlatBase<false, true>;
-	template FlatBase<true, true>;
 }

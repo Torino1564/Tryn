@@ -3,7 +3,6 @@
 #include "TechniqueProbe.h"
 #include "Step.h"
 #include <Core/src/utl/StringHasher.h>
-#include <Core/src/utl/StatefulMeta/TemplateData.h>
 
 #include <unordered_map>
 
@@ -15,38 +14,33 @@ namespace tryn::gfx
 {
 	class IGraphics;
 
-	class TechniqueBase;
-	template <typename OriginalInstanciation, bool NewParam1, bool NewParam2> struct ReplaceTemplateParam;
+	template <typename T>
+	class Technique;
 
-	template <template<bool, bool> class Tech, bool OldParam1, bool OldParam2, bool NewParam1, bool NewParam2>
-	struct ReplaceTemplateParam<Tech<OldParam1, OldParam2>, NewParam1, NewParam2> {
-		using type = Tech<NewParam1, NewParam2>;
-	};
-
-	enum class Techniques
-	{
-		Phong,
-		Flat,
-		Garaoud,
-	};
+	template <typename T>
+	concept TechniqueClass = std::derived_from<T, Technique<T>>;
 
 	class TechniquePool
 	{
 	public:
 
-		static bool RegisterTechnique(utl::UUID_t UUID)
-		{
-			return true;
-		}
-
 		static std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, class Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skeleton = false);
 
-	private:
-		static TechniquePool& Get()
+		template <typename T>
+		static bool RegisterTechnique(utl::UUID_t uuid)
 		{
-			static TechniquePool singleton;
-			return singleton;
+			const auto it = Get().techniqueMap.find(uuid);
+			if (it == Get().techniqueMap.end())
+			{
+				auto [iterator, result] = Get().techniqueMap.insert({uuid, std::make_unique<T>("Handle")});
+				return true;
+			}
+			trynchk_fail.msg(utl::ToWide(std::format("The technique [{}] with UUID: [{}] has already been registered in the TechniquePool.", ZT_TYPE_OF(T), uuid)));
+			std::unreachable();
 		}
+
+	private:
+		static TechniquePool& Get();
 		TechniquePool() = default;
 		std::unordered_map<utl::UUID_t, std::unique_ptr<TechniqueBase>> techniqueMap;
 	};
@@ -58,66 +52,46 @@ namespace tryn::gfx
 		TechniqueBase(const std::string& name);
 		virtual ~TechniqueBase() = default;
 		void AddStep(Step step);
-		void Draw(const IGraphics& gfx, Drawable* parent);
+		void Draw(const IGraphics& gfx, Drawable* parent) const;
 		void Submit(const IGraphics& gfx, Drawable* parent);
 		void Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instancedParent);
 		void Accept(class TechniqueProbe& probe);
 		virtual std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, bool instanced, bool skinned) = 0;
 	protected:
-		class VertexLayout& ExtractLayoutFromMaterial(class Material& mat);
+		static class VertexLayout& ExtractLayoutFromMaterial(class Material& mat);
 		std::string name;
 		std::vector<Step> steps;
 	};
 
-#define ZT_DEFINE_TECHNIQUE(x) 	template <bool Instanced = false, bool Skinned = false> \
-	class FlatBase : public tryn::gfx::Technique<x, #x, Instanced, Skinned>
-
-	template <template <bool Inst, bool Skn> class T, utl::StaticString Name, bool Instanced, bool Skinned>
+	template <class T>
 	class Technique : public TechniqueBase
 	{
 	public:
 		Technique() = default;
-		Technique(const std::string& name)
+		explicit Technique(const std::string& name)
 			:
 		TechniqueBase(name) {}
 
-		std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skinned = false) override
-		{
-			if (instanced && skinned)
-			{
-				return std::make_shared<T<false, false>>(material, aiMaterial, gfx, path);
-			}							
-			else if (instanced)			
-			{							
-				return std::make_shared<T<false, false>>(material, aiMaterial, gfx, path);
-			}							
-			else if (skinned)			
-			{							
-				return std::make_shared<T<false, false>>(material, aiMaterial, gfx, path);
-			}							
-			else						
-			{							
-				return std::make_shared<T<false, false>>(material, aiMaterial, gfx, path);
-			}
-		}
-	public:
-		static constexpr auto GetUUID()
-		{
-			return UUID;
-		}
+		std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skinned = false) override;
+		static constexpr auto GetUUID();
+
 	protected:
-		using Type = Technique<T, Name, Instanced, Skinned>;
-		static constexpr auto UUID = ZT_STRING_HASH(Name.v);
-		using TechType = T<false, false>;
-		static inline bool registered = TechniquePool::RegisterTechnique(UUID);
+		friend class TechniquePool;
+		using Type = T;
+		static constexpr auto uuid = ZT_TYPE_UUID(T);
+		static inline bool registered = TechniquePool::RegisterTechnique<T>(uuid);
 	};
 
-	inline std::shared_ptr<class TechniqueBase> TechniquePool::ConstructTechnique(utl::UUID_t techniqueUUID,
-		Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced,
-		const bool skeleton)
+	template <class T>
+	std::shared_ptr<TechniqueBase> Technique<T>::ConstructDerived(Material& material, const aiMaterial& aiMaterial,
+		const IGraphics& gfx, const std::string& path, const bool instanced, const bool skinned)
 	{
-		auto it = Get().techniqueMap.find(techniqueUUID);
-		trynass(it != Get().techniqueMap.end()).msg(utl::ToWide(std::format("Did not find technique with UUID: {}", techniqueUUID))).lvl(log::Level::Error).ex();
-		return it->second->ConstructDerived(material, aiMaterial, gfx, path, instanced, skeleton);
+		return std::make_shared<T>(material, aiMaterial, gfx, path, instanced, skinned);
+	}
+
+	template <class T>
+	constexpr auto Technique<T>::GetUUID()
+	{
+		return uuid;
 	}
 }

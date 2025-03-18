@@ -34,5 +34,5 @@ Player::Player(ecs::ECS& ecs, std::string name, const std::string& modelPath, gf
 
 	velocity = glm::vec3(0.0f);
 
-	pModel = gfx::Model::Make<gfx::ForwardPhongBase>(gfx, modelPath);
+	pModel = std::make_unique<gfx::Model>(gfx, modelPath);
 }

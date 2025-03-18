@@ -6,17 +6,6 @@
 
 namespace tryn::gfx
 {
-	class Deleter
-	{
-	public:
-		Deleter(std::function<void(std::byte*)>&& deleter) : pDeleter(std::make_unique<std::function<void(std::byte*)>>(std::move(deleter))) {}
-		void operator()(std::byte* bytes) const
-		{
-			pDeleter->operator()(bytes);
-		}
-		std::unique_ptr<std::function<void(std::byte*)>> pDeleter;
-	};
-
 	Texture::Texture(const std::filesystem::path& path, std::optional<glm::vec3> scale)
 	{
 		auto texture = StbImageManager::Load(path.string(), dimensions, numChannels, StbImageManager::RGB_ALPHA());
@@ -33,40 +22,56 @@ namespace tryn::gfx
 		{
 			this->scale = scale;
 		}
-		static Deleter deleter([](std::byte* bytes) -> void
-		{
-			STBI_Close::Get().operator()(bytes);
-		});
-
-		auto& deleterRef = deleter;
-
-		buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleterRef));
 	}
 
 	Texture::Texture(const aiTexture& tex, std::optional<glm::vec3> scale)
 	{
-		hasAlpha = true;
-
-		// create buffer
-
-		trynass(tex.mHeight != 0).msg(L"Tried to load a compressed texture, which are currently not supported!");
-
-		const auto bufferSize = tex.mHeight * tex.mWidth * sizeof(aiTexel);
-		std::byte* buffer_ = new std::byte[tex.mHeight * tex.mWidth * sizeof(aiTexel)];
-
-		std::memcpy(buffer_, tex.pcData, bufferSize);
-
 		this->path = tex.mFilename.C_Str();
-		if (scale)
-		{
-			this->scale = scale;
-		}
-		thread_local Deleter deleter([](std::byte* bytes)
-		{
-			free(bytes);
-		});
 
-		buffer = std::move(std::unique_ptr<std::byte,Deleter>(buffer_, deleter));
+		// If the texture is compressed (png, jpeg), resolve to STBI image to decode it 
+		if (tex.mHeight == 0)
+		{
+			// texture is compressed
+			auto texture = StbImageManager::Load(std::span{(std::byte*)tex.pcData, tex.mWidth}, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+
+			auto pDeleterFunc = [](std::byte* bytes)
+			{
+				STBI_Close::Get().operator()(bytes);
+			};
+
+			if (numChannels == 4)
+			{
+				hasAlpha = true;
+			}
+
+			static const Deleter deleter(pDeleterFunc);
+
+			buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+		}
+		else
+		{
+			// otherwise load the bytes normally
+			const auto bufferSize = tex.mHeight * tex.mWidth * sizeof(aiTexel);
+			std::byte* buffer_ = new std::byte[tex.mHeight * tex.mWidth * sizeof(aiTexel)];
+
+			dimensions = {.width = (int)tex.mWidth, .height = (int)tex.mHeight};
+
+			std::memcpy(buffer_, tex.pcData, bufferSize);
+
+			this->path = tex.mFilename.C_Str();
+			if (scale)
+			{
+				this->scale = scale;
+			}
+			const auto pDeleterFunc = [](std::byte* bytes)
+			{
+				free(bytes);
+			};
+
+			static const Deleter deleter(pDeleterFunc);
+
+			buffer = std::move(std::unique_ptr<std::byte, Deleter>(buffer_, deleter));
+		}
 	}
 
 	std::string Texture::GetID() const noexcept

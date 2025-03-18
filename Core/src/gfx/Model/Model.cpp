@@ -38,127 +38,10 @@ namespace tryn::gfx
 		return glmMatrix;
 	}
 
-	Model::Model(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, bool instanced)
+	Model::Model(const gfx::IGraphics& gfx, std::string_view path, const std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
 		:
-		name(path.data()), gfx(gfx)
+		gfx(gfx), name(path.data())
 	{
-		auto& imp = AssimpManager::Get();
-		const auto pScene = imp.ReadFile(path.data(),
-			aiProcess_Triangulate |
-			aiProcess_JoinIdenticalVertices |
-			aiProcess_ConvertToLeftHanded |
-			aiProcess_GenNormals |
-			aiProcess_CalcTangentSpace
-		);
-
-		if (pScene == nullptr)
-		{
-			throw ModelException(imp.GetErrorString());
-		}
-
-		if (scale != glm::vec3{ 1.0f,1.0f,1.0f })
-		{
-			for (size_t i = 0; i < pScene->mNumMeshes; i++)
-			{
-				const auto& mesh = *pScene->mMeshes[i];
-				for (size_t j = 0; j < mesh.mNumVertices; j++)
-				{
-					auto& vertex = mesh.mVertices[j];
-					vertex.x *= scale.x;
-					vertex.y *= scale.y;
-					vertex.z *= scale.z;
-				}
-			}
-		}
-
-		int nextId = 0;
-		root = std::make_unique<Node>(ParseNode(nextId, *pScene->mRootNode, scale, true));
-
-		// parse materials
-		std::vector<Material> materials;
-		materials.reserve(pScene->mNumMaterials);
-
-		int switchCase = 0;
-
-		if (instanced && skeleton.has_value())
-		{
-			switchCase = 0;
-		}
-		else
-		{
-			if (instanced)
-			{
-				switchCase = 1; 
-			}
-			else if (skeleton.has_value())
-			{
-				switchCase = 2;
-			}
-			else
-			{
-				switchCase = 3;
-			}
-		}
-
-		for (size_t i = 0; i < pScene->mNumMaterials; i++)
-		{
-			switch (switchCase)
-			{
-			case 0:
-				materials.emplace_back(Material::Make<ForwardPhongInstSkn>(gfx, *pScene->mMaterials[i], path));
-				break;
-			case 1:
-				materials.emplace_back(Material::Make<ForwardPhongInst>(gfx, *pScene->mMaterials[i], path));
-				break;
-			case 2:
-				materials.emplace_back(Material::Make<ForwardPhongSkn>(gfx, *pScene->mMaterials[i], path));
-				break;
-			case 3:
-				materials.emplace_back(Material::Make<ForwardPhong>(gfx, *pScene->mMaterials[i], path));
-				break;
-			}
-		}
-
-		if (skeleton.has_value())
-		{
-			for (size_t i = 0; i < pScene->mNumMeshes; i++)
-			{
-				const auto& mesh = *pScene->mMeshes[i];
-				pMeshes.push_back(std::make_unique<ani::BonedMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), skeleton.value(), scale, meshCounter++));
-			}
-		}
-		else
-		{
-			for (size_t i = 0; i < pScene->mNumMeshes; i++)
-			{
-				const auto& mesh = *pScene->mMeshes[i];
-				pMeshes.push_back(std::make_unique<StaticMesh>(gfx, mesh, mesh.mName.C_Str(), &materials[mesh.mMaterialIndex], scale, meshCounter++));
-			}
-		}
-
-		// Set mesh Span
-		std::queue<Node*> q;
-		q.push(root.get());
-
-		while (!q.empty())
-		{
-			auto& current = *q.front();
-			q.pop();
-			
-			current.SetMeshSpan({ pMeshes });
-
-			for (auto& child : current.GetChildren())
-			{
-				q.push(&child);
-			}
-		}
-	}
-
-	std::unique_ptr<Model> Model::Make(const gfx::IGraphics& gfx, std::string_view path,
-		const std::span<utl::UUID_t> techniqueUUIDs, glm::vec3 scale, bool instanced)
-	{
-		auto pModel = std::unique_ptr<Model>(new Model(path, gfx));
-
 		auto& imp = AssimpManager::Get();
 		const auto pScene = imp.ReadFile(path.data(),
 		                                 aiProcess_Triangulate |
@@ -188,13 +71,8 @@ namespace tryn::gfx
 			}
 		}
 
-		for (unsigned int i = 0; i < pScene->mNumAnimations; i++)
-		{
-			ani::AnimationManager::Get().New(pModel->name, *pScene->mAnimations[i]);
-		}
-
 		int nextId = 0;
-		pModel->root = std::make_unique<Node>(pModel->ParseNode(nextId, *pScene->mRootNode, scale, true));
+		root = std::make_unique<Node>(ParseNode(nextId, *pScene->mRootNode, scale, true));
 
 		// parse materials
 		std::vector<Material> materials;
@@ -202,15 +80,15 @@ namespace tryn::gfx
 
 		for (size_t i = 0; i < pScene->mNumMaterials; i++)
 		{
-			materials.emplace_back(Material::Make(gfx, *pScene->mMaterials[i], path, techniqueUUIDs, instanced, pModel->skeleton.has_value()));
+			materials.emplace_back(gfx, *pScene->mMaterials[i], path, techniqueUUIDs, pScene, instanced, skeleton.has_value());
 		}
 
-		if (pModel->skeleton.has_value())
+		if (skeleton.has_value())
 		{
 			for (size_t i = 0; i < pScene->mNumMeshes; i++)
 			{
 				const auto& mesh = *pScene->mMeshes[i];
-				pModel->pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), pModel->skeleton.value(), scale, pModel->meshCounter++));
+				pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), skeleton.value(), scale, meshCounter++));
 			}
 		}
 		else
@@ -218,21 +96,21 @@ namespace tryn::gfx
 			for (size_t i = 0; i < pScene->mNumMeshes; i++)
 			{
 				const auto& mesh = *pScene->mMeshes[i];
-				auto pMesh = std::make_shared<StaticMesh>(gfx, mesh, mesh.mName.C_Str(), &materials[mesh.mMaterialIndex], scale, pModel->meshCounter++);
-				pModel->pMeshes.push_back(std::move(pMesh));
+				auto pMesh = std::make_shared<StaticMesh>(gfx, mesh, mesh.mName.C_Str(), &materials[mesh.mMaterialIndex], scale, meshCounter++);
+				pMeshes.push_back(std::move(pMesh));
 			}
 		}
 
 		// Set mesh Span
 		std::queue<Node*> q;
-		q.push(pModel->root.get());
+		q.push(root.get());
 
 		while (!q.empty())
 		{
 			auto& current = *q.front();
 			q.pop();
 
-			current.SetMeshSpan({ pModel->pMeshes });
+			current.SetMeshSpan({ pMeshes });
 
 			for (auto& child : current.GetChildren())
 			{
@@ -240,7 +118,11 @@ namespace tryn::gfx
 			}
 		}
 
-		return pModel;
+		for (unsigned int i = 0; i < pScene->mNumAnimations; i++)
+		{
+			auto ani = ani::AnimationManager::Get().New(name, *pScene->mAnimations[i]);
+			AddAnimation(ani, {*pScene->mAnimations[i]->mName.C_Str()});
+		}
 	}
 
 	Model::~Model() = default;
@@ -252,7 +134,7 @@ namespace tryn::gfx
 		const auto transform = translation * rotation;
 		root->Submit(gfx, entityTransform * transform);
 	}
-	void Model::Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms)
+	void Model::Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms) const
 	{
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
 		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
@@ -273,7 +155,7 @@ namespace tryn::gfx
 		ImGui::SliderFloat("Z", &settings.position.z, -20.0f, 20.0f);
 		ImGui::End();
 	}
-	void Model::AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string& name)
+	void Model::AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string& name) const
 	{
 		auto& bonedMesh = *GetMainMesh();
 
@@ -287,9 +169,6 @@ namespace tryn::gfx
 	{
 		return meshCounter + 1;
 	}
-	Model::Model(std::string_view path, const gfx::IGraphics& gfx)
-		:
-		name(path.data()), gfx(gfx) {}
 	Node Model::ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root)
 	{
 		auto skeletonNodeIndex = -1;
@@ -390,7 +269,7 @@ namespace tryn::gfx
 		pExtraData->Get("pGfx").Get((const void*&)pGfx);
 
 		const auto name = streamReader.ReadSerialized<std::string>(binary, pExtraData);
-		return Model(name, *pGfx);
+		return Model(*pGfx, name);
 	}
 
 	void Model::Serializer::Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary,
@@ -399,12 +278,19 @@ namespace tryn::gfx
 		// TODO
 	}
 
-	ani::BonedMesh* Model::GetMainMesh()
+	ani::BonedMesh* Model::GetMainMesh() const
 	{
+		trynass(this->skeleton.has_value());
 		return reinterpret_cast<ani::BonedMesh*>(pMeshes[0].get());
 	}
 	const gfx::IGraphics* Model::GetGfx() const
 	{
 		return &gfx;
+	}
+
+	ani::Skeleton& Model::GetSkeleton()
+	{
+		trynass(skeleton.has_value());
+		return skeleton.value();
 	}
 }

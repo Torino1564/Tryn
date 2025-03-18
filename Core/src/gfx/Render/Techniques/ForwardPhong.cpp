@@ -12,20 +12,19 @@
 #include <Core/src/gfx/Bindables/PixelShader.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>
 #include <Core/src/gfx/Bindables/Sampler.h>
+#include <assimp/texture.h>
 
 namespace tryn::gfx
 {
-	template <bool Instanced, bool Skinned>
-	ForwardPhongBase<Instanced, Skinned>::ForwardPhongBase(const std::string& name)
+	ForwardPhong::ForwardPhong(const std::string& name)
 		:
-	Technique<ForwardPhongBase, "ForwardPhongBase", Instanced, Skinned>(name)
+	Technique(name)
 	{
 	}
 
-	template<bool Instanced, bool Skinned>
-	ForwardPhongBase<Instanced, Skinned>::ForwardPhongBase(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& rootPath)
+	ForwardPhong::ForwardPhong(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& rootPath, bool skinned, bool instanced)
 		:
-		Technique<ForwardPhongBase, "ForwardPhongBase", Instanced, Skinned>(Skinned && Instanced ? "PhongInstSkn" : (Skinned ? "PhongSkn" : (Instanced ? "PhongInst" : "Phong")))
+		Technique<ForwardPhong>(skinned && instanced ? "PhongInstSkn" : (skinned ? "PhongSkn" : (instanced ? "PhongInst" : "Phong")))
 	{
 		auto shaderRootPath = gfx.GetShaderRootPath();
 
@@ -55,9 +54,9 @@ namespace tryn::gfx
 				vLayout.AppendElement(VertexLayout::UV);
 				std::shared_ptr<ITexture> tex;
 				{
-					if (auto texture = material.pScene->GetEmbeddedTexture(tempFileName.C_Str()))
+					if (auto pTexture = material.pScene->GetEmbeddedTexture(tempFileName.C_Str()))
 					{
-						tex = ITexture::Resolve(gfx, texture, 0);
+						tex = ITexture::Resolve(gfx, *pTexture, 0);
 					}
 					else
 					{
@@ -85,7 +84,17 @@ namespace tryn::gfx
 				isTextured = true;
 				shaderCode += "Spc";
 				vLayout.AppendElement(VertexLayout::UV);
-				auto tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 1);
+				std::shared_ptr<ITexture> tex;
+				{
+					if (auto pTexture = material.pScene->GetEmbeddedTexture(tempFileName.C_Str()))
+					{
+						tex = ITexture::Resolve(gfx, *pTexture, 1);
+					}
+					else
+					{
+						tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 1);
+					}
+				}
 				usesGlossAlphaChannel = tex->HasAlpha();
 				step.AddBindable(std::move(tex));
 
@@ -105,19 +114,30 @@ namespace tryn::gfx
 				vLayout.AppendElement(VertexLayout::UV);
 				vLayout.AppendElement(VertexLayout::Tangent);
 				vLayout.AppendElement(VertexLayout::Bitangent);
-				step.AddBindable(ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 2));
+				std::shared_ptr<ITexture> tex;
+				{
+					if (auto pTexture = material.pScene->GetEmbeddedTexture(tempFileName.C_Str()))
+					{
+						tex = ITexture::Resolve(gfx, *pTexture, 2);
+					}
+					else
+					{
+						tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 2);
+					}
+				}
+				step.AddBindable(std::move(tex));
 				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Bool, "useNormalMap"));
 				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "normalMapWeight"));
 			}
 		}
 		// Common
 		{
-			if (Skinned)
+			if (skinned)
 			{
 				vLayout.AppendElement(VertexLayout::BoneIds);
 				vLayout.AppendElement(VertexLayout::BoneWeights);
 			}
-			auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (Instanced ? "Inst" : "") + (Skinned ? "Skn" : "") + "_VS.cso");
+			auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (instanced ? "Inst" : "") + (skinned ? "Skn" : "") + "_VS.cso");
 			step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 			step.AddBindable(std::move(pvs));
 			step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
@@ -179,12 +199,4 @@ namespace tryn::gfx
 
 		this->AddStep(std::move(step));
 	}
-
-
-
-	// explicit template specialization
-	template ForwardPhongBase<true, true>;
-	template ForwardPhongBase<true, false>;
-	template ForwardPhongBase<false, true>;
-	template ForwardPhongBase<false, false>;
 }

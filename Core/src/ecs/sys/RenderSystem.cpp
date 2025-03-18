@@ -73,6 +73,7 @@ namespace tryn::ecs
 		activeSkinnedArray.Clear();
 		transformSkinnedArray.Clear();
 		boneTransformArray.Clear();
+		skinnedModelArray.Clear();
 
 		pointLightArray.Clear();
 		pointLightPositionArray.Clear();

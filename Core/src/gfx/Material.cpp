@@ -2,12 +2,7 @@
 #include "Material.h"
 #include <assimp/material.h>
 #include <assimp/types.h>
-#include <Core/src/gfx/Bindables/Rasterizer.h>
-#include <Core/src/gfx/Bindables/IBuffer.h>
-
-#include <fstream>
-
-#include "CoreGraphics.h"
+#include <Core/src/gfx/Render/Techniques/ForwardPhong.h>
 
 namespace tryn::gfx
 {
@@ -18,24 +13,29 @@ namespace tryn::gfx
 		return Make<ForwardPhong>(gfx, emptyMat, emptyPath);
 	}
 
-	Material Material::Make(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path,
-	                        std::span<utl::UUID_t> techniqueUUIDs, const bool instanced, const bool skinned)
+	Material::Material(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path,
+		std::span<const utl::UUID_t> techniqueUUIDs, const aiScene* pScene, const bool instanced, const bool skinned)
+			: pScene(pScene)
 	{
 		const auto rootPath = path.parent_path().string() + "\\";
 
-		Material mat;
-		for (auto techniqueUUID : techniqueUUIDs)
+		if (techniqueUUIDs.size() == 0)
 		{
-			mat.AddTechnique(techniqueUUID, gfx, material, rootPath, instanced, skinned);
+			AddTechnique(ZT_TYPE_UUID(ForwardPhong), gfx, material, rootPath, instanced, skinned);
 		}
 
-		return mat;
+		for (auto techniqueUUID : techniqueUUIDs)
+		{
+			AddTechnique(techniqueUUID, gfx, material, rootPath, instanced, skinned);
+		}
+
 	}
+
 	VertexBuffer Material::ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton) const noexcept
 	{
 		return { vLayout, mesh, skeleton};
 	}
-	IndexBuffer Material::ExtractIndices(const aiMesh& mesh) const noexcept
+	IndexBuffer Material::ExtractIndices(const aiMesh& mesh) noexcept
 	{
 		std::vector<uint32_t> indices;
 		indices.resize(mesh.mNumFaces * 3);
@@ -69,5 +69,10 @@ namespace tryn::gfx
 		const std::string& path, bool instanced, bool skinned)
 	{
 		pTechniques.push_back(TechniquePool::ConstructTechnique(techniqueUUID, *this, material, gfx, path,  instanced, skinned));
+	}
+
+	Material::Material(const aiScene* pScene)
+		: pScene(pScene)
+	{
 	}
 }

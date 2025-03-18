@@ -6,6 +6,8 @@
 #include "Core/third/glm/fwd.hpp"
 #include <Core/src/ser/StreamIO.h>
 
+#include "Core/src/utl/StringHasher.h"
+
 namespace tryn::gfx
 {
 	class InstancedModelChild;
@@ -16,7 +18,7 @@ namespace tryn::gfx
 		template <typename T> friend struct ser::TypeSerializer;
 		friend class InstancedModelChild;
 	public:
-		InstancedModelParent(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint32_t> numInstances = std::nullopt);
+		InstancedModelParent(const gfx::IGraphics& gfx, std::string_view path, std::span<utl::UUID_t> techniqueUUIDs = {} ,glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint32_t> numInstances = std::nullopt);
 		~InstancedModelParent();
 		void Submit(const glm::mat4& entityTransform);
 		InstancedModelChild Instanciate();

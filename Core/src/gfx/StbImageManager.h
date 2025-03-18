@@ -23,6 +23,7 @@ namespace tryn::gfx
 			return STBI_Close::Get();
 		}
 		static std::byte* Load(std::string_view path, spa::DimensionsI& dimensions, int& numChannels, int desiredChannels );
+		static std::byte* Load(std::span<std::byte> buffer, spa::DimensionsI& dimensions, int& numChannels, int desiredChannels );
 		static int RGB_ALPHA();
 	};
 }
