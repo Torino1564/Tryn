@@ -59,8 +59,9 @@ namespace tryn::ecs
 			animatedArray[i].time = time;
 			const auto& skAnInterface = *animatedArray[i].pAnimationSkeletonInterface;
 
-			double realtimePoint = fmod(time, skAnInterface.pAnimation->durationInTicks * skAnInterface.pAnimation->ticksPerSecond );
-			double timePoint = realtimePoint / skAnInterface.pAnimation->ticksPerSecond;
+			double realTimePoint = fmod(time, skAnInterface.pAnimation->durationInTicks / skAnInterface.pAnimation->ticksPerSecond );
+			double timePoint = realTimePoint * skAnInterface.pAnimation->ticksPerSecond;
+
 
 			boneTransformsArray[i].transforms = allocator.MakeNewArray<glm::mat4>(skAnInterface.pSkeleton->bones.size());
 			auto localTransforms = allocator.MakeNewArray<glm::mat4>(skAnInterface.pSkeleton->bones.size());
@@ -72,14 +73,13 @@ namespace tryn::ecs
 				localTransforms[j] = glm::identity<glm::mat4>();
 			}
 
-			auto& previousKey = animatedArray[i].previousKey;
 			for (int j = 0; j < skAnInterface.indexPairs.size(); j++)
 			{
 				auto arrayIndex = skAnInterface.indexPairs[j].first;
 				auto boneIndex = skAnInterface.indexPairs[j].second;
-				const auto& position = skAnInterface.pAnimation->nodes[arrayIndex].GetPositionVectorKey(previousKey, timePoint);
-				const auto& scale = skAnInterface.pAnimation->nodes[arrayIndex].GetScaleVectorKey(previousKey, timePoint);
-				const auto& rotation = skAnInterface.pAnimation->nodes[arrayIndex].GetRotationVectorKey(previousKey, timePoint);
+				const auto& position = skAnInterface.pAnimation->nodes[arrayIndex].GetPositionVectorKey(timePoint);
+				const auto& scale = skAnInterface.pAnimation->nodes[arrayIndex].GetScaleVectorKey(timePoint);
+				const auto& rotation = skAnInterface.pAnimation->nodes[arrayIndex].GetRotationVectorKey(timePoint);
 
 				const auto translationMatrix = glm::translate(glm::mat4(1.0f), position);
 				const auto scaleMatrix = glm::scale(glm::mat4(1.0f), scale);

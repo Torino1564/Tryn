@@ -51,73 +51,60 @@ namespace tryn::gfx::ani
 	{
 		return { nodes };
 	}
-	const glm::vec3& AnimationNode::GetPositionVectorKey( uint32_t& previousKey, const double timePoint) const
+	const glm::vec3& AnimationNode::GetPositionVectorKey(const double timePoint) const
 	{
-		static constexpr glm::vec3 fallback = { 0.0f,0.0f,0.0f };
-		uint32_t newKey = previousKey;
-		uint32_t idx = previousKey;
+		uint32_t newKey = std::floor(timePoint);
 		do
 		{
-			if (idx == numPositionKeys - 1)
+			if (newKey == numPositionKeys - 1)
 			{
-				idx = 0;
-				newKey = idx;
-				previousKey = newKey;
-				return positionKeys[idx].value;
+				newKey = 0;
 			}
-			if (timePoint > positionKeys[idx].time &&
-				timePoint < positionKeys[idx + 1].time)
+			if (timePoint > positionKeys[newKey].time &&
+				timePoint < positionKeys[newKey + 1].time)
 			{
-				newKey = idx;
-				previousKey = newKey;
-				return positionKeys[idx].value;
+				return positionKeys[newKey].value;
 			}
-			idx++;
+			newKey++;
 
-		} while (previousKey == newKey);
-		
-		return fallback;
+		} while (true);
 	}
 
-	const glm::quat& AnimationNode::GetRotationVectorKey(uint32_t& previousKey, const double timePoint) const
+	const glm::quat& AnimationNode::GetRotationVectorKey(const double timePoint) const
 	{
-		uint32_t idx = previousKey;
+		uint32_t newKey = std::floor(timePoint);
 		do
 		{
-			if (idx == numRotationKeys - 1)
+			if (newKey == numPositionKeys - 1)
 			{
-				idx = 0;
-				previousKey = idx;
-				return rotationKeys[idx].value;
+				newKey = 0;
 			}
-			if (timePoint > rotationKeys[idx].time &&
-				timePoint < rotationKeys[idx + 1].time)
+			if (timePoint > rotationKeys[newKey].time &&
+				timePoint < rotationKeys[newKey + 1].time)
 			{
-				previousKey = idx;
-				return rotationKeys[idx].value;
+				return rotationKeys[newKey].value;
 			}
+			newKey++;
 
-		} while (previousKey != idx);
+		} while (true);
 	}
 
-	const glm::vec3& AnimationNode::GetScaleVectorKey(uint32_t& previousKey, const double timePoint) const
+	const glm::vec3& AnimationNode::GetScaleVectorKey(const double timePoint) const
 	{
-		uint32_t idx = previousKey;
+		uint32_t newKey = std::floor(timePoint);
 		do
 		{
-			if (idx == numScalingKeys - 1)
+			if (newKey == numPositionKeys - 1)
 			{
-				idx = 0;
-				previousKey = idx;
-				return scalingKeys[idx].value;
+				newKey = 0;
 			}
-			if (timePoint > scalingKeys[idx].time &&
-				timePoint < scalingKeys[idx + 1].time)
+			if (timePoint > scalingKeys[newKey].time &&
+				timePoint < scalingKeys[newKey + 1].time)
 			{
-				previousKey = idx;
-				return scalingKeys[idx].value;
+				return scalingKeys[newKey].value;
 			}
+			newKey++;
 
-		} while (previousKey != idx);
+		} while (true);
 	}
 }

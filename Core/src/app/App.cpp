@@ -54,6 +54,7 @@ namespace tryn::app
 			gfx->Resize();
 			wnd->AcknowledgeSizeChange();
 		}
+		mem::ArenaAllocator<>::GP().Wipe();
 	}
 
 	const gfx::IGraphics& App::Gfx() const

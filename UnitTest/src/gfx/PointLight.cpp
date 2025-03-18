@@ -17,7 +17,7 @@ namespace Gfx
 		}
 		TEST_METHOD(ModelTest)
 		{
-			auto model = gfx::Model::Make<gfx::FlatBase>(*pGfx, "D:\\dev\\Tryn\\UnitTest\\resources\\models\\sphere.obj");
+			auto model = gfx::Model::Make<gfx::Flat>(*pGfx, "D:\\dev\\Tryn\\UnitTest\\resources\\models\\sphere.obj");
 		}
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;
 		std::unique_ptr<win::Window> pWnd;

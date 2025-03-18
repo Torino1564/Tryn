@@ -166,6 +166,7 @@ namespace tryn::gfx
 	ConstantBuffer& IBuffer<Type, Policy>::GetCPUBuffer() requires (Type == BufferType::Instance || Type == BufferType::
 		VtxConstant || Type == BufferType::PxConstant)
 	{
+		pCPUBuffer->SetDirty();
 		return reinterpret_cast<ConstantBuffer&>(*pCPUBuffer.get());
 	}
 

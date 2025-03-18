@@ -1,8 +1,9 @@
 #pragma once
 #include <vector>
 #include <Core/src/utl/Assert.h>
-#include <new>
 #include <span>
+#include <Core/src/utl/String.h>
+#include <Core/src/log/Log.h>
 
 namespace tryn::mem
 {
@@ -20,8 +21,8 @@ namespace tryn::mem
 			
 			if (numChunks + usedChunks >= buffer.size())
 			{
-				overflow = true;
-				return malloc(numBytes);
+				buffer.resize(buffer.size() * 1.3f, 0);
+				trylog.info(utl::ToWide(std::format("Growing buffer. Requested {} chunks and {} out of {} were in use.", numChunks, usedChunks, buffer.size())));
 			}
 
 			auto& ref = buffer[usedChunks];
@@ -48,11 +49,6 @@ namespace tryn::mem
 		}
 		void Wipe()
 		{
-			if (overflow)
-			{
-				buffer.resize((size_t)(buffer.size() * 1.3f));
-				overflow = false;
-			}
 			std::memset(buffer.data(), 0, buffer.size());
 			usedChunks = 0;
 		}
@@ -66,7 +62,6 @@ namespace tryn::mem
 			return generalPurpose;
 		}
 	private:
-		bool overflow = false;
 		std::vector<ChunkSize> buffer;
 		std::uint32_t usedChunks = 0;
 		static constexpr std::size_t chunkSize = sizeof(ChunkSize);
