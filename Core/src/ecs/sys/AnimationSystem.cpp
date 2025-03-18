@@ -78,8 +78,8 @@ namespace tryn::ecs
 				auto arrayIndex = skAnInterface.indexPairs[j].first;
 				auto boneIndex = skAnInterface.indexPairs[j].second;
 				const auto& position = skAnInterface.pAnimation->nodes[arrayIndex].GetPositionVectorKey(previousKey, timePoint);
-				const auto& scale = skAnInterface.pAnimation->nodes[arrayIndex].scalingKeys[previousKey].value;
-				const auto& rotation = skAnInterface.pAnimation->nodes[arrayIndex].rotationKeys[previousKey].value;
+				const auto& scale = skAnInterface.pAnimation->nodes[arrayIndex].GetScaleVectorKey(previousKey, timePoint);
+				const auto& rotation = skAnInterface.pAnimation->nodes[arrayIndex].GetRotationVectorKey(previousKey, timePoint);
 
 				const auto translationMatrix = glm::translate(glm::mat4(1.0f), position);
 				const auto scaleMatrix = glm::scale(glm::mat4(1.0f), scale);

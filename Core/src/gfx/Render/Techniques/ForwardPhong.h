@@ -11,6 +11,6 @@ namespace tryn::gfx
 	{
 	public:
 		ForwardPhong(const std::string& name);
-		ForwardPhong(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& rootPath, bool skinned = false, bool instanced = false);
+		ForwardPhong(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& rootPath, bool instanced = false, bool skinned = false);
 	};
 }

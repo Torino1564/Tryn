@@ -82,7 +82,7 @@ namespace tryn::utl
     };
 
     template <typename T>
-    constexpr std::string_view type_of()
+    consteval std::string_view type_of()
     {
         return to_string_view(GetTypeNameString<T>());
     }

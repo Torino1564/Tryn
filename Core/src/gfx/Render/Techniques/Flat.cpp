@@ -21,7 +21,7 @@ namespace tryn::gfx
 	{
 	}
 
-	Flat::Flat(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& path, bool skinned, bool instanced)
+	Flat::Flat(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& path, bool instanced, bool skinned)
 		:
 		Technique("Flat")
 	{

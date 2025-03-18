@@ -11,6 +11,6 @@ namespace tryn::gfx
 	{
 	public:
 		Flat(const std::string& name);
-		Flat(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& path, bool skinned = false, bool instanced = false);
+		Flat(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& path, bool instanced = false, bool skinned = false);
 	};
 }

@@ -77,7 +77,7 @@ namespace tryn::utl
       }
     };
 
-    constexpr uint64_t fnv1a_64(const std::string_view str)
+    consteval uint64_t fnv1a_64(const std::string_view str)
 	{
         const auto length = str.size();
 	    uint64_t hash = 0xcbf29ce484222325; // FNV offset basis

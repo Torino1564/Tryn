@@ -22,9 +22,9 @@ namespace tryn::gfx
 	{
 	}
 
-	ForwardPhong::ForwardPhong(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& rootPath, bool skinned, bool instanced)
+	ForwardPhong::ForwardPhong(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& rootPath, bool instanced, bool skinned)
 		:
-		Technique<ForwardPhong>(skinned && instanced ? "PhongInstSkn" : (skinned ? "PhongSkn" : (instanced ? "PhongInst" : "Phong")))
+		Technique("ForwardPhong")
 	{
 		auto shaderRootPath = gfx.GetShaderRootPath();
 
