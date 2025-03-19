@@ -89,7 +89,7 @@ namespace tryn::ecs
 
 				glm::mat4 animationTransform = translationMatrix * rotationMatrix * scaleMatrix;
 				localTransforms[boneIndex] = animationTransform * localTransforms[skAnInterface.pSkeleton->bones[boneIndex].parentID];
-				transformArray[boneIndex] = transformMatrix * localTransforms[boneIndex] * skAnInterface.pSkeleton->bones[boneIndex].inverseBP * glm::inverse(transformMatrix);
+				transformArray[boneIndex] = (transformMatrix)* localTransforms[boneIndex] * skAnInterface.pSkeleton->bones[boneIndex].inverseBP * inverse(transformMatrix);
 			}
 		}
 	}
