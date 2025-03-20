@@ -93,8 +93,8 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 		auto& ent = *entities.back();
 
-		ent.GetComponent<ecs::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
-		ent.GetComponent<ecs::ModelComponent>().pModel = std::unique_ptr<gfx::Model>( new gfx::Model(Gfx(), "Game/Resources/Models/WarrockTaunt.fbx", std::array{ZT_TYPE_UUID(gfx::ForwardPhong)}));
+		ent.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
+		ent.GetComponent<ecs::ModelComponent>().pModel = std::unique_ptr<gfx::Model>( new gfx::Model(Gfx(), "Game/Resources/Models/Wolf/Wolf-Blender-2.82a.glb", std::array{ZT_TYPE_UUID(gfx::ForwardPhong)}));
 		ent.GetComponent<ecs::AnimatedComponent>().pAnimationSkeletonInterface = ent.GetComponent<ecs::ModelComponent>().pModel->GetMainMesh()->GetAnimationInterface();
 		ent.GetComponent<ecs::ScaleComponent>().scale = { 1.0f, 1.0f, 1.0f };
 		ent.GetComponent<ecs::ActiveComponent>().active = true;

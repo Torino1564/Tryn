@@ -6,19 +6,19 @@
 #include <Core/src/gfx/Material.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 
+static glm::mat4 ConvertMatrixToGLMFormat(const aiMatrix4x4& from)
+{
+	glm::mat4 to;
+	//the a,b,c,d in assimp is the row ; the 1,2,3,4 is the column
+	to[0][0] = from.a1; to[1][0] = from.a2; to[2][0] = from.a3; to[3][0] = from.a4;
+	to[0][1] = from.b1; to[1][1] = from.b2; to[2][1] = from.b3; to[3][1] = from.b4;
+	to[0][2] = from.c1; to[1][2] = from.c2; to[2][2] = from.c3; to[3][2] = from.c4;
+	to[0][3] = from.d1; to[1][3] = from.d2; to[2][3] = from.d3; to[3][3] = from.d4;
+	return to;
+}
+
 namespace tryn::gfx::ani
 {
-	glm::mat4 convertAiToGlm(const aiMatrix4x4& aiMat) {
-		glm::mat4 glmMat;
-
-		glmMat[0][0] = aiMat.a1; glmMat[0][1] = aiMat.b1; glmMat[0][2] = aiMat.c1; glmMat[0][3] = aiMat.d1;
-		glmMat[1][0] = aiMat.a2; glmMat[1][1] = aiMat.b2; glmMat[1][2] = aiMat.c2; glmMat[1][3] = aiMat.d2;
-		glmMat[2][0] = aiMat.a3; glmMat[2][1] = aiMat.b3; glmMat[2][2] = aiMat.c3; glmMat[2][3] = aiMat.d3;
-		glmMat[3][0] = aiMat.a4; glmMat[3][1] = aiMat.b4; glmMat[3][2] = aiMat.c4; glmMat[3][3] = aiMat.d4;
-
-		return glmMat;
-	}
-
 	BonedMesh::BonedMesh(const IGraphics& gfx, const Material& material, const aiMesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale, std::optional<std::uint16_t> meshID)
 		:
 		skeleton(skeleton)
@@ -44,13 +44,13 @@ namespace tryn::gfx::ani
 			if (bone.mNumWeights == 0)
 				continue;
 			// Find the bone in the bone array in the skeleton
-			auto boneIt = std::find_if(skeleton.bones.begin(), skeleton.bones.end(), [&](const auto& boneInArray) {
+			auto boneIt = std::ranges::find_if(skeleton.bones, [&](const auto& boneInArray) {
 				return strcmp(boneInArray.name.c_str(),bone.mName.C_Str()) ? false : true;
 				});
 
 			trynass_msg(boneIt != skeleton.bones.end(), L"Did not find a bone creatign a BonedMesh!");
 
-			boneIt->inverseBP = convertAiToGlm(bone.mOffsetMatrix);
+			boneIt->inverseBP = ConvertMatrixToGLMFormat(bone.mOffsetMatrix);
 			
 			boneIt->boneWeights.reserve(bone.mNumWeights);
 

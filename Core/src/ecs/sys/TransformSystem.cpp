@@ -59,7 +59,7 @@ namespace tryn::ecs
 				const auto scalingMatrix = glm::scale(glm::identity<glm::mat4>(), scale);
 				const auto translationMatrix = glm::translate(glm::identity<glm::mat4>(), position);
 				const auto rotationMatrix = glm::yawPitchRoll(yaw, pitch, roll);
-				transformArray[i].transform = translationMatrix * scalingMatrix * rotationMatrix;
+				transformArray[i].transform = translationMatrix * rotationMatrix * scalingMatrix;
 			}
 		}
 	}

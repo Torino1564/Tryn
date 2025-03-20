@@ -53,6 +53,7 @@ namespace tryn::gfx
 
 		if (pScene == nullptr)
 		{
+			trylog.error(utl::ToWide(imp.GetErrorString()));
 			throw ModelException(imp.GetErrorString());
 		}
 

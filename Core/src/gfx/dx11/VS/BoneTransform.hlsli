@@ -15,12 +15,19 @@ float4 CalculateBoneTransformedPosition(uint4 boneIds, float4 boneWeights, float
 {
     float4 transformedPosition = float4(0.0f, 0.0f, 0.0f, 0.0f);
     
-    for (int i = 0; i < MAX_BONE_PER_VERTEX; i++)  
-    {
-        transformedPosition += mul(boneMatrices[boneIds[i]], position) * boneWeights[i];
-    }
+    //for (int i = 0; i < MAX_BONE_PER_VERTEX; i++)  
+    //{
+    //    float4x4 currentBoneTransform = boneMatrices[boneIds[i]];
+    //    float currentBoneWeight = boneWeights[i];
+    //    transformedPosition += mul(position, currentBoneTransform) * currentBoneWeight;
+    //}
+
+    matrix skinMatrix = boneMatrices[boneIds.x] * boneWeights.x +
+                        boneMatrices[boneIds.y] * boneWeights.y +
+                        boneMatrices[boneIds.z] * boneWeights.z +
+                        boneMatrices[boneIds.w] * boneWeights.w;
     
-    return transformedPosition;
+    return mul(position, skinMatrix);
 }
 
 float3 CalculateBoneTransformedNormal(uint4 boneIds, float4 boneWeights, float3 normal)

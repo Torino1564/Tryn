@@ -22,6 +22,16 @@ namespace tryn::gfx
 		{
 			this->scale = scale;
 		}
+
+		auto pDeleterFunc = [](std::byte* bytes)
+			{
+				STBI_Close::Get().operator()(bytes);
+			};
+
+		static const Deleter deleter(pDeleterFunc);
+
+		buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+
 	}
 
 	Texture::Texture(const aiTexture& tex, std::optional<glm::vec3> scale)

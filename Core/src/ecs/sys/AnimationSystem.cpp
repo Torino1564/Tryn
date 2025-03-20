@@ -58,7 +58,6 @@ namespace tryn::ecs
 			auto time = animatedArray[i].time + deltaTime;
 			animatedArray[i].time = time;
 			const auto& skAnInterface = *animatedArray[i].pAnimationSkeletonInterface;
-
 			double realTimePoint = fmod(time, skAnInterface.pAnimation->durationInTicks / skAnInterface.pAnimation->ticksPerSecond );
 			double timePoint = realTimePoint * skAnInterface.pAnimation->ticksPerSecond;
 
@@ -73,10 +72,8 @@ namespace tryn::ecs
 				localTransforms[j] = glm::identity<glm::mat4>();
 			}
 
-			for (int j = 0; j < skAnInterface.indexPairs.size(); j++)
+			for (const auto [arrayIndex, boneIndex] : skAnInterface.indexPairs)
 			{
-				auto arrayIndex = skAnInterface.indexPairs[j].first;
-				auto boneIndex = skAnInterface.indexPairs[j].second;
 				const auto& position = skAnInterface.pAnimation->nodes[arrayIndex].GetPositionVectorKey(timePoint);
 				const auto& scale = skAnInterface.pAnimation->nodes[arrayIndex].GetScaleVectorKey(timePoint);
 				const auto& rotation = skAnInterface.pAnimation->nodes[arrayIndex].GetRotationVectorKey(timePoint);
@@ -87,9 +84,15 @@ namespace tryn::ecs
 
 				const auto transformMatrix = transformsArray[i].transform;
 
-				glm::mat4 animationTransform = translationMatrix * rotationMatrix * scaleMatrix;
-				localTransforms[boneIndex] = animationTransform * localTransforms[skAnInterface.pSkeleton->bones[boneIndex].parentID];
-				transformArray[boneIndex] = (transformMatrix)* localTransforms[boneIndex] * skAnInterface.pSkeleton->bones[boneIndex].inverseBP * inverse(transformMatrix);
+				glm::mat4 localTransform = translationMatrix * rotationMatrix * scaleMatrix;
+
+				if (boneIndex == 0)
+					localTransforms[boneIndex] = localTransform;
+				else
+					localTransforms[boneIndex] = localTransforms[skAnInterface.pSkeleton->bones[boneIndex].parentID] * localTransform;
+
+				const auto& inverseBP = skAnInterface.pSkeleton->bones[boneIndex].inverseBP;
+				transformArray[boneIndex] =  transpose(transformMatrix * localTransforms[boneIndex] * inverseBP * inverse(transformMatrix));
 			}
 		}
 	}

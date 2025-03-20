@@ -25,25 +25,27 @@ namespace tryn::gfx::ani
 			node.numScalingKeys = channel.mNumScalingKeys;
 			node.numRotationKeys = channel.mNumRotationKeys;
 			
-			node.scalingKeys.reserve(node.numScalingKeys);
-			for (unsigned int j = 0; j < node.numScalingKeys; j++)
-			{
-				auto& key = channel.mScalingKeys[j];
-				node.scalingKeys.emplace_back(VectorKey(key.mTime, reinterpret_cast<glm::vec3*>(&key.mValue)));
-			}
-
 			node.positionKeys.reserve(node.numPositionKeys);
+			node.rotationKeys.reserve(node.numRotationKeys);
+			node.scalingKeys.reserve(node.numScalingKeys);
+
 			for (unsigned int j = 0; j < node.numScalingKeys; j++)
 			{
-				auto& key = channel.mPositionKeys[j];
-				node.positionKeys.emplace_back(VectorKey(key.mTime, reinterpret_cast<glm::vec3*>(&key.mValue)));
-			}
-
-			node.rotationKeys.reserve(node.numRotationKeys);
-			for (unsigned int j = 0; j < node.numRotationKeys; j++)
-			{
-				auto& key = channel.mRotationKeys[j];
-				node.rotationKeys.emplace_back(QuatKey(key.mTime, reinterpret_cast<glm::quat*>(&key.mValue)));
+				{
+					auto& key = channel.mScalingKeys[j];
+					const auto q = key.mValue;
+					node.scalingKeys.emplace_back(VectorKey(key.mTime, {q.x, q.y, q.z}));
+				}
+				{
+					auto& key = channel.mPositionKeys[j];
+					const auto q = key.mValue;
+					node.positionKeys.emplace_back(VectorKey(key.mTime, { q.x, q.y, q.z }));
+				}
+				{
+					auto& key = channel.mRotationKeys[j];
+					const auto q = key.mValue;
+					node.rotationKeys.emplace_back(QuatKey(key.mTime, {q.w, q.x, q.y, q.z}));
+				}
 			}
 		}
 	}
