@@ -1,7 +1,10 @@
 #include "TrynPCH.h"
 #include "StbImageManager.h"
 #define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#define STBI_MSC_SECURE_CRT
 #include <Core/third/stb_image/stb_image.h>
+#include <Core/third/stb_image/stb_image_write.h>
 #include "Core/src/utl/Assert.h"
 
 namespace tryn::gfx

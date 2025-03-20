@@ -13,6 +13,7 @@
 #include <Core/src/gfx/ImguiManager.h>
 
 #include "Core/third/glm/gtx/euler_angles.hpp"
+#include <Core/src/gfx/win/gltfSDK.h>
 
 namespace tryn::gfx
 {
@@ -42,6 +43,15 @@ namespace tryn::gfx
 		:
 		gfx(gfx), name(path.data())
 	{
+		const std::filesystem::path fspath(path);
+
+		if (const auto& ext = fspath.extension().string(); ext == ".gltf" || ext == ".glb" )
+		{
+			// TinyGLTF initialization
+			TinyGltfInitialization(gfx, fspath, techniqueUUIDs, scale, instanced);
+			return;
+		}
+
 		auto& imp = AssimpManager::Get();
 		const auto pScene = imp.ReadFile(path.data(),
 		                                 aiProcess_Triangulate |
@@ -293,5 +303,11 @@ namespace tryn::gfx
 	{
 		trynass(skeleton.has_value());
 		return skeleton.value();
+	}
+
+	void Model::TinyGltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path,
+		std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
+	{
+		WinGLTFLoader::Load(path);
 	}
 }

@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\gfx\TexturePool.cpp" />
+    <ClCompile Include="src\gfx\win\gltfSDK.cpp" />
     <ClCompile Include="src\gph\TGraph.cpp" />
     <ClCompile Include="src\gph\TLink.cpp" />
     <ClCompile Include="src\scr\Nodes\ConditionalNode.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="src\gfx\Shape.h" />
     <ClInclude Include="src\gfx\StbImageManager.h" />
     <ClInclude Include="src\gfx\Terrain\Plane.h" />
+    <ClInclude Include="src\gfx\win\gltfSDK.h" />
     <ClInclude Include="src\gph\TGraph.h" />
     <ClInclude Include="src\gph\TLink.h" />
     <ClInclude Include="src\gph\TNodeRegister.h" />
@@ -194,6 +196,8 @@
     <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_extra_math.h" />
     <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_node_editor.h" />
     <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_node_editor_internal.h" />
+    <ClCompile Include="third\tinyGLTFImpl.cpp" />
+    <ClInclude Include="third\stb_image\stb_image_write.h" />
     <ClInclude Include="third\TrynPCH.h" />
   </ItemGroup>
   <ItemGroup>

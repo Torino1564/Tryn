@@ -12,6 +12,8 @@
         "win32-binding"
       ]
     },
-    "dylib"
+    "dylib",
+    "tinygltf",
+    "ms-gltf"
   ]
 }

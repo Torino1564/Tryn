@@ -45,6 +45,7 @@ namespace tryn::gfx
 		const gfx::IGraphics* GetGfx() const;
 		ani::Skeleton& GetSkeleton();
 	private:
+		void TinyGltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = {1.0f, 1.0f, 1.0f}, const bool instanced = false);
 		Node ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);
 		void ParseSkeleton(const aiNode& boneRoot);
 		void ParseBone(const aiNode& bone, const uint32_t parentID);
