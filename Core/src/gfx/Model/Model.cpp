@@ -14,6 +14,9 @@
 
 #include "Core/third/glm/gtx/euler_angles.hpp"
 #include <Core/src/gfx/win/gltfSDK.h>
+#include <GLTFSDK/Deserialize.h>
+
+#include "../../../../../../../../../../Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/UnitTest/include/CppUnitTest.h"
 
 namespace tryn::gfx
 {
@@ -83,7 +86,7 @@ namespace tryn::gfx
 		}
 
 		int nextId = 0;
-		root = std::make_unique<Node>(ParseNode(nextId, *pScene->mRootNode, scale, true));
+		rootId = ParseNode(nextId, *pScene->mRootNode, scale, true);
 
 		// parse materials
 		std::vector<Material> materials;
@@ -114,7 +117,7 @@ namespace tryn::gfx
 
 		// Set mesh Span
 		std::queue<Node*> q;
-		q.push(root.get());
+		q.push(&nodes[rootId]);
 
 		while (!q.empty())
 		{
@@ -123,9 +126,9 @@ namespace tryn::gfx
 
 			current.SetMeshSpan({ pMeshes });
 
-			for (auto& child : current.GetChildren())
+			for (auto& childId : current.GetChildrenIds())
 			{
-				q.push(&child);
+				q.push(&nodes[childId]);
 			}
 		}
 
@@ -143,14 +146,14 @@ namespace tryn::gfx
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
 		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
 		const auto transform = translation * rotation;
-		root->Submit(gfx, entityTransform * transform);
+		nodes[rootId].Submit(gfx, entityTransform * transform);
 	}
 	void Model::Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms) const
 	{
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
 		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
 		const auto transform = translation * rotation;
-		root->Submit(gfx, entityTransform, boneTransforms );
+		nodes[rootId].Submit(gfx, entityTransform, boneTransforms );
 	}
 	void Model::SpawnControlWindow()
 	{
@@ -166,7 +169,7 @@ namespace tryn::gfx
 		ImGui::SliderFloat("Z", &settings.position.z, -20.0f, 20.0f);
 		ImGui::End();
 	}
-	void Model::AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string& name) const
+	void Model::AddAnimation(const std::shared_ptr<ani::Animation>& pAnimation, const std::string& name) const
 	{
 		auto& bonedMesh = *GetMainMesh();
 
@@ -180,7 +183,7 @@ namespace tryn::gfx
 	{
 		return meshCounter + 1;
 	}
-	Node Model::ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root)
+	std::uint32_t Model::ParseNode(int& nextId, const aiNode& node, const glm::vec3 scale, const bool root)
 	{
 		auto skeletonNodeIndex = -1;
 		// If its a root node, find if theres a skeleton
@@ -236,16 +239,26 @@ namespace tryn::gfx
 			meshIds.push_back(meshIdx);
 		}
 
-		Node node_(nextId++, node.mName.C_Str(), std::move(meshIds), transform);
+		const auto index = nextId;
+		auto& added = nodes.emplace_back(nextId++, node.mName.C_Str(), std::move(meshIds), transform);
 		for (auto i = 0; i < node.mNumChildren; i++)
 		{
 			if (root && i == skeletonNodeIndex)
 				continue;
-			node_.AddChild(std::move(ParseNode(nextId, *node.mChildren[i], scale)));
+
+			const auto childId = nextId;
+			nodes.emplace_back(nextId++, node.mName.C_Str(), std::move(meshIds), transform);
+			added.AddChildId(childId);
 		}
 
-		return node_;
+		return index;
 	}
+
+	std::uint32_t Model::ParseNode(int& nextId, const Microsoft::glTF::Node& node, glm::vec3 scale, bool root)
+	{
+		return 0;
+	}
+
 	void Model::ParseSkeleton(const aiNode& boneRoot)
 	{
 		skeleton.emplace();
@@ -308,6 +321,19 @@ namespace tryn::gfx
 	void Model::TinyGltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path,
 		std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
 	{
-		WinGLTFLoader::Load(path);
+		using namespace Microsoft::glTF;
+		const auto doc = WinGLTFLoader::Load(path);
+
+		if (doc.scenes.Size() > 1)
+			trylog.warn(L"GLTF file contains more than one scene!");
+
+		auto& scene = doc.GetDefaultScene();
+		int nextId = 0;
+
+		for (auto& node : scene.nodes)
+		{
+			trylog.info(utl::ToWide(std::format("Root node: {}", doc.nodes[node].name)));
+		}
+
 	}
 }

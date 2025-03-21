@@ -13,6 +13,13 @@
 #include <Core/src/gfx/Material.h>
 #include <Core/src/ser/StreamIO.h>
 
+#include "Core/src/gfx/win/gltfSDK.h"
+
+namespace Microsoft::glTF
+{
+	struct Node;
+}
+
 namespace tryn::gfx
 {
 	class IGraphics;
@@ -38,7 +45,7 @@ namespace tryn::gfx
 		void Submit(const glm::mat4& entityTransform);
 		void Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms) const;
 		void SpawnControlWindow();
-		void AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string&) const;
+		void AddAnimation(const std::shared_ptr<ani::Animation>& pAnimation, const std::string&) const;
 		glm::vec3 GetPosition() const;
 		std::uint16_t GetMeshAmount() const;
 		ani::BonedMesh* GetMainMesh() const;
@@ -46,7 +53,8 @@ namespace tryn::gfx
 		ani::Skeleton& GetSkeleton();
 	private:
 		void TinyGltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = {1.0f, 1.0f, 1.0f}, const bool instanced = false);
-		Node ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);
+		std::uint32_t ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);
+		std::uint32_t ParseNode(int& nextId, const Microsoft::glTF::Node& node, glm::vec3 scale, bool root = false);
 		void ParseSkeleton(const aiNode& boneRoot);
 		void ParseBone(const aiNode& bone, const uint32_t parentID);
 		Settings settings = {};
@@ -55,7 +63,8 @@ namespace tryn::gfx
 		std::uint16_t meshCounter = 0;
 		const gfx::IGraphics& gfx;
 		std::string name = {};
-		std::unique_ptr<Node> root = {};
+		std::vector<Node> nodes = {};
+		std::uint32_t rootId;
 		std::vector<std::shared_ptr<Mesh>> pMeshes = {};
 		friend class Serializer;
 

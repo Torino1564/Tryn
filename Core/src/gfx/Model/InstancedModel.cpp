@@ -40,7 +40,7 @@ namespace tryn::gfx
 		{
 			modifiedTransform = transforms[index] * transform;
 		}
-		pBase->root->Submit(pBase->gfx, { modifiedTransforms }, *this);
+		pBase->nodes[pBase->rootId].Submit(pBase->gfx, { modifiedTransforms }, *this);
 	}
 	InstancedModelChild InstancedModelParent::Instanciate()
 	{

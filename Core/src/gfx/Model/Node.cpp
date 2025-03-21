@@ -9,9 +9,9 @@
 
 namespace tryn::gfx
 {
-	Node::Node(int id, std::string_view name, std::vector<uint16_t> meshIds, glm::mat4 transform, bool isSkeleton)
+	Node::Node(const int id, const std::string_view name, std::vector<uint16_t> meshIds, glm::mat4 transform, const bool isSkeleton)
 		:
-		id(id), name(name.data()), meshIds(std::move(meshIds)), isSkeleton(isSkeleton)
+		isSkeleton(isSkeleton), name(name.data()), id(id), meshIds(std::move(meshIds))
 	{
 		this->transform = std::move(transform);
 		this->appliedTransform = glm::identity<glm::mat4>();
@@ -23,8 +23,9 @@ namespace tryn::gfx
 		{
 			meshes[id]->Submit(gfx, finalTransform);
 		}
-		for (auto& child : children)
+		for (auto& childId : childrenIds)
 		{
+			auto& child = nodes[childId];
 			child.Submit(gfx, finalTransform);
 		}
 	}
@@ -39,27 +40,28 @@ namespace tryn::gfx
 		{
 			meshes[id]->Submit(gfx, {finalTransforms}, parent);
 		}
-		for (auto& child : children)
+		for (auto& childId : childrenIds)
 		{
+			auto& child = nodes[childId];
 			child.Submit(gfx, { finalTransforms }, parent);
 		}
 	}
-	void Node::Submit(const IGraphics& gfx, const glm::mat4& accumulatedTransform, std::span<const glm::mat4> boneTransforms)
+	void Node::Submit(const IGraphics& gfx, const glm::mat4& accumulatedTransform, const std::span<const glm::mat4> boneTransforms) const
 	{
 		// get main mesh
 		ani::BonedMesh* pBonedMesh = reinterpret_cast<ani::BonedMesh*>(meshes[0].get());
 		pBonedMesh->Submit(gfx, accumulatedTransform, boneTransforms);
 	}
-	void Node::AddChild(Node child)
+	void Node::AddChildId(const uint32_t index)
 	{
-		children.push_back(std::move(child));
+		childrenIds.push_back(index);
 	}
-	void Node::SetMeshSpan(std::span<std::shared_ptr<Mesh>> meshSpan)
+	void Node::SetMeshSpan(const std::span<std::shared_ptr<Mesh>> meshSpan)
 	{
 		meshes = meshSpan;
 	}
-	std::vector<Node>& Node::GetChildren()
+	std::vector<uint32_t>& Node::GetChildrenIds()
 	{
-		return children;
+		return childrenIds;
 	}
 }
