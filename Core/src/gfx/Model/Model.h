@@ -18,6 +18,8 @@
 namespace Microsoft::glTF
 {
 	struct Node;
+	struct Scene;
+	struct Document;
 }
 
 namespace tryn::gfx
@@ -54,7 +56,7 @@ namespace tryn::gfx
 	private:
 		void TinyGltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = {1.0f, 1.0f, 1.0f}, const bool instanced = false);
 		std::uint32_t ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);
-		std::uint32_t ParseNode(int& nextId, const Microsoft::glTF::Node& node, glm::vec3 scale, bool root = false);
+		std::uint32_t ParseNode(int& nextId, const Microsoft::glTF::Node& node, const Microsoft::glTF::Document& doc, glm::vec3 scale, bool root = false);
 		void ParseSkeleton(const aiNode& boneRoot);
 		void ParseBone(const aiNode& bone, const uint32_t parentID);
 		Settings settings = {};
@@ -67,6 +69,7 @@ namespace tryn::gfx
 		std::uint32_t rootId;
 		std::vector<std::shared_ptr<Mesh>> pMeshes = {};
 		friend class Serializer;
+		friend class Node;
 
 	public:
 		struct Serializer : public tryn::ser::Serializer<Model>

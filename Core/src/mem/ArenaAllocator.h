@@ -21,7 +21,7 @@ namespace tryn::mem
 			
 			if (numChunks + usedChunks >= buffer.size())
 			{
-				buffer.resize(buffer.size() * 1.3f, 0);
+				buffer.resize((std::size_t)(buffer.size() * 1.3f), 0);
 				trylog.info(utl::ToWide(std::format("Growing buffer. Requested {} chunks and {} out of {} were in use.", numChunks, usedChunks, buffer.size())));
 			}
 

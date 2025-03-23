@@ -57,10 +57,15 @@ namespace tryn::ecs
 				continue;
 			auto time = animatedArray[i].time + deltaTime;
 			animatedArray[i].time = time;
-			const auto& skAnInterface = *animatedArray[i].pAnimationSkeletonInterface;
+			const auto pSkAnInterface = animatedArray[i].pAnimationSkeletonInterface;
+
+			if (!pSkAnInterface)
+				continue;
+
+			const auto& skAnInterface = *pSkAnInterface;
+
 			double realTimePoint = fmod(time, skAnInterface.pAnimation->durationInTicks / skAnInterface.pAnimation->ticksPerSecond );
 			double timePoint = realTimePoint * skAnInterface.pAnimation->ticksPerSecond;
-
 
 			boneTransformsArray[i].transforms = allocator.MakeNewArray<glm::mat4>(skAnInterface.pSkeleton->bones.size());
 			auto localTransforms = allocator.MakeNewArray<glm::mat4>(skAnInterface.pSkeleton->bones.size());

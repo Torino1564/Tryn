@@ -1,5 +1,7 @@
 #include "TrynPCH.h"
 #include "Model.h"
+
+#include <imgui.h>
 #include <Core/src/gfx/Material.h>
 #include <Core/third/glm/gtx/transform.hpp>
 #include <Core/third/glm/gtc/type_ptr.hpp>
@@ -15,8 +17,6 @@
 #include "Core/third/glm/gtx/euler_angles.hpp"
 #include <Core/src/gfx/win/gltfSDK.h>
 #include <GLTFSDK/Deserialize.h>
-
-#include "../../../../../../../../../../Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/UnitTest/include/CppUnitTest.h"
 
 namespace tryn::gfx
 {
@@ -240,23 +240,86 @@ namespace tryn::gfx
 		}
 
 		const auto index = nextId;
-		auto& added = nodes.emplace_back(nextId++, node.mName.C_Str(), std::move(meshIds), transform);
+		auto& added = nodes.emplace_back(nextId++, node.mName.C_Str(), std::move(meshIds), transform, this);
 		for (auto i = 0; i < node.mNumChildren; i++)
 		{
 			if (root && i == skeletonNodeIndex)
 				continue;
 
 			const auto childId = nextId;
-			nodes.emplace_back(nextId++, node.mName.C_Str(), std::move(meshIds), transform);
 			added.AddChildId(childId);
+			nodes.emplace_back(nextId++, node.mName.C_Str(), std::move(meshIds), transform, this);
 		}
 
 		return index;
 	}
 
-	std::uint32_t Model::ParseNode(int& nextId, const Microsoft::glTF::Node& node, glm::vec3 scale, bool root)
+	std::uint32_t Model::ParseNode(int& nextId, const Microsoft::glTF::Node& node, const Microsoft::glTF::Document& doc, glm::vec3 scale, bool root)
 	{
-		return 0;
+		std::string skeletonNodeId;
+		// If its a root node, find if theres a skeleton
+		if (root)
+		{
+			for (auto& childId : node.children)
+			{
+				const auto& child = doc.nodes[childId];
+
+				// find if any children is a skeleton
+
+				auto isSkeleton = true;
+				auto numChildren = 0;
+
+				std::queue<const Microsoft::glTF::Node*> q;
+				q.push(&child);
+
+				while (!q.empty())
+				{
+					auto current = q.front();
+					q.pop();
+					if (!current->meshId.empty())
+					{
+						isSkeleton = false;
+						break;
+					}
+					for (auto& childChildId : current->children)
+					{
+						numChildren++;
+						q.push(&doc.nodes[childChildId]);
+					}
+				}
+				
+				// Parse Skeleton if found any
+				if (isSkeleton && (numChildren != 0))
+				{
+					// ParseSkeleton(child);
+					// Supports only one skeleton!
+					skeletonNodeId = childId;
+					break;
+				}
+
+			}
+		}
+
+		const auto transform = ScaleTranslation(glm::make_mat4(node.matrix.values.data()), scale);
+
+		std::vector<uint16_t> meshIds;
+
+		if (!node.meshId.empty())
+			meshIds.push_back(atoi(doc.meshes[node.meshId].id.c_str()));
+
+		const auto index = nextId;
+		nodes.emplace_back(nextId++, node.name, std::move(meshIds), transform, this);
+		std::size_t addedIndex = nodes.size() - 1;
+
+		for (const auto& childId : node.children)
+		{
+			if (root && skeletonNodeId == childId)
+				continue;
+			const auto childIndex = ParseNode(nextId, doc.nodes[childId], doc, scale);
+			nodes[addedIndex].AddChildId(childIndex);
+		}
+
+		return index;
 	}
 
 	void Model::ParseSkeleton(const aiNode& boneRoot)
@@ -272,7 +335,7 @@ namespace tryn::gfx
 	{
 		auto thisID = skeleton->NextID();
 		skeleton->bones.emplace_back(bone.mName.C_Str(), thisID, parentID);
-		for (auto i = 0; i < bone.mNumChildren; i++)
+		for (unsigned int i = 0; i < bone.mNumChildren; i++)
 		{
 			ParseBone(*bone.mChildren[i], thisID);
 		}
@@ -330,10 +393,32 @@ namespace tryn::gfx
 		auto& scene = doc.GetDefaultScene();
 		int nextId = 0;
 
-		for (auto& node : scene.nodes)
+		for (auto& nodeId : scene.nodes)
 		{
-			trylog.info(utl::ToWide(std::format("Root node: {}", doc.nodes[node].name)));
+			trylog.info(utl::ToWide(std::format("Root node: {}", doc.nodes[nodeId].name)));
+			auto& node = doc.nodes[nodeId];
+			rootId = ParseNode(nextId, node, doc, scale, true);
+			break;
 		}
 
+		// parse materials
+		std::vector<Material> materials;
+		materials.reserve(doc.materials.Size());
+
+		for (unsigned int i = 0; i < doc.materials.Size(); i++)
+		{
+			materials.emplace_back(gfx, doc.materials[i], path, techniqueUUIDs, doc, instanced, skeleton.has_value());
+		}
+
+		// Add meshes
+		for (unsigned int i = 0; i < doc.meshes.Size(); i++)
+		{
+			auto& mesh = doc.meshes[i];
+			if (skeleton.has_value())
+			{
+				
+				pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, doc.materials[mesh.primitives[0].materialId], mesh, mesh.name, skeleton.value(), scale, meshCounter++));
+			}
+		}
 	}
 }
