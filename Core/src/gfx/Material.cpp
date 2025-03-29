@@ -3,7 +3,7 @@
 #include <assimp/material.h>
 #include <assimp/types.h>
 #include <Core/src/gfx/Render/Techniques/ForwardPhong.h>
-
+#include <GLTFSDK/GLTF.h>
 namespace tryn::gfx
 {
 	Material Material::MakeDefault(const IGraphics& gfx)
@@ -29,6 +29,13 @@ namespace tryn::gfx
 			AddTechnique(techniqueUUID, gfx, material, rootPath, instanced, skinned);
 		}
 
+	}
+
+	Material::Material(const IGraphics& gfx, const Microsoft::glTF::Material& material,
+		const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs,
+		const Microsoft::glTF::Document& document, bool instanced, const bool skinned)
+	{
+		
 	}
 
 	VertexBuffer Material::ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton) const noexcept
