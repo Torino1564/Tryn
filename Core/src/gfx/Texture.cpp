@@ -4,6 +4,8 @@
 #include <Core/src/utl/String.h>
 #include <assimp/texture.h>
 
+#include "win/gltfSDK.h"
+
 namespace tryn::gfx
 {
 	Texture::Texture(const std::filesystem::path& path, std::optional<glm::vec3> scale)
@@ -31,7 +33,6 @@ namespace tryn::gfx
 		static const Deleter deleter(pDeleterFunc);
 
 		buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
-
 	}
 
 	Texture::Texture(const aiTexture& tex, std::optional<glm::vec3> scale)
@@ -84,6 +85,25 @@ namespace tryn::gfx
 		}
 	}
 
+	Texture::Texture(const GLTFTextureData& textureData, const std::optional<glm::vec3> scale)
+	{
+		auto texture = StbImageManager::Load(std::span{(std::byte*)std::move(textureData.data.data()), textureData.byteSize}, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+		this->path = textureData.name;
+		if (scale)
+		{
+			this->scale = scale;
+		}
+
+		auto pDeleterFunc = [](std::byte* bytes)
+		{
+			STBI_Close::Get().operator()(bytes);
+		};
+
+		static const Deleter deleter(pDeleterFunc);
+
+		buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+	}
+
 	std::string Texture::GetID() const noexcept
 	{
 		return GenerateID(path, scale);
@@ -112,5 +132,10 @@ namespace tryn::gfx
 	bool Texture::HasAlpha() const noexcept
 	{
 		return hasAlpha;
+	}
+
+	std::string Texture::GetPath() const
+	{
+		return path;
 	}
 }

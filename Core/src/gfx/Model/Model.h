@@ -54,9 +54,9 @@ namespace tryn::gfx
 		const gfx::IGraphics* GetGfx() const;
 		ani::Skeleton& GetSkeleton();
 	private:
-		void TinyGltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = {1.0f, 1.0f, 1.0f}, const bool instanced = false);
+		void GltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = {1.0f, 1.0f, 1.0f}, const bool instanced = false);
 		std::uint32_t ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);
-		std::uint32_t ParseNode(int& nextId, const Microsoft::glTF::Node& node, const Microsoft::glTF::Document& doc, glm::vec3 scale, bool root = false);
+		std::uint32_t ParseNode(int& nextId, const Microsoft::glTF::Node& node, const WinGLTFLoaderContext& context, glm::vec3 scale, bool root = false);
 		void ParseSkeleton(const aiNode& boneRoot);
 		void ParseBone(const aiNode& bone, const uint32_t parentID);
 		Settings settings = {};

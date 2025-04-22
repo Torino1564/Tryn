@@ -29,7 +29,9 @@ namespace tryn::gfx
 		std::shared_ptr<std::istream> m_stream;
 	};
 
-	Document WinGLTFLoader::Load(const std::filesystem::path& path)
+	WinGLTFLoaderContext::~WinGLTFLoaderContext() = default;
+
+	WinGLTFLoaderContext WinGLTFLoader::Load(const std::filesystem::path& path)
 	{
 		std::shared_ptr<IStreamReader> streamReader;
 		std::ifstream file(path.string());
@@ -53,6 +55,6 @@ namespace tryn::gfx
 			pReader.reset(reader.release());
 		}
 
-		return Deserialize(jsonStr);
+		return WinGLTFLoaderContext{.pDocument = std::make_unique<Document>(Deserialize(jsonStr)), .pReader = std::move(pReader)};
 	}
 }

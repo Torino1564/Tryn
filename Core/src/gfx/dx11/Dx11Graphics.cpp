@@ -393,6 +393,14 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
+	std::shared_ptr<ITexture> Graphics::CreateTexture(std::shared_ptr<Texture> pTexture, int slot) const
+	{
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11Texture>(*this, pTexture, slot);
+			});
+		return future.get();
+	}
+
 	std::shared_ptr<IRasterizer> Graphics::CreateRasterizer(const bool twoSided) const
 	{
 		auto future = Dispatch_([&] {

@@ -19,6 +19,7 @@ namespace Microsoft::glTF
 
 namespace tryn::gfx
 {
+	class WinGLTFLoaderContext;
 	class IGraphics;
 	class Material
 	{
@@ -27,7 +28,7 @@ namespace tryn::gfx
 		template <TechniqueClass... T>
 		static Material Make(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, const aiScene* pScene = nullptr, bool instanced = false, bool skinned = false);
 		Material(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs, const aiScene* pScene = nullptr, bool instanced = false, bool skinned = false);
-		Material(const IGraphics& gfx, const Microsoft::glTF::Material& material, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs, const Microsoft::glTF::Document& document, bool instanced = false, bool skinned = false);
+		Material(const IGraphics& gfx, const Microsoft::glTF::Material& material, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs, const WinGLTFLoaderContext& context, bool instanced = false, bool skinned = false);
 		static Material MakeDefault(const IGraphics& gfx);
 		VertexBuffer ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton = nullptr) const noexcept;
 		static IndexBuffer ExtractIndices(const aiMesh& mesh) noexcept;
@@ -41,8 +42,8 @@ namespace tryn::gfx
 		Material() = default;
 		Material(const aiScene* pScene);
 		VertexLayout vLayout;
-		std::vector<std::shared_ptr<class Attribute>> pAttributes;
-		std::vector<std::shared_ptr<class Texture>> pTextures;
+		std::unordered_map<std::string, std::shared_ptr<class Attribute>> attributes;
+		std::unordered_map<std::string, std::shared_ptr<class Texture>> textures;
 		std::vector<std::shared_ptr<TechniqueBase>> pTechniques;
 		std::string name;
 
