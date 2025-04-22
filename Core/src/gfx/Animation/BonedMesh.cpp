@@ -82,6 +82,15 @@ namespace tryn::gfx::ani
 		pMaterials.push_back(std::make_unique<Material>(material));
 		selectedMaterial = pMaterials.size() - 1;
 	}
+
+	BonedMesh::BonedMesh(const IGraphics& gfx, const Material& material, const Microsoft::glTF::Mesh& mesh,
+		std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale, std::optional<std::uint16_t> meshID)
+			:
+		skeleton(skeleton)
+	{
+
+	}
+
 	MeshType BonedMesh::Type() const
 	{
 		return MeshType::Boned;

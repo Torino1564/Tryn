@@ -12,21 +12,13 @@ namespace tryn::gfx
 	{
 		struct Remover
 		{
-			void operator()(Texture* pTexture)
-			{
-				TexturePool::Get().pool.erase(pTexture->GetID());
-			}
-			static Remover& Get()
-			{
-				static Remover remover;
-				return remover;
-			}
+			void operator()(const Texture* pTexture) const;
+			static Remover& Get();
 		};
 
-	public:
-		static std::shared_ptr<Texture> Resolve(std::filesystem::path path, std::optional<glm::vec3> scale = std::nullopt);
-
+		static std::shared_ptr<Texture> Resolve(const std::filesystem::path& path, std::optional<glm::vec3> scale = std::nullopt);
 		static std::shared_ptr<Texture> Resolve(const aiTexture& tex, std::optional<glm::vec3> scale = std::nullopt);
+		static std::shared_ptr<Texture> Resolve(const class GLTFTextureData& textureData, std::optional<glm::vec3> scale = std::nullopt);
 
 	private:
 		static TexturePool& Get()

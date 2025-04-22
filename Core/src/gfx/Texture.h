@@ -27,7 +27,8 @@ namespace tryn::gfx
 	public:
 		Texture(const std::filesystem::path& path, std::optional<glm::vec3> scale = std::nullopt);
 		Texture(const aiTexture& tex, std::optional<glm::vec3> scale = std::nullopt);
-		static constexpr std::string GenerateID(const std::filesystem::path& path, std::optional<glm::vec3> scale = std::nullopt);
+		Texture(const class GLTFTextureData& textureData, std::optional<glm::vec3> scale = std::nullopt);
+		static constexpr std::string GenerateID(const std::string& name, std::optional<glm::vec3> scale = std::nullopt);
 		std::string GetID() const noexcept;
 		const std::byte* Data() const noexcept;
 		int GetHeight() const noexcept;
@@ -35,7 +36,7 @@ namespace tryn::gfx
 		int GetNumChannels() const noexcept;
 		int GetRowPitch() const noexcept;
 		bool HasAlpha() const noexcept;
-
+		std::string GetPath() const;
 	private:
 		// Data
 		std::string path;
@@ -48,10 +49,10 @@ namespace tryn::gfx
 		std::unique_ptr<std::byte, Deleter> buffer;
 	};
 
-	constexpr std::string Texture::GenerateID(const std::filesystem::path& path, std::optional<glm::vec3> scale)
+	constexpr std::string Texture::GenerateID(const std::string& name, std::optional<glm::vec3> scale)
 	{
 		std::string id = "#Texture#";
-		id += path.string();
+		id += name;
 		if (scale)
 		{
 			id += "#Scale:";

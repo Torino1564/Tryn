@@ -51,7 +51,7 @@ namespace tryn::gfx
 		if (const auto& ext = fspath.extension().string(); ext == ".gltf" || ext == ".glb" )
 		{
 			// TinyGLTF initialization
-			TinyGltfInitialization(gfx, fspath, techniqueUUIDs, scale, instanced);
+			GltfInitialization(gfx, fspath, techniqueUUIDs, scale, instanced);
 			return;
 		}
 
@@ -254,8 +254,9 @@ namespace tryn::gfx
 		return index;
 	}
 
-	std::uint32_t Model::ParseNode(int& nextId, const Microsoft::glTF::Node& node, const Microsoft::glTF::Document& doc, glm::vec3 scale, bool root)
+	std::uint32_t Model::ParseNode(int& nextId, const Microsoft::glTF::Node& node, const WinGLTFLoaderContext& context, glm::vec3 scale, bool root)
 	{
+		auto& doc = *context.pDocument;
 		std::string skeletonNodeId;
 		// If its a root node, find if theres a skeleton
 		if (root)
@@ -315,7 +316,7 @@ namespace tryn::gfx
 		{
 			if (root && skeletonNodeId == childId)
 				continue;
-			const auto childIndex = ParseNode(nextId, doc.nodes[childId], doc, scale);
+			const auto childIndex = ParseNode(nextId, doc.nodes[childId], context, scale);
 			nodes[addedIndex].AddChildId(childIndex);
 		}
 
@@ -381,11 +382,12 @@ namespace tryn::gfx
 		return skeleton.value();
 	}
 
-	void Model::TinyGltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path,
+	void Model::GltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path,
 		std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
 	{
 		using namespace Microsoft::glTF;
-		const auto doc = WinGLTFLoader::Load(path);
+		const auto context = WinGLTFLoader::Load(path);
+		auto& doc = *context.pDocument;
 
 		if (doc.scenes.Size() > 1)
 			trylog.warn(L"GLTF file contains more than one scene!");
@@ -397,7 +399,7 @@ namespace tryn::gfx
 		{
 			trylog.info(utl::ToWide(std::format("Root node: {}", doc.nodes[nodeId].name)));
 			auto& node = doc.nodes[nodeId];
-			rootId = ParseNode(nextId, node, doc, scale, true);
+			rootId = ParseNode(nextId, node, context, scale, true);
 			break;
 		}
 
@@ -407,7 +409,7 @@ namespace tryn::gfx
 
 		for (unsigned int i = 0; i < doc.materials.Size(); i++)
 		{
-			materials.emplace_back(gfx, doc.materials[i], path, techniqueUUIDs, doc, instanced, skeleton.has_value());
+			materials.emplace_back(gfx, doc.materials[i], path, techniqueUUIDs, context, instanced, skeleton.has_value());
 		}
 
 		// Add meshes
@@ -416,8 +418,7 @@ namespace tryn::gfx
 			auto& mesh = doc.meshes[i];
 			if (skeleton.has_value())
 			{
-				
-				pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, doc.materials[mesh.primitives[0].materialId], mesh, mesh.name, skeleton.value(), scale, meshCounter++));
+				pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, materials[std::atoi(mesh.primitives[0].materialId.c_str())], mesh, mesh.name, skeleton.value(), scale, meshCounter++));
 			}
 		}
 	}

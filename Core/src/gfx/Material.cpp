@@ -3,7 +3,15 @@
 #include <assimp/material.h>
 #include <assimp/types.h>
 #include <Core/src/gfx/Render/Techniques/ForwardPhong.h>
+#include <GLTFSDK/Document.h>
 #include <GLTFSDK/GLTF.h>
+#include <GLTFSDK/GLTFResourceReader.h>
+
+#include "IGraphics.h"
+#include "Texture.h"
+#include "TexturePool.h"
+#include "win/gltfSDK.h"
+
 namespace tryn::gfx
 {
 	Material Material::MakeDefault(const IGraphics& gfx)
@@ -33,9 +41,54 @@ namespace tryn::gfx
 
 	Material::Material(const IGraphics& gfx, const Microsoft::glTF::Material& material,
 		const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs,
-		const Microsoft::glTF::Document& document, bool instanced, const bool skinned)
+		const WinGLTFLoaderContext& context, bool instanced, const bool skinned)
 	{
-		
+		auto& document = *context.pDocument;
+		const auto rootPath = path.parent_path().string() + "\\";
+
+		// Fill textures:
+		auto emissiveTextureId = material.emissiveTexture.textureId;
+		auto normalTextureId = material.normalTexture.textureId;
+		auto occlusionTextureId =	material.occlusionTexture.textureId;
+		auto metallicRoughnessTextureId =	material.metallicRoughness.metallicRoughnessTexture.textureId;
+		auto baseColorTextureId =	material.metallicRoughness.baseColorTexture.textureId;
+
+
+		if (!emissiveTextureId.empty())
+		{
+			auto& emissiveTexture = document.textures[emissiveTextureId];
+			auto& img = document.images[emissiveTexture.imageId];
+			auto bufferView = document.bufferViews[img.bufferViewId];
+			auto imgdata = context.pReader->ReadBinaryData(document, img);
+			
+			GLTFTextureData data = {.stride = bufferView.byteStride.Get(), .byteSize = imgdata.size(), .data = std::move(imgdata), .name = emissiveTexture.name};
+			auto tex = TexturePool::Resolve(data);
+			// Load Texture
+			textures.insert({"emissiveTexture", tex});
+		}
+
+		if (!baseColorTextureId.empty())
+		{
+			auto& baseColorTexture = document.textures[baseColorTextureId];
+			auto& img = document.images[baseColorTexture.imageId];
+			auto bufferView = document.bufferViews[img.bufferViewId];
+			auto imgdata = context.pReader->ReadBinaryData(document, img);
+			
+			GLTFTextureData data = {.stride = bufferView.byteStride.Get(), .byteSize = imgdata.size(), .data = std::move(imgdata), .name = baseColorTexture.name};
+			auto tex = TexturePool::Resolve(data);
+			// Load Texture
+			textures.insert({"baseColorTexture", tex});
+		}
+
+		//if (techniqueUUIDs.size() == 0)
+		//{
+		//	AddTechnique(ZT_TYPE_UUID(ForwardPhong), gfx, material, rootPath, instanced, skinned);
+		//}
+
+		//for (auto techniqueUUID : techniqueUUIDs)
+		//{
+		//	AddTechnique(techniqueUUID, gfx, material, rootPath, instanced, skinned);
+		//}
 	}
 
 	VertexBuffer Material::ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton) const noexcept
