@@ -42,6 +42,7 @@ namespace tryn::gfx
 	Material::Material(const IGraphics& gfx, const Microsoft::glTF::Material& material,
 		const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs,
 		const WinGLTFLoaderContext& context, bool instanced, const bool skinned)
+			: pScene(nullptr)
 	{
 		auto& document = *context.pDocument;
 		const auto rootPath = path.parent_path().string() + "\\";
@@ -53,32 +54,84 @@ namespace tryn::gfx
 		auto metallicRoughnessTextureId =	material.metallicRoughness.metallicRoughnessTexture.textureId;
 		auto baseColorTextureId =	material.metallicRoughness.baseColorTexture.textureId;
 
+		auto filename = path.filename().string();
 
-		if (!emissiveTextureId.empty())
+		// Add Textures
 		{
-			auto& emissiveTexture = document.textures[emissiveTextureId];
-			auto& img = document.images[emissiveTexture.imageId];
-			auto bufferView = document.bufferViews[img.bufferViewId];
-			auto imgdata = context.pReader->ReadBinaryData(document, img);
+			if (!emissiveTextureId.empty())
+			{
+				auto& emissiveTexture = document.textures[emissiveTextureId];
+				auto& img = document.images[emissiveTexture.imageId];
+				auto bufferView = document.bufferViews[img.bufferViewId];
+				auto imgdata = context.pReader->ReadBinaryData(document, img);
 			
-			GLTFTextureData data = {.stride = bufferView.byteStride.Get(), .byteSize = imgdata.size(), .data = std::move(imgdata), .name = emissiveTexture.name};
-			auto tex = TexturePool::Resolve(data);
-			// Load Texture
-			textures.insert({"emissiveTexture", tex});
+				GLTFTextureData data = {.data = std::move(imgdata), .name = filename + "emissiveTexture"};
+				auto tex = TexturePool::Resolve(data);
+				// Load Texture
+				textures.insert({"emissiveTexture", tex});
+			}
+
+			if (!normalTextureId.empty())
+			{
+				auto& normalTexture = document.textures[normalTextureId];
+				auto& img = document.images[normalTexture.imageId];
+				auto bufferView = document.bufferViews[img.bufferViewId];
+				auto imgdata = context.pReader->ReadBinaryData(document, img);
+			
+				GLTFTextureData data = {.byteSize = imgdata.size(), .data = std::move(imgdata), .name = filename + "normalTexture" };
+				auto tex = TexturePool::Resolve(data);
+				// Load Texture
+				textures.insert({"normalTexture", tex});
+			}
+
+			if (!occlusionTextureId.empty())
+			{
+				auto& occlusionTexture = document.textures[occlusionTextureId];
+				auto& img = document.images[occlusionTexture.imageId];
+				auto bufferView = document.bufferViews[img.bufferViewId];
+				auto imgdata = context.pReader->ReadBinaryData(document, img);
+
+				GLTFTextureData data = { .byteSize = imgdata.size(), .data = std::move(imgdata), .name = filename + "occlusionTexture" };
+				auto tex = TexturePool::Resolve(data);
+				// Load Texture
+				textures.insert({ "occlusionTexture", tex });
+			}
+
+			if (!metallicRoughnessTextureId.empty())
+			{
+				auto& metallicRoughnessTexture = document.textures[metallicRoughnessTextureId];
+				auto& img = document.images[metallicRoughnessTexture.imageId];
+				auto bufferView = document.bufferViews[img.bufferViewId];
+				auto imgdata = context.pReader->ReadBinaryData(document, img);
+
+				GLTFTextureData data = { .byteSize = imgdata.size(), .data = std::move(imgdata), .name = filename + "metallicRoughnessTexture" };
+				auto tex = TexturePool::Resolve(data);
+				// Load Texture
+				textures.insert({ "metallicRoughnessTexture", tex });
+			}
+
+			if (!baseColorTextureId.empty())
+			{
+				auto& baseColorTexture = document.textures[baseColorTextureId];
+				auto& img = document.images[baseColorTexture.imageId];
+				auto bufferView = document.bufferViews[img.bufferViewId];
+				auto imgdata = context.pReader->ReadBinaryData(document, img);
+
+				GLTFTextureData data = { .byteSize = imgdata.size(), .data = std::move(imgdata), .name = filename + "baseColorTexture" };
+				auto tex = TexturePool::Resolve(data);
+				// Load Texture
+				textures.insert({ "baseColorTexture", tex });
+			}
 		}
 
-		if (!baseColorTextureId.empty())
+		// Add Attributes
+
+		// diffuse color
 		{
-			auto& baseColorTexture = document.textures[baseColorTextureId];
-			auto& img = document.images[baseColorTexture.imageId];
-			auto bufferView = document.bufferViews[img.bufferViewId];
-			auto imgdata = context.pReader->ReadBinaryData(document, img);
-			
-			GLTFTextureData data = {.stride = bufferView.byteStride.Get(), .byteSize = imgdata.size(), .data = std::move(imgdata), .name = baseColorTexture.name};
-			auto tex = TexturePool::Resolve(data);
-			// Load Texture
-			textures.insert({"baseColorTexture", tex});
+			auto color = material.metallicRoughness.baseColorFactor.AsColor3();
+			attributes.emplace("diffuseColor", Attribute::Make<glm::vec3>("diffuseColor", {color.r, color.g, color.b}));
 		}
+
 
 		//if (techniqueUUIDs.size() == 0)
 		//{
@@ -129,6 +182,11 @@ namespace tryn::gfx
 		const std::string& path, bool instanced, bool skinned)
 	{
 		pTechniques.push_back(TechniquePool::ConstructTechnique(techniqueUUID, *this, material, gfx, path,  instanced, skinned));
+	}
+
+	bool Material::HasAttribute(const std::string& name) const
+	{
+		return attributes.contains(name);
 	}
 
 	Material::Material(const aiScene* pScene)

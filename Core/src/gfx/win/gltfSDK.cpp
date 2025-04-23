@@ -31,30 +31,67 @@ namespace tryn::gfx
 
 	WinGLTFLoaderContext::~WinGLTFLoaderContext() = default;
 
-	WinGLTFLoaderContext WinGLTFLoader::Load(const std::filesystem::path& path)
+	class StreamReader : public IStreamReader
 	{
-		std::shared_ptr<IStreamReader> streamReader;
-		std::ifstream file(path.string());
-		std::shared_ptr<std::istream> pFile = std::make_shared<std::istream>(file.rdbuf());
-		std::string jsonStr;
-		
+	public:
+		StreamReader(std::filesystem::path pathBase) : m_pathBase(std::move(pathBase))
+		{
+
+		}
+
+		// Resolves the relative URIs of any external resources declared in the glTF manifest
+		std::shared_ptr<std::istream> GetInputStream(const std::string& filename) const override
+		{
+			// In order to construct a valid stream:
+			// 1. The filename argument will be encoded as UTF-8 so use filesystem::u8path to
+			//    correctly construct a path instance.
+			// 2. Generate an absolute path by concatenating m_pathBase with the specified filename
+			//    path. The filesystem::operator/ uses the platform's preferred directory separator
+			//    if appropriate.
+			// 3. Always open the file stream in binary mode. The glTF SDK will handle any text
+			//    encoding issues for us.
+			auto streamPath = m_pathBase / std::filesystem::path(filename);
+			auto stream = std::make_shared<std::ifstream>(streamPath, std::ios_base::binary);
+
+			// Check if the stream has no errors and is ready for I/O operations
+			if (!stream || !(*stream))
+			{
+				throw std::runtime_error("Unable to create a valid input stream for uri: " + filename);
+			}
+
+			return stream;
+		}
+
+	private:
+		std::filesystem::path m_pathBase;
+	};
+
+	void WinGLTFLoader::Load(const std::filesystem::path& path, const std::function<void(const WinGLTFLoaderContext&)>& process)
+	{
+		auto streamReader = std::make_unique<StreamReader>(path.parent_path());
+		std::string manifest;
 		std::unique_ptr<GLTFResourceReader> pReader;
 		try
 		{
-			streamReader = std::make_unique<GLBStreamReader>(pFile);
-			auto reader = std::make_unique<GLBResourceReader>(streamReader, pFile);
-			jsonStr = reader->GetJson();
-			pReader.reset(reader.release());
+			auto glbStream = streamReader->GetInputStream(path.filename().string());
+			auto reader = std::make_unique<GLBResourceReader>(std::move(streamReader), std::move(glbStream));
+			manifest = reader->GetJson();
+			pReader = std::move(reader);
 		}
 		catch (GLTFException ex)
 		{
-			pFile->seekg(0);
-			auto it = std::istreambuf_iterator<char>(*(pFile.get()));
-			jsonStr = std::string(it, {});
-			auto reader = std::make_unique<GLTFResourceReader>(streamReader);
-			pReader.reset(reader.release());
+			auto gltfStream = streamReader->GetInputStream(path.filename().string());
+			auto reader = std::make_unique<GLTFResourceReader>(std::move(streamReader));
+
+			std::stringstream manifestStream;
+
+			manifestStream << gltfStream->rdbuf();
+			manifest = manifestStream.str();
+
+			pReader = std::move(reader);
 		}
 
-		return WinGLTFLoaderContext{.pDocument = std::make_unique<Document>(Deserialize(jsonStr)), .pReader = std::move(pReader)};
+		const WinGLTFLoaderContext context{.pDocument = std::make_unique<Document>(Deserialize(manifest)), .pReader = std::move(pReader)};
+		process(context);
 	}
 }

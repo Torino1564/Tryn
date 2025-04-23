@@ -10,7 +10,6 @@ namespace tryn::gfx
 {
 	struct GLTFTextureData
 	{
-		size_t stride;
 		size_t byteSize;
 		std::vector<uint8_t> data;
 		std::string name;
@@ -27,6 +26,6 @@ namespace tryn::gfx
 	class WinGLTFLoader
 	{
 	public:
-		static WinGLTFLoaderContext Load(const std::filesystem::path& path);
+		static void Load(const std::filesystem::path& path, const std::function<void(const WinGLTFLoaderContext&)>& process);
 	};
 }

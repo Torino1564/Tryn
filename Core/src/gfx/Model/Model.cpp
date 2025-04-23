@@ -386,40 +386,45 @@ namespace tryn::gfx
 		std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
 	{
 		using namespace Microsoft::glTF;
-		const auto context = WinGLTFLoader::Load(path);
-		auto& doc = *context.pDocument;
 
-		if (doc.scenes.Size() > 1)
-			trylog.warn(L"GLTF file contains more than one scene!");
-
-		auto& scene = doc.GetDefaultScene();
-		int nextId = 0;
-
-		for (auto& nodeId : scene.nodes)
-		{
-			trylog.info(utl::ToWide(std::format("Root node: {}", doc.nodes[nodeId].name)));
-			auto& node = doc.nodes[nodeId];
-			rootId = ParseNode(nextId, node, context, scale, true);
-			break;
-		}
-
-		// parse materials
-		std::vector<Material> materials;
-		materials.reserve(doc.materials.Size());
-
-		for (unsigned int i = 0; i < doc.materials.Size(); i++)
-		{
-			materials.emplace_back(gfx, doc.materials[i], path, techniqueUUIDs, context, instanced, skeleton.has_value());
-		}
-
-		// Add meshes
-		for (unsigned int i = 0; i < doc.meshes.Size(); i++)
-		{
-			auto& mesh = doc.meshes[i];
-			if (skeleton.has_value())
+		auto processFunction = [&](const WinGLTFLoaderContext& context)
 			{
-				pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, materials[std::atoi(mesh.primitives[0].materialId.c_str())], mesh, mesh.name, skeleton.value(), scale, meshCounter++));
-			}
-		}
+				auto& doc = *context.pDocument;
+
+				if (doc.scenes.Size() > 1)
+					trylog.warn(L"GLTF file contains more than one scene!");
+
+				auto& scene = doc.GetDefaultScene();
+				int nextId = 0;
+
+				for (auto& nodeId : scene.nodes)
+				{
+					trylog.info(utl::ToWide(std::format("Root node: {}", doc.nodes[nodeId].name)));
+					auto& node = doc.nodes[nodeId];
+					rootId = ParseNode(nextId, node, context, scale, true);
+					break;
+				}
+
+				// parse materials
+				std::vector<Material> materials;
+				materials.reserve(doc.materials.Size());
+
+				for (unsigned int i = 0; i < doc.materials.Size(); i++)
+				{
+					materials.emplace_back(gfx, doc.materials[i], path, techniqueUUIDs, context, instanced, skeleton.has_value());
+				}
+
+				// Add meshes
+				for (unsigned int i = 0; i < doc.meshes.Size(); i++)
+				{
+					auto& mesh = doc.meshes[i];
+					if (skeleton.has_value())
+					{
+						pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, materials[std::atoi(mesh.primitives[0].materialId.c_str())], mesh, mesh.name, skeleton.value(), scale, meshCounter++));
+					}
+				}
+			};
+
+		WinGLTFLoader::Load(path, processFunction);
 	}
 }

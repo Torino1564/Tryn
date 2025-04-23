@@ -1,11 +1,18 @@
 #pragma once
-#include <core/src/gfx/Render/Technique.h>
+#include <Core/src/gfx/Attribute.h>
 #include <Core/src/gfx/Vertex.h>
 #include <concepts>
 #include <span>
 
+#include "Core/src/utl/StringHasher.h"
+
+namespace tryn::gfx
+{
+	class TechniqueBase;
+}
+
 template <typename T>
-concept TechniqueClass = std::derived_from<T, class tryn::gfx::TechniqueBase>;
+concept TechniqueClass = std::derived_from<T, tryn::gfx::TechniqueBase>;
 
 struct aiMaterial;
 struct aiMesh;
@@ -38,11 +45,19 @@ namespace tryn::gfx
 		void AddTechnique(utl::UUID_t techniqueUUID, const IGraphics& gfx, const aiMaterial& material, const std::string& path, bool instanced, bool skinned);
 		const aiScene* pScene;
 
+		template <typename T>
+		T GetAttribute(const std::string& name)
+		{
+			auto& att = attributes.at(name);
+			return att.Get<T>();
+		}
+
+		bool HasAttribute(const std::string& name) const;
 	private:
 		Material() = default;
 		Material(const aiScene* pScene);
 		VertexLayout vLayout;
-		std::unordered_map<std::string, std::shared_ptr<class Attribute>> attributes;
+		std::unordered_map<std::string, Attribute> attributes;
 		std::unordered_map<std::string, std::shared_ptr<class Texture>> textures;
 		std::vector<std::shared_ptr<TechniqueBase>> pTechniques;
 		std::string name;
