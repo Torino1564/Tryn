@@ -7,22 +7,20 @@ namespace tryn::gfx
 	{
 	public:
 		template <typename T>
-		static Attribute Make(const std::string& name, T&& value)
+		static Attribute Make(const T& value)
 		{
 			Attribute newVal;
 
-			newVal.name = name;
-			newVal.value = std::make_any<T>(std::forward<T&&>(value));
+			newVal.value = std::make_any<T>(value);
 
 			return newVal;
 		}
 		template <typename T>
-		T Get()
+		T Get() const
 		{
 			return std::any_cast<T>(value);
 		}
 	private:
-		std::string name;
 		std::any value;
 	};
 }

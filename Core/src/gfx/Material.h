@@ -28,6 +28,27 @@ namespace tryn::gfx
 {
 	class WinGLTFLoaderContext;
 	class IGraphics;
+
+	enum class TextureType : std::uint8_t
+	{
+		Emissive,
+		Normal,
+		Occlussion,
+		MetallicRoughness,
+		MetallicRoughnessBaseColor,
+		Diffuse,
+		Specular,
+		Unknown
+	};
+
+	enum class AttributeType : std::uint8_t
+	{
+		DiffuseColor,
+		SpecularColor,
+		SpecularGloss,
+		Unknown
+	};
+
 	class Material
 	{
 		friend class TechniqueBase;
@@ -36,30 +57,35 @@ namespace tryn::gfx
 		static Material Make(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, const aiScene* pScene = nullptr, bool instanced = false, bool skinned = false);
 		Material(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs, const aiScene* pScene = nullptr, bool instanced = false, bool skinned = false);
 		Material(const IGraphics& gfx, const Microsoft::glTF::Material& material, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs, const WinGLTFLoaderContext& context, bool instanced = false, bool skinned = false);
-		static Material MakeDefault(const IGraphics& gfx);
+		static std::shared_ptr<Material> MakeDefault(const IGraphics& gfx);
 		VertexBuffer ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton = nullptr) const noexcept;
-		static IndexBuffer ExtractIndices(const aiMesh& mesh) noexcept;
 		VertexBuffer ExtractVertices(const Shape3D& mesh) const noexcept;
-		IndexBuffer ExtractIndices(const Shape3D& mesh) const noexcept;
+		VertexBuffer ExtractVertices(const Microsoft::glTF::Mesh& mesh, const Microsoft::glTF::Document& document, std::optional<ani::Skeleton> skeleton = std::nullopt) const noexcept;
+		static IndexBuffer ExtractIndices(const aiMesh& mesh) noexcept;
+		static IndexBuffer ExtractIndices(const Shape3D& mesh) noexcept;
+		static IndexBuffer ExtractIndices(const Microsoft::glTF::Mesh& mesh, const Microsoft::glTF::Document& document) noexcept;
 		std::vector<std::shared_ptr<TechniqueBase>> GetTechniques() const noexcept;
-		void AddTechnique(utl::UUID_t techniqueUUID, const IGraphics& gfx, const aiMaterial& material, const std::string& path, bool instanced, bool skinned);
+		void AddTechnique(utl::UUID_t techniqueUUID, const IGraphics& gfx, const std::string& path, bool instanced, bool skinned);
 		const aiScene* pScene;
 
 		template <typename T>
-		T GetAttribute(const std::string& name)
+		T GetAttribute(const AttributeType attribute) const
 		{
-			auto& att = attributes.at(name);
+			auto& att = attributes.at(attribute);
 			return att.Get<T>();
 		}
 
-		bool HasAttribute(const std::string& name) const;
+		bool HasAttribute(AttributeType attribute) const;
+		bool HasTexture(TextureType texture) const;
+		std::shared_ptr<class Texture> GetTexture(TextureType texture) const;
+
 	private:
 		Material() = default;
 		Material(const aiScene* pScene);
-		VertexLayout vLayout;
-		std::unordered_map<std::string, Attribute> attributes;
-		std::unordered_map<std::string, std::shared_ptr<class Texture>> textures;
+		std::unordered_map<AttributeType, Attribute> attributes;
+		std::unordered_map<TextureType, std::shared_ptr<Texture>> textures;
 		std::vector<std::shared_ptr<TechniqueBase>> pTechniques;
+		int selectedTechnique = -1;
 		std::string name;
 
 	};

@@ -5,6 +5,10 @@
 #include <GLTFSDK/GLTFResourceReader.h>
 #include <GLTFSDK/GLBResourceReader.h>
 #include <filesystem>
+#include <GLTFSDK/ExtensionsKHR.h>
+
+#include "Core/src/log/Log.h"
+#include "Core/src/utl/String.h"
 
 using namespace Microsoft::glTF;
 
@@ -78,8 +82,10 @@ namespace tryn::gfx
 			manifest = reader->GetJson();
 			pReader = std::move(reader);
 		}
-		catch (GLTFException ex)
+		catch (GLTFException& ex)
 		{
+			trylog.debug(L"Loading a GLTF file");
+			streamReader = std::make_unique<StreamReader>(path.parent_path());
 			auto gltfStream = streamReader->GetInputStream(path.filename().string());
 			auto reader = std::make_unique<GLTFResourceReader>(std::move(streamReader));
 
@@ -91,7 +97,7 @@ namespace tryn::gfx
 			pReader = std::move(reader);
 		}
 
-		const WinGLTFLoaderContext context{.pDocument = std::make_unique<Document>(Deserialize(manifest)), .pReader = std::move(pReader)};
+		const WinGLTFLoaderContext context{.pDocument = std::make_unique<Document>(Deserialize(manifest, KHR::GetKHRExtensionDeserializer())), .pReader = std::move(pReader)};
 		process(context);
 	}
 }

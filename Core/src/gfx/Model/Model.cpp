@@ -10,10 +10,10 @@
 #include <Core/src/gfx/Animation/BonedMesh.h>
 #include <Core/src/mem/ArenaAllocator.h>
 #include <queue>
+#include <assimp/postprocess.h>
 #include <Core/src/gfx/Animation/Bone.h>
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/gfx/ImguiManager.h>
-
 #include "Core/third/glm/gtx/euler_angles.hpp"
 #include <Core/src/gfx/win/gltfSDK.h>
 #include <GLTFSDK/Deserialize.h>
@@ -89,12 +89,12 @@ namespace tryn::gfx
 		rootId = ParseNode(nextId, *pScene->mRootNode, scale, true);
 
 		// parse materials
-		std::vector<Material> materials;
+		std::vector<std::shared_ptr<Material>> materials;
 		materials.reserve(pScene->mNumMaterials);
 
 		for (size_t i = 0; i < pScene->mNumMaterials; i++)
 		{
-			materials.emplace_back(gfx, *pScene->mMaterials[i], path, techniqueUUIDs, pScene, instanced, skeleton.has_value());
+			materials.emplace_back(std::make_shared<Material>(gfx, *pScene->mMaterials[i], path, techniqueUUIDs, pScene, instanced, skeleton.has_value()));
 		}
 
 		if (skeleton.has_value())
@@ -110,7 +110,7 @@ namespace tryn::gfx
 			for (size_t i = 0; i < pScene->mNumMeshes; i++)
 			{
 				const auto& mesh = *pScene->mMeshes[i];
-				auto pMesh = std::make_shared<StaticMesh>(gfx, mesh, mesh.mName.C_Str(), &materials[mesh.mMaterialIndex], scale, meshCounter++);
+				auto pMesh = std::make_shared<StaticMesh>(gfx, mesh, mesh.mName.C_Str(), materials[mesh.mMaterialIndex], scale, meshCounter++);
 				pMeshes.push_back(std::move(pMesh));
 			}
 		}
@@ -240,15 +240,13 @@ namespace tryn::gfx
 		}
 
 		const auto index = nextId;
-		auto& added = nodes.emplace_back(nextId++, node.mName.C_Str(), std::move(meshIds), transform, this);
+		nodes.emplace_back(nextId++, node.mName.C_Str(), std::move(meshIds), transform, this);
 		for (auto i = 0; i < node.mNumChildren; i++)
 		{
 			if (root && i == skeletonNodeIndex)
 				continue;
-
-			const auto childId = nextId;
-			added.AddChildId(childId);
-			nodes.emplace_back(nextId++, node.mName.C_Str(), std::move(meshIds), transform, this);
+			const auto childId = ParseNode(nextId, *node.mChildren[i], scale, false);
+			nodes[index].AddChildId(childId);
 		}
 
 		return index;
@@ -310,14 +308,12 @@ namespace tryn::gfx
 
 		const auto index = nextId;
 		nodes.emplace_back(nextId++, node.name, std::move(meshIds), transform, this);
-		std::size_t addedIndex = nodes.size() - 1;
-
 		for (const auto& childId : node.children)
 		{
 			if (root && skeletonNodeId == childId)
 				continue;
 			const auto childIndex = ParseNode(nextId, doc.nodes[childId], context, scale);
-			nodes[addedIndex].AddChildId(childIndex);
+			nodes[index].AddChildId(childIndex);
 		}
 
 		return index;
@@ -389,7 +385,7 @@ namespace tryn::gfx
 
 		auto processFunction = [&](const WinGLTFLoaderContext& context)
 			{
-				auto& doc = *context.pDocument;
+				const auto& doc = *context.pDocument;
 
 				if (doc.scenes.Size() > 1)
 					trylog.warn(L"GLTF file contains more than one scene!");
@@ -406,12 +402,12 @@ namespace tryn::gfx
 				}
 
 				// parse materials
-				std::vector<Material> materials;
+				std::vector<std::shared_ptr<Material>> materials;
 				materials.reserve(doc.materials.Size());
 
 				for (unsigned int i = 0; i < doc.materials.Size(); i++)
 				{
-					materials.emplace_back(gfx, doc.materials[i], path, techniqueUUIDs, context, instanced, skeleton.has_value());
+					materials.emplace_back(std::make_shared<Material>(gfx, doc.materials[i], path, techniqueUUIDs, context, instanced, skeleton.has_value()));
 				}
 
 				// Add meshes
@@ -421,6 +417,10 @@ namespace tryn::gfx
 					if (skeleton.has_value())
 					{
 						pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, materials[std::atoi(mesh.primitives[0].materialId.c_str())], mesh, mesh.name, skeleton.value(), scale, meshCounter++));
+					}
+					else
+					{
+						pMeshes.push_back(std::make_shared<StaticMesh>(gfx, mesh, doc, mesh.name, materials[std::atoi(mesh.primitives[0].materialId.c_str())], scale, meshCounter++));
 					}
 				}
 			};

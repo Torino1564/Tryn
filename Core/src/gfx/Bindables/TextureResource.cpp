@@ -22,9 +22,9 @@ namespace tryn::gfx
 		return GenerateID(gfx, tex.mFilename.C_Str(), slot);
 	}
 
-	std::string ITexture::GenerateID(const IGraphics& gfx, std::shared_ptr<Texture> pTexture, const uint8_t slot)
+	std::string ITexture::GenerateID(const IGraphics& gfx, const std::shared_ptr<Texture>& pTexture, const uint8_t slot)
 	{
-		return GenerateID(gfx, pTexture->GetID(), slot);
+		return GenerateID(gfx, pTexture->GetPath(), slot);
 	}
 
 	std::shared_ptr<ITexture> ITexture::Resolve(const IGraphics& gfx, const std::filesystem::path& path, uint8_t slot)
@@ -50,5 +50,10 @@ namespace tryn::gfx
 	const Texture& ITexture::GetTextureResource() const
 	{
 		return *pTextureResource;
+	}
+
+	const std::string& ITexture::GetPath() const
+	{
+		return path;
 	}
 }

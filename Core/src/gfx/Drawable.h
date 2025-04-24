@@ -39,7 +39,7 @@ namespace tryn::gfx
 		std::unique_ptr<ITransformCBuf> pTransformCBuf;
 		uint32_t indexCount = 0;
 		std::uint16_t ID = 0;
-		std::vector<std::unique_ptr<class Material>> pMaterials;
+		std::vector<std::shared_ptr<Material>> pMaterials;
 		unsigned int selectedMaterial = 0;
 		glm::mat4 transform = {};
 	};

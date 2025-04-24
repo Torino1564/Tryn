@@ -19,7 +19,7 @@ static glm::mat4 ConvertMatrixToGLMFormat(const aiMatrix4x4& from)
 
 namespace tryn::gfx::ani
 {
-	BonedMesh::BonedMesh(const IGraphics& gfx, const Material& material, const aiMesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale, std::optional<std::uint16_t> meshID)
+	BonedMesh::BonedMesh(const IGraphics& gfx, std::shared_ptr<Material> pMaterial, const aiMesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale, std::optional<std::uint16_t> meshID)
 		:
 		skeleton(skeleton)
 	{
@@ -61,9 +61,9 @@ namespace tryn::gfx::ani
 		}
 
 		ID = meshID.value_or(0);
-		auto vertexBuffer = material.ExtractVertices(mesh, &skeleton);
+		auto vertexBuffer = pMaterial->ExtractVertices(mesh, &skeleton);
 		vertexBuffer.SetClean();
-		const auto indices = material.ExtractIndices(mesh);
+		const auto indices = pMaterial->ExtractIndices(mesh);
 
 		indexCount = static_cast<uint32_t>(indices.Size());
 
@@ -79,11 +79,11 @@ namespace tryn::gfx::ani
 		cblayout.Solidify();
 		pSkeletonCBuffer = gfx.CreateVtxConstantBuffer(std::move(cblayout), 5);
 
-		pMaterials.push_back(std::make_unique<Material>(material));
+		pMaterials.push_back(std::move(pMaterial));
 		selectedMaterial = pMaterials.size() - 1;
 	}
 
-	BonedMesh::BonedMesh(const IGraphics& gfx, const Material& material, const Microsoft::glTF::Mesh& mesh,
+	BonedMesh::BonedMesh(const IGraphics& gfx, std::shared_ptr<Material> pMaterial, const Microsoft::glTF::Mesh& mesh,
 		std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale, std::optional<std::uint16_t> meshID)
 			:
 		skeleton(skeleton)

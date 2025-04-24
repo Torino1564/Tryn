@@ -6,13 +6,12 @@
 
 namespace tryn::gfx
 {
-	std::shared_ptr<TechniqueBase> TechniquePool::ConstructTechnique(utl::UUID_t techniqueUUID, Material& material,
-		const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced,
+	std::shared_ptr<TechniqueBase> TechniquePool::ConstructTechnique(utl::UUID_t techniqueUUID, const Material& material, const IGraphics& gfx, const std::string& path, const bool instanced,
 		const bool skeleton)
 	{
 		auto it = Get().techniqueMap.find(techniqueUUID);
 		trynass(it != Get().techniqueMap.end()).msg(utl::ToWide(std::format("Did not find technique with UUID: {}", techniqueUUID))).lvl(log::Level::Error).ex();
-		return it->second->ConstructDerived(material, aiMaterial, gfx, path, instanced, skeleton);
+		return it->second->ConstructDerived(material, gfx, path, instanced, skeleton);
 	}
 
 	TechniquePool& TechniquePool::Get()
@@ -24,6 +23,7 @@ namespace tryn::gfx
 	TechniqueBase::TechniqueBase(const std::string& name)
 	{
 		this->name = name;
+		pVertexLayout = std::make_unique<VertexLayout>();
 	}
 	void TechniqueBase::AddStep(Step step)
 	{
@@ -44,7 +44,7 @@ namespace tryn::gfx
 			step.Submit(gfx, parent);
 		}
 	}
-	void TechniqueBase::Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
+	void TechniqueBase::Submit(const IGraphics& gfx, Drawable* parent, const std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
 	{
 		for (auto& step : steps)
 		{
@@ -59,8 +59,9 @@ namespace tryn::gfx
 			step.Accept(probe);
 		}
 	}
-	VertexLayout& TechniqueBase::ExtractLayoutFromMaterial(Material& mat)
-    {
-		return mat.vLayout;
-    }
+
+	VertexLayout TechniqueBase::GetVertexLayout() const
+	{
+		return *pVertexLayout;
+	}
 }

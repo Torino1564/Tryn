@@ -24,7 +24,7 @@ namespace tryn::gfx
 	{
 	public:
 
-		static std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, class Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skeleton = false);
+		static std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, const class Material& material, const IGraphics& gfx, const std::string& path, bool instanced = false, bool skeleton = false);
 
 		template <typename T>
 		static bool RegisterTechnique(utl::UUID_t uuid)
@@ -56,9 +56,10 @@ namespace tryn::gfx
 		void Submit(const IGraphics& gfx, Drawable* parent);
 		void Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instancedParent);
 		void Accept(class TechniqueProbe& probe);
-		virtual std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, bool instanced, bool skinned) = 0;
+		virtual std::shared_ptr<TechniqueBase> ConstructDerived(const Material& material, const IGraphics& gfx, const std::string& path, bool instanced, bool skinned) = 0;
+		class VertexLayout GetVertexLayout() const;
 	protected:
-		static class VertexLayout& ExtractLayoutFromMaterial(class Material& mat);
+		std::unique_ptr<VertexLayout> pVertexLayout;
 		std::string name;
 		std::vector<Step> steps;
 	};
@@ -72,7 +73,7 @@ namespace tryn::gfx
 			:
 		TechniqueBase(name) {}
 
-		std::shared_ptr<TechniqueBase> ConstructDerived(class Material& material, const aiMaterial& aiMaterial, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skinned = false) override;
+		std::shared_ptr<TechniqueBase> ConstructDerived(const Material& material, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skinned = false) override;
 		static constexpr auto GetUUID();
 
 	protected:
@@ -83,10 +84,10 @@ namespace tryn::gfx
 	};
 
 	template <class T>
-	std::shared_ptr<TechniqueBase> Technique<T>::ConstructDerived(Material& material, const aiMaterial& aiMaterial,
+	std::shared_ptr<TechniqueBase> Technique<T>::ConstructDerived(const Material& material,
 		const IGraphics& gfx, const std::string& path, const bool instanced, const bool skinned)
 	{
-		return std::make_shared<T>(material, aiMaterial, gfx, path, instanced, skinned);
+		return std::make_shared<T>(material, gfx, path, instanced, skinned);
 	}
 
 	template <class T>

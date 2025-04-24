@@ -21,17 +21,16 @@ namespace tryn::gfx
 	{
 	}
 
-	Flat::Flat(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& path, bool instanced, bool skinned)
+	Flat::Flat(const Material& material, const IGraphics& gfx, const std::string& path, const bool instanced, const bool skinned)
 		:
 		Technique("Flat")
 	{
-		auto shaderRootPath = gfx.GetShaderRootPath();
+		auto shaderRootPath = IGraphics::GetShaderRootPath();
 
 		std::string shaderCode = "Flat";
 		aiString tempFileName;
 
-
-		auto& vLayout = this->ExtractLayoutFromMaterial(material);
+		auto& vLayout = *pVertexLayout;
 
 		// Common
 		vLayout.AppendElement(VertexLayout::Position3D);
@@ -69,30 +68,23 @@ namespace tryn::gfx
 			if ((*buf)["materialColor"].Exists())
 			{
 				auto& param = (*buf)["materialColor"].Get<glm::vec3>();
-				aiColor3D color = { 0.45f,0.45f,0.85f };
-				aiMat.Get(AI_MATKEY_COLOR_DIFFUSE, color);
-				param = reinterpret_cast<glm::vec3&>(color);
+				param = material.GetAttribute<glm::vec3>(AttributeType::DiffuseColor);
 			}
 			if ((*buf)["specularColor"].Exists())
 			{
 				auto& param = (*buf)["specularColor"].Get<glm::vec3>();
-				aiColor3D color = { 0.18f,0.18f,0.18f };
-				aiMat.Get(AI_MATKEY_COLOR_SPECULAR, color);
-				param = reinterpret_cast<glm::vec3&>(color);
+				param = material.GetAttribute<glm::vec3>(AttributeType::SpecularColor);
+			}
+			if ((*buf)["specularGloss"].Exists())
+			{
+				auto& param = (*buf)["specularGloss"].Get<float>();
+				param = material.GetAttribute<float>(AttributeType::SpecularGloss);
 			}
 			if ((*buf)["specularWeight"].Exists())
 			{
 				auto& param = (*buf)["specularWeight"].Get<float>();
 				param = 1.0f;
 			}
-			if ((*buf)["specularGloss"].Exists())
-			{
-				auto& param = (*buf)["specularGloss"].Get<float>();
-				float gloss = 8.0f;
-				aiMat.Get(AI_MATKEY_SHININESS, gloss);
-				param = gloss;
-			}
-
 			step.AddBindable(std::move(buf));
 		}
 

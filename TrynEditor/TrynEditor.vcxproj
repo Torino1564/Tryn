@@ -104,13 +104,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="third\imgui-node-editor-0.9.3\crude_json.cpp" />
-    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_canvas.cpp" />
-    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_node_editor.cpp" />
-    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="third\TinyProcessLib\process.cpp" />
     <ClCompile Include="third\TinyProcessLib\process_unix.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -124,20 +117,8 @@
     <ClInclude Include="src\App\ScriptEditor\ScriptEditor.h" />
     <ClInclude Include="src\dll\Compiler.h" />
     <ClInclude Include="src\Engine\Engine.h" />
-    <ClInclude Include="third\imgui-node-editor-0.9.3\crude_json.h" />
-    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_bezier_math.h" />
-    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_canvas.h" />
-    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_extra_math.h" />
-    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_node_editor.h" />
-    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_node_editor_internal.h" />
     <ClInclude Include="third\reflect.hpp" />
     <ClInclude Include="third\TinyProcessLib\process.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="third\imgui-node-editor-0.9.3\imgui_bezier_math.inl" />
-    <None Include="third\imgui-node-editor-0.9.3\imgui_extra_math.inl" />
-    <None Include="third\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl" />
-    <None Include="third\imgui-node-editor-0.9.3\LICENSE" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

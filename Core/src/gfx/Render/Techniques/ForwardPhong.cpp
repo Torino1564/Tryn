@@ -1,7 +1,5 @@
 #include "TrynPCH.h"
 #include "ForwardPhong.h"
-#include <assimp/material.h>
-#include <assimp/StringUtils.h>
 #include <assimp/types.h>
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/gfx/Material.h>
@@ -12,7 +10,7 @@
 #include <Core/src/gfx/Bindables/PixelShader.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>
 #include <Core/src/gfx/Bindables/Sampler.h>
-#include <assimp/texture.h>
+
 
 namespace tryn::gfx
 {
@@ -22,16 +20,16 @@ namespace tryn::gfx
 	{
 	}
 
-	ForwardPhong::ForwardPhong(Material& material, const aiMaterial& aiMat, const IGraphics& gfx, const std::string& rootPath, bool instanced, bool skinned)
+	ForwardPhong::ForwardPhong(const Material& material, const IGraphics& gfx, const std::string& rootPath, bool instanced, bool skinned)
 		:
 		Technique("ForwardPhong")
 	{
-		auto shaderRootPath = gfx.GetShaderRootPath();
+		auto shaderRootPath = tryn::gfx::IGraphics::GetShaderRootPath();
 
 		std::string shaderCode = "Phong";
 		aiString tempFileName;
 
-		auto& vLayout = this->ExtractLayoutFromMaterial(material);
+		auto& vLayout = *pVertexLayout;
 
 		// Common
 		vLayout.AppendElement(VertexLayout::Position3D);
@@ -47,28 +45,19 @@ namespace tryn::gfx
 		// Albedo
 		{
 			bool hasAlpha = false;
-			if (aiMat.GetTexture(aiTextureType_DIFFUSE, 0, &tempFileName) == aiReturn_SUCCESS)
+			if (material.HasTexture(TextureType::Diffuse))
 			{
 				isTextured = true;
 				shaderCode += "Tex";
 				vLayout.AppendElement(VertexLayout::UV);
-				std::shared_ptr<ITexture> tex;
-				{
-					if (auto pTexture = material.pScene->GetEmbeddedTexture(tempFileName.C_Str()))
-					{
-						tex = ITexture::Resolve(gfx, *pTexture, 0);
-					}
-					else
-					{
-						tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 0);
-					}
-				}
-				if (tex->HasAlpha())
+				auto pTexture = material.GetTexture(TextureType::Diffuse);
+				if (pTexture->HasAlpha())
 				{
 					hasAlpha = true;
 					shaderCode += "Msk";
 				}
-				step.AddBindable(std::move(tex));
+				auto pTextureBindable = ITexture::Resolve(gfx, pTexture, 0);
+				step.AddBindable(std::move(pTextureBindable));
 			}
 			else
 			{
@@ -79,24 +68,15 @@ namespace tryn::gfx
 		}
 		// Specular
 		{
-			if (aiMat.GetTexture(aiTextureType_SPECULAR, 0, &tempFileName) == aiReturn_SUCCESS)
+			if (material.HasTexture(TextureType::Specular))
 			{
 				isTextured = true;
 				shaderCode += "Spc";
 				vLayout.AppendElement(VertexLayout::UV);
-				std::shared_ptr<ITexture> tex;
-				{
-					if (auto pTexture = material.pScene->GetEmbeddedTexture(tempFileName.C_Str()))
-					{
-						tex = ITexture::Resolve(gfx, *pTexture, 1);
-					}
-					else
-					{
-						tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 1);
-					}
-				}
-				usesGlossAlphaChannel = tex->HasAlpha();
-				step.AddBindable(std::move(tex));
+				auto pTexture = material.GetTexture(TextureType::Specular);
+				usesGlossAlphaChannel = pTexture->HasAlpha();
+				auto pTextureBindable = ITexture::Resolve(gfx, pTexture, 1);
+				step.AddBindable(std::move(pTextureBindable));
 
 				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Bool, "useGlossAlpha"));
 				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Bool, "useSpecularMap"));
@@ -107,25 +87,16 @@ namespace tryn::gfx
 		}
 		// Normal
 		{
-			if (aiMat.GetTexture(aiTextureType_NORMALS, 0, &tempFileName) == aiReturn_SUCCESS)
+			if (material.HasTexture(TextureType::Normal))
 			{
 				isTextured = true;
 				shaderCode += "Nrm";
 				vLayout.AppendElement(VertexLayout::UV);
 				vLayout.AppendElement(VertexLayout::Tangent);
 				vLayout.AppendElement(VertexLayout::Bitangent);
-				std::shared_ptr<ITexture> tex;
-				{
-					if (auto pTexture = material.pScene->GetEmbeddedTexture(tempFileName.C_Str()))
-					{
-						tex = ITexture::Resolve(gfx, *pTexture, 2);
-					}
-					else
-					{
-						tex = ITexture::Resolve(gfx, rootPath + tempFileName.C_Str(), 2);
-					}
-				}
-				step.AddBindable(std::move(tex));
+				auto pTexture = material.GetTexture(TextureType::Normal);
+				auto pTextureBindable = ITexture::Resolve(gfx, pTexture, 2);
+				step.AddBindable(std::move(pTextureBindable));
 				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Bool, "useNormalMap"));
 				cbLayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Float, "normalMapWeight"));
 			}
@@ -150,9 +121,7 @@ namespace tryn::gfx
 			if ((*buf)["materialColor"].Exists())
 			{
 				auto& param = (*buf)["materialColor"].Get<glm::vec3>();
-				aiColor3D color = { 0.45f,0.45f,0.85f };
-				aiMat.Get(AI_MATKEY_COLOR_DIFFUSE, color);
-				param = reinterpret_cast<glm::vec3&>(color);
+				param = material.GetAttribute<glm::vec3>(AttributeType::DiffuseColor);
 			}
 			if ((*buf)["useGlossAlpha"].Exists())
 			{
@@ -167,9 +136,7 @@ namespace tryn::gfx
 			if ((*buf)["specularColor"].Exists())
 			{
 				auto& param = (*buf)["specularColor"].Get<glm::vec3>();
-				aiColor3D color = { 0.18f,0.18f,0.18f };
-				aiMat.Get(AI_MATKEY_COLOR_SPECULAR, color);
-				param = reinterpret_cast<glm::vec3&>(color);
+				param = material.GetAttribute<glm::vec3>(AttributeType::SpecularColor);
 			}
 			if ((*buf)["specularWeight"].Exists())
 			{
@@ -179,9 +146,7 @@ namespace tryn::gfx
 			if ((*buf)["specularGloss"].Exists())
 			{
 				auto& param = (*buf)["specularGloss"].Get<float>();
-				float gloss = 8.0f;
-				aiMat.Get(AI_MATKEY_SHININESS, gloss);
-				param = gloss;
+				param = material.GetAttribute<float>(AttributeType::SpecularGloss);
 			}
 			if ((*buf)["useNormalMap"].Exists())
 			{

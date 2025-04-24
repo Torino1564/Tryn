@@ -11,14 +11,17 @@
 #include "Texture.h"
 #include "TexturePool.h"
 #include "win/gltfSDK.h"
+#include <GLTFSDK/ExtensionsKHR.h>
 
 namespace tryn::gfx
 {
-	Material Material::MakeDefault(const IGraphics& gfx)
+	std::shared_ptr<Material> Material::MakeDefault(const IGraphics& gfx)
 	{
 		static const aiMaterial emptyMat = {};
 		static const std::filesystem::path emptyPath = {};
-		return Make<ForwardPhong>(gfx, emptyMat, emptyPath);
+		static constexpr std::array uuidList = { ZT_TYPE_UUID(ForwardPhong) };
+		static auto defaultMat = std::make_shared<Material>(gfx, emptyMat, emptyPath, uuidList);
+		return defaultMat;
 	}
 
 	Material::Material(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path,
@@ -27,16 +30,101 @@ namespace tryn::gfx
 	{
 		const auto rootPath = path.parent_path().string() + "\\";
 
+		// Add textures
+		aiString tempFileName;
+
+		// Diffuse
+		if (material.GetTexture(aiTextureType_DIFFUSE, 0, &tempFileName) == aiReturn_SUCCESS)
+		{
+			std::shared_ptr<Texture> pTexture;
+			if (auto aiTexture = pScene->GetEmbeddedTexture(tempFileName.C_Str()))
+			{
+				pTexture = TexturePool::Resolve(*aiTexture);
+			}
+			else
+			{
+				pTexture = TexturePool::Resolve(rootPath + tempFileName.C_Str());
+			}
+			textures.insert({ TextureType::Diffuse, pTexture });
+		}
+
+		// Normal
+		if (material.GetTexture(aiTextureType_NORMALS, 0, &tempFileName) == aiReturn_SUCCESS)
+		{
+			std::shared_ptr<Texture> pTexture;
+			if (auto aiTexture = pScene->GetEmbeddedTexture(tempFileName.C_Str()))
+			{
+				pTexture = TexturePool::Resolve(*aiTexture);
+			}
+			else
+			{
+				pTexture = TexturePool::Resolve(rootPath + tempFileName.C_Str());
+			}
+			textures.insert({ TextureType::Normal, pTexture });
+		}
+
+		// Specular
+		if (material.GetTexture(aiTextureType_SPECULAR, 0, &tempFileName) == aiReturn_SUCCESS)
+		{
+			std::shared_ptr<Texture> pTexture;
+			if (auto aiTexture = pScene->GetEmbeddedTexture(tempFileName.C_Str()))
+			{
+				pTexture = TexturePool::Resolve(*aiTexture);
+			}
+			else
+			{
+				pTexture = TexturePool::Resolve(rootPath + tempFileName.C_Str());
+			}
+			textures.insert({ TextureType::Specular, pTexture });
+		}
+
+		// Specular
+		if (material.GetTexture(aiTextureType_EMISSIVE, 0, &tempFileName) == aiReturn_SUCCESS)
+		{
+			std::shared_ptr<Texture> pTexture;
+			if (auto aiTexture = pScene->GetEmbeddedTexture(tempFileName.C_Str()))
+			{
+				pTexture = TexturePool::Resolve(*aiTexture);
+			}
+			else
+			{
+				pTexture = TexturePool::Resolve(rootPath + tempFileName.C_Str());
+			}
+			textures.insert({ TextureType::Emissive, pTexture });
+		}
+
+		// Add Attributes
+		// Diffuse Color
+		{
+			aiColor3D color = { 0.45f,0.45f,0.85f };
+			material.Get(AI_MATKEY_COLOR_DIFFUSE, color);
+			attributes.insert({ AttributeType::DiffuseColor, Attribute::Make<glm::vec3>({color.r, color.g, color.b}) });
+		}
+
+		// Specular Color
+		{
+			aiColor3D color = { 0.18f,0.18f,0.18f };
+			material.Get(AI_MATKEY_COLOR_SPECULAR, color);
+			attributes.insert({ AttributeType::SpecularColor, Attribute::Make<glm::vec3>({color.r, color.g, color.b}) });
+		}
+
+		// Specular Gloss
+		{
+			float gloss = 8.0f;
+			material.Get(AI_MATKEY_SHININESS, gloss);
+			attributes.insert({ AttributeType::SpecularGloss, Attribute::Make<float>(gloss)});
+		}
+		
+
 		if (techniqueUUIDs.size() == 0)
 		{
-			AddTechnique(ZT_TYPE_UUID(ForwardPhong), gfx, material, rootPath, instanced, skinned);
+			AddTechnique(ZT_TYPE_UUID(ForwardPhong), gfx, rootPath, instanced, skinned);
 		}
 
 		for (auto techniqueUUID : techniqueUUIDs)
 		{
-			AddTechnique(techniqueUUID, gfx, material, rootPath, instanced, skinned);
+			AddTechnique(techniqueUUID, gfx, rootPath, instanced, skinned);
 		}
-
 	}
 
 	Material::Material(const IGraphics& gfx, const Microsoft::glTF::Material& material,
@@ -62,91 +150,126 @@ namespace tryn::gfx
 			{
 				auto& emissiveTexture = document.textures[emissiveTextureId];
 				auto& img = document.images[emissiveTexture.imageId];
-				auto bufferView = document.bufferViews[img.bufferViewId];
 				auto imgdata = context.pReader->ReadBinaryData(document, img);
 			
-				GLTFTextureData data = {.data = std::move(imgdata), .name = filename + "emissiveTexture"};
+				GLTFTextureData data = {.data = std::move(imgdata), .name = img.uri };
 				auto tex = TexturePool::Resolve(data);
 				// Load Texture
-				textures.insert({"emissiveTexture", tex});
+				textures.insert({TextureType::Emissive, tex});
 			}
 
 			if (!normalTextureId.empty())
 			{
 				auto& normalTexture = document.textures[normalTextureId];
 				auto& img = document.images[normalTexture.imageId];
-				auto bufferView = document.bufferViews[img.bufferViewId];
 				auto imgdata = context.pReader->ReadBinaryData(document, img);
 			
-				GLTFTextureData data = {.byteSize = imgdata.size(), .data = std::move(imgdata), .name = filename + "normalTexture" };
+				GLTFTextureData data = {.byteSize = imgdata.size(), .data = std::move(imgdata), .name = img.uri };
 				auto tex = TexturePool::Resolve(data);
 				// Load Texture
-				textures.insert({"normalTexture", tex});
+				textures.insert({TextureType::Normal, tex});
 			}
 
 			if (!occlusionTextureId.empty())
 			{
 				auto& occlusionTexture = document.textures[occlusionTextureId];
 				auto& img = document.images[occlusionTexture.imageId];
-				auto bufferView = document.bufferViews[img.bufferViewId];
 				auto imgdata = context.pReader->ReadBinaryData(document, img);
 
-				GLTFTextureData data = { .byteSize = imgdata.size(), .data = std::move(imgdata), .name = filename + "occlusionTexture" };
+				GLTFTextureData data = { .byteSize = imgdata.size(), .data = std::move(imgdata), .name = img.uri };
 				auto tex = TexturePool::Resolve(data);
 				// Load Texture
-				textures.insert({ "occlusionTexture", tex });
+				textures.insert({TextureType::Occlussion, tex });
 			}
 
 			if (!metallicRoughnessTextureId.empty())
 			{
 				auto& metallicRoughnessTexture = document.textures[metallicRoughnessTextureId];
 				auto& img = document.images[metallicRoughnessTexture.imageId];
-				auto bufferView = document.bufferViews[img.bufferViewId];
 				auto imgdata = context.pReader->ReadBinaryData(document, img);
 
-				GLTFTextureData data = { .byteSize = imgdata.size(), .data = std::move(imgdata), .name = filename + "metallicRoughnessTexture" };
+				GLTFTextureData data = { .byteSize = imgdata.size(), .data = std::move(imgdata), .name = img.uri };
 				auto tex = TexturePool::Resolve(data);
 				// Load Texture
-				textures.insert({ "metallicRoughnessTexture", tex });
+				textures.insert({TextureType::MetallicRoughness, tex });
 			}
 
 			if (!baseColorTextureId.empty())
 			{
 				auto& baseColorTexture = document.textures[baseColorTextureId];
 				auto& img = document.images[baseColorTexture.imageId];
-				auto bufferView = document.bufferViews[img.bufferViewId];
 				auto imgdata = context.pReader->ReadBinaryData(document, img);
 
-				GLTFTextureData data = { .byteSize = imgdata.size(), .data = std::move(imgdata), .name = filename + "baseColorTexture" };
+				GLTFTextureData data = { .byteSize = imgdata.size(), .data = std::move(imgdata), .name = img.uri };
 				auto tex = TexturePool::Resolve(data);
 				// Load Texture
-				textures.insert({ "baseColorTexture", tex });
+				textures.insert({TextureType::MetallicRoughnessBaseColor, tex });
 			}
 		}
 
-		// Add Attributes
+		// TODO: Add mode things here regarding KHR Extensions
 
-		// diffuse color
+		// KHR Extensions
+		if (material.HasExtension<Microsoft::glTF::KHR::Materials::PBRSpecularGlossiness>())
 		{
-			auto color = material.metallicRoughness.baseColorFactor.AsColor3();
-			attributes.emplace("diffuseColor", Attribute::Make<glm::vec3>("diffuseColor", {color.r, color.g, color.b}));
+			auto& specGloss = material.GetExtension<Microsoft::glTF::KHR::Materials::PBRSpecularGlossiness>();
+
+			// Add attributes
+
+			// diffuse color
+			{
+				auto color = specGloss.diffuseFactor.AsColor3();
+				attributes.emplace(AttributeType::DiffuseColor, Attribute::Make<glm::vec3>({ color.r, color.g, color.b }));
+			}
+
+			// specular color
+			{
+				auto color = specGloss.specularFactor;
+				attributes.emplace(AttributeType::SpecularColor, Attribute::Make<glm::vec3>({ color.r, color.g, color.b }));
+			}
+
+			// specular gloss
+			{
+				auto gloss = specGloss.glossinessFactor;
+				attributes.emplace(AttributeType::SpecularGloss, Attribute::Make<float>(gloss));
+			}
+
+			// Add textures
+
+			if (auto diffuseTextureId = specGloss.diffuseTexture.textureId; !diffuseTextureId.empty())
+			{
+				auto diffuseTexture = document.textures[diffuseTextureId];
+				auto img = document.images[diffuseTexture.imageId];
+				auto imgdata = context.pReader->ReadBinaryData(document, img);
+				GLTFTextureData data = { .byteSize = imgdata.size(), .data = std::move(imgdata), .name = img.uri };
+				auto tex = TexturePool::Resolve(data);
+				// Load Texture
+				textures.insert({TextureType::Diffuse, tex });
+			}
+
+			if (auto specularTextureId = specGloss.specularGlossinessTexture.textureId; !specularTextureId.empty())
+			{
+				auto specularTexture = document.textures[specularTextureId];
+				auto img = document.images[specularTexture.imageId];
+				auto imgdata = context.pReader->ReadBinaryData(document, img);
+				GLTFTextureData data = { .byteSize = imgdata.size(), .data = std::move(imgdata), .name = img.uri };
+				auto tex = TexturePool::Resolve(data);
+				// Load Texture
+				textures.insert({TextureType::Specular, tex });
+			}
 		}
 
+		trynass(techniqueUUIDs.size() != 0).msg(L"Cannot create a material with no techniques!");
 
-		//if (techniqueUUIDs.size() == 0)
-		//{
-		//	AddTechnique(ZT_TYPE_UUID(ForwardPhong), gfx, material, rootPath, instanced, skinned);
-		//}
-
-		//for (auto techniqueUUID : techniqueUUIDs)
-		//{
-		//	AddTechnique(techniqueUUID, gfx, material, rootPath, instanced, skinned);
-		//}
+		for (auto techniqueUUID : techniqueUUIDs)
+		{
+			AddTechnique(techniqueUUID, gfx, rootPath, instanced, skinned);
+		}
 	}
 
 	VertexBuffer Material::ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton) const noexcept
 	{
-		return { vLayout, mesh, skeleton};
+		return { pTechniques[selectedTechnique]->GetVertexLayout(), mesh, skeleton};
 	}
 	IndexBuffer Material::ExtractIndices(const aiMesh& mesh) noexcept
 	{
@@ -165,12 +288,28 @@ namespace tryn::gfx
 
 	VertexBuffer Material::ExtractVertices(const Shape3D& mesh) const noexcept
 	{
-		return { vLayout, mesh};
+		return { pTechniques[selectedTechnique]->GetVertexLayout(), mesh};
 	}
 
-	IndexBuffer Material::ExtractIndices(const Shape3D& mesh) const noexcept
+	VertexBuffer Material::ExtractVertices(const Microsoft::glTF::Mesh& mesh,
+		const Microsoft::glTF::Document& document, std::optional<ani::Skeleton> skeleton) const noexcept
+	{
+		return { pTechniques[selectedTechnique]->GetVertexLayout(), mesh, document, skeleton};
+	}
+
+	IndexBuffer Material::ExtractIndices(const Shape3D& mesh) noexcept
 	{
 		return IndexBuffer(mesh.Indices());
+	}
+
+	IndexBuffer Material::ExtractIndices(const Microsoft::glTF::Mesh& mesh,
+		const Microsoft::glTF::Document& document) noexcept
+	{
+		const auto numIndices = document.accessors[mesh.primitives[0].indicesAccessorId].count;
+		std::vector<uint32_t> indices;
+		indices.resize(numIndices, 0);
+
+		return IndexBuffer{ indices };
 	}
 
 	std::vector<std::shared_ptr<TechniqueBase>> Material::GetTechniques() const noexcept
@@ -178,15 +317,26 @@ namespace tryn::gfx
 		return pTechniques;
 	}
 
-	void Material::AddTechnique(utl::UUID_t techniqueUUID, const IGraphics& gfx, const aiMaterial& material,
+	void Material::AddTechnique(utl::UUID_t techniqueUUID, const IGraphics& gfx,
 		const std::string& path, bool instanced, bool skinned)
 	{
-		pTechniques.push_back(TechniquePool::ConstructTechnique(techniqueUUID, *this, material, gfx, path,  instanced, skinned));
+		selectedTechnique = pTechniques.size();
+		pTechniques.push_back(TechniquePool::ConstructTechnique(techniqueUUID, *this, gfx, path,  instanced, skinned));
 	}
 
-	bool Material::HasAttribute(const std::string& name) const
+	bool Material::HasAttribute(const AttributeType attribute) const
 	{
-		return attributes.contains(name);
+		return attributes.contains(attribute);
+	}
+
+	bool Material::HasTexture(const TextureType texture) const
+	{
+		return textures.contains(texture);
+	}
+
+	std::shared_ptr<Texture> Material::GetTexture(const TextureType texture) const
+	{
+		return textures.at(texture);
 	}
 
 	Material::Material(const aiScene* pScene)

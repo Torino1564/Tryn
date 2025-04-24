@@ -2,6 +2,7 @@
 #include "Vertex.h"
 #include <Core/src/utl/Assert.h>
 #include <Core/src/gfx/Animation/Bone.h>
+#include <GLTFSDK/GLTF.h>
 
 #include "Shape.h"
 
@@ -71,31 +72,42 @@ namespace tryn::gfx
 	std::string VertexLayout::GetCode() const
 	{
 		std::stringstream ss;
-		for (auto& [element, index] : Elements)
+		for (const auto& element : Elements | std::views::keys)
 		{
 			ss << element.GetCode();
 		}
 		return ss.str();
 	}
 
-	VertexBuffer::VertexBuffer(VertexLayout layout_, size_t size)
+	VertexBuffer::VertexBuffer(VertexLayout layout_, const size_t size)
 	{
 		trynass_msg(layout_.GetElementCount() != 0 && layout_.Size() != 0, L"Attempted to create a VertexBuffer with an empty layout");
 		this->layout = std::move(layout_);
-		Resize(layout.Size() * size);
+		VertexBuffer::Resize(layout.Size() * size);
 		dirty = false;
 	}
 
 	VertexBuffer::VertexBuffer(VertexLayout layout, const aiMesh& mesh, ani::Skeleton* skeleton)
 	{
 		this->layout = std::move(layout);
-		Resize(mesh.mNumVertices);
+		VertexBuffer::Resize(mesh.mNumVertices);
 
 		for (unsigned int i = 0; i < this->layout.GetElementCount(); i++)
 		{
 			VertexLayout::Bridge<VertexLayout::Element::AttributeAiMeshFill>(this->layout.ResolveByIndex(i).GetType(), *this, mesh, skeleton);
 		}
 		dirty = false;
+	}
+
+	VertexBuffer::VertexBuffer(VertexLayout layout, const Microsoft::glTF::Mesh& mesh, const Microsoft::glTF::Document& doc, std::optional<ani::Skeleton> skeleton)
+	{
+		// TODO: Finish GLTF vertex data loading!!
+		this->layout = std::move(layout);
+		for (unsigned int i = 0; i < layout.GetElementCount(); i++)
+		{
+			auto type = layout.ResolveByIndex(i);
+			auto& ref = mesh.primitives[0].attributes;
+		}
 	}
 
 	VertexBuffer::VertexBuffer(VertexLayout layout, const Shape3D& shape)

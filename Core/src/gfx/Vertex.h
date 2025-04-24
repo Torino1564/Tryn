@@ -15,6 +15,13 @@
 #include <Core/src/gfx/VertexFormat.h>
 #include <Core/src/gfx/Shape.h>
 
+#include "Animation/BonedMesh.h"
+
+namespace Microsoft::glTF
+{
+	class Document;
+}
+
 namespace tryn::gfx::ani
 {
 	class Skeleton;
@@ -421,6 +428,7 @@ namespace tryn::gfx
 	public:
 		VertexBuffer(VertexLayout layout_, size_t size = 0);
 		VertexBuffer(VertexLayout layout, const aiMesh& mesh, ani::Skeleton* skeleton = nullptr);
+		VertexBuffer(VertexLayout layout, const Microsoft::glTF::Mesh& mesh,const Microsoft::glTF::Document& doc, std::optional<ani::Skeleton> skeleton = std::nullopt);
 		VertexBuffer(VertexLayout layout, const class Shape3D& mesh);
 		void Resize(size_t newSize) override;
 		constexpr std::size_t ByteSize() const noexcept override;

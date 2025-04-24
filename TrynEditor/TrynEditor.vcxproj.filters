@@ -21,18 +21,6 @@
     <ClCompile Include="src\App\EditorApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="third\imgui-node-editor-0.9.3\crude_json.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_canvas.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_node_editor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="third\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\dll\Compiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -62,24 +50,6 @@
     <ClInclude Include="src\App\EditorApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="third\imgui-node-editor-0.9.3\crude_json.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_bezier_math.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_canvas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_extra_math.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_node_editor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="third\imgui-node-editor-0.9.3\imgui_node_editor_internal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="third\reflect.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -95,17 +65,5 @@
     <ClInclude Include="src\App\Applet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="third\imgui-node-editor-0.9.3\imgui_bezier_math.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="third\imgui-node-editor-0.9.3\imgui_extra_math.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="third\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="third\imgui-node-editor-0.9.3\LICENSE" />
   </ItemGroup>
 </Project>
