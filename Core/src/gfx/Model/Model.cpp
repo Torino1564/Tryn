@@ -345,8 +345,14 @@ namespace tryn::gfx
 			tdata.scale.z = node.scale.z;
 		}
 
+		trylog.debug(utl::ToWide(std::format("Node [{}] has matrix = [{}]", node.name, tdata.hasMatrix)));
 
-		const auto transform = ScaleTranslation(tdata.hasMatrix ? tdata.matrix : glm::translate(glm::identity<glm::mat4>(), tdata.translation) * glm::toMat4(tdata.rotation) * glm::scale(glm::identity<glm::mat4>(), tdata.scale), scale);
+		if (node.name == "node_Object001_-5720")
+		{
+			throw Microsoft::glTF::GLTFException("TestExc");
+		}
+
+		const auto transform = ScaleTranslation((tdata.hasMatrix ? tdata.matrix : glm::translate(glm::identity<glm::mat4>(), tdata.translation) * glm::toMat4(tdata.rotation) * glm::scale(glm::identity<glm::mat4>(), tdata.scale)), scale);
 
 		std::vector<uint16_t> meshIds;
 
@@ -359,8 +365,15 @@ namespace tryn::gfx
 		{
 			if (root && skeletonNodeId == childId)
 				continue;
-			const auto childIndex = ParseNode(nextId, doc.nodes[childId], context, scale);
-			nodes[index].AddChildId(childIndex);
+			try
+			{
+				const auto childIndex = ParseNode(nextId, doc.nodes[childId], context, scale);
+				nodes[index].AddChildId(childIndex);
+			}
+			catch(Microsoft::glTF::GLTFException&)
+			{
+				trylog.debug(L"Skipped Node");
+			}
 		}
 
 		return index;
