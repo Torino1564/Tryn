@@ -2,9 +2,13 @@
 #include "Vertex.h"
 #include <Core/src/utl/Assert.h>
 #include <Core/src/gfx/Animation/Bone.h>
+#include <GLTFSDK/Document.h>
 #include <GLTFSDK/GLTF.h>
-
+#include <GLTFSDK/GLTFResourceReader.h>
+#include <GLTFSDK/MeshPrimitiveUtils.h>
 #include "Shape.h"
+#include "Core/src/utl/StatefulMeta/TemplateData.h"
+#include "win/gltfSDK.h"
 
 namespace tryn::gfx
 {
@@ -99,15 +103,157 @@ namespace tryn::gfx
 		dirty = false;
 	}
 
-	VertexBuffer::VertexBuffer(VertexLayout layout, const Microsoft::glTF::Mesh& mesh, const Microsoft::glTF::Document& doc, std::optional<ani::Skeleton> skeleton)
+	struct NothingBehaviour
 	{
-		// TODO: Finish GLTF vertex data loading!!
-		this->layout = std::move(layout);
-		for (unsigned int i = 0; i < layout.GetElementCount(); i++)
+		template <typename T>
+		void operator()(T&& element, VertexBuffer&, int) const
 		{
-			auto type = layout.ResolveByIndex(i);
-			auto& ref = mesh.primitives[0].attributes;
 		}
+	};
+
+	namespace {
+		template <Microsoft::glTF::AccessorType AccessorType, Microsoft::glTF::ComponentType ComponentType, typename ComponentTypeT, VertexLayout::VertexElement ElementType, typename SysTypeOverride = void, typename ExtraBehaviour = NothingBehaviour>
+	   void LoadBufferData(const gfx::WinGLTFLoaderContext& context, VertexBuffer& buffer, const Microsoft::glTF::MeshPrimitive& primitive, const std::string& accessorString, const int sameTypeIndex = 0)
+		{
+			using SysType = std::conditional_t<std::same_as<SysTypeOverride, void>, typename VertexLayout::VertexElementAttr<ElementType>::SysType, SysTypeOverride>;
+			using namespace Microsoft::glTF;
+			const auto& doc = *context.pDocument;
+			const auto& reader = *context.pReader;
+
+			trynass(primitive.HasAttribute(accessorString)).msg(utl::ToWide(std::format("The primitive does not have the requested attribute: [{}]", accessorString)));
+
+			const Accessor accessor = doc.accessors[primitive.GetAttributeAccessorId(accessorString)];
+
+			if (accessor.componentType != ComponentType)
+			{
+				throw GLTFException("Invalid component type for " + accessorString);
+			}
+
+			if (accessor.type != AccessorType)
+			{
+				throw GLTFException("Invalid accessor type for " + accessorString);
+			}
+
+			auto data = reader.ReadBinaryData<ComponentTypeT>(doc, accessor);
+			static constexpr uint8_t componentPerSysType = sizeof(SysType) / sizeof(ComponentTypeT);
+			buffer.Resize(data.size()/componentPerSysType);
+
+			for (unsigned int i = 0; i < data.size()/componentPerSysType; i++)
+			{
+				const auto& element = *reinterpret_cast<SysType*>(data.data() + i*componentPerSysType);
+				buffer[i].Attr<ElementType>(sameTypeIndex) = element;
+				static constexpr auto eb = ExtraBehaviour();
+				eb(element, buffer, i);
+			}
+		}
+	}
+
+	struct ComputeBitangentBehaviour
+	{
+		template <typename T>
+		void operator()(T&& tangent, VertexBuffer& buffer, const int i) const
+		{
+			const auto normal = buffer[i].Attr<VertexLayout::Normal>();
+			const auto bitangent = glm::cross(normal, glm::vec3{ tangent.x, tangent.y, tangent.z }) * tangent.w;
+			buffer[i].Attr<VertexLayout::Bitangent>() = bitangent;
+		}
+	};
+
+	VertexBuffer::VertexBuffer(VertexLayout layout_, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::optional<ani::Skeleton> skeleton)
+	{
+		using namespace Microsoft::glTF;
+		this->layout = std::move(layout_);
+		auto& doc = *context.pDocument;
+		auto& reader = *context.pReader;
+
+		uint8_t uvCounter = 0;
+		bool computedBitangents = false;
+		const auto elCount = layout.GetElementCount();
+		for (unsigned int i = 0; i < elCount; i++)
+		{
+			switch (auto type = layout.ResolveByIndex(i).GetType())
+			{
+			case VertexLayout::Position3D:
+				{
+					LoadBufferData<AccessorType::TYPE_VEC3, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Position3D>(context, *this, primitive, ACCESSOR_POSITION);
+					break;
+				}
+			case VertexLayout::Position2D:
+				{
+					LoadBufferData<AccessorType::TYPE_VEC2, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Position2D>(context, *this, primitive, ACCESSOR_POSITION);
+					break;
+				}
+			case VertexLayout::Tangent:
+				{
+					try
+					{
+						LoadBufferData<AccessorType::TYPE_VEC4, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Tangent, glm::vec4, ComputeBitangentBehaviour>(context, *this, primitive, ACCESSOR_TANGENT);
+						computedBitangents = true;
+					}
+					catch (GLTFException&)
+					{
+						LoadBufferData<AccessorType::TYPE_VEC3, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Tangent>(context, *this, primitive, ACCESSOR_TANGENT);
+					}
+					break;
+				}
+			case VertexLayout::Bitangent:
+				{
+					trynass(computedBitangents == true);
+					break;
+				}
+			case VertexLayout::Normal:
+				{
+					LoadBufferData<AccessorType::TYPE_VEC3, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Normal>(context, *this, primitive, ACCESSOR_NORMAL);
+					break;
+				}
+			case VertexLayout::UV:
+				{
+					std::string accessorString;
+					if (uvCounter == 0)
+					{
+						accessorString = ACCESSOR_TEXCOORD_0;
+					}
+					else
+					{
+						accessorString = ACCESSOR_TEXCOORD_1;
+					}
+					LoadBufferData<AccessorType::TYPE_VEC2, ComponentType::COMPONENT_FLOAT, float, VertexLayout::UV>(context, *this, primitive, accessorString, uvCounter++);
+					break;
+				}
+			case VertexLayout::Char4Color:
+				{
+					LoadBufferData<AccessorType::TYPE_UNKNOWN, ComponentType::COMPONENT_UNSIGNED_SHORT, char, VertexLayout::Char4Color>(context, *this, primitive, ACCESSOR_COLOR_0);
+					break;
+				}
+			case VertexLayout::Float3Color:
+				{
+					LoadBufferData<AccessorType::TYPE_VEC3, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Float3Color>(context, *this, primitive, ACCESSOR_COLOR_0);
+					break;
+				}
+			case VertexLayout::Float4Color:
+			{
+				LoadBufferData<AccessorType::TYPE_VEC4, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Float3Color>(context, *this, primitive, ACCESSOR_COLOR_0);
+				break;
+			}
+			case VertexLayout::BoneWeights:
+				{
+					// TODO
+					LoadBufferData<AccessorType::TYPE_VEC4, ComponentType::COMPONENT_FLOAT, float, VertexLayout::BoneWeights>(context, *this, primitive, ACCESSOR_WEIGHTS_0);
+					break;
+				}
+			case VertexLayout::BoneIds:
+			{
+				LoadBufferData<AccessorType::TYPE_UNKNOWN, ComponentType::COMPONENT_UNSIGNED_INT, unsigned int, VertexLayout::BoneIds>(context, *this, primitive, ACCESSOR_JOINTS_0);
+				break;
+			}
+			case VertexLayout::Unknown:
+			{
+				throw GLTFException("Unknown Vertex Element!");
+				break;
+			}
+			}
+		}
+		dirty = false;
 	}
 
 	VertexBuffer::VertexBuffer(VertexLayout layout, const Shape3D& shape)

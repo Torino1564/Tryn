@@ -2,6 +2,8 @@
 #include "Render/Technique.h"
 #include <core/src/gfx/Bindables/TransformCBuf.h>
 
+#include "Core/third/glm/ext/matrix_transform.hpp"
+
 struct aiMesh;
 
 namespace tryn::gfx
@@ -14,8 +16,8 @@ namespace tryn::gfx
 		virtual ~Drawable() = default;
 
 		void Draw(const IGraphics& gfx , const glm::mat4& transform);
-		void Submit(const IGraphics& gfx, const glm::mat4& transform);
-		void Submit(const IGraphics& gfx, std::span<const glm::mat4> transforms, InstancedModelParent& parent);
+		virtual void Submit(const IGraphics& gfx, const glm::mat4& transform);
+		virtual void Submit(const IGraphics& gfx, std::span<const glm::mat4> transforms, InstancedModelParent& parent);
 		void BindBase() const;
 		void BindBase(const IContext& context) const;
 		void BindExtraBinds();
@@ -29,7 +31,6 @@ namespace tryn::gfx
 		[[nodiscard]] glm::mat4 GetTransformMatrix() const;
 		[[nodiscard]] std::uint16_t GetID() const;
 
-	protected:
 		Material& GetSelectedMaterial() const;
 		virtual void ExtraSubmitBehavior() {}
 		std::array<IBindable*, 10> extraBindPtrs;
@@ -41,6 +42,6 @@ namespace tryn::gfx
 		std::uint16_t ID = 0;
 		std::vector<std::shared_ptr<Material>> pMaterials;
 		unsigned int selectedMaterial = 0;
-		glm::mat4 transform = {};
+		glm::mat4 transform = glm::identity<glm::mat4>();
 	};
 }

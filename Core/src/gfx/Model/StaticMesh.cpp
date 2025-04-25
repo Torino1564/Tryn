@@ -68,7 +68,7 @@ namespace tryn::gfx
 		this->selectedMaterial = pMaterials.size() - 1;
 	}
 
-	StaticMesh::StaticMesh(const IGraphics& gfx, const Microsoft::glTF::Mesh& mesh, const Microsoft::glTF::Document& document, std::string_view tag,
+	StaticMesh::StaticMesh(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::string_view tag,
 		std::shared_ptr<Material> pMaterial, glm::vec3 scale, std::optional<std::uint16_t> meshID)
 	{
 		auto material = pMaterial ? pMaterial : Material::MakeDefault(gfx);
@@ -83,12 +83,12 @@ namespace tryn::gfx
 		}
 
 		ID = meshID.value_or(0);
-		auto vertexBuffer = material->ExtractVertices(mesh, document);
+		auto vertexBuffer = material->ExtractVertices(primitive, context);
 		vertexBuffer.SetClean();
-		const auto indices = material->ExtractIndices(mesh, document);
+		const auto indices = material->ExtractIndices(primitive, context);
 
 		indexCount = static_cast<uint32_t>(indices.Size());
-
+		
 		pVertexBuffer = IVertexBuffer::Resolve(gfx, std::make_shared<VertexBuffer>(std::move(vertexBuffer)), this->tag);
 		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<IndexBuffer>(std::move(indices)));
 		pTopology = IPrimitiveTopology::Resolve(gfx);

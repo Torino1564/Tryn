@@ -29,7 +29,7 @@ Texture2D norm : register(t2);
 
 SamplerState splr : register(s0);
 
-float4 main(const float3 viewPos : POSITION, float3 viewNormal : NORMAL, const float3 viewTangent : TANGENT, const float3 viewBitangent : BITANGENT, const float2 tc : Texcoord, const float4 pos : SV_POSITION) : SV_TARGET
+float4 main(const float3 viewPos : POSITION, float3 viewNormal : NORMAL, const float3 viewTangent : TANGENT, const float3 viewBitangent : BITANGENT, const float2 tc : Texcoord) : SV_TARGET
 {
     const float4 dtex = tex.Sample(splr, tc);
 #ifdef MASK

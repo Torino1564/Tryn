@@ -12,6 +12,7 @@
 #include "TexturePool.h"
 #include "win/gltfSDK.h"
 #include <GLTFSDK/ExtensionsKHR.h>
+#include <GLTFSDK/MeshPrimitiveUtils.h>
 
 namespace tryn::gfx
 {
@@ -291,10 +292,10 @@ namespace tryn::gfx
 		return { pTechniques[selectedTechnique]->GetVertexLayout(), mesh};
 	}
 
-	VertexBuffer Material::ExtractVertices(const Microsoft::glTF::Mesh& mesh,
-		const Microsoft::glTF::Document& document, std::optional<ani::Skeleton> skeleton) const noexcept
+	VertexBuffer Material::ExtractVertices(const Microsoft::glTF::MeshPrimitive& primitive,
+		const gfx::WinGLTFLoaderContext& context, std::optional<ani::Skeleton> skeleton) const noexcept
 	{
-		return { pTechniques[selectedTechnique]->GetVertexLayout(), mesh, document, skeleton};
+		return { pTechniques[selectedTechnique]->GetVertexLayout(), primitive, context, skeleton};
 	}
 
 	IndexBuffer Material::ExtractIndices(const Shape3D& mesh) noexcept
@@ -302,12 +303,10 @@ namespace tryn::gfx
 		return IndexBuffer(mesh.Indices());
 	}
 
-	IndexBuffer Material::ExtractIndices(const Microsoft::glTF::Mesh& mesh,
-		const Microsoft::glTF::Document& document) noexcept
+	IndexBuffer Material::ExtractIndices(const Microsoft::glTF::MeshPrimitive& primitive,
+		const gfx::WinGLTFLoaderContext& context) noexcept
 	{
-		const auto numIndices = document.accessors[mesh.primitives[0].indicesAccessorId].count;
-		std::vector<uint32_t> indices;
-		indices.resize(numIndices, 0);
+		const auto indices = Microsoft::glTF::MeshPrimitiveUtils::GetIndices32(*context.pDocument, *context.pReader, primitive);
 
 		return IndexBuffer{ indices };
 	}
@@ -317,8 +316,8 @@ namespace tryn::gfx
 		return pTechniques;
 	}
 
-	void Material::AddTechnique(utl::UUID_t techniqueUUID, const IGraphics& gfx,
-		const std::string& path, bool instanced, bool skinned)
+	void Material::AddTechnique(const utl::UUID_t techniqueUUID, const IGraphics& gfx,
+		const std::string& path, const bool instanced, const bool skinned)
 	{
 		selectedTechnique = pTechniques.size();
 		pTechniques.push_back(TechniquePool::ConstructTechnique(techniqueUUID, *this, gfx, path,  instanced, skinned));

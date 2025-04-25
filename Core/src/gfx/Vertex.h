@@ -19,6 +19,7 @@
 
 namespace Microsoft::glTF
 {
+	struct MeshPrimitive;
 	class Document;
 }
 
@@ -64,6 +65,7 @@ struct BGRAColor
 
 namespace tryn::gfx
 {
+	class WinGLTFLoaderContext;
 	class VertexBuffer;
 
 	class VertexLayout
@@ -428,7 +430,7 @@ namespace tryn::gfx
 	public:
 		VertexBuffer(VertexLayout layout_, size_t size = 0);
 		VertexBuffer(VertexLayout layout, const aiMesh& mesh, ani::Skeleton* skeleton = nullptr);
-		VertexBuffer(VertexLayout layout, const Microsoft::glTF::Mesh& mesh,const Microsoft::glTF::Document& doc, std::optional<ani::Skeleton> skeleton = std::nullopt);
+		VertexBuffer(VertexLayout layout, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::optional<ani::Skeleton> skeleton = std::nullopt);
 		VertexBuffer(VertexLayout layout, const class Shape3D& mesh);
 		void Resize(size_t newSize) override;
 		constexpr std::size_t ByteSize() const noexcept override;

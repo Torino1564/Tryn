@@ -49,7 +49,6 @@ namespace tryn::gfx
 			{
 				isTextured = true;
 				shaderCode += "Tex";
-				vLayout.AppendElement(VertexLayout::UV);
 				auto pTexture = material.GetTexture(TextureType::Diffuse);
 				if (pTexture->HasAlpha())
 				{
@@ -72,7 +71,6 @@ namespace tryn::gfx
 			{
 				isTextured = true;
 				shaderCode += "Spc";
-				vLayout.AppendElement(VertexLayout::UV);
 				auto pTexture = material.GetTexture(TextureType::Specular);
 				usesGlossAlphaChannel = pTexture->HasAlpha();
 				auto pTextureBindable = ITexture::Resolve(gfx, pTexture, 1);
@@ -91,7 +89,6 @@ namespace tryn::gfx
 			{
 				isTextured = true;
 				shaderCode += "Nrm";
-				vLayout.AppendElement(VertexLayout::UV);
 				vLayout.AppendElement(VertexLayout::Tangent);
 				vLayout.AppendElement(VertexLayout::Bitangent);
 				auto pTexture = material.GetTexture(TextureType::Normal);
@@ -109,13 +106,15 @@ namespace tryn::gfx
 				vLayout.AppendElement(VertexLayout::BoneWeights);
 			}
 			auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (instanced ? "Inst" : "") + (skinned ? "Skn" : "") + "_VS.cso");
+			if (isTextured)
+			{
+				vLayout.AppendElement(VertexLayout::UV);
+				step.AddBindable(ISampler::Resolve(gfx));
+			}
 			step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 			step.AddBindable(std::move(pvs));
 			step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
-			if (isTextured)
-			{
-				step.AddBindable(ISampler::Resolve(gfx));
-			}
+
 			cbLayout.Solidify();
 			auto buf = IPxConstantBuffer::Resolve(gfx, std::move(cbLayout), 1);
 			if ((*buf)["materialColor"].Exists())

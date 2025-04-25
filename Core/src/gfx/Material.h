@@ -20,6 +20,7 @@ struct aiScene;
 
 namespace Microsoft::glTF
 {
+	struct MeshPrimitive;
 	class Document;
 	class Material;
 }
@@ -60,10 +61,10 @@ namespace tryn::gfx
 		static std::shared_ptr<Material> MakeDefault(const IGraphics& gfx);
 		VertexBuffer ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton = nullptr) const noexcept;
 		VertexBuffer ExtractVertices(const Shape3D& mesh) const noexcept;
-		VertexBuffer ExtractVertices(const Microsoft::glTF::Mesh& mesh, const Microsoft::glTF::Document& document, std::optional<ani::Skeleton> skeleton = std::nullopt) const noexcept;
+		VertexBuffer ExtractVertices(const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::optional<ani::Skeleton> skeleton = std::nullopt) const noexcept;
 		static IndexBuffer ExtractIndices(const aiMesh& mesh) noexcept;
 		static IndexBuffer ExtractIndices(const Shape3D& mesh) noexcept;
-		static IndexBuffer ExtractIndices(const Microsoft::glTF::Mesh& mesh, const Microsoft::glTF::Document& document) noexcept;
+		static IndexBuffer ExtractIndices(const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context) noexcept;
 		std::vector<std::shared_ptr<TechniqueBase>> GetTechniques() const noexcept;
 		void AddTechnique(utl::UUID_t techniqueUUID, const IGraphics& gfx, const std::string& path, bool instanced, bool skinned);
 		const aiScene* pScene;

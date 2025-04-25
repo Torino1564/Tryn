@@ -18,6 +18,9 @@
 #include <Core/src/gfx/win/gltfSDK.h>
 #include <GLTFSDK/Deserialize.h>
 
+#include "GLTFMesh.h"
+#include "Core/third/glm/gtx/quaternion.hpp"
+
 namespace tryn::gfx
 {
 	glm::mat4 ScaleTranslation(const glm::mat4& mat, const glm::vec3& scale)
@@ -153,7 +156,7 @@ namespace tryn::gfx
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
 		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
 		const auto transform = translation * rotation;
-		nodes[rootId].Submit(gfx, entityTransform, boneTransforms );
+		nodes[rootId].Submit(gfx, entityTransform * transform, boneTransforms );
 	}
 	void Model::SpawnControlWindow()
 	{
@@ -252,6 +255,24 @@ namespace tryn::gfx
 		return index;
 	}
 
+	class TransformData
+	{
+	public:
+		TransformData()
+		{
+			rotation[0] = rotation[1] = rotation[2] = rotation[3] = 0.0;
+			translation[0] = translation[1] = translation[2] = 0.0;
+			scale[0] = scale[1] = scale[2] = 1.0;
+		}
+
+		glm::quat rotation;
+		glm::vec3 translation;
+		glm::vec3 scale;
+		glm::mat4 matrix;
+
+		bool hasMatrix;
+	};
+
 	std::uint32_t Model::ParseNode(int& nextId, const Microsoft::glTF::Node& node, const WinGLTFLoaderContext& context, glm::vec3 scale, bool root)
 	{
 		auto& doc = *context.pDocument;
@@ -299,7 +320,33 @@ namespace tryn::gfx
 			}
 		}
 
-		const auto transform = ScaleTranslation(glm::make_mat4(node.matrix.values.data()), scale);
+		TransformData tdata;
+
+		Microsoft::glTF::TransformationType type = node.GetTransformationType();
+		tdata.hasMatrix = type == Microsoft::glTF::TRANSFORMATION_MATRIX;
+
+		if (tdata.hasMatrix)
+		{
+			tdata.matrix = glm::make_mat4(node.matrix.values.data());
+		}
+		else
+		{
+			tdata.rotation.x = node.rotation.x;
+			tdata.rotation.y = node.rotation.y;
+			tdata.rotation.z = node.rotation.z;
+			tdata.rotation.w = node.rotation.w;
+
+			tdata.translation.x = node.translation.x;
+			tdata.translation.y = node.translation.y;
+			tdata.translation.z = node.translation.z;
+
+			tdata.scale.x = node.scale.x;
+			tdata.scale.y = node.scale.y;
+			tdata.scale.z = node.scale.z;
+		}
+
+
+		const auto transform = ScaleTranslation(tdata.hasMatrix ? tdata.matrix : glm::translate(glm::identity<glm::mat4>(), tdata.translation) * glm::toMat4(tdata.rotation) * glm::scale(glm::identity<glm::mat4>(), tdata.scale), scale);
 
 		std::vector<uint16_t> meshIds;
 
@@ -414,13 +461,23 @@ namespace tryn::gfx
 				for (unsigned int i = 0; i < doc.meshes.Size(); i++)
 				{
 					auto& mesh = doc.meshes[i];
-					if (skeleton.has_value())
+					pMeshes.push_back(std::make_shared<GLTFMesh>(gfx, mesh, context, mesh.name, materials[std::atoi(mesh.primitives[0].materialId.c_str())], scale, meshCounter++));
+				}
+
+				// Set mesh Span
+				std::queue<Node*> q;
+				q.push(&nodes[rootId]);
+
+				while (!q.empty())
+				{
+					auto& current = *q.front();
+					q.pop();
+
+					current.SetMeshSpan({ pMeshes });
+
+					for (auto& childId : current.GetChildrenIds())
 					{
-						pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, materials[std::atoi(mesh.primitives[0].materialId.c_str())], mesh, mesh.name, skeleton.value(), scale, meshCounter++));
-					}
-					else
-					{
-						pMeshes.push_back(std::make_shared<StaticMesh>(gfx, mesh, doc, mesh.name, materials[std::atoi(mesh.primitives[0].materialId.c_str())], scale, meshCounter++));
+						q.push(&nodes[childId]);
 					}
 				}
 			};
