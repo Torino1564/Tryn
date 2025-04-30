@@ -45,11 +45,19 @@ namespace tryn::gfx
 		// Albedo
 		{
 			bool hasAlpha = false;
-			if (material.HasTexture(TextureType::Diffuse))
+			if (material.HasTexture(TextureType::Diffuse) || material.HasTexture(TextureType::MetallicRoughnessBaseColor))
 			{
 				isTextured = true;
 				shaderCode += "Tex";
-				auto pTexture = material.GetTexture(TextureType::Diffuse);
+				std::shared_ptr<Texture> pTexture;
+				try
+				{
+					pTexture = material.GetTexture(TextureType::Diffuse);
+				}
+				catch(std::exception& e)
+				{
+					pTexture = material.GetTexture(TextureType::MetallicRoughnessBaseColor);
+				}
 				if (pTexture->HasAlpha())
 				{
 					hasAlpha = true;
@@ -120,7 +128,7 @@ namespace tryn::gfx
 			if ((*buf)["materialColor"].Exists())
 			{
 				auto& param = (*buf)["materialColor"].Get<glm::vec3>();
-				param = material.GetAttribute<glm::vec3>(AttributeType::DiffuseColor);
+				param = material.GetAttributeOr<glm::vec3>(AttributeType::DiffuseColor, {0.45f, 0.45, 0.45f});
 			}
 			if ((*buf)["useGlossAlpha"].Exists())
 			{
@@ -135,7 +143,7 @@ namespace tryn::gfx
 			if ((*buf)["specularColor"].Exists())
 			{
 				auto& param = (*buf)["specularColor"].Get<glm::vec3>();
-				param = material.GetAttribute<glm::vec3>(AttributeType::SpecularColor);
+				param = material.GetAttributeOr<glm::vec3>(AttributeType::SpecularColor, {0.18f, 0.18f, 0.18f});
 			}
 			if ((*buf)["specularWeight"].Exists())
 			{
@@ -145,7 +153,7 @@ namespace tryn::gfx
 			if ((*buf)["specularGloss"].Exists())
 			{
 				auto& param = (*buf)["specularGloss"].Get<float>();
-				param = material.GetAttribute<float>(AttributeType::SpecularGloss);
+				param = material.GetAttributeOr<float>(AttributeType::SpecularGloss, 8.0f);
 			}
 			if ((*buf)["useNormalMap"].Exists())
 			{

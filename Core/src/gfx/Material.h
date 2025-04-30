@@ -76,6 +76,20 @@ namespace tryn::gfx
 			return att.Get<T>();
 		}
 
+		template <typename T>
+		T GetAttributeOr(const AttributeType attribute, T&& orValue) const
+		{
+			try
+			{
+				auto& att = attributes.at(attribute);
+				return att.Get<T>();
+			}
+			catch (std::exception& e)
+			{
+				return std::forward<T>(orValue);
+			}
+		}
+
 		bool HasAttribute(AttributeType attribute) const;
 		bool HasTexture(TextureType texture) const;
 		std::shared_ptr<class Texture> GetTexture(TextureType texture) const;

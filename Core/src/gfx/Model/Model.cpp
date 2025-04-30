@@ -331,10 +331,7 @@ namespace tryn::gfx
 		}
 		else
 		{
-			tdata.rotation.x = node.rotation.x;
-			tdata.rotation.y = node.rotation.y;
-			tdata.rotation.z = node.rotation.z;
-			tdata.rotation.w = node.rotation.w;
+			tdata.rotation = glm::quat(node.rotation.w, node.rotation.x, -node.rotation.z, node.rotation.y);
 
 			tdata.translation.x = node.translation.x;
 			tdata.translation.y = node.translation.y;
@@ -349,10 +346,14 @@ namespace tryn::gfx
 
 		if (node.name == "node_Object001_-5720")
 		{
-			throw Microsoft::glTF::GLTFException("TestExc");
+			trylog.debug(L"Node node_Object001_ - 5720");
+		}
+		if (node.name == "node_mesh_Adam_mask_-5716")
+		{
+			trylog.debug(L"node_mesh_Adam_mask_-5716");
 		}
 
-		const auto transform = ScaleTranslation((tdata.hasMatrix ? tdata.matrix : glm::translate(glm::identity<glm::mat4>(), tdata.translation) * glm::toMat4(tdata.rotation) * glm::scale(glm::identity<glm::mat4>(), tdata.scale)), scale);
+		const auto transform = tdata.hasMatrix ? glm::transpose(tdata.matrix) : glm::translate(glm::mat4(1.0f), tdata.translation) * glm::toMat4(tdata.rotation) * glm::scale(glm::mat4(1.0f), tdata.scale);
 
 		std::vector<uint16_t> meshIds;
 
