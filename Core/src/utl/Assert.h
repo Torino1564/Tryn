@@ -52,7 +52,7 @@ namespace tryn::utl
 #define ZT_TRYNASS_ACTIVE false
 #else
 #define ZT_TRYNASS_ACTIVE true
-#endif
+#endif	
 #endif
 
 #define trynass(expr) (!ZT_TRYNASS_ACTIVE || bool(expr)) ? void(0) : (void)tryn::utl::Assertion{ ZT_WSTR(expr), __FILEW__, __FUNCTIONW__, __LINE__ }

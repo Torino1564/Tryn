@@ -2267,6 +2267,12 @@
     <ClInclude Include="src\gfx\Model\GLTFMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\fsx\IBoundingBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fsx\BoundingBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">

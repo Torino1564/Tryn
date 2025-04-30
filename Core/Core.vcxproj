@@ -87,6 +87,8 @@
     <ClInclude Include="src\dbg\SourceIncludes.h" />
     <ClInclude Include="src\ecs\Component.h" />
     <ClInclude Include="src\ecs\SerializeLambda.h" />
+    <ClInclude Include="src\fsx\BoundingBox.h" />
+    <ClInclude Include="src\fsx\IBoundingBox.h" />
     <ClInclude Include="src\gfx\Attribute.h" />
     <ClInclude Include="src\gfx\Bindables\PrimitiveTopology.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11InputLayout.cpp" />
