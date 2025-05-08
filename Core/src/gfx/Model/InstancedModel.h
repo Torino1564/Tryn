@@ -15,8 +15,7 @@ namespace tryn::gfx
 
 	class InstancedModelParent
 	{
-		template <typename T> friend struct ser::TypeSerializer;
-		friend class InstancedModelChild;
+		friend void ser::Serialize(ser::StreamIO& io, gfx::InstancedModelParent* pData, bool binary, const std::string& name);
 	public:
 		InstancedModelParent(const gfx::IGraphics& gfx, std::string_view path, std::span<utl::UUID_t> techniqueUUIDs = {} ,glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint32_t> numInstances = std::nullopt);
 		~InstancedModelParent();
@@ -48,41 +47,11 @@ namespace tryn::gfx
 
 		std::uint16_t instanceID = {};
 		InstancedModelParent* pParentModel = nullptr;
-
-		struct Serializer : public tryn::ser::Serializer<InstancedModelChild>
-		{
-			static void Write(const tryn::ser::StreamWriter& streamWriter, const InstancedModelChild& data, const bool binary = true,
-			                  const std::string& name = "");
-
-			static InstancedModelChild Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, ser::ExtraDataPack* pExtraData = nullptr);
-
-			static void Read(InstancedModelChild& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, ser::ExtraDataPack* pExtraData = nullptr);
-		};
 	};
 }
 namespace tryn::ser
 {
-	template <typename T>
-		concept HasGfxPointer = requires (T t) {
-			std::same_as<decltype(t.pGfx), gfx::IGraphics*>;
-		};
-
-	template <typename Ptr>
-	concept PointerLike = std::is_pointer_v<Ptr> || requires (Ptr p) {
-    { *p };
-    { static_cast<bool>(p) };
-    { p.operator->() } -> std::convertible_to<decltype( &*p )>;
-};
-
-	template <typename T>
-	concept InstancedModelParentPointer = PointerLike<T> && std::is_same_v<std::remove_pointer_t<T>, gfx::InstancedModelParent> || std::is_same_v<std::remove_reference_t<decltype(*std::declval<T>())>, gfx::InstancedModelParent>;
-
-	template <>
-	struct TypeSerializer<std::unique_ptr<gfx::InstancedModelParent>>
-	{
-		static void Write(const StreamWriter& streamWriter, const std::unique_ptr<gfx::InstancedModelParent>& pData, const bool binary = true, const std::string& name = "");
-		static std::unique_ptr<gfx::InstancedModelParent> Read(const StreamReader& streamReader, const bool binary = true, ser::ExtraDataPack* pExtraData = nullptr);
-
-		static void Read(std::unique_ptr<gfx::InstancedModelParent>& data, const StreamReader& streamReader, const bool binary = true, ser::ExtraDataPack* = nullptr);
-	};
+	void Serialize(StreamIO& io, gfx::InstancedModelParent* pData, bool binary = true, const std::string& name = "");
+	void Serialize(StreamWriter& io, gfx::InstancedModelChild* pData, bool binary = true, const std::string& name = "");
+	void Serialize(StreamReader& io, gfx::InstancedModelChild* pData, bool binary = true, const std::string& name = "");
 }

@@ -399,30 +399,6 @@ namespace tryn::gfx
 		}
 	}
 
-	void Model::Serializer::Write(const tryn::ser::StreamWriter& streamWriter, const Model& data, const bool binary,
-		const std::string& name)
-	{
-		streamWriter.Serialize(data.name, binary, name);
-	}
-
-	Model Model::Serializer::Read(const tryn::ser::StreamReader& streamReader, const bool binary,
-	                              ser::ExtraDataPack* pExtraData)
-	{
-		trynass(pExtraData).msg(L"The SerializeReadComponentField functor requires extra data named pGfx!");
-
-		const IGraphics* pGfx = nullptr;
-		pExtraData->Get("pGfx").Get((const void*&)pGfx);
-
-		const auto name = streamReader.ReadSerialized<std::string>(binary, pExtraData);
-		return Model(*pGfx, name);
-	}
-
-	void Model::Serializer::Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary,
-		ser::ExtraDataPack* pExtraData)
-	{
-		// TODO
-	}
-
 	ani::BonedMesh* Model::GetMainMesh() const
 	{
 		trynass(this->skeleton.has_value());

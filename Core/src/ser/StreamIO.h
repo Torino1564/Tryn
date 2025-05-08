@@ -1,4 +1,5 @@
 #pragma once
+#include <d3d11.h>
 #include <Core/src/utl/Exception.h>
 #include "Serializer.h"
 #include <span>
@@ -10,34 +11,46 @@ class std::istringstream;
 namespace tryn::ser
 {
 	ZT_EX_DEF(StreamIOException);
-	
-	class StreamWriter
+
+	class StreamIO
 	{
 	public:
-		explicit StreamWriter(std::ostringstream& oss)
-			: oss(oss) {}
+		enum Type
+		{
+			Reader,
+			Writer
+		};
 
-		explicit StreamWriter(StreamWriter&&) noexcept : oss(oss) {}
+		StreamIO(const Type type) : type{type} {}
+
+		template <typename T>
+		void Field(T* pData, bool binary, const std::string& name);
+		virtual void GetAndFill(const std::string&, void*& pToFill) {}
+	private:
+		Type type;
+	};
+
+
+	class StreamWriter : public StreamIO
+	{
+	public:
+		explicit StreamWriter(std::shared_ptr<std::ostringstream> oss)
+			: StreamIO(Writer), oss(oss) {}
+
+		explicit StreamWriter(StreamWriter&& rhs) noexcept : StreamIO(Writer), oss(std::move(rhs.oss)) {}
 		StreamWriter& operator=(StreamWriter&& rhs) noexcept
 		{
 			oss = std::move(rhs.oss);
 			return *this;
 		}
+
 		template <typename T>
 		requires Serializable<T>
-		void Serialize(const T& data,const bool binary = true, const std::string& name = "") const
+		void Write(T* data, const bool binary = true, const std::string& name = "") const
 		{
-			if constexpr (HasSerializer<T>)
-			{
-				return T::Serializer::Write(*this, data, binary, name);
-			}
-			if constexpr (HasTypeSerializer<T>)
-			{
-				return TypeSerializer<T>::Write(*this, data, binary, name);
-			}
 			if constexpr (HasFunctionSerializer<T>)
 			{
-				return SerializeWrite(*this, data, binary, name);
+				return Serialize(*this, data, binary, name);
 			}
 			if constexpr (std::is_trivially_copyable_v<T>)
 			{
@@ -51,70 +64,37 @@ namespace tryn::ser
 
 		auto& GetStringStream() const
 		{
-			return oss;
+			return *oss;
 		}
 	private:
-		std::ostringstream& oss;
+		std::shared_ptr<std::ostringstream> oss;
 		void WriteBinary(const char* pData, unsigned size) const;
 	};
 
-	class StreamReader
+	class StreamReader : public StreamIO
 	{
 	public:
-		explicit StreamReader(std::istringstream& iss) : iss(iss){}
-		explicit StreamReader(StreamReader&&) noexcept : iss(iss) {}
+		explicit StreamReader(std::shared_ptr<std::istringstream>& iss) : StreamIO(Reader), iss(iss){}
+		explicit StreamReader(StreamReader&&) noexcept : StreamIO(Reader), iss(iss) {}
 		StreamReader& operator=(StreamReader&& rhs) noexcept
 		{
 			iss = std::move(rhs.iss);
 			return *this;
 		}
-		template <typename T>
-		requires Serializable<T> && !HasFunctionSerializer<T>
-		T ReadSerialized(const bool binary = true, ExtraDataPack* pExtraData = nullptr) const
-		{
-			if constexpr (HasSerializer<T>)
-			{
-				return T::Serializer::Read(*this, binary, pExtraData);
-			}
-			else if constexpr (HasTypeSerializer<T>)
-			{
-				return TypeSerializer<T>::Read(*this, binary, pExtraData);
-			}
-			else {
-				if (binary)
-				{
-					T newElement = {};
-					iss.read((char*)&newElement, sizeof(T));
-					return newElement;
-				}
-				else
-				{
-					return T{};
-				}
-			}
-		}
 
 		template <typename T>
 		requires Serializable<T>
-		void ReadSerialized(T& data, const bool binary = true, ExtraDataPack* pExtraData = nullptr) const
+		void Read(T* pData, const bool binary = true, const std::string& name = "") const
 		{
-			if constexpr (HasSerializer<T>)
+			if constexpr (HasFunctionSerializer<T>)
 			{
-				return T::Serializer::Read(data, *this, binary, pExtraData);
-			}
-			else if constexpr (HasTypeSerializer<T>)
-			{
-				return TypeSerializer<T>::Read(data, *this, binary, pExtraData);
-			}
-			else if constexpr (HasFunctionSerializer<T>)
-			{
-				return SerializeRead(*this, data, binary, pExtraData);
+				return Serialize(*this, pData, binary, name);
 			}
 			else
 			{
 				if (binary)
 				{
-					iss.read((char*)&data, sizeof(T));
+					iss->read((char*)pData, sizeof(T));
 				}
 				else
 				{
@@ -124,14 +104,29 @@ namespace tryn::ser
 		}
 
 		void ExtractExpression(const std::string& expression, std::span<char> pExtraChars = {}) const;
-
 		std::istringstream& GetStringStream() const;
+		void GetAndFill(const std::string&, void*& pToFill) override;
 
 	private:
-
 		void ReadBinary(char* pData, unsigned size) const;
-		std::istringstream& iss;
+		ExtraDataPack extraDataPack;
+		std::shared_ptr<std::istringstream> iss;
 	};
+
+	template <typename T>
+	void StreamIO::Field(T* pData, bool binary = true, const std::string& name = "")
+	{
+		if (type == Reader)
+		{
+			auto pReader = static_cast<StreamReader*>(this);
+			pReader->Read<T>(pData, binary, name);
+		}
+		else
+		{
+			auto pWriter = static_cast<StreamWriter*>(this);
+			pWriter->Write<T>(pData, binary, name);
+		}
+	}
 }
 
 #include "DefaultTypeSerializers.h"

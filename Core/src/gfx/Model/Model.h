@@ -70,17 +70,6 @@ namespace tryn::gfx
 		std::vector<std::shared_ptr<Mesh>> pMeshes = {};
 		friend class Serializer;
 		friend class Node;
-
-	public:
-		struct Serializer : public tryn::ser::Serializer<Model>
-		{
-			static void Write(const tryn::ser::StreamWriter& streamWriter, const Model& data, const bool binary = true,
-			                  const std::string& name = "");
-
-			static Model Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, ser::ExtraDataPack* pExtraData = nullptr);
-
-			static void Read(Model& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, ser::ExtraDataPack* pExtraData = nullptr);
-		};
 	};
 
 	template <typename... Techniques>

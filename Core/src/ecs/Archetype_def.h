@@ -18,7 +18,7 @@ namespace tryn::ecs
 	{
 		friend class Entity;
 		friend class ArchetypeManager;
-		template <typename T> friend struct ser::TypeSerializer;
+		friend void ser::Serialize(ser::StreamIO& io, Archetype* data, bool binary, const std::string& name);
 
 	public:
 		template <typename C>
@@ -102,13 +102,5 @@ namespace tryn::ecs
 
 namespace tryn::ser
 {
-	template <>
-	struct ser::TypeSerializer<ecs::Archetype *>
-	{
-		static void Write(const StreamWriter& streamWriter, ecs::Archetype* const& data, const bool binary = true, const std::string& name = "");
-
-		static ecs::Archetype* Read(const tryn::ser::StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr);
-
-		static void Read(ecs::Archetype*& data, const tryn::ser::StreamReader& streamReader, const bool binary = true, const ExtraDataPack* pExtraData = nullptr);
-	};
+	void Serialize(StreamIO& io, ecs::Archetype* data, bool binary = true, const std::string& name = "");
 }

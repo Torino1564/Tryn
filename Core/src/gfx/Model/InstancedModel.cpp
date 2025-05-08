@@ -113,49 +113,19 @@ namespace tryn::gfx
 	{
 		pParentModel->transforms[instanceID] = transformation;
 	}
-
-	void InstancedModelChild::Serializer::Write(const tryn::ser::StreamWriter& streamWriter,
-		const InstancedModelChild& data, const bool binary, const std::string& name)
-	{
-		streamWriter.Serialize(data.pParentModel, binary, name);
-	}
-
-	InstancedModelChild InstancedModelChild::Serializer::Read(const tryn::ser::StreamReader& streamReader,
-		const bool binary, ser::ExtraDataPack* pExtraData)
-	{
-		auto pParentModel = streamReader.ReadSerialized<InstancedModelParent*>(binary, pExtraData);
-		return pParentModel->Instanciate();
-	}
-
-	void InstancedModelChild::Serializer::Read(InstancedModelChild& data, const tryn::ser::StreamReader& streamReader,
-		const bool binary, ser::ExtraDataPack* pExtraData)
-	{
-		auto pParentModel = streamReader.ReadSerialized<InstancedModelParent*>(binary, pExtraData);
-		data = pParentModel->Instanciate();
-	}
 }
 
-void tryn::ser::TypeSerializer<std::unique_ptr<tryn::gfx::InstancedModelParent>>::Write(
-	const StreamWriter& streamWriter, const std::unique_ptr<gfx::InstancedModelParent>& pData, const bool binary,
-	const std::string& name)
+void tryn::ser::Serialize(StreamIO& io, gfx::InstancedModelParent* pData, const bool binary, const std::string& name)
 {
-	streamWriter.Serialize(pData->pBase);
+	io.Field(&pData->pBase, binary);
 }
 
-std::unique_ptr<tryn::gfx::InstancedModelParent> tryn::ser::TypeSerializer<std::unique_ptr<tryn::gfx::
-InstancedModelParent>>::Read(const StreamReader& streamReader, const bool binary, ser::ExtraDataPack* pExtraData)
+void tryn::ser::Serialize(StreamWriter& sw, gfx::InstancedModelChild* pData, bool binary, const std::string& name)
 {
-	trynass(pExtraData).msg(L"The SerializeReadComponentField functor requires extra data named pGfx!");
-
-	const class IGraphics* pGfx = nullptr;
-	pExtraData->Get("pGfx").Get((const void*&)pGfx);
-
-	return {nullptr};
+	
 }
 
-void tryn::ser::TypeSerializer<std::unique_ptr<tryn::gfx::InstancedModelParent>>::Read(
-	std::unique_ptr<gfx::InstancedModelParent>& data, const StreamReader& streamReader, const bool binary,
-	ser::ExtraDataPack*)
+void tryn::ser::Serialize(StreamReader& io, gfx::InstancedModelChild* pData, bool binary, const std::string& name)
 {
-	//static_assert(HasGfxPointer<Data> && extraData != nullptr, "The InstanceModelParent* Serializer requires extra data of type tryn::gfx::IGraphics*!");
+
 }

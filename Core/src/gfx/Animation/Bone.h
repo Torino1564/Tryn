@@ -56,24 +56,5 @@ namespace tryn::gfx::ani
 namespace tryn::ser
 {
 	// TODO: Finish AnimationSkeletonInterface* serializer
-
-	template <> struct ser::TypeSerializer<gfx::ani::AnimationSkeletonInterface*>
-	{
-		static void Write(const StreamWriter& streamWriter, gfx::ani::AnimationSkeletonInterface* const& pData, const bool binary = true, const std::string& name = "")
-		{
-			streamWriter.Serialize(0u, binary, name);
-		}
-
-		template <typename Data = void>
-		static gfx::ani::AnimationSkeletonInterface* Read(const StreamReader& streamReader, const bool binary = true, const std::string& name = "", const Data* pExtraData = nullptr)
-		{
-			return nullptr;
-		}
-
-		template <typename Data = void>
-		static void Read(const StreamReader& streamReader, gfx::ani::AnimationSkeletonInterface* pData, const bool binary = true, const std::string& name = "", const Data* pExtraData = nullptr)
-		{
-			pData = nullptr;
-		}
-	};
+	void Serialize(StreamIO& streamWriter, gfx::ani::AnimationSkeletonInterface* pData, bool binary = true, const std::string& name = "");
 }

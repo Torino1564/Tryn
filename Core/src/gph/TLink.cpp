@@ -86,19 +86,12 @@ namespace tryn::gph
 
 namespace tryn::ser
 {
-	void SerializeWrite(const StreamWriter& sw, const gph::TLink& data, const bool binary,
-	   const std::string& name)
+	void Serialize(StreamIO& io, gph::TLink* data, const bool binary, const std::string& name)
 	{
-		sw.Serialize(data.Id, binary);
-		sw.Serialize(data.InputId, binary);
-		sw.Serialize(data.OutputId, binary);
+		io.GetAndFill("pGraph", reinterpret_cast<void*&>(data->pGraph));
+		io.Field(&data->Id, binary);
+		io.Field(&data->InputId, binary);
+		io.Field(&data->OutputId, binary);
 	}
 
-	void SerializeRead(const StreamReader& sr, gph::TLink& data_, const bool binary, const ExtraDataPack* pExtraData)
-	{
-		pExtraData->Get("pGraph").Get((void*&)data_.pGraph);
-		sr.ReadSerialized(data_.Id, binary);
-		sr.ReadSerialized(data_.InputId, binary);
-		sr.ReadSerialized(data_.OutputId, binary);
-	}
 }

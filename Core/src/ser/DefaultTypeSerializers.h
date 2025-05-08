@@ -7,155 +7,81 @@
 namespace tryn::ser
 {
 	template <Serializable T>
-	struct TypeSerializer<std::unique_ptr<T>>
+	void Serialize(const StreamWriter& streamWriter, std::unique_ptr<T>* pData, const bool binary = true, const std::string& name = "")
 	{
-		static void Write(const StreamWriter& streamWriter, const std::unique_ptr<T>& pData, const bool binary = true, const std::string& name = "")
-		{
-			streamWriter.GetStringStream() << "UP:";
-			streamWriter.Serialize(*pData, binary, name);
-		}
-		static std::unique_ptr<T> Read(const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr)
-		{
-			std::unique_ptr<T> uptr;
-			
-			Read(uptr, streamReader, binary, pExtraData);
-
-			return uptr;
-		}
-
-		static void Read(std::unique_ptr<T>& data, const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr)
-		{
-			streamReader.ExtractExpression("UP:");
-			data.release();
-			if constexpr (HasFunctionSerializer<T>)
-			{
-				data = std::make_unique<T>();
-				streamReader.ReadSerialized(*data, binary, pExtraData);
-			}
-			else
-			{
-				data = std::unique_ptr<T>(new T(std::move(streamReader.ReadSerialized<T>(binary, pExtraData))));
-			}
-		}
-	};
+		streamWriter.Field(*pData, binary, name);
+	}
 
 	template <Serializable T>
-	struct TypeSerializer<std::vector<T>>
+	void Serialize(const StreamReader& streamReader, std::unique_ptr<T>* pData, const bool binary = true, const std::string& name = "")
 	{
-		static void Write(const StreamWriter& streamWriter, const std::vector<T>& data, const bool binary = true, const std::string& name = "")
-		{
-			streamWriter.GetStringStream() << std::format("VEC:{:0>16}", data.size());
+		auto pT = new T();
+		streamReader.Field(pT, binary, name);
+		pData->reset(pT);
+	}
 
-			int i = 0;
-			for (auto& element : data)
-			{
-				streamWriter.Serialize(element, binary, std::to_string(i++) + ":");
-			}
-		}
-
-		static std::vector<T> Read(const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr)
-		{
-			std::vector<T> newVector;
-
-			Read(newVector, streamReader, binary, pExtraData);
-
-			return newVector;
-		}
-
-		static void Read(std::vector<T>& data, const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr)
-		{
-			static std::vector<char> charBuffer;
-			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
-			streamReader.ExtractExpression("VEC:", charBuffer);
-
-			auto numElements = std::stoi(charBuffer.data(), nullptr, 10);
-
-			data.reserve(numElements);
-
-			for (int i = 0; i < numElements; i++)
-			{
-				if constexpr (HasFunctionSerializer<T>)
-				{
-					data.emplace_back();
-					streamReader.ReadSerialized(data.back(), binary, pExtraData);
-				}
-				else
-				{
-					data.emplace_back(streamReader.ReadSerialized<T>(binary, pExtraData));
-				}
-			}
-		}
-	};
-
-	template <>
-	struct TypeSerializer<std::string>
+	template <Serializable T>
+	static void Serialize(const StreamWriter& streamWriter, std::vector<T>* data, const bool binary = true, const std::string& name = "")
 	{
-		static void Write(const StreamWriter& streamWriter, const std::string& data, const bool binary = true, const std::string& name = "");
+		streamWriter.GetStringStream() << std::format("VEC:{:0>16}", data.size());
 
-		static std::string Read(const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr);
+		int i = 0;
+		for (auto& element : data)
+		{
+			streamWriter.Field(element, binary, std::to_string(i++) + ":");
+		}
+	}
 
-		static void Read(std::string& data, const StreamReader& sr, const bool binary = true, ExtraDataPack* pExtraData = nullptr);
-	};
+	template <Serializable T>
+	static void Serialize(const StreamReader& streamReader, std::vector<T>* pData, const bool binary = true, const std::string& name = "")
+	{
+		static std::vector<char> charBuffer;
+		charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
+		streamReader.ExtractExpression("VEC:", charBuffer);
+
+		auto numElements = std::stoi(charBuffer.data(), nullptr, 10);
+		new(pData) std::vector<T>();
+		pData.reserve(numElements);
+
+		for (int i = 0; i < numElements; i++)
+		{
+			pData->emplace_back();
+			streamReader.Field(pData->back(), binary);
+		}
+	}
+
+	void Serialize(const StreamWriter& streamWriter, std::string* pData, const bool binary = true, const std::string& name = "");
+
+	void Serialize(const StreamReader& sr, std::string* pData, const bool binary = true, const std::string& name = "");
 
 	template <Serializable T, Serializable K>
-	struct TypeSerializer<std::unordered_map<T, K>>
+	void Serialize(const StreamWriter& streamWriter, std::unordered_map<T, K>* data, const bool binary = true, const std::string& name = "")
 	{
-		static void Write(const StreamWriter& streamWriter, const std::unordered_map<T, K>& data, const bool binary = true, const std::string& name = "")
+		streamWriter.GetStringStream() << std::format("UMAP:{:0>16}", data.size());
+
+		unsigned int i = 0;
+		for (const auto& [key, value] : *data)
 		{
-			streamWriter.GetStringStream() << std::format("UMAP:{:0>16}", data.size());
-
-			unsigned int i = 0;
-			for (const auto& [key, value] : data)
-			{
-				streamWriter.Serialize(key, binary, std::to_string(i) + ":");
-				streamWriter.Serialize(value, binary, std::to_string(i) + ":");
-				i++;
-			}
+			streamWriter.Field(key, binary, std::to_string(i) + ":");
+			streamWriter.Field(value, binary, std::to_string(i) + ":");
+			i++;
 		}
+	}
 
-		static std::unordered_map<T, K> Read(const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr)
+	template <Serializable T, Serializable K>
+	void Serialize(const StreamReader& streamReader, std::unordered_map<T, K>* pData, const bool binary = true, const std::string& name = "")
+	{
+		static std::vector<char> charBuffer;
+		charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
+		streamReader.ExtractExpression("UMAP:", charBuffer);
+
+		auto numElements = std::stoi(charBuffer.data(), nullptr, 10);
+
+		pData->reserve(numElements);
+
+		for (int i = 0; i < numElements; i++)
 		{
-
-			std::unordered_map<T, K> newUMap;
-			
-			Read(newUMap, streamReader, binary, pExtraData);
-
-			return newUMap;
+			const auto it = pData->insert({ streamReader.Field<T>(binary), streamReader.Field<K>(binary) });
 		}
-
-		static void Read(std::unordered_map<T, K>& data, const StreamReader& streamReader, const bool binary = true, ExtraDataPack* pExtraData = nullptr)
-		{
-			static std::vector<char> charBuffer;
-			charBuffer.resize(sizeof(uint16_t) * 8, (char)0);
-			streamReader.ExtractExpression("UMAP:", charBuffer);
-
-			auto numElements = std::stoi(charBuffer.data(), nullptr, 10);
-
-			data.reserve(numElements);
-
-			for (int i = 0; i < numElements; i++)
-			{
-				if constexpr (HasFunctionSerializer<T> && HasFunctionSerializer<K>)
-				{
-					const auto it = data.insert({T{}, K{}});
-					streamReader.ReadSerialized(it.first, binary, pExtraData);
-					streamReader.ReadSerialized(it.second, binary, pExtraData);
-				}
-				else if constexpr (HasFunctionSerializer<T>)
-				{
-					const auto [it, success] = data.insert({ T{}, streamReader.ReadSerialized<K>(binary, pExtraData) });
-					streamReader.ReadSerialized(it->first, binary, pExtraData);
-				}
-				else if constexpr (HasFunctionSerializer<K>)
-				{
-					const auto [it, success] = data.insert({ streamReader.ReadSerialized<T>(binary, pExtraData), K{}});
-					streamReader.ReadSerialized(it->second, binary, pExtraData);
-				}
-				else
-				{
-					const auto it = data.insert({ streamReader.ReadSerialized<T>(binary, pExtraData), streamReader.ReadSerialized<K>(binary, pExtraData) });
-				}
-			}
-		}
-	};
+	}
 }

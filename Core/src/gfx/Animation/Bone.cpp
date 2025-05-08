@@ -51,3 +51,8 @@ namespace tryn::gfx::ani
 	}
 
 }
+
+void tryn::ser::Serialize(StreamIO& streamWriter, gfx::ani::AnimationSkeletonInterface* pData, const bool binary,
+	const std::string& name)
+{
+}

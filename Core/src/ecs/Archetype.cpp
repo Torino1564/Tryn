@@ -282,36 +282,9 @@ namespace tryn::ecs
 
 namespace tryn::ser
 {
-	void TypeSerializer<ecs::Archetype*>::Write(const StreamWriter& streamWriter, ecs::Archetype* const& data,
-	const bool binary, const std::string& name)
+	void Serialize(StreamIO& io, ecs::Archetype* data, const bool binary, const std::string& name)
 	{
-		std::vector<utl::UUID_t> sortedComponents = data->components;
-		std::ranges::sort(sortedComponents);
-		streamWriter.Serialize(sortedComponents, binary, name);
-	}
-
-	ecs::Archetype* TypeSerializer<ecs::Archetype*>::Read(const tryn::ser::StreamReader& streamReader,
-		const bool binary, const ExtraDataPack* pExtraData)
-	{
-		/*ecs::ECS* pEcs = nullptr;
-		pExtraData->Get("pEcs")((const void**)pEcs);
-
-		std::vector<utl::UUID_t> componentUUIDs;
-
-		streamReader.ReadSerialized(componentUUIDs, binary, pExtraData);
-
-		return pEcs->GetArchetypeManager().GetArchetype(componentUUIDs);*/
-		return nullptr;
-	}
-
-	void TypeSerializer<ecs::Archetype*>::Read(ecs::Archetype*& data, const tryn::ser::StreamReader& streamReader,
-		const bool binary, const ExtraDataPack* pExtraData)
-	{
-		/*ecs::ECS* pEcs = nullptr;
-		pExtraData->Get("pEcs")((const void**)pEcs);
-
-		std::vector<utl::UUID_t> componentUUIDs;
-		streamReader.ReadSerialized(componentUUIDs, binary, pExtraData);
-		data = pEcs->GetArchetypeManager().GetArchetype(componentUUIDs);*/
+		std::ranges::sort(data->components);
+		io.Field(&data->components, binary, name);
 	}
 }

@@ -4,36 +4,18 @@
 
 namespace tryn::ser
 {
-	void TypeSerializer<std::string>::Write(const StreamWriter& streamWriter, const std::string& data,const bool binary, const std::string& name)
+	void Serialize(const StreamWriter& streamWriter, const std::string* pData, const bool binary,
+		const std::string& name)
 	{
-		streamWriter.GetStringStream()	<< std::setw(sizeof(std::size_t) * 2)
-										<< std::setfill('0')
-										<< std::hex
-										<< data.size();
+		streamWriter.GetStringStream() << std::setw(sizeof(std::size_t) * 2)
+			<< std::setfill('0')
+			<< std::hex
+			<< pData->size();
 
-		streamWriter.GetStringStream() << data;
+		streamWriter.GetStringStream() << *pData;
 	}
 
-	std::string TypeSerializer<std::string>::Read(const StreamReader& streamReader, const bool binary,
-		ExtraDataPack* pExtraData)
-	{
-		std::size_t numChars = 0;
-
-		char sizeStr[(sizeof(std::size_t) * 2) + 1] = {0};
-		streamReader.GetStringStream().read(sizeStr, sizeof(std::size_t) * 2);
-
-		numChars = std::strtoul(sizeStr, nullptr, 16);
-
-		std::string newString;
-		newString.resize(numChars);
-
-		streamReader.GetStringStream().read(newString.data(), numChars);
-
-		return newString;
-	}
-
-	void TypeSerializer<std::string>::Read(std::string& data, const StreamReader& sr, const bool binary,
-	                                       ExtraDataPack* pExtraData)
+	void Serialize(const StreamReader& sr, std::string* pData, const bool binary, const std::string& name)
 	{
 		std::size_t numChars = 0;
 
@@ -42,8 +24,8 @@ namespace tryn::ser
 
 		numChars = std::strtoul(sizeStr, nullptr, 16);
 
-		data.resize(numChars);
+		pData->resize(numChars);
 
-		sr.GetStringStream().read(data.data(), numChars);
+		sr.GetStringStream().read(pData->data(), numChars);
 	}
 }
