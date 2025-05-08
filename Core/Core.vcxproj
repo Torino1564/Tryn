@@ -87,6 +87,7 @@
     <ClInclude Include="src\dbg\SourceIncludes.h" />
     <ClInclude Include="src\ecs\Component.h" />
     <ClInclude Include="src\ecs\SerializeLambda.h" />
+    <ClInclude Include="src\ecs\sys\SelectableSystem.h" />
     <ClInclude Include="src\fsx\BoundingBox.h" />
     <ClInclude Include="src\fsx\IBoundingBox.h" />
     <ClInclude Include="src\gfx\Attribute.h" />
