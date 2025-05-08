@@ -1,6 +1,6 @@
 #pragma once
 #include <Core/src/utl/StringHasher.h>
-
+#include <vector>
 #include "Assert.h"
 
 namespace tryn::utl
@@ -34,7 +34,8 @@ namespace tryn::utl
 	                                    {
 	                                        if constexpr (std::same_as<Interface, std::any>)
 	                                        {
-	                                            *ppInt->template emplace<T>();
+                                                std::any** ppCasted = (std::any**)ppInt;
+                                                (*ppCasted)->emplace<T>();
 	                                        }
 	                                        else
 	                                        {
@@ -57,6 +58,9 @@ namespace tryn::utl
 
             if constexpr (std::same_as<Interface, std::any>)
                 iRef.reset();
+
+            trynass(it != infoTable.end()).msg(L"Unknown Type!").ex();
+
             auto pRef = &iRef;
             it->second.createFunc(&pRef);
         }

@@ -12,25 +12,9 @@ using namespace std::string_literals;
 
 namespace tryn::ed
 {
-	void Compiler::CompileToDLL(const std::string& sourceFile, bool debug)
+	void Compiler::CompileToDLL(const std::filesystem::path& sourceFile, const bool debug)
 	{
-	//      OPENFILENAMEA fileName;
-		
-	//char filename[ MAX_PATH ];
-
-		//OPENFILENAMEA ofn;
-	//      ZeroMemory( &filename, sizeof( filename ) );
-	//      ZeroMemory( &ofn,      sizeof( ofn ) );
-	//      ofn.lStructSize  = sizeof( ofn );
-	//      ofn.hwndOwner    = nullptr;  // If you have a window to center over, put its HANDLE here
-	//      ofn.lpstrFilter  = "Executable Files\0*.txt\0Any File\0*.*\0";
-	//      ofn.lpstrFile    = filename;
-	//      ofn.nMaxFile     = MAX_PATH;
-	//      ofn.lpstrTitle   = "Select a File, yo!";
-	//      ofn.Flags        = OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST;
-
-	 //   GetOpenFileNameA( &ofn );
-
+		const auto currentWD = std::filesystem::current_path();
         auto cmdProcess = TinyProcessLib::Process(
             LR"(C:\Windows\System32\cmd.exe)", {},  // Launch cmd.exe
         [](const char *output, size_t n) { std::cout << std::string(output, n); },  // Capture stdout
@@ -40,10 +24,24 @@ namespace tryn::ed
 		cmdProcess.write( "\"" + std::string(R"(C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat)") + "\"");
 		cmdProcess.write("\n");
 		Sleep(100);
-		cmdProcess.write(std::format("cl.exe /std:c++latest {} /LD /I {} \"{}\" /link /DLL {}", debug ? "/Od /Zi /MDd" : "/O2 /MD", "../",  sourceFile, debug ? "/DEBUG /PDB:%random%" : ""));
+
+		if (debug)
+		{
+			auto pdbPath = sourceFile; pdbPath.replace_extension("pdb");
+			cmdProcess.write(std::format("del {}", pdbPath.string()));
+			cmdProcess.write("\n");
+		}
+		const auto includeDir = std::filesystem::current_path().parent_path();
+
+		cmdProcess.write(std::format("cd {}", sourceFile.parent_path().string()));
+		cmdProcess.write("\n");
+
+		cmdProcess.write(std::format("cl.exe /std:c++latest /EHsc {} /LD /I {} \"{}\" /link  /DLL {}", debug ? "/Od /Zi /MDd" : "/O2 /MD", includeDir.string(), sourceFile.string(), debug ? "/DEBUG " : ""));
 		cmdProcess.write("\n");
 		Sleep(100);
+
 		cmdProcess.write("exit\n");
         cmdProcess.get_exit_status();
+		SetCurrentDirectoryA(currentWD.string().c_str());
 	}
 }

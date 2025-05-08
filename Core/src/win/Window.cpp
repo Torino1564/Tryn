@@ -399,9 +399,11 @@ namespace tryn::win
 #include <shlobj_core.h>
 	std::pair<bool, std::filesystem::path> SelectDirectory()
 	{
+		const auto currentWD = std::filesystem::current_path();
 		BROWSEINFOA browseInfo = {};
 
 		const auto rv = SHBrowseForFolderA(&browseInfo);
+		SetCurrentDirectoryA(currentWD.string().c_str());
 		if (rv == nullptr)
 		{
 			return {false, {}};
@@ -420,6 +422,7 @@ namespace tryn::win
 #include <commdlg.h>
 	std::pair<bool, std::filesystem::path> SelectFile(std::vector<std::string> extensions)
 	{
+		const auto currentWD = std::filesystem::current_path();
 		char filename[ MAX_PATH ];
 
 		std::string extensionString;
@@ -439,11 +442,12 @@ namespace tryn::win
 		ofn.lpstrTitle   = "Select a File, yo!";
 		ofn.Flags        = 0x02000000 | 0x00001000;
 
-	    if (GetOpenFileNameA( &ofn ))
+		const auto res = GetOpenFileNameA(&ofn);
+		SetCurrentDirectoryA(currentWD.string().c_str());
+	    if (res)
 	    {
 		    return {true, {filename}};
 	    }
-
 		return {false, {}};
 	}
 }

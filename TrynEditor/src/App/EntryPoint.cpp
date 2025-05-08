@@ -29,4 +29,4 @@ app::App* app::CreateApp(int argc, char** argv)
 	auto pApp = new ed::TrynEditorApp(window, gfx);
 
 	return pApp;
-}\
+}

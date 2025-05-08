@@ -64,7 +64,7 @@ namespace tryn::ser
 			{
 				if (binary)
 				{
-					const auto pData = (char*)(&data);
+					const auto pData = (char*)data;
 					WriteBinary(pData, sizeof(T));
 				}
 			}

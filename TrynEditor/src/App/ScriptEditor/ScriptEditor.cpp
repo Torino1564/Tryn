@@ -262,6 +262,10 @@ namespace tryn::ed
 	{
 	    auto [success, path] = win::SelectDirectory();
 	    path = absolute(path);
+        std::filesystem::create_directories(path / pGraph->name);
+        auto folderPath = path / pGraph->name;
+        auto binPath = folderPath / "bin";
+
 	    pWriter = std::make_unique<ser::StreamWriter>(std::make_shared<std::ostringstream>());
 	    auto& sw = *pWriter;
 	    auto& data = *pGraph;
@@ -308,21 +312,22 @@ namespace tryn::ed
     		while (std::getline(file, line)) {
     			buffer << line << '\n';
     		}
+            std::filesystem::create_directories(binPath);
 
-    		std::ofstream outfile(data.name + ".cpp");
+    		std::ofstream outfile( (binPath / data.name).string() + ".cpp");
 
     		outfile << buffer.str();
 
     		outfile.close();
 		}
 
-		auto dllPath = (workingDir / data.name).string();
-		pCompiler->CompileToDLL((workingDir / (data.name + ".cpp")).string(), true);
+		auto dllPath = (binPath / data.name).string();
+		pCompiler->CompileToDLL((binPath / (data.name + ".cpp")).string(), true);
 
 		sw.Field(&dllPath);
 		sw.Field(&data.variables, binary);
 
-	    std::ofstream file(path / (pGraph->name + ".tscript"));
+	    std::ofstream file(folderPath / (pGraph->name + ".tscript"));
 	    file << pWriter->GetStringStream().str();
 	    file.close();
 	}
@@ -380,6 +385,12 @@ namespace tryn::ed
 
     		sr.AddExtraElement(ser::ElementDataView(*data.pRegister, "pTypeRegister"));
     		sr.Field(&data.variables, binary);
+
+            for (auto& node : data.nodes)
+            {
+                auto pNode = static_cast<scr::ScriptNode*>(node.get());
+                pNode->pGraph = pNewGraph;
+            }
 		}
 
 	    pGraph.reset(pNewGraph);

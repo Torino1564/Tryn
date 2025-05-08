@@ -6,7 +6,7 @@ namespace tryn::ed
 	class Compiler
 	{
 	public:
-		void CompileToDLL(const std::string& sourceFile, bool debug = false);
+		void CompileToDLL(const std::filesystem::path& sourceFile, bool debug = false);
 	};
 }
 
