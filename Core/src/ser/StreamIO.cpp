@@ -32,6 +32,11 @@ namespace tryn::ser
 		extraDataPack.Get(name).Get(pToFill);
 	}
 
+	void StreamReader::AddExtraElement(const ElementDataView& element)
+	{
+		extraDataPack.AddElement(element);
+	}
+
 	void StreamReader::ReadBinary(char* pData, const unsigned size) const
 	{
 		iss->read(pData, size);

@@ -6,21 +6,20 @@
 
 namespace tryn::ser
 {
-	void SerializeWrite(const StreamWriter& sw, const scr::Variable& data, const bool binary, const std::string& name)
-	{
-		sw.Serialize(data.name, binary);
-		sw.Serialize(data.typeName, binary);
-		sw.Serialize(data.uuid, binary);
-	}
-
-	void SerializeRead(const StreamReader& sr, scr::Variable& data, const bool binary, ExtraDataPack* pExtraData)
+	void Serialize(StreamIO& io, scr::Variable* data, const bool binary, const std::string& name)
 	{
 		gph::TTypeRegister* pTypeRegister = nullptr;
-		pExtraData->Get("pTypeRegister").Get((void*&)pTypeRegister);
-		sr.ReadSerialized(data.name, binary, pExtraData);
-		sr.ReadSerialized(data.typeName, binary, pExtraData);
-		sr.ReadSerialized(data.uuid, binary, pExtraData);
-
-		pTypeRegister->ConstructAt(data.var, data.uuid);
+		io.GetAndFill("pTypeRegister", reinterpret_cast<void*&>(pTypeRegister));
+		
+		io.Field(&data->name, binary);
+		io.Field(&data->typeName, binary);
+		io.Field(&data->uuid, binary);
+		
+		io.Exclusive<StreamIO::Reader>(
+			[&]()
+			{
+				pTypeRegister->ConstructAt(data->var, data->uuid);
+			}
+		);
 	}
 }

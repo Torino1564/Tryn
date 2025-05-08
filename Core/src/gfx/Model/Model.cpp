@@ -3,6 +3,8 @@
 
 #include <imgui.h>
 #include <Core/src/gfx/Material.h>
+#undef max
+#undef min
 #include <Core/third/glm/gtx/transform.hpp>
 #include <Core/third/glm/gtc/type_ptr.hpp>
 #include <Core/third/glm/glm.hpp>
@@ -45,9 +47,11 @@ namespace tryn::gfx
 		return glmMatrix;
 	}
 
+	Model::Model() = default;
+
 	Model::Model(const gfx::IGraphics& gfx, std::string_view path, const std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
 		:
-		gfx(gfx), name(path.data())
+		pGfx(&gfx), name(path.data())
 	{
 		const std::filesystem::path fspath(path);
 
@@ -149,14 +153,14 @@ namespace tryn::gfx
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
 		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
 		const auto transform = translation * rotation;
-		nodes[rootId].Submit(gfx, entityTransform * transform);
+		nodes[rootId].Submit(*pGfx, entityTransform * transform);
 	}
 	void Model::Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms) const
 	{
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
 		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
 		const auto transform = translation * rotation;
-		nodes[rootId].Submit(gfx, entityTransform * transform, boneTransforms );
+		nodes[rootId].Submit(*pGfx, entityTransform * transform, boneTransforms );
 	}
 	void Model::SpawnControlWindow()
 	{
@@ -406,7 +410,7 @@ namespace tryn::gfx
 	}
 	const gfx::IGraphics* Model::GetGfx() const
 	{
-		return &gfx;
+		return pGfx;
 	}
 
 	ani::Skeleton& Model::GetSkeleton()
@@ -474,4 +478,9 @@ namespace tryn::gfx
 
 		WinGLTFLoader::Load(path, processFunction);
 	}
+}
+
+void tryn::ser::Serialize(StreamIO& io, gfx::Model* pModel, bool binary, const std::string& name)
+{
+	// TODO: Serialize Model
 }

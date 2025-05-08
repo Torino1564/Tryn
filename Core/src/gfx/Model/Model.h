@@ -38,6 +38,7 @@ namespace tryn::gfx
 	{
 		friend class InstancedModelParent;
 	public:
+		Model();
 		Model(const gfx::IGraphics& gfx, std::string_view path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = {1.0f, 1.0f, 1.0f}, const bool instanced = false);
 		template <typename... Techniques>
 			requires std::derived_from<Techniques..., TechniqueBase>
@@ -63,7 +64,7 @@ namespace tryn::gfx
 	private:
 		std::optional<ani::Skeleton> skeleton = std::nullopt;
 		std::uint16_t meshCounter = 0;
-		const gfx::IGraphics& gfx;
+		const IGraphics* pGfx = nullptr;
 		std::string name = {};
 		std::vector<Node> nodes = {};
 		std::uint32_t rootId;
@@ -79,4 +80,9 @@ namespace tryn::gfx
 		static constexpr auto arr =  {ZT_TYPE_UUID(Techniques)...};
 		return std::make_unique<Model>(gfx, path, arr, scale, instanced);
 	}
+}
+
+namespace tryn::ser
+{
+	void Serialize(StreamIO& io, gfx::Model* pModel, bool binary, const std::string& name);
 }

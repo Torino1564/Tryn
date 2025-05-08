@@ -23,8 +23,6 @@ namespace tryn
 
 	namespace ser
 	{
-	    void SerializeWrite(const class StreamWriter& sw, const gph::PinInfo& data, const bool binary, const std::string& name);
-
-	    void SerializeRead(const class StreamReader& sr, gph::PinInfo& data, const bool binary, class ExtraDataPack* pExtraData = nullptr);
+		void Serialize(class StreamIO& sw, gph::PinInfo* data, const bool binary, const std::string& name);
 	}
 }

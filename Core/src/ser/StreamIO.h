@@ -26,6 +26,14 @@ namespace tryn::ser
 		template <typename T>
 		void Field(T* pData, bool binary, const std::string& name);
 		virtual void GetAndFill(const std::string&, void*& pToFill) {}
+		template <Type T, typename Func>
+		void Exclusive(const Func& func)
+		{
+			if (type == T)
+			{
+				func();
+			}
+		}
 	private:
 		Type type;
 	};
@@ -46,7 +54,7 @@ namespace tryn::ser
 
 		template <typename T>
 		requires Serializable<T>
-		void Write(T* data, const bool binary = true, const std::string& name = "") const
+		void Write(T* data, const bool binary = true, const std::string& name = "")
 		{
 			if constexpr (HasFunctionSerializer<T>)
 			{
@@ -84,7 +92,7 @@ namespace tryn::ser
 
 		template <typename T>
 		requires Serializable<T>
-		void Read(T* pData, const bool binary = true, const std::string& name = "") const
+		void Read(T* pData, const bool binary = true, const std::string& name = "")
 		{
 			if constexpr (HasFunctionSerializer<T>)
 			{
@@ -106,6 +114,7 @@ namespace tryn::ser
 		void ExtractExpression(const std::string& expression, std::span<char> pExtraChars = {}) const;
 		std::istringstream& GetStringStream() const;
 		void GetAndFill(const std::string&, void*& pToFill) override;
+		void AddExtraElement(const ElementDataView& element);
 
 	private:
 		void ReadBinary(char* pData, unsigned size) const;

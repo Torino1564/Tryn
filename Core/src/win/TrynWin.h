@@ -5,9 +5,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
-#ifndef STRICT
 #define STRICT
-#endif
 #define NOGDICAPMASKS
 #define NOSYSMETRICS
 #define NOMENUS

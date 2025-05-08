@@ -24,7 +24,7 @@ namespace tryn
 
 	namespace ser
 	{
-		void SerializeWrite(StreamIO& io, gph::TNode* data, const bool binary, const std::string& name)
+		void Serialize(StreamIO& io, gph::TNode* data, const bool binary, const std::string& name)
 		{
 			io.GetAndFill("pGraph", reinterpret_cast<void*&>(data->pGraph));
 			io.Field(&data->uniqueId, binary);

@@ -40,7 +40,7 @@ namespace tryn::gfx
 		{
 			modifiedTransform = transforms[index] * transform;
 		}
-		pBase->nodes[pBase->rootId].Submit(pBase->gfx, { modifiedTransforms }, *this);
+		pBase->nodes[pBase->rootId].Submit(*pBase->GetGfx(), { modifiedTransforms }, *this);
 	}
 	InstancedModelChild InstancedModelParent::Instanciate()
 	{
@@ -101,7 +101,7 @@ namespace tryn::gfx
 		pTransformationBuffers.clear();
 		for (auto i = 0; i < pBase->GetMeshAmount(); i++)
 		{
-			pTransformationBuffers.emplace_back(pBase->gfx.CreateInstanceBuffer(arrayElement, upperLimit));
+			pTransformationBuffers.emplace_back(pBase->GetGfx()->CreateInstanceBuffer(arrayElement, upperLimit));
 		}
 	}
 	InstancedModelChild::~InstancedModelChild()

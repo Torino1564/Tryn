@@ -4,6 +4,7 @@
 #include <Core/src/scr/ScriptGraph.h>
 #include <Core/src/spa/Vec2.h>
 
+#include "Core/src/ser/StreamIO.h"
 #include "TrynEditor/src/App/Applet.h"
 
 namespace ax::NodeEditor

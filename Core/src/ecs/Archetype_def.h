@@ -12,6 +12,16 @@
 
 namespace tryn::ecs
 {
+	class Archetype;
+}
+
+namespace tryn::ser
+{
+	void Serialize(StreamIO& io, ecs::Archetype* data, bool binary = true, const std::string& name = "");
+}
+
+namespace tryn::ecs
+{
 	class ECS;
 	using ArchetypeID = std::uint16_t;
 	class Archetype
@@ -98,9 +108,4 @@ namespace tryn::ecs
 		std::map<utl::UUID_t, std::vector<ArchetypeID>> archetypeTable;
 		std::vector<Archetype> archetypeBuffer = {};
 	};
-}
-
-namespace tryn::ser
-{
-	void Serialize(StreamIO& io, ecs::Archetype* data, bool binary = true, const std::string& name = "");
 }

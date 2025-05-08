@@ -4,7 +4,7 @@
 
 namespace tryn::ser
 {
-	void Serialize(const StreamWriter& streamWriter, const std::string* pData, const bool binary,
+	void Serialize(StreamWriter& streamWriter, std::string* pData, const bool binary,
 		const std::string& name)
 	{
 		streamWriter.GetStringStream() << std::setw(sizeof(std::size_t) * 2)
@@ -15,7 +15,7 @@ namespace tryn::ser
 		streamWriter.GetStringStream() << *pData;
 	}
 
-	void Serialize(const StreamReader& sr, std::string* pData, const bool binary, const std::string& name)
+	void Serialize(StreamReader& sr, std::string* pData, const bool binary, const std::string& name)
 	{
 		std::size_t numChars = 0;
 

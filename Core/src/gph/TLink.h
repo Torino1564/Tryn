@@ -22,7 +22,5 @@ namespace tryn::gph
 
 namespace tryn::ser
 {
-    void SerializeWrite(const class StreamWriter& sw, const gph::TLink& data, const bool binary, const std::string& name);
-
-    void SerializeRead(const class StreamReader& sr, gph::TLink& data_, const bool binary, const class ExtraDataPack* pExtraData = nullptr);
+    void Serialize(class StreamIO& io, gph::TLink* data, bool binary, const std::string& name);
 }

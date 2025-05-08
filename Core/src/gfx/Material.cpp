@@ -3,6 +3,8 @@
 #include <assimp/material.h>
 #include <assimp/types.h>
 #include <Core/src/gfx/Render/Techniques/ForwardPhong.h>
+#undef min
+#undef max
 #include <GLTFSDK/Document.h>
 #include <GLTFSDK/GLTF.h>
 #include <GLTFSDK/GLTFResourceReader.h>

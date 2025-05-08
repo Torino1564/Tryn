@@ -2,6 +2,8 @@
 #include "Vertex.h"
 #include <Core/src/utl/Assert.h>
 #include <Core/src/gfx/Animation/Bone.h>
+#undef max
+#undef min
 #include <GLTFSDK/Document.h>
 #include <GLTFSDK/GLTF.h>
 #include <GLTFSDK/GLTFResourceReader.h>

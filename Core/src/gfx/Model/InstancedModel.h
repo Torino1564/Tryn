@@ -10,12 +10,26 @@
 
 namespace tryn::gfx
 {
+	class InstancedModelParent;
 	class InstancedModelChild;
+}
+
+namespace tryn::ser
+{
+	void Serialize(StreamIO& io, gfx::InstancedModelParent* pData, bool binary = true, const std::string& name = "");
+	void Serialize(StreamWriter& io, gfx::InstancedModelChild* pData, bool binary = true, const std::string& name = "");
+	void Serialize(StreamReader& io, gfx::InstancedModelChild* pData, bool binary = true, const std::string& name = "");
+}
+
+namespace tryn::gfx
+{
 	class IGraphics;
 
 	class InstancedModelParent
 	{
 		friend void ser::Serialize(ser::StreamIO& io, gfx::InstancedModelParent* pData, bool binary, const std::string& name);
+		friend class InstancedModelChild;
+
 	public:
 		InstancedModelParent(const gfx::IGraphics& gfx, std::string_view path, std::span<utl::UUID_t> techniqueUUIDs = {} ,glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint32_t> numInstances = std::nullopt);
 		~InstancedModelParent();
@@ -48,10 +62,4 @@ namespace tryn::gfx
 		std::uint16_t instanceID = {};
 		InstancedModelParent* pParentModel = nullptr;
 	};
-}
-namespace tryn::ser
-{
-	void Serialize(StreamIO& io, gfx::InstancedModelParent* pData, bool binary = true, const std::string& name = "");
-	void Serialize(StreamWriter& io, gfx::InstancedModelChild* pData, bool binary = true, const std::string& name = "");
-	void Serialize(StreamReader& io, gfx::InstancedModelChild* pData, bool binary = true, const std::string& name = "");
 }

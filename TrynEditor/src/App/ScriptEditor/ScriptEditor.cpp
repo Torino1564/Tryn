@@ -262,20 +262,19 @@ namespace tryn::ed
 	{
 	    auto [success, path] = win::SelectDirectory();
 	    path = absolute(path);
-	    std::ostringstream oss;
-	    pWriter = std::make_unique<ser::StreamWriter>(oss);
+	    pWriter = std::make_unique<ser::StreamWriter>(std::make_shared<std::ostringstream>());
 	    auto& sw = *pWriter;
 	    auto& data = *pGraph;
 
 	    const bool binary = true;
-	    sw.Serialize(data.links, binary);
-		sw.Serialize(data.nodes, binary);
-		sw.Serialize(data.entryId, binary);
-		sw.Serialize(data.pinIdToInfo, binary);
-		sw.Serialize(data.nodeIdToNodeIndex, binary);
-		sw.Serialize(data.uniqueId, binary);
-		sw.Serialize(data.m_NextLinkId, binary);
-		sw.Serialize(data.name, binary);
+	    sw.Field(&data.links, binary);
+		sw.Field(&data.nodes, binary);
+		sw.Field(&data.entryId, binary);
+		sw.Field(&data.pinIdToInfo, binary);
+		sw.Field(&data.nodeIdToNodeIndex, binary);
+		sw.Field(&data.uniqueId, binary);
+		sw.Field(&data.m_NextLinkId, binary);
+		sw.Field(&data.name, binary);
 
 		// Create dll with type register
 		static auto workingDir = std::filesystem::current_path();
@@ -317,11 +316,11 @@ namespace tryn::ed
     		outfile.close();
 		}
 
-		const auto dllPath = (workingDir / data.name).string();
+		auto dllPath = (workingDir / data.name).string();
 		pCompiler->CompileToDLL((workingDir / (data.name + ".cpp")).string(), true);
 
-		sw.Serialize(dllPath);
-		sw.Serialize(data.variables, binary);
+		sw.Field(&dllPath);
+		sw.Field(&data.variables, binary);
 
 	    std::ofstream file(path / (pGraph->name + ".tscript"));
 	    file << pWriter->GetStringStream().str();
@@ -345,30 +344,30 @@ namespace tryn::ed
 
 	    const auto buf = file.rdbuf();
 	    std::stringstream ss; ss << buf;
-	    std::istringstream iss(ss.str());
+	    auto iss = std::make_shared<std::istringstream>(ss.str());
 
 	    pReader = std::make_unique<ser::StreamReader>(iss);
 
 	    scr::ScriptGraph* pNewGraph = new scr::ScriptGraph("temp");
-	    ser::ExtraDataPack extraData = {};
-	    extraData.AddElement(ser::ElementDataView(*pNewGraph, "pGraph"));
 	    
 		{
 	        auto& sr = *pReader;
 	        auto& data = *pNewGraph;
-	        auto pExtraData = &extraData;
 	        const auto binary = true;
 
-			sr.ReadSerialized(data.links, binary, pExtraData);
-    		sr.ReadSerialized(data.nodes, binary, pExtraData);
-    		sr.ReadSerialized(data.entryId, binary, pExtraData);
-    		sr.ReadSerialized(data.pinIdToInfo, binary, pExtraData);
-    		sr.ReadSerialized(data.nodeIdToNodeIndex, binary, pExtraData);
-    		sr.ReadSerialized(data.uniqueId, binary, pExtraData);
-    		sr.ReadSerialized(data.m_NextLinkId, binary, pExtraData);
-    		sr.ReadSerialized(data.name, binary, pExtraData);
+			sr.AddExtraElement(ser::ElementDataView(*pNewGraph, "pGraph"));
 
-    		const auto dllPath = sr.ReadSerialized<std::string>(binary, pExtraData);
+			sr.Field(&data.links, binary);
+    		sr.Field(&data.nodes, binary);
+    		sr.Field(&data.entryId, binary);
+    		sr.Field(&data.pinIdToInfo, binary);
+    		sr.Field(&data.nodeIdToNodeIndex, binary);
+    		sr.Field(&data.uniqueId, binary);
+    		sr.Field(&data.m_NextLinkId, binary);
+    		sr.Field(&data.name, binary);
+
+            std::string dllPath;
+	    	sr.Field<std::string>(&dllPath, binary);
 
     		std::filesystem::path path(dllPath);
 
@@ -379,8 +378,8 @@ namespace tryn::ed
     		auto pRegister = data.pRegister.get();
     		const auto er = pFunc(pRegister);
 
-    		pExtraData->AddElement(ser::ElementDataView(*data.pRegister, "pTypeRegister"));
-    		sr.ReadSerialized(data.variables, binary, pExtraData);
+    		sr.AddExtraElement(ser::ElementDataView(*data.pRegister, "pTypeRegister"));
+    		sr.Field(&data.variables, binary);
 		}
 
 	    pGraph.reset(pNewGraph);

@@ -17,8 +17,6 @@ namespace tryn
 
 	namespace ser
 	{
-	    void SerializeWrite(const class StreamWriter& sw, const scr::Variable& data, const bool binary, const std::string& name);
-
-	    void SerializeRead(const class StreamReader& sr, scr::Variable& data, const bool binary, class ExtraDataPack* pExtraData = nullptr);
+	    void Serialize(class StreamIO& io, scr::Variable* data, bool binary, const std::string& name);
 	}
 }
