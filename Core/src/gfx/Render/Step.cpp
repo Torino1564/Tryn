@@ -9,7 +9,7 @@
 
 namespace tryn::gfx
 {
-	Step::Step(std::string renderQueueID)
+	Step::Step(const std::string& renderQueueID)
 		:
 		renderQueueID(renderQueueID)
 	{
@@ -32,7 +32,7 @@ namespace tryn::gfx
 			bind->Bind(context);
 		}
 	}
-	void Step::Draw(const IGraphics& gfx, Drawable* parent) const
+	void Step::Draw(const IGraphics& gfx, const Drawable* parent)
 	{
 		gfx.DrawIndexed(parent->GetIndexCount());
 	}
@@ -41,7 +41,7 @@ namespace tryn::gfx
 		auto& renderGraph = gfx.GetRenderGraph();
 		renderGraph.GetRenderQueueByID(renderQueueID).Push(BasicJob(parent,this));
 	}
-	void Step::Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instanceParent)
+	void Step::Submit(const IGraphics& gfx, Drawable* parent, const std::span<const glm::mat4> transforms, InstancedModelParent& instanceParent)
 	{
 		auto& renderGraph = gfx.GetRenderGraph();
 		renderGraph.GetRenderQueueByID(renderQueueID).Push(InstancedJob(parent, this, transforms, &instanceParent));
@@ -53,5 +53,10 @@ namespace tryn::gfx
 		{
 			pBindable->Accept(probe);
 		}
+	}
+
+	const std::string& Step::RenderQueueID() const
+	{
+		return renderQueueID;
 	}
 }

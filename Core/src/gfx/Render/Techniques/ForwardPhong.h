@@ -11,6 +11,8 @@ namespace tryn::gfx
 	{
 	public:
 		ForwardPhong(const std::string& name);
-		ForwardPhong(const Material& material, const IGraphics& gfx, const std::string& rootPath, bool instanced = false, bool skinned = false);
+
+		// The material vector has to contain the PBR material on slot 0
+		ForwardPhong(const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced = false, bool skinned = false);
 	};
 }

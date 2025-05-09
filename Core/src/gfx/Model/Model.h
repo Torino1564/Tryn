@@ -47,6 +47,7 @@ namespace tryn::gfx
 		Model(Model&&) = default;
 		void Submit(const glm::mat4& entityTransform);
 		void Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms) const;
+		void AddOrEnableTechniques(std::span<const utl::UUID_t> techniqueUUIDs);
 		void SpawnControlWindow();
 		void AddAnimation(const std::shared_ptr<ani::Animation>& pAnimation, const std::string&) const;
 		glm::vec3 GetPosition() const;
@@ -69,6 +70,8 @@ namespace tryn::gfx
 		std::vector<Node> nodes = {};
 		std::uint32_t rootId;
 		std::vector<std::shared_ptr<Mesh>> pMeshes = {};
+		std::vector<std::shared_ptr<Material>> pMaterials;
+		std::vector<utl::UUID_t> techniques;
 		friend class Serializer;
 		friend class Node;
 	};

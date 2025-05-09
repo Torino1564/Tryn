@@ -131,6 +131,19 @@ namespace tryn::gfx::ani
 		}
 		return &interfaces[animationNameMapper.at(name)];
 	}
+
+	void BonedMesh::EnableOrAddTechnique(const IGraphics& gfx, const utl::UUID_t techniqueUUID,
+		const std::span<uint16_t> materialIndex)
+	{
+		EnableOrAddTechniqueEx(gfx, techniqueUUID, true, materialIndex);
+	}
+
+	void BonedMesh::AddTechnique(const IGraphics& gfx, const utl::UUID_t techniqueUUID, const std::span<uint16_t> materialIndex,
+		const bool enabled)
+	{
+		AddTechniqueEx(gfx, techniqueUUID, true, materialIndex, enabled);
+	}
+
 	inline void BonedMesh::ExtraSubmitBehavior()
 	{
 

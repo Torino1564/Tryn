@@ -61,6 +61,7 @@ namespace tryn::ecs
 		}
 
 		void Finalize();
+		void Finalize2();
 		void Execute() const;
 		const gfx::IGraphics& Gfx() const;
 		gfx::IGraphics& Gfx();
@@ -90,21 +91,31 @@ namespace tryn::ecs
 		virtual ~System() = default;
 		virtual void Execute() = 0;
 		virtual void Init() = 0;
-
+		virtual int ID() const = 0;
 		template <typename S>
-		void AddDependency()
+		void AddDependency(this auto& self)
 		{
 			// assert uniqueness
-			for (auto& existingDependencyUID : dependencyUIDs)
+			auto it = std::ranges::find(dependencyUIDs, S::UID);
+			if (it == dependencyUIDs.end())
 			{
-				if (existingDependencyUID == S::UID)
-				{
-					trylog.info(L"The system already has that dependency.");
-					return;
-				}
+				trylog.info(utl::ToWide(std::format("The system [{}] already has [{}] as a dependency.", ZT_TYPE_OF(decltype(self)), ZT_TYPE_OF(S))));
+				return;
 			}
-
 			dependencyUIDs.push_back(S::UID);
+		}
+
+		template <typename S>
+		void AddPrerequisiteOf(this auto& self)
+		{
+			// assert uniqueness
+			auto it = std::ranges::find(prerequisiteOfUIDs, S::UID);
+			if (it == prerequisiteOfUIDs.end())
+			{
+				trylog.info(utl::ToWide(std::format("The system [{}] already is a prerequisite of [{}].", ZT_TYPE_OF(decltype(self)), ZT_TYPE_OF(S))));
+				return;
+			}
+			prerequisiteOfUIDs.push_back(S::UID);
 		}
 	protected:
 		struct SystemUID
@@ -122,6 +133,7 @@ namespace tryn::ecs
 
 	private:
 		std::vector<SystemUID> dependencyUIDs;
+		std::vector<SystemUID> prerequisiteOfUIDs;
 	};
 
 	template <typename T>
@@ -135,7 +147,10 @@ namespace tryn::ecs
 		static void InitDependencies(System* self) {}
 		void Execute() override {}
 		void Init() override {}
-
+		int ID() const override
+		{
+			return UID.id;
+		}
 		const static inline auto UID = SystemUID::Resolve();
 	};
 

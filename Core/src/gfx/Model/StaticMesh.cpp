@@ -102,4 +102,16 @@ namespace tryn::gfx
 	{
 		return MeshType::Static;
 	}
+
+	void StaticMesh::EnableOrAddTechnique(const IGraphics& gfx, const utl::UUID_t techniqueUUID,
+		const std::span<uint16_t> materialIndex)
+	{
+		EnableOrAddTechniqueEx(gfx, techniqueUUID, false, materialIndex);
+	}
+
+	void StaticMesh::AddTechnique(const IGraphics& gfx, const utl::UUID_t techniqueUUID, const std::span<uint16_t> materialIndex,
+		const bool enabled)
+	{
+		AddTechniqueEx(gfx, techniqueUUID, false, materialIndex, enabled);
+	}
 }

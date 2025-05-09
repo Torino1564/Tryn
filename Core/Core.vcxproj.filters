@@ -444,6 +444,12 @@
     <ClCompile Include="src\gfx\Model\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\sys\RenderIDInfoSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Render\Techniques\EntityIDTechnique.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -2271,6 +2277,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\fsx\BoundingBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\sys\RenderIDInfoSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\Jobs\EntityIDJob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Render\Techniques\EntityIDTechnique.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

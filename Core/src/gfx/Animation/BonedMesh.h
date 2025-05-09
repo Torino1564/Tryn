@@ -19,6 +19,9 @@ namespace tryn::gfx::ani
 		void Submit(const IGraphics& gfx, const glm::mat4 finalTransform, std::span<const glm::mat4> boneTransforms);
 		void AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string& name);
 		AnimationSkeletonInterface* GetAnimationInterface(const std::string& name = "?");
+
+		void EnableOrAddTechnique(const IGraphics& gfx, utl::UUID_t techniqueUUID, std::span<uint16_t> materialIndex) override;
+		void AddTechnique(const IGraphics& gfx, utl::UUID_t techniqueUUID, std::span<uint16_t> materialIndex, bool enabled = true) override;
 	private:
 		void inline ExtraSubmitBehavior() override;
 		Skeleton& skeleton;	

@@ -56,23 +56,23 @@ namespace tryn::ecs
 	};
 
 	template<typename ...Cs>
-	inline Entity Entity::CreateNew(ECS& ecs, std::string name)
+	Entity Entity::CreateNew(ECS& ecs, std::string name)
 	{
 		Entity ent(std::move(name));
-		ent.pArchetype = &ecs.GetArchetypeManager().GetArchetype<Cs...>();
+		ent.pArchetype = &ecs.GetArchetypeManager().GetArchetype< Cs...>();
 		ent.UUID = ent.pArchetype->ResolveEntityUUID();
 		return ent;
 	}
 
 	template<typename C>
-	inline C& Entity::GetComponent()
+	C& Entity::GetComponent()
 	{
 		auto data = pArchetype->GetComponentData<C>();
 		return data[UUID.ID - 1];
 	}
 
 	template<typename ...Cs>
-	inline void Entity::AddComponent(ECS& ecs)
+	void Entity::AddComponent(ECS& ecs)
 	{
 		std::array<utl::UUID_t, sizeof...(Cs)> newComponentIDs = { ZT_TYPE_UUID(Cs)... };
 		AddComponent(ecs, newComponentIDs);

@@ -20,7 +20,7 @@ namespace tryn::ecs
 	{
 	}
 
-	void SystemGraph::Finalize()
+	void SystemGraph::Finalize2()
 	{
 		sul::dynamic_bitset<> systemsSet;
 		sul::dynamic_bitset<> perLevelSystemsSet;
@@ -35,6 +35,8 @@ namespace tryn::ecs
 				systemsSet[systemIndex].set();
 			}
 		}
+
+
 
 		// loop while there are systems not set to their appropiate level
 		while (!systemsSet.all())
@@ -92,6 +94,98 @@ namespace tryn::ecs
 
 		finalized = true;
 	}
+
+	void SystemGraph::Finalize()
+	{
+		/* Create the following data structure
+		 * ------------------
+		 *	|system	|dep of	|
+		 *	-----------------
+		 *	|	1	| [...]	|
+		 *	|	2	|		|
+		 * 	|	3	|		|
+		 *	|	4	|		|
+		 *	|  ...	|		|
+		 *	|   N	|		|
+		 *	-----------------
+		 *	Each system registers its dependencies and adds itself
+		 *	as a dependency for systems it must happen before
+		 */
+
+		struct Row
+		{
+			int systemID;
+			std::vector<int> dependencies; // must happen after these systems
+		};
+
+		std::vector<Row> table; table.resize(pSystems.size());
+
+		// Fill table
+		for (const auto& pSystem : pSystems)
+		{
+			const auto& system = *pSystem;
+			auto& row = table[system.ID()];
+
+			// System ID
+			row.systemID = system.ID();
+
+			// Add dependencies
+			for (const auto depUID : system.dependencyUIDs)
+			{
+				row.dependencies.push_back(depUID.id);
+			}
+
+			// Add itself as dependency for systems it must happen before of
+			for (const auto preReqOfUID : system.prerequisiteOfUIDs)
+			{
+				table[preReqOfUID.id].dependencies.push_back(system.ID());
+			}
+		}
+
+		// Once the table is filled, we iterate over all systems and place them on levels accordingly
+		sul::dynamic_bitset<> systemsSet; systemsSet.resize(pSystems.size());
+
+		// Loop while there are still systems to set
+		while (!systemsSet.all())
+		{
+			levels.emplace_back();
+			auto& currentLevel = levels.back();
+			// For each unset system, loop over all dependencies in the table and check if it can be placed in the current level
+			for (int systemID = 0; systemID < systemsSet.size(); systemID++)
+			{
+				// Skip if set
+				if (systemsSet[systemID])
+				{
+					continue;
+				}
+
+				// Check dependencies if not set.
+				bool dependenciesSet = true;
+				for (auto dependencyID : table[systemID].dependencies)
+				{
+					if (!systemsSet[dependencyID])
+					{
+						dependenciesSet = false;
+						break;
+					}
+				}
+
+				// Register to this level if its dependencies are set
+				if (dependenciesSet)
+				{
+					currentLevel.systemIndices.push_back(systemID);
+					systemsSet[systemID].set();
+				}
+			}
+		}
+
+		// Lastly call init on all systems
+		for (auto& pSystem : pSystems)
+		{
+			pSystem->Init();
+		}
+	}
+
 	void SystemGraph::Execute() const
 	{
 		trynass(finalized).msg(L"The system graph must be finalized before it can be executed!").ex();

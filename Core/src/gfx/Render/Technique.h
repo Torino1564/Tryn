@@ -24,7 +24,7 @@ namespace tryn::gfx
 	{
 	public:
 
-		static std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, const class Material& material, const IGraphics& gfx, const std::string& path, bool instanced = false, bool skeleton = false);
+		static std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, const std::vector<const std::shared_ptr<class Material>>& materials, const IGraphics& gfx, bool instanced = false, bool skeleton = false);
 
 		template <typename T>
 		static bool RegisterTechnique(utl::UUID_t uuid)
@@ -38,6 +38,7 @@ namespace tryn::gfx
 			trynchk_fail.msg(utl::ToWide(std::format("The technique [{}] with UUID: [{}] has already been registered in the TechniquePool.", ZT_TYPE_OF(T), uuid)));
 			std::unreachable();
 		}
+		static const std::string& Name(utl::UUID_t techniqueUuid);
 
 	private:
 		static TechniquePool& Get();
@@ -52,13 +53,24 @@ namespace tryn::gfx
 		TechniqueBase(const std::string& name);
 		virtual ~TechniqueBase() = default;
 		void AddStep(Step step);
-		void Draw(const IGraphics& gfx, Drawable* parent) const;
+		void Draw(const IGraphics& gfx, const Drawable* parent) const;
 		void Submit(const IGraphics& gfx, Drawable* parent);
 		void Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instancedParent);
 		void Accept(class TechniqueProbe& probe);
-		virtual std::shared_ptr<TechniqueBase> ConstructDerived(const Material& material, const IGraphics& gfx, const std::string& path, bool instanced, bool skinned) = 0;
+		virtual std::shared_ptr<TechniqueBase> ConstructDerived(const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced, bool skinned) const = 0;
 		class VertexLayout GetVertexLayout() const;
+		virtual utl::UUID_t UUID() const = 0;
+		auto&& GetStep(this auto&& self, const uint16_t index)
+		{
+			return std::forward<decltype(self)>(self).steps[index];
+		}
+		auto&& GetStep(this auto&& self, const std::string& renderQueueID)
+		{
+			auto it = std::ranges::find_if(std::forward<decltype(self)>(self).steps, [&](const Step& step) { return step.RenderQueueID() == renderQueueID; });
+			return *it;
+		}
 	protected:
+		std::vector<IBindable*> pExtraBinds;
 		std::unique_ptr<VertexLayout> pVertexLayout;
 		std::string name;
 		std::vector<Step> steps;
@@ -73,7 +85,8 @@ namespace tryn::gfx
 			:
 		TechniqueBase(name) {}
 
-		std::shared_ptr<TechniqueBase> ConstructDerived(const Material& material, const IGraphics& gfx, const std::string& path, const bool instanced = false, const bool skinned = false) override;
+		std::shared_ptr<TechniqueBase> ConstructDerived(const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, const bool instanced = false, const bool skinned = false) const override;
+		utl::UUID_t UUID() const override;
 		static constexpr auto GetUUID();
 
 	protected:
@@ -84,10 +97,16 @@ namespace tryn::gfx
 	};
 
 	template <class T>
-	std::shared_ptr<TechniqueBase> Technique<T>::ConstructDerived(const Material& material,
-		const IGraphics& gfx, const std::string& path, const bool instanced, const bool skinned)
+	std::shared_ptr<TechniqueBase> Technique<T>::ConstructDerived(const std::vector<const std::shared_ptr<Material>>& materials,
+		const IGraphics& gfx, const bool instanced, const bool skinned) const
 	{
-		return std::make_shared<T>(material, gfx, path, instanced, skinned);
+		return std::make_shared<T>(materials, gfx, instanced, skinned);
+	}
+
+	template <class T>
+	utl::UUID_t Technique<T>::UUID() const
+	{
+		return GetUUID();
 	}
 
 	template <class T>

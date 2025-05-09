@@ -60,7 +60,15 @@ namespace tryn::ecs
 	}
 
 	template <typename ... ACs>
-	inline std::span<std::tuple<std::span<typename ACs::Component>...>> ArchetypeManager::GetComponentGroups()
+	std::span<std::tuple<std::span<typename ACs::Component>...>> ArchetypeManager::GetComponentGroups()
+	{
+		auto [query, result] = GetComponentGroups<ACs...>();
+		return result;
+	}
+
+	template <typename ... ACs>
+	std::pair<std::span<ArchetypeID>, std::span<std::tuple<std::span<typename ACs::Component>...>>> ArchetypeManager::
+	GetComponentGroupsEx()
 	{
 		const std::span<ArchetypeID> query = QueryArchetype<typename ACs::Component...>();
 
@@ -74,7 +82,7 @@ namespace tryn::ecs
 			});
 		}
 
-		return result;
+		return { result, query };
 	}
 
 	template <typename... Cs>

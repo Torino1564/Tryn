@@ -6,12 +6,19 @@
 
 namespace tryn::gfx
 {
-	std::shared_ptr<TechniqueBase> TechniquePool::ConstructTechnique(utl::UUID_t techniqueUUID, const Material& material, const IGraphics& gfx, const std::string& path, const bool instanced,
+	std::shared_ptr<TechniqueBase> TechniquePool::ConstructTechnique(utl::UUID_t techniqueUUID, const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, const bool instanced,
 		const bool skeleton)
 	{
 		auto it = Get().techniqueMap.find(techniqueUUID);
-		trynass(it != Get().techniqueMap.end()).msg(utl::ToWide(std::format("Did not find technique with UUID: {}", techniqueUUID))).lvl(log::Level::Error).ex();
-		return it->second->ConstructDerived(material, gfx, path, instanced, skeleton);
+		trynass(it != Get().techniqueMap.end()).msg(utl::ToWide(std::format("Technique with UUID: [{}] is not registered", techniqueUUID))).lvl(log::Level::Error).ex();
+		return it->second->ConstructDerived(materials, gfx, instanced, skeleton);
+	}
+
+	const std::string& TechniquePool::Name(utl::UUID_t techniqueUuid)
+	{
+		auto it = Get().techniqueMap.find(techniqueUuid);
+		trynass(it != Get().techniqueMap.end()).msg(utl::ToWide(std::format("Technique with UUID: [{}] is not registered", techniqueUuid))).lvl(log::Level::Error).ex();
+		return it->second->name;
 	}
 
 	TechniquePool& TechniquePool::Get()
@@ -29,8 +36,9 @@ namespace tryn::gfx
 	{
 		steps.push_back(std::move(step));
 	}
-	void TechniqueBase::Draw(const IGraphics& gfx, Drawable* parent) const
+	void TechniqueBase::Draw(const IGraphics& gfx, const Drawable* parent) const
 	{
+		BindExtraBinds();
 		for (auto& step : steps)
 		{
 			step.Bind();

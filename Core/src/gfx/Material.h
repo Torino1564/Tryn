@@ -54,10 +54,8 @@ namespace tryn::gfx
 	{
 		friend class TechniqueBase;
 	public:
-		template <TechniqueClass... T>
-		static Material Make(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, const aiScene* pScene = nullptr, bool instanced = false, bool skinned = false);
-		Material(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs, const aiScene* pScene = nullptr, bool instanced = false, bool skinned = false);
-		Material(const IGraphics& gfx, const Microsoft::glTF::Material& material, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs, const WinGLTFLoaderContext& context, bool instanced = false, bool skinned = false);
+		Material(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, const aiScene* pScene = nullptr, bool instanced = false, bool skinned = false);
+		Material(const IGraphics& gfx, const Microsoft::glTF::Material& material, const std::filesystem::path& path, const WinGLTFLoaderContext& context, bool instanced = false, bool skinned = false);
 		static std::shared_ptr<Material> MakeDefault(const IGraphics& gfx);
 		VertexBuffer ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton = nullptr) const noexcept;
 		VertexBuffer ExtractVertices(const Shape3D& mesh) const noexcept;
@@ -65,8 +63,6 @@ namespace tryn::gfx
 		static IndexBuffer ExtractIndices(const aiMesh& mesh) noexcept;
 		static IndexBuffer ExtractIndices(const Shape3D& mesh) noexcept;
 		static IndexBuffer ExtractIndices(const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context) noexcept;
-		std::vector<std::shared_ptr<TechniqueBase>> GetTechniques() const noexcept;
-		void AddTechnique(utl::UUID_t techniqueUUID, const IGraphics& gfx, const std::string& path, bool instanced, bool skinned);
 		const aiScene* pScene;
 
 		template <typename T>
@@ -99,7 +95,6 @@ namespace tryn::gfx
 		Material(const aiScene* pScene);
 		std::unordered_map<AttributeType, Attribute> attributes;
 		std::unordered_map<TextureType, std::shared_ptr<Texture>> textures;
-		std::vector<std::shared_ptr<TechniqueBase>> pTechniques;
 		int selectedTechnique = -1;
 		std::string name;
 

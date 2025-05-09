@@ -4,7 +4,6 @@
 #include <Core/src/ecs/cmp/Components.h>
 #include <Core/src/gfx/Model/Model.h>
 
-
 namespace tryn::ecs
 {
 	uint16_t ComponentManager::ComponentCount() const

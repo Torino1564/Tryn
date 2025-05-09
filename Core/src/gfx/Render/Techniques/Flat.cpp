@@ -21,14 +21,13 @@ namespace tryn::gfx
 	{
 	}
 
-	Flat::Flat(const Material& material, const IGraphics& gfx, const std::string& path, const bool instanced, const bool skinned)
+	Flat::Flat(const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, const bool instanced, const bool skinned)
 		:
 		Technique("Flat")
 	{
 		auto shaderRootPath = IGraphics::GetShaderRootPath();
-
+		auto& material = *materials[0];
 		std::string shaderCode = "Flat";
-		aiString tempFileName;
 
 		auto& vLayout = *pVertexLayout;
 

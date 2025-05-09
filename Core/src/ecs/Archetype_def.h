@@ -78,6 +78,9 @@ namespace tryn::ecs
 
 		template <typename... ACs>
 		std::span<std::tuple<std::span<typename ACs::Component>...>> GetComponentGroups();
+
+		template <typename... ACs>
+		std::pair<std::span<ArchetypeID>, std::span<std::tuple<std::span<typename ACs::Component>...>>> GetComponentGroupsEx();
 		std::span<std::span<ComponentArray*>> GetComponentGroups(std::span<utl::UUID_t> componentUUIDs);
 
 		std::span<ArchetypeID> QueryArchetype(std::span<utl::UUID_t> componentUUIDs);

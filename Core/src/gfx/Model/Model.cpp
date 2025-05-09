@@ -55,6 +55,11 @@ namespace tryn::gfx
 	{
 		const std::filesystem::path fspath(path);
 
+		for (auto techniqueUUID : techniqueUUIDs)
+		{
+			techniques.push_back(techniqueUUID);
+		}
+
 		if (const auto& ext = fspath.extension().string(); ext == ".gltf" || ext == ".glb" )
 		{
 			// TinyGLTF initialization
@@ -96,12 +101,11 @@ namespace tryn::gfx
 		rootId = ParseNode(nextId, *pScene->mRootNode, scale, true);
 
 		// parse materials
-		std::vector<std::shared_ptr<Material>> materials;
-		materials.reserve(pScene->mNumMaterials);
+		pMaterials.reserve(pScene->mNumMaterials);
 
 		for (size_t i = 0; i < pScene->mNumMaterials; i++)
 		{
-			materials.emplace_back(std::make_shared<Material>(gfx, *pScene->mMaterials[i], path, techniqueUUIDs, pScene, instanced, skeleton.has_value()));
+			pMaterials.emplace_back(std::make_shared<Material>(gfx, *pScene->mMaterials[i], path, techniqueUUIDs, pScene, instanced, skeleton.has_value()));
 		}
 
 		if (skeleton.has_value())
@@ -109,7 +113,7 @@ namespace tryn::gfx
 			for (size_t i = 0; i < pScene->mNumMeshes; i++)
 			{
 				const auto& mesh = *pScene->mMeshes[i];
-				pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, materials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), skeleton.value(), scale, meshCounter++));
+				pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, pMaterials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), skeleton.value(), scale, meshCounter++));
 			}
 		}
 		else
@@ -117,7 +121,7 @@ namespace tryn::gfx
 			for (size_t i = 0; i < pScene->mNumMeshes; i++)
 			{
 				const auto& mesh = *pScene->mMeshes[i];
-				auto pMesh = std::make_shared<StaticMesh>(gfx, mesh, mesh.mName.C_Str(), materials[mesh.mMaterialIndex], scale, meshCounter++);
+				auto pMesh = std::make_shared<StaticMesh>(gfx, mesh, mesh.mName.C_Str(), pMaterials[mesh.mMaterialIndex], scale, meshCounter++);
 				pMeshes.push_back(std::move(pMesh));
 			}
 		}
@@ -162,6 +166,23 @@ namespace tryn::gfx
 		const auto transform = translation * rotation;
 		nodes[rootId].Submit(*pGfx, entityTransform * transform, boneTransforms );
 	}
+
+	void Model::AddOrEnableTechniques(std::span<const utl::UUID_t> techniqueUUIDs)
+	{
+		for (const auto techniqueUUID : techniqueUUIDs)
+		{
+			if (std::ranges::find(techniques, techniqueUUID) == techniques.end())
+			{
+				techniques.emplace_back(techniqueUUID);
+			}
+			for (auto& mesh : pMeshes | std::views::transform([](auto& pMesh) -> Mesh& { return *pMesh; }))
+			{
+				mesh.EnableOrAddTechnique(*pGfx, techniqueUUID);
+			}
+		}
+		
+	}
+
 	void Model::SpawnControlWindow()
 	{
 		ImGui::Begin(name.c_str());
@@ -448,7 +469,7 @@ namespace tryn::gfx
 
 				for (unsigned int i = 0; i < doc.materials.Size(); i++)
 				{
-					materials.emplace_back(std::make_shared<Material>(gfx, doc.materials[i], path, techniqueUUIDs, context, instanced, skeleton.has_value()));
+					materials.emplace_back(std::make_shared<Material>(gfx, doc.materials[i], path, context, instanced, skeleton.has_value()));
 				}
 
 				// Add meshes
@@ -456,6 +477,10 @@ namespace tryn::gfx
 				{
 					auto& mesh = doc.meshes[i];
 					pMeshes.push_back(std::make_shared<GLTFMesh>(gfx, mesh, context, mesh.name, materials[std::atoi(mesh.primitives[0].materialId.c_str())], scale, meshCounter++));
+					for (auto techniqueUUID : techniqueUUIDs)
+					{
+						pMeshes.back()->AddTechnique(gfx, techniqueUUID, instanced, skeleton.has_value());
+					}
 				}
 
 				// Set mesh Span

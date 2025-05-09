@@ -19,7 +19,9 @@ ZT_EX_DEF(DcbException);
 		X( Float3 ) \
 		X( Float4 ) \
 		X( Matrix4 ) \
-		X( Matrix3 )
+		X( Matrix3 ) \
+		X( Int32 ) \
+		X( Int64 )
 
 namespace tryn::gfx
 {
@@ -76,6 +78,16 @@ namespace tryn::gfx
 		{
 			using TrueType = glm::mat3;
 			static constexpr size_t TrueTypeSize = sizeof(glm::mat3);
+		};
+		template <> struct TypeAttr<Int32>
+		{
+			using TrueType = uint32_t;
+			static constexpr size_t TrueTypeSize = sizeof(TrueType);
+		};
+		template <> struct TypeAttr<Int64>
+		{
+			using TrueType = uint64_t;
+			static constexpr size_t TrueTypeSize = sizeof(TrueType);
 		};
 
 		template<typename T>
@@ -155,7 +167,7 @@ namespace tryn::gfx
 	public:
 		ConstantBufferLayout();
 		void Append(Node child);
-		void Append(ConstantBufferLayout::Type type, std::string name);
+		void Append(Type type, std::string name);
 		void Solidify();
 		bool IsSolid() const;
 		size_t Size() const;

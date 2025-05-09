@@ -73,7 +73,7 @@ namespace tryn::gfx
 
 		AddExtraBind(&instanceBuffer);
 
-		for (auto& technique : GetSelectedMaterial().GetTechniques())
+		for (auto& [enabled, technique] : pTechniques | std::views::filter([](const auto& pair){ return pair.first; }))
 		{
 			technique->Submit(gfx, this, transforms, instancedParent);
 		}
@@ -122,6 +122,16 @@ namespace tryn::gfx
 		}
 		trylog.warn(L"Failed to add extra bind: the 10 slot limit was reached.");
 	}
+
+	void Drawable::AddTechniqueStepExtraBind(IBindable* pBindable, utl::UUID_t techniqueUUID, const std::string& step)
+	{
+		if (const auto it = std::ranges::find_if(pTechniques, [=](const auto& pair) { return (pair.second->UUID() == techniqueUUID); }); it != pTechniques.end())
+		{
+			auto& currentStep = it->second->GetStep(step);
+
+		}
+	}
+
 	void Drawable::BindTransformCBuf() const
 	{
 		pTransformCBuf->BindTransformCBuf(this);
@@ -149,6 +159,45 @@ namespace tryn::gfx
 	std::uint16_t Drawable::GetID() const
 	{
 		return ID;
+	}
+
+	void Drawable::EnableOrAddTechniqueEx(const IGraphics& gfx, const utl::UUID_t techniqueUUID, const bool skinned,
+		const std::span<uint16_t> materialIndex)
+	{
+		if (const auto it = std::ranges::find_if(pTechniques, [=](const auto& pair) { return (pair.second->UUID() == techniqueUUID); }); it != pTechniques.end())
+		{
+			// Technique exists, then just enable it
+			it->first = true;
+		}
+		else
+		{
+			// Technique does not exist, add it and enable it:
+			AddTechniqueEx(gfx, techniqueUUID, skinned, materialIndex, true);
+		}
+	}
+
+	void Drawable::DisableTechnique(const utl::UUID_t techniqueUUID)
+	{
+		if (const auto it = std::ranges::find_if(pTechniques, [=](const auto& pair) { return (pair.second->UUID() == techniqueUUID); }); it != pTechniques.end())
+		{
+			// Technique exists, then just disable it
+			it->first = false;
+		}
+		else
+		{
+			trylog.warn(utl::ToWide(std::format("Attempted to disable a technique that does not exist: [{}]", TechniquePool::Name(techniqueUUID))));
+		}
+	}
+
+	void Drawable::AddTechniqueEx(const IGraphics& gfx, const utl::UUID_t techniqueUUID, const bool skinned, const std::span<uint16_t> materialIndexes, const bool enabled)
+	{
+		std::vector<const std::shared_ptr<Material>> materials;
+		for (auto materialIndex : materialIndexes)
+		{
+			materials.emplace_back(pMaterials[materialIndex]);
+		}
+
+		pTechniques.emplace_back(enabled, TechniquePool::ConstructTechnique(techniqueUUID, materials, gfx, instanced, skinned));
 	}
 
 	Material& Drawable::GetSelectedMaterial() const

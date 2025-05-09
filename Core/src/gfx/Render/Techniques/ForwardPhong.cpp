@@ -20,10 +20,11 @@ namespace tryn::gfx
 	{
 	}
 
-	ForwardPhong::ForwardPhong(const Material& material, const IGraphics& gfx, const std::string& rootPath, bool instanced, bool skinned)
+	ForwardPhong::ForwardPhong(const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced, bool skinned)
 		:
 		Technique("ForwardPhong")
 	{
+		auto& material = *materials[0];
 		auto shaderRootPath = tryn::gfx::IGraphics::GetShaderRootPath();
 
 		std::string shaderCode = "Phong";

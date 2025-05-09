@@ -22,13 +22,11 @@ namespace tryn::gfx
 	{
 		static const aiMaterial emptyMat = {};
 		static const std::filesystem::path emptyPath = {};
-		static constexpr std::array uuidList = { ZT_TYPE_UUID(ForwardPhong) };
-		static auto defaultMat = std::make_shared<Material>(gfx, emptyMat, emptyPath, uuidList);
+		static auto defaultMat = std::make_shared<Material>(gfx, emptyMat, emptyPath);
 		return defaultMat;
 	}
 
-	Material::Material(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path,
-		std::span<const utl::UUID_t> techniqueUUIDs, const aiScene* pScene, const bool instanced, const bool skinned)
+	Material::Material(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, const aiScene* pScene, const bool instanced, const bool skinned)
 			: pScene(pScene)
 	{
 		const auto rootPath = path.parent_path().string() + "\\";
@@ -117,22 +115,10 @@ namespace tryn::gfx
 			material.Get(AI_MATKEY_SHININESS, gloss);
 			attributes.insert({ AttributeType::SpecularGloss, Attribute::Make<float>(gloss)});
 		}
-		
-
-		if (techniqueUUIDs.size() == 0)
-		{
-			AddTechnique(ZT_TYPE_UUID(ForwardPhong), gfx, rootPath, instanced, skinned);
-		}
-
-		for (auto techniqueUUID : techniqueUUIDs)
-		{
-			AddTechnique(techniqueUUID, gfx, rootPath, instanced, skinned);
-		}
 	}
 
 	Material::Material(const IGraphics& gfx, const Microsoft::glTF::Material& material,
-		const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs,
-		const WinGLTFLoaderContext& context, bool instanced, const bool skinned)
+		const std::filesystem::path& path, const WinGLTFLoaderContext& context, bool instanced, const bool skinned)
 			: pScene(nullptr)
 	{
 		auto& document = *context.pDocument;
@@ -261,13 +247,6 @@ namespace tryn::gfx
 				textures.insert({TextureType::Specular, tex });
 			}
 		}
-
-		trynass(techniqueUUIDs.size() != 0).msg(L"Cannot create a material with no techniques!");
-
-		for (auto techniqueUUID : techniqueUUIDs)
-		{
-			AddTechnique(techniqueUUID, gfx, rootPath, instanced, skinned);
-		}
 	}
 
 	VertexBuffer Material::ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton) const noexcept
@@ -313,17 +292,6 @@ namespace tryn::gfx
 		return IndexBuffer{ indices };
 	}
 
-	std::vector<std::shared_ptr<TechniqueBase>> Material::GetTechniques() const noexcept
-	{
-		return pTechniques;
-	}
-
-	void Material::AddTechnique(const utl::UUID_t techniqueUUID, const IGraphics& gfx,
-		const std::string& path, const bool instanced, const bool skinned)
-	{
-		selectedTechnique = pTechniques.size();
-		pTechniques.push_back(TechniquePool::ConstructTechnique(techniqueUUID, *this, gfx, path,  instanced, skinned));
-	}
 
 	bool Material::HasAttribute(const AttributeType attribute) const
 	{
