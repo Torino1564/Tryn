@@ -4,7 +4,7 @@
 
 tryn::gfx::JITUpdateBuffer::JITUpdateBuffer(IVtxConstantBuffer* pBuffer, void* pData, size_t numBytes)
 	:
-	pBuffer(pBuffer), pData(pData), numBytes(numBytes)
+	pData(pData), numBytes(numBytes), pBuffer(pBuffer)
 {
 }
 

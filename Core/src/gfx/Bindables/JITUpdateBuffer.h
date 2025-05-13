@@ -4,6 +4,7 @@
 
 namespace tryn::gfx
 {
+	template <IBuffer<>>
 	class JITUpdateBuffer : public IBindable
 	{
 	public:

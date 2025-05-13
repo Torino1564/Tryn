@@ -20,7 +20,7 @@ namespace tryn::gfx
 		void Submit(const IGraphics& gfx, Drawable* parent);
 		void Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instanceParent);
 		void Accept(class TechniqueProbe& probe);
-		std::vector<std::shared_ptr<gfx::IBindable>> bindables;
+		std::vector<std::shared_ptr<IBindable>> bindables;
 		const std::string& RenderQueueID() const;
 	private:
 		std::string renderQueueID;

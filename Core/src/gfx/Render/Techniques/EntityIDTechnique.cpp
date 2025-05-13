@@ -4,6 +4,7 @@
 
 #include "Core/src/gfx/Vertex.h"
 #include "Core/src/gfx/Bindables/InputLayout.h"
+#include "Core/src/gfx/Bindables/JITUpdateBuffer.h"
 #include "Core/src/gfx/Bindables/PixelShader.h"
 #include "Core/src/gfx/Bindables/Rasterizer.h"
 #include "Core/src/gfx/Bindables/VertexShader.h"
@@ -37,7 +38,6 @@ namespace tryn::gfx
 		step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 		step.AddBindable(std::move(pvs));
 		step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
-		
 
 		this->AddStep(std::move(step));
 	}
