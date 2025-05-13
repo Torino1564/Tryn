@@ -1,6 +1,6 @@
 #include "TrynPCH.h"
 #include "BonedMesh.h"
-#include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/mem/ArenaAllocator.h>
 #include <Core/src/gfx/Bindables/JITUpdateBuffer.h>
 #include <Core/src/gfx/Material.h>
@@ -61,13 +61,10 @@ namespace tryn::gfx::ani
 		}
 
 		ID = meshID.value_or(0);
-		auto vertexBuffer = pMaterial->ExtractVertices(mesh, &skeleton);
-		vertexBuffer.SetClean();
-		const auto indices = pMaterial->ExtractIndices(mesh);
+		const auto indices = IndexBuffer(mesh);
 
 		indexCount = static_cast<uint32_t>(indices.Size());
 
-		pVertexBuffer = IVertexBuffer::Resolve(gfx, std::make_shared<VertexBuffer>(vertexBuffer), this->tag);
 		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<IndexBuffer>(indices));
 		pTopology = IPrimitiveTopology::Resolve(gfx);
 		InitTransformCBuf(gfx);
@@ -95,22 +92,23 @@ namespace tryn::gfx::ani
 	{
 		return MeshType::Boned;
 	}
-	void BonedMesh::Submit(const IGraphics& gfx, const glm::mat4 finalTransform, std::span<const glm::mat4> boneTransforms)
+	void BonedMesh::Submit(const IGraphics& gfx, const glm::mat4& finalTransform, std::span<const glm::mat4> boneTransforms)
 	{
 		extraBindPtrs = {};
 
 		this->transform = finalTransform;
 
-		auto jitBuffer = mem::ArenaAllocator<>::GP().MakeNew<JITUpdateBuffer>(pSkeletonCBuffer.get(), (void*)boneTransforms.data(), boneTransforms.size_bytes());
+		auto& jitBuffer = mem::ArenaAllocator<>::GP().Emplace(JITUpdateBuffer::Make(pSkeletonCBuffer.get(), (void*)boneTransforms.data(), boneTransforms.size_bytes()));
 
-		AddExtraBind(jitBuffer);
+		AddExtraBind(&jitBuffer);
 
-		for (auto& technique : GetSelectedMaterial().GetTechniques())
+		for (auto& [enabled, technique]: pTechniques)
 		{
-			technique->Submit(gfx, this);
+			if (enabled)
+				technique->Submit(gfx, this);
 		}
 	}
-	void BonedMesh::AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string& name)
+	void BonedMesh::AddAnimation(const std::shared_ptr<ani::Animation>& pAnimation, const std::string& name)
 	{
 		animationNameMapper[name] = (uint16_t)pAnimations.size();
 		pAnimations.push_back(pAnimation);

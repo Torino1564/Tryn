@@ -12,6 +12,6 @@ namespace tryn::gfx
 	public:
 		Flat(const std::string& name);
 		// Only the material at slot 0 is used
-		Flat(const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced = false, bool skinned = false);
+		Flat(const std::vector<std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced = false, bool skinned = false);
 	};
 }

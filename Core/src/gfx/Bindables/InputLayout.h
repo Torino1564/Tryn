@@ -2,7 +2,7 @@
 #include <Core/src/gfx/Bindables/Bindable.h>
 #include "PolyVBuffer.h"
 #include <Core/src/gfx/Model/StaticMesh.h>
-#include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Bindables/IBufferBase.h>
 
 namespace tryn::gfx
 {

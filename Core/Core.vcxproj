@@ -11,7 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ecs\sys\RenderIDInfoSystem.cpp" />
+    <ClCompile Include="src\ecs\sys\JITBufferCallbackSystem.cpp" />
+    <ClCompile Include="src\gfx\CPUBuffer.cpp" />
     <ClCompile Include="src\gfx\Model\GLTFMesh.cpp" />
     <ClCompile Include="src\gfx\Model\Mesh.cpp" />
     <ClCompile Include="src\gfx\Render\Techniques\EntityIDTechnique.cpp" />
@@ -60,7 +61,7 @@
     <ClCompile Include="src\gfx\Animation\BonedMesh.cpp" />
     <ClCompile Include="src\gfx\Bindables\Bindable.cpp" />
     <ClCompile Include="src\gfx\Bindables\DepthStencil.cpp" />
-    <ClCompile Include="src\gfx\Bindables\IBuffer.cpp" />
+    <ClCompile Include="src\gfx\Bindables\IBufferBase.cpp" />
     <ClCompile Include="src\gfx\Bindables\InputLayout.cpp" />
     <ClCompile Include="src\gfx\Bindables\JITUpdateBuffer.cpp" />
     <ClCompile Include="src\gfx\Bindables\PixelShader.cpp" />
@@ -87,9 +88,10 @@
     <ClCompile Include="src\ecs\cmp\TransformComponent.cpp" />
     <ClInclude Include="include\DllApi.h" />
     <ClInclude Include="src\dbg\SourceIncludes.h" />
+    <ClInclude Include="src\ecs\cmp\UpdateJITBufferComponent.h" />
     <ClInclude Include="src\ecs\Component.h" />
     <ClInclude Include="src\ecs\SerializeLambda.h" />
-    <ClInclude Include="src\ecs\sys\RenderIDInfoSystem.h" />
+    <ClInclude Include="src\ecs\sys\JITBufferCallbackSystem.h" />
     <ClInclude Include="src\fsx\BoundingBox.h" />
     <ClInclude Include="src\fsx\IBoundingBox.h" />
     <ClInclude Include="src\gfx\Attribute.h" />
@@ -278,7 +280,7 @@
     <ClInclude Include="src\gfx\Bindables\BindableBase.h" />
     <ClInclude Include="src\gfx\Bindables\JITUpdateBuffer.h" />
     <ClInclude Include="src\gfx\ConstantBuffer.h" />
-    <ClInclude Include="src\gfx\Bindables\IBuffer.h" />
+    <ClInclude Include="src\gfx\Bindables\IBufferBase.h" />
     <ClInclude Include="src\gfx\Bindables\InputLayout.h" />
     <ClInclude Include="src\gfx\Bindables\PixelShader.h" />
     <ClInclude Include="src\gfx\Bindables\PolyVBuffer.h" />

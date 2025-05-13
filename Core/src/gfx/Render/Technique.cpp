@@ -4,14 +4,33 @@
 #include <Core/src/gfx/Model/InstancedModel.h>
 #include <Core/src/gfx/IGraphics.h>
 
+#include "Core/src/gfx/Bindables/IBufferBase.h"
+
 namespace tryn::gfx
 {
-	std::shared_ptr<TechniqueBase> TechniquePool::ConstructTechnique(utl::UUID_t techniqueUUID, const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, const bool instanced,
-		const bool skeleton)
+	auto TechniquePool::ConstructTechnique(const IGraphics& gfx, utl::UUID_t techniqueUuid,
+	                                       const std::vector<std::shared_ptr<Material>>& materials,
+	                                       const Microsoft::glTF::MeshPrimitive& primitive,
+	                                       const gfx::WinGLTFLoaderContext& context, const bool instanced,
+	                                       const bool skeleton) -> std::shared_ptr<TechniqueBase>
 	{
-		auto it = Get().techniqueMap.find(techniqueUUID);
-		trynass(it != Get().techniqueMap.end()).msg(utl::ToWide(std::format("Technique with UUID: [{}] is not registered", techniqueUUID))).lvl(log::Level::Error).ex();
-		return it->second->ConstructDerived(materials, gfx, instanced, skeleton);
+		auto it = Get().techniqueMap.find(techniqueUuid);
+		trynass(it != Get().techniqueMap.end()).msg(utl::ToWide(std::format("Technique with UUID: [{}] is not registered", techniqueUuid))).lvl(log::Level::Error).ex();
+		auto tech = it->second->ConstructDerived(materials, gfx, instanced, skeleton);
+		tech->CreateVertexBuffer(gfx, primitive, context, nullptr);
+		return tech;
+	}
+
+	auto TechniquePool::ConstructTechnique(const IGraphics& gfx, utl::UUID_t techniqueUuid,
+	                                       const std::vector<std::shared_ptr<Material>>& materials, const aiMesh& mesh,
+	                                       ani::Skeleton* skeleton,
+	                                       const bool instanced) -> std::shared_ptr<TechniqueBase>
+	{
+		auto it = Get().techniqueMap.find(techniqueUuid);
+		trynass(it != Get().techniqueMap.end()).msg(utl::ToWide(std::format("Technique with UUID: [{}] is not registered", techniqueUuid))).lvl(log::Level::Error).ex();
+		auto tech = it->second->ConstructDerived(materials, gfx, instanced, skeleton != nullptr);
+		tech->CreateVertexBuffer(gfx, mesh, skeleton);
+		return tech;
 	}
 
 	const std::string& TechniquePool::Name(utl::UUID_t techniqueUuid)
@@ -38,13 +57,21 @@ namespace tryn::gfx
 	}
 	void TechniqueBase::Draw(const IGraphics& gfx, const Drawable* parent) const
 	{
-		BindExtraBinds();
 		for (auto& step : steps)
 		{
 			step.Bind();
 			step.Draw(gfx, parent);
 		}
 	}
+
+	void TechniqueBase::OfferBindable(const std::string& identifier, const std::shared_ptr<IBindable>& pBindable)
+	{
+		for (auto& step : steps)
+		{
+			step.OfferBindable(identifier, pBindable);
+		}
+	}
+
 	void TechniqueBase::Submit(const IGraphics& gfx, Drawable* parent)
 	{
 		for (auto& step : steps)
@@ -66,6 +93,20 @@ namespace tryn::gfx
 		{
 			step.Accept(probe);
 		}
+	}
+
+	void TechniqueBase::CreateVertexBuffer(const IGraphics& gfx,
+		const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context,
+		ani::Skeleton* pSkeleton)
+	{
+		auto pCPUBuffer = std::make_shared<VertexBuffer>(*pVertexLayout, primitive, context);
+		pVertexBuffer = IVertexBuffer::Resolve(gfx, pCPUBuffer);
+	}
+
+	void TechniqueBase::CreateVertexBuffer(const IGraphics& gfx, const aiMesh& mesh, ani::Skeleton* pSkeleton)
+	{
+		auto pCPUBuffer = std::make_shared<VertexBuffer>(*pVertexLayout, mesh, pSkeleton);
+		pVertexBuffer = IVertexBuffer::Resolve(gfx, pCPUBuffer);
 	}
 
 	VertexLayout TechniqueBase::GetVertexLayout() const

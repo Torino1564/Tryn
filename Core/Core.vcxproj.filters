@@ -303,7 +303,7 @@
     <ClCompile Include="src\gfx\Bindables\TextureResource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\Bindables\IBuffer.cpp">
+    <ClCompile Include="src\gfx\Bindables\IBufferBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\Bindables\InputLayout.cpp">
@@ -444,10 +444,13 @@
     <ClCompile Include="src\gfx\Model\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ecs\sys\RenderIDInfoSystem.cpp">
+    <ClCompile Include="src\ecs\sys\JITBufferCallbackSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\Render\Techniques\EntityIDTechnique.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\CPUBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1850,7 +1853,7 @@
     <ClInclude Include="src\gfx\Model\InstancedModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\Bindables\IBuffer.h">
+    <ClInclude Include="src\gfx\Bindables\IBufferBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\dx11\Bindables\DX11Buffer.h">
@@ -2279,13 +2282,16 @@
     <ClInclude Include="src\fsx\BoundingBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ecs\sys\RenderIDInfoSystem.h">
+    <ClInclude Include="src\ecs\sys\JITBufferCallbackSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Render\Jobs\EntityIDJob.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Render\Techniques\EntityIDTechnique.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\cmp\UpdateJITBufferComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

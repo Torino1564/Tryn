@@ -11,6 +11,8 @@
 #include <Core/src/ecs/sys/UpdateVelocitySystem.h>
 #include <Core/src/ecs/sys/AnimationSystem.h>
 
+#include "JITBufferCallbackSystem.h"
+
 
 namespace tryn::ecs
 {
@@ -184,6 +186,8 @@ namespace tryn::ecs
 		{
 			pSystem->Init();
 		}
+
+		finalized = true;
 	}
 
 	void SystemGraph::Execute() const
@@ -236,6 +240,7 @@ namespace tryn::ecs
 		RegisterSystem<UpdatePositionSystem>();
 		RegisterSystem<UpdateVelocitySystem>();
 		RegisterSystem<AnimationSystem>();
+		RegisterSystem<JITBufferCallbackSystem>();
 	}
 
 	void SystemManager::ExecuteSystems() const

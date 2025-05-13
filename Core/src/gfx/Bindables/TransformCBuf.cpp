@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "TransformCBuf.h"
 #include <Core/src/gfx/Drawable.h>
-#include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Bindables/IBufferBase.h>
 
 namespace tryn::gfx
 {

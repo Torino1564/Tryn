@@ -17,12 +17,15 @@ namespace tryn::gfx
 		void Bind() const;
 		void Bind(const IContext& context) const;
 		static void Draw(const IGraphics& gfx, const Drawable* parent);
+		void OfferBindable(const std::string& identifier, const std::shared_ptr<IBindable>& pBindable);
 		void Submit(const IGraphics& gfx, Drawable* parent);
 		void Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instanceParent);
 		void Accept(class TechniqueProbe& probe);
 		std::vector<std::shared_ptr<IBindable>> bindables;
+		std::vector<std::shared_ptr<IBindable>> inheritedBindables;
 		const std::string& RenderQueueID() const;
 	private:
+		std::vector<std::string> bindablesToAccept;
 		std::string renderQueueID;
 	};
 }

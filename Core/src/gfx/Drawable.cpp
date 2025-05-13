@@ -4,7 +4,7 @@
 #include <Core/src/gfx/Material.h>
 #include <Core/third/glm/glm.hpp>
 #include <Core/third/glm/gtx/euler_angles.hpp>
-#include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
 
 namespace tryn::gfx
@@ -31,9 +31,10 @@ namespace tryn::gfx
 
 		gfx.Dispatch([&] {
 			BindBase();
-			for (auto& technique : GetSelectedMaterial().GetTechniques())
+			for (const auto& [enabled, technique] : pTechniques)
 			{
-				technique->Draw(gfx, this);
+				if (enabled)
+					technique->Draw(gfx, this);
 			}
 			});
 	}
@@ -43,9 +44,10 @@ namespace tryn::gfx
 		ExtraSubmitBehavior();
 		this->transform = transform;
 
-		for (auto& technique : GetSelectedMaterial().GetTechniques())
+		for (const auto& [enabled, technique]: pTechniques)
 		{
-			technique->Submit(gfx, this);
+			if (enabled)
+				technique->Submit(gfx, this);
 		}
 	}
 	void Drawable::Submit(const IGraphics& gfx, const std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent)
@@ -123,15 +125,6 @@ namespace tryn::gfx
 		trylog.warn(L"Failed to add extra bind: the 10 slot limit was reached.");
 	}
 
-	void Drawable::AddTechniqueStepExtraBind(IBindable* pBindable, utl::UUID_t techniqueUUID, const std::string& step)
-	{
-		if (const auto it = std::ranges::find_if(pTechniques, [=](const auto& pair) { return (pair.second->UUID() == techniqueUUID); }); it != pTechniques.end())
-		{
-			auto& currentStep = it->second->GetStep(step);
-
-		}
-	}
-
 	void Drawable::BindTransformCBuf() const
 	{
 		pTransformCBuf->BindTransformCBuf(this);
@@ -191,7 +184,7 @@ namespace tryn::gfx
 
 	void Drawable::AddTechniqueEx(const IGraphics& gfx, const utl::UUID_t techniqueUUID, const bool skinned, const std::span<uint16_t> materialIndexes, const bool enabled)
 	{
-		std::vector<const std::shared_ptr<Material>> materials;
+		std::vector<std::shared_ptr<Material>> materials;
 		for (auto materialIndex : materialIndexes)
 		{
 			materials.emplace_back(pMaterials[materialIndex]);

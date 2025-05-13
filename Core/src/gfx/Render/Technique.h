@@ -12,7 +12,13 @@ struct aiMaterial;
 
 namespace tryn::gfx
 {
+	namespace ani
+	{
+		class Skeleton;
+	}
+
 	class IGraphics;
+	class Material;
 
 	template <typename T>
 	class Technique;
@@ -24,7 +30,11 @@ namespace tryn::gfx
 	{
 	public:
 
-		static std::shared_ptr<TechniqueBase> ConstructTechnique(utl::UUID_t techniqueUUID, const std::vector<const std::shared_ptr<class Material>>& materials, const IGraphics& gfx, bool instanced = false, bool skeleton = false);
+		static std::shared_ptr<TechniqueBase> ConstructTechnique(const IGraphics& gfx, utl::UUID_t techniqueUuid, const std::vector<std::shared_ptr<Material>>& materials, const Microsoft::glTF::MeshPrimitive& primitive,
+			const gfx::WinGLTFLoaderContext& context, bool instanced = false, bool skeleton = false);
+		static std::shared_ptr<TechniqueBase> ConstructTechnique(const IGraphics& gfx, utl::UUID_t techniqueUuid,
+		                               const std::vector<std::shared_ptr<Material>>& materials, const aiMesh& mesh,
+		                               ani::Skeleton* skeleton, bool instanced = false);
 
 		template <typename T>
 		static bool RegisterTechnique(utl::UUID_t uuid)
@@ -54,10 +64,13 @@ namespace tryn::gfx
 		virtual ~TechniqueBase() = default;
 		void AddStep(Step step);
 		void Draw(const IGraphics& gfx, const Drawable* parent) const;
+		void OfferBindable(const std::string& identifier, const std::shared_ptr<IBindable>& pBindable);
 		void Submit(const IGraphics& gfx, Drawable* parent);
-		void Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, class InstancedModelParent& instancedParent);
+		void Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent);
 		void Accept(class TechniqueProbe& probe);
-		virtual std::shared_ptr<TechniqueBase> ConstructDerived(const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced, bool skinned) const = 0;
+		virtual std::shared_ptr<TechniqueBase> ConstructDerived(const std::vector<std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced, bool skinned) const = 0;
+		void CreateVertexBuffer(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, ani::Skeleton* pSkeleton);
+		void CreateVertexBuffer(const IGraphics& gfx, const aiMesh& mesh, ani::Skeleton* pSkeleton);
 		class VertexLayout GetVertexLayout() const;
 		virtual utl::UUID_t UUID() const = 0;
 		auto&& GetStep(this auto&& self, const uint16_t index)
@@ -72,6 +85,7 @@ namespace tryn::gfx
 	protected:
 		std::vector<IBindable*> pExtraBinds;
 		std::unique_ptr<VertexLayout> pVertexLayout;
+		std::shared_ptr<IVertexBuffer> pVertexBuffer;
 		std::string name;
 		std::vector<Step> steps;
 	};
@@ -85,7 +99,7 @@ namespace tryn::gfx
 			:
 		TechniqueBase(name) {}
 
-		std::shared_ptr<TechniqueBase> ConstructDerived(const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, const bool instanced = false, const bool skinned = false) const override;
+		std::shared_ptr<TechniqueBase> ConstructDerived(const std::vector<std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced = false, bool skinned = false) const override;
 		utl::UUID_t UUID() const override;
 		static constexpr auto GetUUID();
 
@@ -97,7 +111,7 @@ namespace tryn::gfx
 	};
 
 	template <class T>
-	std::shared_ptr<TechniqueBase> Technique<T>::ConstructDerived(const std::vector<const std::shared_ptr<Material>>& materials,
+	std::shared_ptr<TechniqueBase> Technique<T>::ConstructDerived(const std::vector<std::shared_ptr<Material>>& materials,
 		const IGraphics& gfx, const bool instanced, const bool skinned) const
 	{
 		return std::make_shared<T>(materials, gfx, instanced, skinned);

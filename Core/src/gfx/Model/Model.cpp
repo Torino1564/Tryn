@@ -105,7 +105,7 @@ namespace tryn::gfx
 
 		for (size_t i = 0; i < pScene->mNumMaterials; i++)
 		{
-			pMaterials.emplace_back(std::make_shared<Material>(gfx, *pScene->mMaterials[i], path, techniqueUUIDs, pScene, instanced, skeleton.has_value()));
+			pMaterials.emplace_back(std::make_shared<Material>(gfx, *pScene->mMaterials[i], path, pScene, instanced, skeleton.has_value()));
 		}
 
 		if (skeleton.has_value())
@@ -165,6 +165,19 @@ namespace tryn::gfx
 		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
 		const auto transform = translation * rotation;
 		nodes[rootId].Submit(*pGfx, entityTransform * transform, boneTransforms );
+	}
+
+	void Model::AddPerTechniqueBindable(const std::shared_ptr<IBindable>& pBindable, const std::string& identifier)
+	{
+		for (auto& pMesh : pMeshes)
+		{
+			for (auto& pTechnique : pMesh->pTechniques | std::views::values)
+			{
+				pTechnique->OfferBindable(identifier, pBindable);
+			}
+		}
+
+		pExtraBindables.emplace_back(identifier, pBindable);
 	}
 
 	void Model::AddOrEnableTechniques(std::span<const utl::UUID_t> techniqueUUIDs)
@@ -479,7 +492,7 @@ namespace tryn::gfx
 					pMeshes.push_back(std::make_shared<GLTFMesh>(gfx, mesh, context, mesh.name, materials[std::atoi(mesh.primitives[0].materialId.c_str())], scale, meshCounter++));
 					for (auto techniqueUUID : techniqueUUIDs)
 					{
-						pMeshes.back()->AddTechnique(gfx, techniqueUUID, instanced, skeleton.has_value());
+						pMeshes.back()->AddTechnique(gfx, techniqueUUID);
 					}
 				}
 

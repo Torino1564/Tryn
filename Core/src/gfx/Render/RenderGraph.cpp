@@ -7,7 +7,7 @@
 #include <Core/src/gfx/Bindables/DepthStencil.h>
 #include <Core/src/gfx/BindablePool.h>
 #include <Core/src/gfx/PointLight.h>
-#include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Bindables/IBufferBase.h>
 
 namespace tryn::gfx
 {

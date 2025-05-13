@@ -17,13 +17,13 @@ namespace tryn::gfx
 		Instance
 	};
 	template<BufferType Type, CachingPolicy Policy = CachingPolicy::Caching>
-	class IBuffer;
+	class IBufferBase;
 
-	using IVtxConstantBuffer		= IBuffer<BufferType::VtxConstant, CachingPolicy::Caching>;
-	using IVtxConstantBufferNCach	= IBuffer<BufferType::VtxConstant, CachingPolicy::NonCaching>;
-	using IPxConstantBuffer			= IBuffer<BufferType::PxConstant, CachingPolicy::Caching>;
-	using IPxConstantBufferNCach	= IBuffer<BufferType::PxConstant, CachingPolicy::NonCaching>;
-	using IVertexBuffer				= IBuffer<BufferType::Vertex, CachingPolicy::Caching>;
-	using IIndexBuffer				= IBuffer<BufferType::Index, CachingPolicy::Caching>;
-	using IInstanceBuffer			= IBuffer<BufferType::Instance, CachingPolicy::Caching>;
+	using IVtxConstantBuffer		= IBufferBase<BufferType::VtxConstant, CachingPolicy::Caching>;
+	using IVtxConstantBufferNCach	= IBufferBase<BufferType::VtxConstant, CachingPolicy::NonCaching>;
+	using IPxConstantBuffer			= IBufferBase<BufferType::PxConstant, CachingPolicy::Caching>;
+	using IPxConstantBufferNCach	= IBufferBase<BufferType::PxConstant, CachingPolicy::NonCaching>;
+	using IVertexBuffer				= IBufferBase<BufferType::Vertex, CachingPolicy::Caching>;
+	using IIndexBuffer				= IBufferBase<BufferType::Index, CachingPolicy::Caching>;
+	using IInstanceBuffer			= IBufferBase<BufferType::Instance, CachingPolicy::Caching>;
 }

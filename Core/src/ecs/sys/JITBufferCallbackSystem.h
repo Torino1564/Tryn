@@ -13,10 +13,10 @@ namespace tryn::ecs
 	struct ActiveComponent;
 	struct TransformComponent;
 
-	class RenderIDInfoSystem : SystemImpl<RenderIDInfoSystem>
+	class JITBufferCallbackSystem : public SystemImpl<JITBufferCallbackSystem>
 	{
 	public:
-		RenderIDInfoSystem(const SystemGraph& graph);
+		JITBufferCallbackSystem(const SystemGraph& graph);
 		static void InitDependencies(System* self);
 		void Execute() override;
 	};

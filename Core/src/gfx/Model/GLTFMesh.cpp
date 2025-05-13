@@ -34,9 +34,20 @@ namespace tryn::gfx
 	                   glm::vec3 scale, std::optional<std::uint16_t> meshID)
 	{
 		ID = meshID.value_or(0);
+		pMaterials.emplace_back(pMaterial);
 		for (const auto& primitive : mesh.primitives)
 		{
 			pPrimitives.push_back(std::make_shared<StaticMesh>(gfx, primitive, context, tag, pMaterial, scale));
 		}
+	}
+
+	void GLTFMesh::EnableOrAddTechnique(const IGraphics& gfx, const utl::UUID_t techniqueUUID, const std::span<uint16_t> materialIndex)
+	{
+		EnableOrAddTechniqueEx(gfx, techniqueUUID, false, materialIndex);
+	}
+
+	void GLTFMesh::AddTechnique(const IGraphics& gfx, const utl::UUID_t techniqueUUID, const std::span<uint16_t> materialIndex, const bool enabled)
+	{
+		AddTechniqueEx(gfx, techniqueUUID, false, materialIndex, enabled);
 	}
 }

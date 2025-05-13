@@ -4,6 +4,8 @@
 #include <Core/src/ecs/cmp/Components.h>
 #include <Core/src/gfx/Model/Model.h>
 
+#include "UpdateJITBufferComponent.h"
+
 namespace tryn::ecs
 {
 	uint16_t ComponentManager::ComponentCount() const
@@ -38,6 +40,7 @@ namespace tryn::ecs
 		RegisterComponent<InstancedModelChildComponent>();
 		RegisterComponent<InstancedModelParentComponent>();
 		RegisterComponent<TransformComponent>();
+		RegisterComponent<UpdateJITBufferComponent>();
 	}
 }
 

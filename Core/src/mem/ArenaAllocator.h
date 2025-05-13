@@ -30,6 +30,16 @@ namespace tryn::mem
 
 			return reinterpret_cast<void*>(&ref);
 		}
+		template <typename T>
+		T& Emplace(T&& t)
+		{
+			using Type = std::remove_cvref_t<T>;
+			void* ptr = Allocate(sizeof(Type));
+			auto casted = static_cast<Type*>(ptr);
+			*casted = std::forward<T&&>(t);
+			return *casted;
+		}
+
 		template <typename T, typename... Args>
 		T* MakeNew(Args... args)
 		{

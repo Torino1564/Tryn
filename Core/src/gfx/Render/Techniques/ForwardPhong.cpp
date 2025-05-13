@@ -5,7 +5,7 @@
 #include <Core/src/gfx/Material.h>
 #include <Core/src/gfx/Bindables/TextureResource.h>
 #include <Core/src/gfx/Bindables/Rasterizer.h>
-#include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Bindables/VertexShader.h>
 #include <Core/src/gfx/Bindables/PixelShader.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>
@@ -20,7 +20,7 @@ namespace tryn::gfx
 	{
 	}
 
-	ForwardPhong::ForwardPhong(const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced, bool skinned)
+	ForwardPhong::ForwardPhong(const std::vector<std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced, bool skinned)
 		:
 		Technique("ForwardPhong")
 	{

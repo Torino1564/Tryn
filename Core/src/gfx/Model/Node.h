@@ -4,6 +4,8 @@
 #include <vector>
 #include <core/third/glm/glm.hpp>
 
+#include "Core/src/utl/StringHasher.h"
+
 namespace tryn::gfx
 {
 	class Mesh;

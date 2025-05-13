@@ -50,7 +50,7 @@ namespace tryn::ecs
 		ComponentArray& GetComponentArray(utl::UUID_t);
 
 		void EntityControlWindow(struct EntityID id);
-
+		const ArchetypeManager& Manager() const;
 	private:
 		Archetype(ArchetypeManager& manager, const uint16_t uuid);
 
@@ -59,7 +59,7 @@ namespace tryn::ecs
 		static Archetype Make(ArchetypeManager& manager, const uint16_t uuid, std::span<utl::UUID_t> componentUUIDs);
 
 		ArchetypeID UUID = 0;
-		class ComponentManager& componentManager;
+		ComponentManager& componentManager;
 		ArchetypeManager& archetypeManager;
 		std::vector<utl::UUID_t> components;
 
@@ -81,6 +81,7 @@ namespace tryn::ecs
 
 		template <typename... ACs>
 		std::pair<std::span<ArchetypeID>, std::span<std::tuple<std::span<typename ACs::Component>...>>> GetComponentGroupsEx();
+
 		std::span<std::span<ComponentArray*>> GetComponentGroups(std::span<utl::UUID_t> componentUUIDs);
 
 		std::span<ArchetypeID> QueryArchetype(std::span<utl::UUID_t> componentUUIDs);

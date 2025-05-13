@@ -249,50 +249,6 @@ namespace tryn::gfx
 		}
 	}
 
-	VertexBuffer Material::ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton) const noexcept
-	{
-		return { pTechniques[selectedTechnique]->GetVertexLayout(), mesh, skeleton};
-	}
-	IndexBuffer Material::ExtractIndices(const aiMesh& mesh) noexcept
-	{
-		std::vector<uint32_t> indices;
-		indices.resize(mesh.mNumFaces * 3);
-
-		for (unsigned int i = 0; i < mesh.mNumFaces; i++)
-		{
-			const auto& triangle = mesh.mFaces[i];
-			indices[3 * i] = triangle.mIndices[0];
-			indices[(3 * i) + 1] = triangle.mIndices[1];
-			indices[(3 * i) + 2] = triangle.mIndices[2];
-		}
-		return { indices };
-	}
-
-	VertexBuffer Material::ExtractVertices(const Shape3D& mesh) const noexcept
-	{
-		return { pTechniques[selectedTechnique]->GetVertexLayout(), mesh};
-	}
-
-	VertexBuffer Material::ExtractVertices(const Microsoft::glTF::MeshPrimitive& primitive,
-		const gfx::WinGLTFLoaderContext& context, std::optional<ani::Skeleton> skeleton) const noexcept
-	{
-		return { pTechniques[selectedTechnique]->GetVertexLayout(), primitive, context, skeleton};
-	}
-
-	IndexBuffer Material::ExtractIndices(const Shape3D& mesh) noexcept
-	{
-		return IndexBuffer(mesh.Indices());
-	}
-
-	IndexBuffer Material::ExtractIndices(const Microsoft::glTF::MeshPrimitive& primitive,
-		const gfx::WinGLTFLoaderContext& context) noexcept
-	{
-		const auto indices = Microsoft::glTF::MeshPrimitiveUtils::GetIndices32(*context.pDocument, *context.pReader, primitive);
-
-		return IndexBuffer{ indices };
-	}
-
-
 	bool Material::HasAttribute(const AttributeType attribute) const
 	{
 		return attributes.contains(attribute);

@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "PointLightJob.h"
 #include <Core/src/gfx/Render/RenderGraph.h>
-#include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Camera.h>
 
 namespace tryn::gfx

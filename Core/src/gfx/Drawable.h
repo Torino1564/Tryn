@@ -23,7 +23,6 @@ namespace tryn::gfx
 		void BindExtraBinds();
 		void BindExtraBinds(const IContext& context);
 		void AddExtraBind(IBindable* pBindable);
-		void AddTechniqueStepExtraBind(IBindable* pBindable, utl::UUID_t techniqueUUID, const std::string& step);
 		void BindTransformCBuf() const;
 		void BindTransformCBuf(const IContext& context) const;
 		void InitTransformCBuf(const IGraphics& gfx);

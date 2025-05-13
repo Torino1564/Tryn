@@ -13,6 +13,6 @@ namespace tryn::gfx
 		ForwardPhong(const std::string& name);
 
 		// The material vector has to contain the PBR material on slot 0
-		ForwardPhong(const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced = false, bool skinned = false);
+		ForwardPhong(const std::vector<std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced = false, bool skinned = false);
 	};
 }

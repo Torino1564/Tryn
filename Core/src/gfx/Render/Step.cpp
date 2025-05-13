@@ -36,6 +36,15 @@ namespace tryn::gfx
 	{
 		gfx.DrawIndexed(parent->GetIndexCount());
 	}
+
+	void Step::OfferBindable(const std::string& identifier, const std::shared_ptr<IBindable>& pBindable)
+	{
+		if (const auto it = std::ranges::find(bindablesToAccept, identifier); it != bindablesToAccept.end())
+		{
+			inheritedBindables.push_back(pBindable);
+		}
+	}
+
 	void Step::Submit(const IGraphics& gfx, Drawable* parent)
 	{
 		auto& renderGraph = gfx.GetRenderGraph();

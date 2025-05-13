@@ -16,7 +16,7 @@ namespace tryn::gfx
 	{
 	}
 
-	EntityIDTechnique::EntityIDTechnique(const std::vector<const std::shared_ptr<Material>>& materials,
+	EntityIDTechnique::EntityIDTechnique(const std::vector<std::shared_ptr<Material>>& materials,
 		const IGraphics& gfx, bool instanced, bool skinned)
 			: Technique("EntityIDTechnique")
 	{

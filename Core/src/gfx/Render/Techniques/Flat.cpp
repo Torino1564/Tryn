@@ -7,7 +7,7 @@
 #include <Core/src/gfx/Material.h>
 #include <Core/src/gfx/Bindables/TextureResource.h>
 #include <Core/src/gfx/Bindables/Rasterizer.h>
-#include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Bindables/VertexShader.h>
 #include <Core/src/gfx/Bindables/PixelShader.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>
@@ -21,7 +21,7 @@ namespace tryn::gfx
 	{
 	}
 
-	Flat::Flat(const std::vector<const std::shared_ptr<Material>>& materials, const IGraphics& gfx, const bool instanced, const bool skinned)
+	Flat::Flat(const std::vector<std::shared_ptr<Material>>& materials, const IGraphics& gfx, const bool instanced, const bool skinned)
 		:
 		Technique("Flat")
 	{

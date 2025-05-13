@@ -1,5 +1,5 @@
 #pragma once
-#include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
 #include <Core/src/gfx/ConstantBuffer.h>
 
@@ -17,7 +17,7 @@ namespace tryn::gfx::dx11
 	constexpr int GetBindFlag<BufferType::Index>() { return D3D11_BIND_INDEX_BUFFER; }
 
 	template <BufferType Type, CachingPolicy Policy = CachingPolicy::Caching>
-	class DX11Buffer : public IBuffer<Type, Policy>
+	class DX11Buffer : public IBufferBase<Type, Policy>
 	{
 	public:
 		DX11Buffer(const Graphics& gfx, std::shared_ptr<CPUBuffer> pCpuBuffer, std::string tag = "?")

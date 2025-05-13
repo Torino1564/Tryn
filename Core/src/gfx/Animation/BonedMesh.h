@@ -16,8 +16,8 @@ namespace tryn::gfx::ani
 		BonedMesh(const IGraphics& gfx, std::shared_ptr<Material> pMaterial, const aiMesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint16_t> meshID = std::nullopt);
 		BonedMesh(const IGraphics& gfx, std::shared_ptr<Material> pMaterial, const Microsoft::glTF::Mesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint16_t> meshID = std::nullopt);
 		[[nodiscard]] MeshType Type() const override;
-		void Submit(const IGraphics& gfx, const glm::mat4 finalTransform, std::span<const glm::mat4> boneTransforms);
-		void AddAnimation(std::shared_ptr<ani::Animation> pAnimation, const std::string& name);
+		void Submit(const IGraphics& gfx, const glm::mat4& finalTransform, std::span<const glm::mat4> boneTransforms);
+		void AddAnimation(const std::shared_ptr<ani::Animation>& pAnimation, const std::string& name);
 		AnimationSkeletonInterface* GetAnimationInterface(const std::string& name = "?");
 
 		void EnableOrAddTechnique(const IGraphics& gfx, utl::UUID_t techniqueUUID, std::span<uint16_t> materialIndex) override;

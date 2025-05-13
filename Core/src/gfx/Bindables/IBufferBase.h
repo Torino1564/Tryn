@@ -17,7 +17,7 @@ namespace tryn::gfx
 	struct IsBufferType_t : std::false_type{};
 
 	template <BufferType Type, CachingPolicy Policy>
-	struct IsBufferType_t<IBuffer<Type, Policy>> : std::true_type{};
+	struct IsBufferType_t<IBufferBase<Type, Policy>> : std::true_type{};
 
 	template <typename T>
 	concept Buffer_T = IsBufferType_t<T>::value;
@@ -40,8 +40,19 @@ namespace tryn::gfx
 	template <>
 	constexpr const char* GetTypeString<BufferType::Index>() { return "Index"; }
 
-	template<BufferType Type, CachingPolicy Policy>
 	class IBuffer : public IBindable
+	{
+	public:
+		virtual ConstantBuffer& GetCPUBuffer() = 0;
+
+	protected:
+		std::shared_ptr<CPUBuffer> pCPUBuffer;
+		std::string path;
+		std::string tag;
+	};
+
+	template<BufferType Type, CachingPolicy Policy>
+	class IBufferBase : public IBuffer
 	{
 	public:
 		static std::shared_ptr<IVtxConstantBuffer> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
@@ -82,7 +93,7 @@ namespace tryn::gfx
 		virtual std::vector<std::any> GetSlottedLayoutFromVB(int slot) const;
 
 		static constexpr const char* GetType();
-		virtual ~IBuffer() = default;
+		virtual ~IBufferBase() = default;
 
 		std::string_view GetPath() const;
 
@@ -100,24 +111,21 @@ namespace tryn::gfx
 		void Accept_(TechniqueProbe& probe)
 			requires (Type == BufferType::VtxConstant || Type == BufferType::PxConstant);
 
-		ConstantBuffer& GetCPUBuffer()
-			requires (Type == BufferType::Instance || Type == BufferType::VtxConstant || Type == BufferType::PxConstant);
+		ConstantBuffer& GetCPUBuffer() override;
+
 
 		static constexpr BufferType bufferType = Type;
 		static constexpr CachingPolicy policy = Policy;
 
 	protected:
-		std::string path;
-		std::string tag;
-		std::shared_ptr<CPUBuffer> pCPUBuffer;
-		[[no_unique_address]] std::conditional_t<Type == BufferType::PxConstant || Type == BufferType::VtxConstant || Type == BufferType::Instance, int, utl::empty_t> slot;
-		using Layout_Ty = std::conditional_t<Type == BufferType::Vertex, VertexLayout, utl::empty_t>;
-		[[no_unique_address]] Layout_Ty layout;
-		[[no_unique_address]] std::conditional_t<Type == BufferType::Instance, size_t, utl::empty_t> gpuSize;
+
+		[[msvc::no_unique_address]] std::conditional_t<Type == BufferType::PxConstant || Type == BufferType::VtxConstant || Type == BufferType::Instance, int, utl::empty_t> slot;
+		[[msvc::no_unique_address]] std::conditional_t<Type == BufferType::Vertex, VertexLayout, utl::empty_t> layout;
+		[[msvc::no_unique_address]] std::conditional_t<Type == BufferType::Instance, size_t, utl::empty_t> gpuSize;
 	};
 
 	template <BufferType Type, CachingPolicy Policy>
-	constexpr const char* IBuffer<Type, Policy>::GetType()
+	constexpr const char* IBufferBase<Type, Policy>::GetType()
 	{
 		return GetTypeString<Type>();
 	}

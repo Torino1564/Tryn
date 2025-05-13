@@ -182,6 +182,11 @@ namespace tryn::ecs
 		}
 	}
 
+	const ArchetypeManager& Archetype::Manager() const
+	{
+		return archetypeManager;
+	}
+
 	Archetype::Archetype(ArchetypeManager& manager, const uint16_t uuid)
 		:
 	UUID(uuid),

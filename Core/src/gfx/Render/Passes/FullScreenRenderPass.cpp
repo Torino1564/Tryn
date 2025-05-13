@@ -1,7 +1,7 @@
 #include "TrynPCH.h"
 #include "FullScreenRenderPass.h"
 #include <Core/src/gfx/Vertex.h>
-#include <Core/src/gfx/Bindables/IBuffer.h>
+#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Bindables/VertexShader.h>
 #include <Core/src/gfx/Bindables/PixelShader.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>

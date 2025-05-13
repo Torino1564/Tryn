@@ -19,7 +19,7 @@ namespace Microsoft::glTF
 {
 	struct Node;
 	struct Scene;
-	struct Document;
+	class Document;
 }
 
 namespace tryn::gfx
@@ -37,7 +37,12 @@ namespace tryn::gfx
 	class Model
 	{
 		friend class InstancedModelParent;
+		friend class Serializer;
+		friend class Node;
+
 	public:
+
+		// Avoid using the default constructor. Use the parametrized constructor or factory function instead
 		Model();
 		Model(const gfx::IGraphics& gfx, std::string_view path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = {1.0f, 1.0f, 1.0f}, const bool instanced = false);
 		template <typename... Techniques>
@@ -45,8 +50,13 @@ namespace tryn::gfx
 		static std::unique_ptr<Model> Make(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
 		~Model();
 		Model(Model&&) = default;
+		// Submit the model to the render pipeline
 		void Submit(const glm::mat4& entityTransform);
 		void Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms) const;
+
+		// Adds a bindable with an identifier that will be offered to the existing techinques to see if they link with it.
+		void AddPerTechniqueBindable(const std::shared_ptr<IBindable>& pBindable, const std::string& identifier);
+		// Adds and enables the specified techniques on all meshes
 		void AddOrEnableTechniques(std::span<const utl::UUID_t> techniqueUUIDs);
 		void SpawnControlWindow();
 		void AddAnimation(const std::shared_ptr<ani::Animation>& pAnimation, const std::string&) const;
@@ -62,18 +72,32 @@ namespace tryn::gfx
 		void ParseSkeleton(const aiNode& boneRoot);
 		void ParseBone(const aiNode& bone, const uint32_t parentID);
 		Settings settings = {};
+
 	private:
+
+		// Skeleton optional
 		std::optional<ani::Skeleton> skeleton = std::nullopt;
 		std::uint16_t meshCounter = 0;
 		const IGraphics* pGfx = nullptr;
 		std::string name = {};
+
+		// Nodes
 		std::vector<Node> nodes = {};
+
+		// Index of root node
 		std::uint32_t rootId;
+
+		// Meshes utilized by Nodes
 		std::vector<std::shared_ptr<Mesh>> pMeshes = {};
+
+		// Materials utilized by child meshes
 		std::vector<std::shared_ptr<Material>> pMaterials;
+
+		// Techniques utilized by child meshes
 		std::vector<utl::UUID_t> techniques;
-		friend class Serializer;
-		friend class Node;
+
+		// Extra bindables. The steps inside the techniques can link to these and bind them when rendered.
+		std::vector<std::pair<std::string, std::shared_ptr<IBindable>>> pExtraBindables;
 	};
 
 	template <typename... Techniques>

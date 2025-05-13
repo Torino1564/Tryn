@@ -1,7 +1,7 @@
 #pragma once
 #include <Core/src/gfx/Render/RenderPass.h>
 
-#include "Core/src/gfx/Bindables/IBuffer.h"
+#include "Core/src/gfx/Bindables/IBufferBase.h"
 #include <Core/src/utl/StatefulMeta/TemplateData.h>
 #include <Core/src/gfx/RTVDSFwd.h>
 

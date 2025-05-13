@@ -6,6 +6,7 @@
 #include <Core/src/ecs/cmp/Components.h>
 #include <Core/src/win/IWindow.h>
 
+#include "Core/src/ecs/cmp/UpdateJITBufferComponent.h"
 #include "Core/src/ecs/sys/SystemManager.h"
 
 TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::shared_ptr<tryn::gfx::IGraphics> pGraphics)
@@ -91,16 +92,39 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		   ecs::ModelComponent,
 		   ecs::ScaleComponent,
 		   ecs::AnimatedComponent,
-		   //ecs::BoneTransformsComponent,
+		   ecs::BoneTransformsComponent,
+		   ecs::UpdateJITBufferComponent,
 		   ecs::RotationComponent>(ECS(),"AnimationTest")));
 
 		auto& ent = *entities.back();
 
 		ent.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-		ent.GetComponent<ecs::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Wolf/Wolf-Blender-2.82a.glb", std::array{ZT_TYPE_UUID(gfx::ForwardPhong)});
-		//ent.GetComponent<ecs::AnimatedComponent>().pAnimationSkeletonInterface = ent.GetComponent<ecs::ModelComponent>().pModel->GetMainMesh()->GetAnimationInterface();
+		auto& pModel = ent.GetComponent<ecs::ModelComponent>().pModel;
+		pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Wolf/Wolf-Blender-2.82a.glb", std::array{ZT_TYPE_UUID(gfx::ForwardPhong)});
 		ent.GetComponent<ecs::ScaleComponent>().scale = { 1.0f, 1.0f, 1.0f };
 		ent.GetComponent<ecs::ActiveComponent>().active = true;
+
+		// Entity ID buffer
+		{
+			gfx::ConstantBufferLayout cblayout;
+			cblayout.Append(gfx::ConstantBufferLayout::Type::Int32, "entityID");
+			cblayout.Solidify();
+
+			auto buffer = gfx::IPxConstantBuffer::Resolve(*gfx, std::move(cblayout));
+
+			auto pJITBuffer = std::make_shared<gfx::JITUpdateBuffer>(gfx::JITUpdateBuffer::Make(buffer.get()));
+
+			pModel->AddPerTechniqueBindable(buffer, "entityIDBuffer");
+
+			auto pFun = [](const std::shared_ptr<gfx::JITUpdateBuffer>& pBuffer, uint32_t entityID, const ecs::Archetype* pArchetype)
+				{
+					uint32_t* pEntityID = &pArchetype->Manager().GetArenaAllocator().Emplace(entityID);
+					
+					pBuffer->Set(pEntityID, sizeof(decltype(entityID)));
+				};
+
+			ent.GetComponent<ecs::UpdateJITBufferComponent>() = { .pJITBuffer = pJITBuffer, .pFunc = pFun};
+		}
 	}
 
 	{

@@ -92,27 +92,28 @@ namespace tryn::ecs
 		virtual void Execute() = 0;
 		virtual void Init() = 0;
 		virtual int ID() const = 0;
+		virtual const std::string_view Name() const = 0;
 		template <typename S>
-		void AddDependency(this auto& self)
+		void AddDependency()
 		{
 			// assert uniqueness
 			auto it = std::ranges::find(dependencyUIDs, S::UID);
-			if (it == dependencyUIDs.end())
+			if (it != dependencyUIDs.end())
 			{
-				trylog.info(utl::ToWide(std::format("The system [{}] already has [{}] as a dependency.", ZT_TYPE_OF(decltype(self)), ZT_TYPE_OF(S))));
+				trylog.info(utl::ToWide(std::format("The system [{}] already has [{}] as a dependency.", Name(), ZT_TYPE_OF(S))));
 				return;
 			}
 			dependencyUIDs.push_back(S::UID);
 		}
 
 		template <typename S>
-		void AddPrerequisiteOf(this auto& self)
+		void AddPrerequisiteOf()
 		{
 			// assert uniqueness
 			auto it = std::ranges::find(prerequisiteOfUIDs, S::UID);
-			if (it == prerequisiteOfUIDs.end())
+			if (it != prerequisiteOfUIDs.end())
 			{
-				trylog.info(utl::ToWide(std::format("The system [{}] already is a prerequisite of [{}].", ZT_TYPE_OF(decltype(self)), ZT_TYPE_OF(S))));
+				trylog.info(utl::ToWide(std::format("The system [{}] already is a prerequisite of [{}].", Name(), ZT_TYPE_OF(S))));
 				return;
 			}
 			prerequisiteOfUIDs.push_back(S::UID);
@@ -147,11 +148,18 @@ namespace tryn::ecs
 		static void InitDependencies(System* self) {}
 		void Execute() override {}
 		void Init() override {}
+		const std::string_view Name() const override
+		{
+			return name;
+		}
 		int ID() const override
 		{
 			return UID.id;
 		}
 		const static inline auto UID = SystemUID::Resolve();
+
+	private:
+		static constexpr auto name = ZT_TYPE_OF(T);
 	};
 
 	class SystemManager

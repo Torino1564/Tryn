@@ -20,6 +20,9 @@ namespace tryn::gfx
 		void Submit(const IGraphics& gfx, std::span<const glm::mat4> transforms, InstancedModelParent& parent) override;
 		[[nodiscard]] MeshType Type() const override;
 
+		void AddTechnique(const IGraphics& gfx, utl::UUID_t techniqueUUID, std::span<uint16_t> materialIndex, bool enabled) override;
+		void EnableOrAddTechnique(const IGraphics& gfx, utl::UUID_t techniqueUUID, std::span<uint16_t> materialIndex) override;
+
 	private:
 		std::vector<std::shared_ptr<Mesh>> pPrimitives;
 	};

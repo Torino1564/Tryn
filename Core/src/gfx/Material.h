@@ -57,12 +57,7 @@ namespace tryn::gfx
 		Material(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, const aiScene* pScene = nullptr, bool instanced = false, bool skinned = false);
 		Material(const IGraphics& gfx, const Microsoft::glTF::Material& material, const std::filesystem::path& path, const WinGLTFLoaderContext& context, bool instanced = false, bool skinned = false);
 		static std::shared_ptr<Material> MakeDefault(const IGraphics& gfx);
-		VertexBuffer ExtractVertices(const aiMesh& mesh, ani::Skeleton* skeleton = nullptr) const noexcept;
-		VertexBuffer ExtractVertices(const Shape3D& mesh) const noexcept;
-		VertexBuffer ExtractVertices(const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::optional<ani::Skeleton> skeleton = std::nullopt) const noexcept;
-		static IndexBuffer ExtractIndices(const aiMesh& mesh) noexcept;
-		static IndexBuffer ExtractIndices(const Shape3D& mesh) noexcept;
-		static IndexBuffer ExtractIndices(const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context) noexcept;
+
 		const aiScene* pScene;
 
 		template <typename T>
@@ -99,12 +94,4 @@ namespace tryn::gfx
 		std::string name;
 
 	};
-
-	template <TechniqueClass ... T>
-	Material Material::Make(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path,
-		const aiScene* pScene, bool instanced, bool skinned)
-	{
-		static constexpr auto arr = {ZT_TYPE_UUID(T) ...};
-		return Material(gfx, material, path, std::span{arr}, pScene, instanced, skinned);
-	}
 }
