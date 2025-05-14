@@ -69,6 +69,7 @@ namespace tryn::gfx::dx11
 
 		// Resource Creation
 		std::shared_ptr<IVertexBuffer>						CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string) const override;
+		std::shared_ptr<ISOAVertexBuffer>					CreateSOAVertexBuffer(const std::shared_ptr<IVertexShader>& pVS) const override;
 		std::shared_ptr<IIndexBuffer>						CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string) const override;
 		std::shared_ptr<IVertexShader>						CreateVertexShader(std::string path) const override;
 		std::shared_ptr<IPixelShader>						CreatePixelShader(std::string path) const override;

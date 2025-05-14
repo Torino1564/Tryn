@@ -6,20 +6,6 @@
 #include <Core/src/gfx/IBufferFwd.h>
 #include "IGraphics.h"
 
-#define BINDABLE_LIST \
-		X(VertexBuffer)\
-		X(PolyVBuffer)\
-		X(IndexBuffer)\
-		X(VertexShader)\
-		X(PixelShader)\
-		X(InputLayout)\
-		X(PrimitiveTopology)\
-		X(VtxConstantBuffer)\
-		X(PxConstantBuffer)\
-		X(Rasterizer)\
-		X(Sampler)\
-		X(Texture)
-
 namespace tryn::gfx
 {
 	class BindablePool
@@ -28,6 +14,14 @@ namespace tryn::gfx
 		struct ResolveHelper;
 
 		template <> struct ResolveHelper<IVertexBuffer>
+		{
+			template <class ... Args>
+			std::shared_ptr<IVertexBuffer> operator()(const IGraphics& gfx, Args&&...args)
+			{
+				return gfx.CreateVertexBuffer(std::forward<Args>(args)...);
+			}
+		};
+		template <> struct ResolveHelper<ISOAVertexBuffer>
 		{
 			template <class ... Args>
 			std::shared_ptr<IVertexBuffer> operator()(const IGraphics& gfx, Args&&...args)

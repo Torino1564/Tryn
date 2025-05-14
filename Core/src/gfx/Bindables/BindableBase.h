@@ -5,7 +5,7 @@
 #include "PixelShader.h"
 #include "PrimitiveTopology.h"
 #include "InputLayout.h"
-#include "PolyVBuffer.h"
+#include "SOAVertexBuffer.h"
 #include "BufferResourceType.h"
 #include "Rasterizer.h"
 #include "RenderTargetView.h"

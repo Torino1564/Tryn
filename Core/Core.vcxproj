@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ecs\sys\JITBufferCallbackSystem.cpp" />
+    <ClCompile Include="src\gfx\Bindables\SOAVertexBuffer.cpp" />
     <ClCompile Include="src\gfx\CPUBuffer.cpp" />
     <ClCompile Include="src\gfx\Model\GLTFMesh.cpp" />
     <ClCompile Include="src\gfx\Model\Mesh.cpp" />
@@ -98,7 +99,7 @@
     <ClInclude Include="src\gfx\Bindables\PrimitiveTopology.h" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11InputLayout.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PixelShader.cpp" />
-    <ClCompile Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.cpp" />
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11SOAVertexBuffer.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11TransformCBuf.cpp" />
     <ClCompile Include="src\gfx\dx11\Bindables\DX11VertexShader.cpp" />
@@ -283,7 +284,7 @@
     <ClInclude Include="src\gfx\Bindables\IBufferBase.h" />
     <ClInclude Include="src\gfx\Bindables\InputLayout.h" />
     <ClInclude Include="src\gfx\Bindables\PixelShader.h" />
-    <ClInclude Include="src\gfx\Bindables\PolyVBuffer.h" />
+    <ClInclude Include="src\gfx\Bindables\SOAVertexBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\PoliVertexBuffer.h" />
     <ClInclude Include="src\gfx\Bindables\Rasterizer.h" />
     <ClInclude Include="src\gfx\Bindables\Sampler.h" />
@@ -295,7 +296,7 @@
     <ClInclude Include="src\gfx\dx11\Bindables\DX11Buffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11InputLayout.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PixelShader.h" />
-    <ClInclude Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.h" />
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11SOAVertexBuffer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11Rasterizer.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11Texture.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11TransformCBuf.h" />

@@ -108,7 +108,7 @@
     <ClCompile Include="src\app\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.cpp">
+    <ClCompile Include="src\gfx\dx11\Bindables\DX11SOAVertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\ImguiManager.cpp">
@@ -451,6 +451,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\CPUBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Bindables\SOAVertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1466,10 +1469,10 @@
     <ClInclude Include="src\gfx\Bindables\PoliVertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\Bindables\PolyVBuffer.h">
+    <ClInclude Include="src\gfx\Bindables\SOAVertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\dx11\Bindables\DX11PolyVBuffer.h">
+    <ClInclude Include="src\gfx\dx11\Bindables\DX11SOAVertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\BindablePool.h">

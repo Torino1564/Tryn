@@ -8,7 +8,7 @@
 #include <Core/src/gfx/dx11/Bindables/DX11VertexShader.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PixelShader.h>
 #include <Core/src/gfx/dx11/Bindables/DX11PrimitiveTopology.h>
-#include <Core/src/gfx/dx11/Bindables/DX11PolyVBuffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11SOAVertexBuffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11TransformCBuf.h>
 #include <Core/src/gfx/dx11/Bindables/DX11Texture.h>
 #include <Core/src/gfx/dx11/Bindables/DX11Rasterizer.h>
@@ -260,13 +260,14 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	//std::shared_ptr<IPolyVBuffer> Graphics::CreatePolyVertexBuffer(std::vector<std::variant<std::pair<std::string, std::shared_ptr<tryn::gfx::VertexBuffer>>, std::shared_ptr<tryn::gfx::IVertexBuffer>, std::shared_ptr<tryn::gfx::IPolyVBuffer>>>& pCpuVBs, std::string tag)
-	//{
-	//	auto future = Dispatch_([&]{
-	//		return std::make_shared<DX11PolyVBuffer>(*this, pCpuVBs, tag);
-	//	});
-	//	return future.get();
-	//}
+	std::shared_ptr<ISOAVertexBuffer> Graphics::CreateSOAVertexBuffer(const std::shared_ptr<IVertexShader>& pVS) const
+	{
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11SOAVertexBuffer>(*this, pVS);
+
+			});
+		return future.get();
+	}
 
 	std::shared_ptr<IIndexBuffer> Graphics::CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string tag) const
 	{

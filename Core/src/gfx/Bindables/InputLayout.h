@@ -1,6 +1,6 @@
 #pragma once
 #include <Core/src/gfx/Bindables/Bindable.h>
-#include "PolyVBuffer.h"
+#include "SOAVertexBuffer.h"
 #include <Core/src/gfx/Model/StaticMesh.h>
 #include <Core/src/gfx/Bindables/IBufferBase.h>
 
