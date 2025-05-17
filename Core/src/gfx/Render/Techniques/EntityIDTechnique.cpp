@@ -23,12 +23,12 @@ namespace tryn::gfx
 		auto shaderRootPath = IGraphics::GetShaderRootPath();
 		std::string shaderCode = "EntityID";
 
-		auto& vLayout = *pVertexLayout;
 
 		// Common
-		vLayout.AppendElement(VertexLayout::Position3D);
 
 		Step step("EntityID");
+		auto vLayout = step.GetVertexLayout();
+		vLayout.AppendElement(VertexLayout::Position3D);
 		gfx.GetRenderGraph().AddRenderQueue("EntityID");
 
 		step.AddBindable(std::move(IRasterizer::Resolve(gfx)));

@@ -30,4 +30,6 @@ namespace tryn::gfx
 	public:
 		static void Load(const std::filesystem::path& path, const std::function<void(const WinGLTFLoaderContext&)>& process);
 	};
+
+
 }

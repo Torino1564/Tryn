@@ -35,6 +35,7 @@ namespace tryn::gfx::dx11
 		ID3D11Buffer* Data() const;
 		void Update();
 		void Update(ID3D11DeviceContext& context);
+		std::vector<std::any> GetSlottedLayoutFromVB(int slot) const override;
 
 	private:
 		void GPUSizeChanges() requires (Type == BufferType::Instance);
@@ -46,7 +47,6 @@ namespace tryn::gfx::dx11
 		void Bind_(ID3D11DeviceContext& context)
 			requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant || Type == BufferType::Instance);
 		std::vector<std::any> GetLayoutFromVB() const override;
-		std::vector<std::any> GetSlottedLayoutFromVB(int slot) const override;
 		std::vector<std::any> GetSlottedLayoutFromVB_(int slot) const
 			requires (Type == BufferType::Vertex);
 		static std::vector<std::any> GetSlottedLayoutFromVB_(int slot);

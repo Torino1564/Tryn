@@ -67,9 +67,9 @@ namespace tryn::gfx
 			requires (Type == BufferType::Vertex && Policy == CachingPolicy::Caching);
 		static std::shared_ptr<IIndexBuffer> Resolve(const IGraphics& gfx, std::shared_ptr<IndexBuffer> indices, std::string tag = "?")
 			requires (Type == BufferType::Index && Policy == CachingPolicy::Caching);
-		static std::string GenerateID(const IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer, std::string tag = "?")
+		static std::string GenerateID(const IGraphics& gfx, const std::shared_ptr<VertexBuffer>& cpuBuffer, std::string tag = "?")
 			requires (Type == BufferType::Vertex);
-		static std::string GenerateID(const IGraphics& gfx, std::shared_ptr<IndexBuffer> indices, std::string tag = "?")
+		static std::string GenerateID(const IGraphics& gfx, const std::shared_ptr<IndexBuffer>& indices, std::string tag = "?")
 			requires (Type == BufferType::Index);
 		static std::string GenerateID(const IGraphics& gfx, ConstantBufferLayout& cbl, int slot = 0, std::string tag = "?")
 			requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant);

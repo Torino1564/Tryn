@@ -29,15 +29,16 @@ namespace tryn::gfx
 		auto& material = *materials[0];
 		std::string shaderCode = "Flat";
 
-		auto& vLayout = *pVertexLayout;
+
+
+		Step step("Lambertian");
+		gfx.GetRenderGraph().AddRenderQueue("Lambertian");
+		auto& vLayout = step.GetVertexLayout();
 
 		// Common
 		vLayout.AppendElement(VertexLayout::Position3D);
 		vLayout.AppendElement(VertexLayout::Normal);
 		ConstantBufferLayout cbLayout;
-
-		Step step("Lambertian");
-		gfx.GetRenderGraph().AddRenderQueue("Lambertian");
 
 		// Albedo
 		{

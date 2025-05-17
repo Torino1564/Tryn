@@ -7,6 +7,8 @@
 #include <Core/src/gfx/Render/Jobs/InstancedJob.h>
 #include <Core/src/gfx/IGraphics.h>
 
+#include "Core/src/gfx/Bindables/SOAVertexBuffer.h"
+
 namespace tryn::gfx
 {
 	Step::Step(const std::string& renderQueueID)
@@ -14,6 +16,18 @@ namespace tryn::gfx
 		renderQueueID(renderQueueID)
 	{
 	}
+
+	Step::Step(Step&& rhs) noexcept
+		:
+		bindables(std::move(rhs.bindables)),
+		pVertexLayout(std::move(rhs.pVertexLayout)),
+		pSOAVertexBuffer(std::move(rhs.pSOAVertexBuffer)),
+		bindablesToAccept(std::move(rhs.bindablesToAccept))
+	{
+	}
+
+	Step::~Step() = default;
+
 	void Step::AddBindable(std::shared_ptr<IBindable> bindable)
 	{
 		bindables.push_back(std::move(bindable));
@@ -37,14 +51,6 @@ namespace tryn::gfx
 		gfx.DrawIndexed(parent->GetIndexCount());
 	}
 
-	void Step::OfferBindable(const std::string& identifier, const std::shared_ptr<IBindable>& pBindable)
-	{
-		if (const auto it = std::ranges::find(bindablesToAccept, identifier); it != bindablesToAccept.end())
-		{
-			inheritedBindables.push_back(pBindable);
-		}
-	}
-
 	void Step::Submit(const IGraphics& gfx, Drawable* parent)
 	{
 		auto& renderGraph = gfx.GetRenderGraph();
@@ -55,6 +61,30 @@ namespace tryn::gfx
 		auto& renderGraph = gfx.GetRenderGraph();
 		renderGraph.GetRenderQueueByID(renderQueueID).Push(InstancedJob(parent, this, transforms, &instanceParent));
 	}
+
+	void Step::OfferBindable(const std::string& identifier, const std::shared_ptr<IBindable>& pBindable)
+	{
+		if (const auto it = std::ranges::find(bindablesToAccept, identifier); it != bindablesToAccept.end())
+		{
+			acceptedBindables.push_back(pBindable);
+		}
+	}
+
+	void Step::FillSOAVertexBuffer(const ISOAVertexBuffer& SOAVertexBuffer) const
+	{
+		this->pSOAVertexBuffer->AppendFrom(SOAVertexBuffer, *pVertexLayout);
+	}
+
+	const VertexLayout& Step::GetVertexLayout() const
+	{
+		return *pVertexLayout;
+	}
+
+	VertexLayout& Step::GetVertexLayout()
+	{
+		return *pVertexLayout;
+	}
+
 	void Step::Accept(TechniqueProbe& probe)
 	{
 		probe.SetStep(this);

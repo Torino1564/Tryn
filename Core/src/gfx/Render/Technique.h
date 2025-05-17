@@ -12,6 +12,8 @@ struct aiMaterial;
 
 namespace tryn::gfx
 {
+	class ISOAVertexBuffer;
+
 	namespace ani
 	{
 		class Skeleton;
@@ -30,11 +32,7 @@ namespace tryn::gfx
 	{
 	public:
 
-		static std::shared_ptr<TechniqueBase> ConstructTechnique(const IGraphics& gfx, utl::UUID_t techniqueUuid, const std::vector<std::shared_ptr<Material>>& materials, const Microsoft::glTF::MeshPrimitive& primitive,
-			const gfx::WinGLTFLoaderContext& context, bool instanced = false, bool skeleton = false);
-		static std::shared_ptr<TechniqueBase> ConstructTechnique(const IGraphics& gfx, utl::UUID_t techniqueUuid,
-		                               const std::vector<std::shared_ptr<Material>>& materials, const aiMesh& mesh,
-		                               ani::Skeleton* skeleton, bool instanced = false);
+		static std::shared_ptr<TechniqueBase> ConstructTechnique(const IGraphics& gfx, utl::UUID_t techniqueUuid, const std::vector<std::shared_ptr<Material>>& materials, bool instanced = false, bool skeleton = false);
 
 		template <typename T>
 		static bool RegisterTechnique(utl::UUID_t uuid)
@@ -62,16 +60,15 @@ namespace tryn::gfx
 	public:
 		TechniqueBase(const std::string& name);
 		virtual ~TechniqueBase() = default;
+		virtual std::shared_ptr<TechniqueBase> ConstructDerived(const std::vector<std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced, bool skinned) const = 0;
+		void FillSOAVertexBuffer(const ISOAVertexBuffer& pSOAVertexBuffer) const;
+		void OfferBindable(const std::string& identifier, const std::shared_ptr<IBindable>& pBindable);
 		void AddStep(Step step);
 		void Draw(const IGraphics& gfx, const Drawable* parent) const;
-		void OfferBindable(const std::string& identifier, const std::shared_ptr<IBindable>& pBindable);
 		void Submit(const IGraphics& gfx, Drawable* parent);
 		void Submit(const IGraphics& gfx, Drawable* parent, std::span<const glm::mat4> transforms, InstancedModelParent& instancedParent);
 		void Accept(class TechniqueProbe& probe);
-		virtual std::shared_ptr<TechniqueBase> ConstructDerived(const std::vector<std::shared_ptr<Material>>& materials, const IGraphics& gfx, bool instanced, bool skinned) const = 0;
-		void CreateVertexBuffer(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, ani::Skeleton* pSkeleton);
-		void CreateVertexBuffer(const IGraphics& gfx, const aiMesh& mesh, ani::Skeleton* pSkeleton);
-		class VertexLayout GetVertexLayout() const;
+		[[nodiscard]] const std::vector<std::shared_ptr<Material>>& GetUsedMaterials() const;
 		virtual utl::UUID_t UUID() const = 0;
 		auto&& GetStep(this auto&& self, const uint16_t index)
 		{
@@ -84,8 +81,7 @@ namespace tryn::gfx
 		}
 	protected:
 		std::vector<IBindable*> pExtraBinds;
-		std::unique_ptr<VertexLayout> pVertexLayout;
-		std::shared_ptr<IVertexBuffer> pVertexBuffer;
+		std::vector<std::shared_ptr<Material>> usedMaterials;
 		std::string name;
 		std::vector<Step> steps;
 	};

@@ -126,6 +126,16 @@ namespace tryn::gfx
 			}
 		}
 
+		for (auto& mesh : pMeshes)
+		{
+			for (auto technique : techniqueUUIDs)
+			{
+				mesh->AddTechnique(gfx, technique);
+			}
+		}
+
+		
+
 		// Set mesh Span
 		std::queue<Node*> q;
 		q.push(&nodes[rootId]);
@@ -177,7 +187,7 @@ namespace tryn::gfx
 			}
 		}
 
-		pExtraBindables.emplace_back(identifier, pBindable);
+		pAddedBindables.emplace_back(identifier, pBindable);
 	}
 
 	void Model::AddOrEnableTechniques(std::span<const utl::UUID_t> techniqueUUIDs)

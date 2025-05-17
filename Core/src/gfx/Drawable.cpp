@@ -6,6 +6,7 @@
 #include <Core/third/glm/gtx/euler_angles.hpp>
 #include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
+#include <Core/src/gfx/Bindables/SOAVertexBuffer.h>
 
 namespace tryn::gfx
 {
@@ -24,6 +25,8 @@ namespace tryn::gfx
 		}
 		return mod;
 	}
+
+	Drawable::~Drawable() = default;
 
 	void Drawable::Draw(const IGraphics& gfx, const glm::mat4& transform)
 	{
@@ -82,13 +85,11 @@ namespace tryn::gfx
 	}
 	void Drawable::BindBase() const
 	{
-		pVertexBuffer->Bind();
 		pIndexBuffer->Bind();
 		pTopology->Bind();
 	}
 	void Drawable::BindBase(const IContext& context) const
 	{
-		pVertexBuffer->Bind(context);
 		pIndexBuffer->Bind(context);
 		pTopology->Bind(context);
 	}
@@ -137,9 +138,9 @@ namespace tryn::gfx
 	{
 		pTransformCBuf = gfx.CreateTransformCBuf();
 	}
-	IVertexBuffer& Drawable::GetVertexBuffer() const
+	ISOAVertexBuffer& Drawable::GetVertexBuffer() const
 	{
-		return *pVertexBuffer;
+		return *pSOAVertexBuffer;
 	}
 	uint32_t Drawable::GetIndexCount() const
 	{
@@ -190,7 +191,8 @@ namespace tryn::gfx
 			materials.emplace_back(pMaterials[materialIndex]);
 		}
 
-		pTechniques.emplace_back(enabled, TechniquePool::ConstructTechnique(techniqueUUID, materials, gfx, instanced, skinned));
+		auto& [_, technique] = pTechniques.emplace_back(enabled, TechniquePool::ConstructTechnique(gfx, techniqueUUID, materials, instanced, skinned));
+		technique->FillSOAVertexBuffer(*pSOAVertexBuffer);
 	}
 
 	Material& Drawable::GetSelectedMaterial() const
