@@ -2,6 +2,8 @@
 #include <type_traits>
 #include "Core/src/utl/StatefulMeta/TemplateData.h"
 #include <Core/src/mem/ArenaAllocator.h>
+
+#include "Query.h"
 #include "Core/src/utl/StringHasher.h"
 
 namespace tryn::gfx
@@ -70,6 +72,10 @@ namespace tryn::ecs
 		ECS(const app::App* pApp);
 		~ECS();
 		void WipeAllocator();
+
+		template <typename... Components>
+		std::span<Components...> Query(Query<Components...>& query);
+
 		const gfx::IGraphics& Gfx() const;
 		const mem::ArenaAllocator<>& GetAllocator() const;
 		mem::ArenaAllocator<>& GetAllocator();

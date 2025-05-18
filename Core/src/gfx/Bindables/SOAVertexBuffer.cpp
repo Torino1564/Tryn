@@ -6,13 +6,6 @@
 
 namespace tryn::gfx
 {
-
-	std::shared_ptr<ISOAVertexBuffer> ISOAVertexBuffer::Resolve(const IGraphics& gfx,
-	                                                            const std::shared_ptr<IVertexShader>& pVS)
-	{
-		return BindablePool::Resolve<ISOAVertexBuffer>(gfx, pVS);
-	}
-
 	void ISOAVertexBuffer::Append(const std::shared_ptr<IVertexBuffer>& vertexBuffer, const std::string& name, uint16_t slot = 0)
 	{
 		if (pBuffers.contains(name))

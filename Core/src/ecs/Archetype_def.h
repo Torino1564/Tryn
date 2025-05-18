@@ -23,7 +23,7 @@ namespace tryn::ser
 namespace tryn::ecs
 {
 	class ECS;
-	using ArchetypeID = std::uint16_t;
+	using ArchetypeID = std::uint32_t;
 	class Archetype
 	{
 		friend class Entity;

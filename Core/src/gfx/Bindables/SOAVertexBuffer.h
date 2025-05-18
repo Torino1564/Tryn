@@ -9,8 +9,6 @@ namespace tryn::gfx
 	class ISOAVertexBuffer : public IBindable
 	{
 	public:
-		static std::shared_ptr<ISOAVertexBuffer> Resolve(const IGraphics& gfx, const std::shared_ptr<IVertexShader>& pVS);
-		
 		void Append(const std::shared_ptr<IVertexBuffer>& vertexBuffer, const std::string& name, uint16_t slot);
 		void AppendFrom(const ISOAVertexBuffer& soaVertexBuffer, const std::string& name, uint16_t slot);
 
