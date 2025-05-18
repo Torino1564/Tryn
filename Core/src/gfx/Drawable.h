@@ -13,7 +13,7 @@ namespace tryn::gfx
 	class Drawable
 	{
 	public:
-		virtual ~Drawable() = default;
+		virtual ~Drawable();
 
 		void Draw(const IGraphics& gfx , const glm::mat4& transform);
 		virtual void Submit(const IGraphics& gfx, const glm::mat4& transform);
@@ -26,7 +26,7 @@ namespace tryn::gfx
 		void BindTransformCBuf() const;
 		void BindTransformCBuf(const IContext& context) const;
 		void InitTransformCBuf(const IGraphics& gfx);
-		[[nodiscard]] IVertexBuffer& GetVertexBuffer() const;
+		[[nodiscard]] ISOAVertexBuffer& GetVertexBuffer() const;
 		[[nodiscard]] uint32_t GetIndexCount() const;
 		[[nodiscard]] glm::mat4 GetTransformMatrix() const;
 		[[nodiscard]] std::uint16_t GetID() const;
@@ -34,13 +34,13 @@ namespace tryn::gfx
 		Material& GetSelectedMaterial() const;
 		virtual void ExtraSubmitBehavior() {}
 		std::array<IBindable*, 10> extraBindPtrs;
-		std::shared_ptr<IVertexBuffer> pVertexBuffer;
+		std::shared_ptr<ISOAVertexBuffer> pSOAVertexBuffer;
 		std::shared_ptr<IIndexBuffer> pIndexBuffer;
 		std::shared_ptr<IPrimitiveTopology> pTopology;
 		std::unique_ptr<ITransformCBuf> pTransformCBuf;
 		uint32_t indexCount = 0;
 		std::uint16_t ID = 0;
-		std::vector<std::shared_ptr<Material>> pMaterials;
+		std::vector<std::shared_ptr<Material>> pMaterials = {};
 		std::vector<std::pair<bool, std::shared_ptr<TechniqueBase>>> pTechniques;
 		unsigned int selectedMaterial = 0;
 		glm::mat4 transform = glm::identity<glm::mat4>();

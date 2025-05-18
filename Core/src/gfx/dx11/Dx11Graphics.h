@@ -69,7 +69,7 @@ namespace tryn::gfx::dx11
 
 		// Resource Creation
 		std::shared_ptr<IVertexBuffer>						CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string) const override;
-		std::shared_ptr<ISOAVertexBuffer>					CreateSOAVertexBuffer(const std::shared_ptr<IVertexShader>& pVS) const override;
+		std::shared_ptr<ISOAVertexBuffer>					CreateSOAVertexBuffer() const override;
 		std::shared_ptr<IIndexBuffer>						CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string) const override;
 		std::shared_ptr<IVertexShader>						CreateVertexShader(std::string path) const override;
 		std::shared_ptr<IPixelShader>						CreatePixelShader(std::string path) const override;
@@ -92,6 +92,8 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<IShaderResourceDepthStencil>		CreateShaderResourceDepthStencil(const spa::DimensionsI, const uint16_t slot, ComparissonMode mode) const override;
 		std::unique_ptr<ITransformCBuf>						CreateTransformCBuf() const override;
 		std::unique_ptr<RenderWorker>						CreateRenderWorker(ccr::Master*) const override;
+
+		std::shared_ptr<class DX11InputLayout>				CreateInputLayout(const std::vector<D3D11_INPUT_ELEMENT_DESC>& descriptorBuffer, const class DX11VertexShader& vs) const;
 
 	private:
 

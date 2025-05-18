@@ -1,6 +1,9 @@
 #include "TrynPCH.h"
 #include "gltfSDK.h"
 
+#undef min
+#undef max
+
 #include <GLTFSDK/Deserialize.h>
 #include <GLTFSDK/GLTFResourceReader.h>
 #include <GLTFSDK/GLBResourceReader.h>

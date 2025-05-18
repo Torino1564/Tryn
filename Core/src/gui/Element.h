@@ -14,6 +14,6 @@ namespace tryn::gui
 		// Components
 		std::vector<std::unique_ptr<IBehaviourComponent>> componentPtrs;
 		spa::Vec2I position;
-		spa::DimensionsF dimensions
+		spa::DimensionsF dimensions;
 	};
 }

@@ -10,13 +10,14 @@ namespace tryn::gfx::dx11
 	class DX11SOAVertexBuffer : public ISOAVertexBuffer
 	{
 	public:
-		DX11SOAVertexBuffer(const Graphics& gfx, const std::shared_ptr<IVertexShader>& pVS);
+		DX11SOAVertexBuffer(const Graphics& gfx);
 		void Bind() override;
 		void Bind(const IContext& context) override;
+		void SetVertexShader(const std::shared_ptr<IVertexShader>& pVS) override;
 
 	private:
 		void AssertApiMatch(const std::shared_ptr<IVertexBuffer>& pVB) override;
-		void Bind_Impl(const IContext& context);
+		void Bind_Impl(const IContext& context) const;
 		void Update();
 
 		const Graphics& gfx;

@@ -205,9 +205,9 @@ namespace tryn::gfx::dx11
 		for (int i = 0; i < descSize; i++)
 		{
 			D3D11_INPUT_ELEMENT_DESC descriptor = {};
-			descriptor.SemanticName = vLayout.Elements[i].first.GetName();
-			descriptor.SemanticIndex = vLayout.Elements[i].second;
-			descriptor.Format = Graphics::MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
+			descriptor.SemanticName = vLayout.Elements[i].GetName();
+			descriptor.SemanticIndex = vLayout.Elements[i].Index();
+			descriptor.Format = Graphics::MapDXGIFormat(vLayout.Elements[i].GetFormat());
 			descriptor.InputSlot = (UINT)slot;
 			descriptor.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 			descriptor.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;

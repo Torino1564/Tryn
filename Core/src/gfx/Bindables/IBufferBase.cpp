@@ -48,7 +48,7 @@ namespace tryn::gfx
 	}
 
 	template <BufferType Type, CachingPolicy Policy>
-	std::string IBufferBase<Type, Policy>::GenerateID(const IGraphics& gfx, std::shared_ptr<VertexBuffer> cpuBuffer,
+	std::string IBufferBase<Type, Policy>::GenerateID(const IGraphics& gfx, const std::shared_ptr<VertexBuffer>& cpuBuffer,
 		std::string tag) requires (Type == BufferType::Vertex)
 	{
 			if (tag == "?") return tag;
@@ -58,7 +58,7 @@ namespace tryn::gfx
 
 			for (auto& element : cpuBuffer->GetLayout().Elements)
 			{
-				ss << element.first.GetName() << element.second;
+				ss << element.GetName() << element.Id() << element.Index();
 			};
 			ss << "#" << tag;
 
@@ -66,7 +66,7 @@ namespace tryn::gfx
 	}
 
 	template <BufferType Type, CachingPolicy Policy>
-	std::string IBufferBase<Type, Policy>::GenerateID(const IGraphics& gfx, std::shared_ptr<IndexBuffer> indices, std::string tag)
+	std::string IBufferBase<Type, Policy>::GenerateID(const IGraphics& gfx, const std::shared_ptr<IndexBuffer>& indices, std::string tag)
 		requires (Type == BufferType::Index)
 	{
 		if (tag == "?") return tag;

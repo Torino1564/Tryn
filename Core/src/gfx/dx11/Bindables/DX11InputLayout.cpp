@@ -29,7 +29,7 @@ namespace tryn::gfx::dx11
 	{
 		trynass_msg(vs.GetAPI() == GraphicAPI::DX11, L"A DX11InputLayout was constructed with a non DX11 Vertex Shader");
 
-		auto& dx11vs = static_cast<DX11VertexShader&>(vs);
+		const auto& dx11vs = static_cast<DX11VertexShader&>(vs);
 
 		type = GraphicAPI::DX11;
 
@@ -37,6 +37,20 @@ namespace tryn::gfx::dx11
 
 		gfx.GetDevice().CreateInputLayout(buffer.data(), (UINT)layout.GetElementCount(), dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
 	}
+
+	DX11InputLayout::DX11InputLayout(const Graphics& gfx, const std::vector<D3D11_INPUT_ELEMENT_DESC>& descriptorBuffer,
+		const IVertexShader& vs)
+			: gfx(gfx)
+	{
+		trynass_msg(vs.GetAPI() == GraphicAPI::DX11, L"A DX11InputLayout was constructed with a non DX11 Vertex Shader");
+
+		const auto& dx11vs = static_cast<const DX11VertexShader&>(vs);
+		buffer = descriptorBuffer;
+		type = GraphicAPI::DX11;
+
+		gfx.GetDevice().CreateInputLayout(buffer.data(), (UINT)descriptorBuffer.size(), dx11vs.GetBlob()->GetBufferPointer(), dx11vs.GetBlob()->GetBufferSize(), &pLayout) >> chk;
+	}
+
 	void DX11InputLayout::Bind()
 	{
 		gfx.GetContext().IASetInputLayout(pLayout.Get());

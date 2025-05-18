@@ -24,17 +24,14 @@ namespace tryn::gfx
 		:
 		Technique("ForwardPhong")
 	{
+		usedMaterials.emplace_back(materials[0]);
 		auto& material = *materials[0];
 		auto shaderRootPath = tryn::gfx::IGraphics::GetShaderRootPath();
 
 		std::string shaderCode = "Phong";
 		aiString tempFileName;
 
-		auto& vLayout = *pVertexLayout;
 
-		// Common
-		vLayout.AppendElement(VertexLayout::Position3D);
-		vLayout.AppendElement(VertexLayout::Normal);
 		ConstantBufferLayout cbLayout;
 		bool isTextured = false;
 		bool usesGlossAlphaChannel = false;
@@ -42,6 +39,9 @@ namespace tryn::gfx
 		// Lambertian
 		Step step("Lambertian");
 		gfx.GetRenderGraph().AddRenderQueue("Lambertian");
+		auto& vLayout = step.GetVertexLayout();
+		vLayout.AppendElement(VertexLayout::Position3D);
+		vLayout.AppendElement(VertexLayout::Normal);
 
 		// Albedo
 		{

@@ -13,6 +13,7 @@ namespace tryn::gfx
 	class Mesh : public Drawable
 	{
 	public:
+		Mesh();
 		~Mesh() override = default;
 		[[nodiscard]] std::string GetTag() const;
 		[[nodiscard]] virtual MeshType Type() const = 0;

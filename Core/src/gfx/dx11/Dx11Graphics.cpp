@@ -237,9 +237,9 @@ namespace tryn::gfx::dx11
 			for (int i = 0; i < descSize; i++)
 			{
 				D3D11_INPUT_ELEMENT_DESC descriptor = {};
-				descriptor.SemanticName = vLayout.Elements[i].first.GetName();
-				descriptor.SemanticIndex = vLayout.Elements[i].second;
-				descriptor.Format = MapDXGIFormat(vLayout.Elements[i].first.GetFormat());
+				descriptor.SemanticName = vLayout.Elements[i].GetName();
+				descriptor.SemanticIndex = vLayout.Elements[i].Index();
+				descriptor.Format = MapDXGIFormat(vLayout.Elements[i].GetFormat());
 				descriptor.InputSlot = (UINT)slot;
 				descriptor.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 				descriptor.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
@@ -260,10 +260,10 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<ISOAVertexBuffer> Graphics::CreateSOAVertexBuffer(const std::shared_ptr<IVertexShader>& pVS) const
+	std::shared_ptr<ISOAVertexBuffer> Graphics::CreateSOAVertexBuffer() const
 	{
 		auto future = Dispatch_([&] {
-			return std::make_shared<DX11SOAVertexBuffer>(*this, pVS);
+			return std::make_shared<DX11SOAVertexBuffer>(*this);
 
 			});
 		return future.get();
@@ -376,6 +376,15 @@ namespace tryn::gfx::dx11
 	std::unique_ptr<RenderWorker> Graphics::CreateRenderWorker(ccr::Master* pMaster) const
 	{
 		return std::make_unique<DX11RenderWorker>(pMaster, *this);
+	}
+
+	std::shared_ptr<class DX11InputLayout> Graphics::CreateInputLayout(
+		const std::vector<D3D11_INPUT_ELEMENT_DESC>& descriptorBuffer, const DX11VertexShader& vs) const
+	{
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11InputLayout>(*this, descriptorBuffer, vs);
+			});
+		return future.get();
 	}
 
 	std::shared_ptr<ITexture> Graphics::CreateTexture(const std::filesystem::path path, const int slot) const

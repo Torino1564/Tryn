@@ -21,6 +21,14 @@ namespace tryn::gfx
 				return gfx.CreateVertexBuffer(std::forward<Args>(args)...);
 			}
 		};
+		template <> struct ResolveHelper<ISOAVertexBuffer>
+		{
+			template <class ... Args>
+			auto operator()(const IGraphics& gfx, Args&&...args)
+			{
+				return gfx.CreateSOAVertexBuffer(std::forward<Args>(args)...);
+			}
+		};
 		template <> struct ResolveHelper<IVertexShader>
 		{
 			template <class ... Args>

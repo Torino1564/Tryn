@@ -44,7 +44,7 @@ namespace tryn::gfx
 
 		// Avoid using the default constructor. Use the parametrized constructor or factory function instead
 		Model();
-		Model(const gfx::IGraphics& gfx, std::string_view path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = {1.0f, 1.0f, 1.0f}, const bool instanced = false);
+		Model(const gfx::IGraphics& gfx, std::string_view path, std::span<const utl::UUID_t> techniqueUUIDs = {std::array{ZT_TYPE_UUID(ForwardPhong)}}, const glm::vec3& scale = {1.0f, 1.0f, 1.0f}, const bool instanced = false);
 		template <typename... Techniques>
 			requires std::derived_from<Techniques..., TechniqueBase>
 		static std::unique_ptr<Model> Make(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
@@ -96,8 +96,8 @@ namespace tryn::gfx
 		// Techniques utilized by child meshes
 		std::vector<utl::UUID_t> techniques;
 
-		// Extra bindables. The steps inside the techniques can link to these and bind them when rendered.
-		std::vector<std::pair<std::string, std::shared_ptr<IBindable>>> pExtraBindables;
+		// Added bindables. The steps inside the techniques can link to these and bind them when rendered.
+		std::vector<std::pair<std::string, std::shared_ptr<IBindable>>> pAddedBindables;
 	};
 
 	template <typename... Techniques>

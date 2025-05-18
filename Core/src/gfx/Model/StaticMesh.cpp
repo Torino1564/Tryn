@@ -7,9 +7,12 @@
 #include <utility>
 #include <Core/src/gfx/Material.h>
 
+#include "Core/src/gfx/Bindables/SOAVertexBuffer.h"
+
 namespace tryn::gfx
 {
 	StaticMesh::StaticMesh(const IGraphics& gfx, const aiMesh& mesh, std::string_view tag, const std::shared_ptr<Material>& pMaterial, glm::vec3 scale, const std::optional<std::uint16_t> meshID)
+		: Mesh()
 	{
 		auto material = pMaterial ? pMaterial : Material::MakeDefault(gfx);
 
@@ -27,17 +30,20 @@ namespace tryn::gfx
 		const auto indices = IndexBuffer(mesh);
 
 		indexCount = static_cast<uint32_t>(indices.Size());
-
+		pSOAVertexBuffer = ISOAVertexBuffer::Resolve(gfx);
+		pSOAVertexBuffer->InitFields(gfx, mesh);
 		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<IndexBuffer>(indices));
 		pTopology = IPrimitiveTopology::Resolve(gfx);
 		InitTransformCBuf(gfx);
 
+		this->pMaterials.clear();
 		this->pMaterials.emplace_back(std::move(material));
 		this->selectedMaterial = pMaterials.size() - 1;
 	}
 
 	StaticMesh::StaticMesh(const IGraphics& gfx, const Shape3D& shape,
 		std::string_view tag, const std::shared_ptr<Material>& pMaterial, glm::vec3 scale, std::optional<std::uint16_t> meshID)
+			: Mesh()
 	{
 		// TODO: Finish this
 
@@ -67,6 +73,7 @@ namespace tryn::gfx
 
 	StaticMesh::StaticMesh(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::string_view tag,
 		const std::shared_ptr<Material>& pMaterial, glm::vec3 scale, const std::optional<std::uint16_t> meshID)
+			: Mesh()
 	{
 		auto material = pMaterial ? pMaterial : Material::MakeDefault(gfx);
 
@@ -80,15 +87,17 @@ namespace tryn::gfx
 		}
 
 		ID = meshID.value_or(0);
-
+		
 		const auto indices = IndexBuffer(primitive, context);
 
 		indexCount = static_cast<uint32_t>(indices.Size());
-
+		pSOAVertexBuffer = ISOAVertexBuffer::Resolve(gfx);
+		pSOAVertexBuffer->InitFields(gfx, primitive, context);
 		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<IndexBuffer>(std::move(indices)));
 		pTopology = IPrimitiveTopology::Resolve(gfx);
 		InitTransformCBuf(gfx);
 
+		this->pMaterials.clear();
 		this->pMaterials.emplace_back(std::move(material));
 		this->selectedMaterial = pMaterials.size() - 1;
 	}
