@@ -58,7 +58,7 @@ namespace tryn ::ecs
 	};
 
 	template <typename Test, typename... Components>
-		requires std::predicate<Test, const std::tuple<Components...>&>
+		//requires std::predicate<Test, const std::tuple<Components...>&>
 	struct Logic
 	{
 		using T = std::tuple<Components...>;
@@ -115,14 +115,15 @@ namespace tryn ::ecs
 		consteval Query() = default;
 
 		template<typename... Cs>
-		friend Query<Cs...> Select();
+		friend constexpr Query<Cs...> Select();
 
-		constexpr Query& From(const std::vector<ArchetypeID>& archetypes_in);
+		constexpr Query& From(const std::vector<ArchetypeID>& archetypes_in = {});
 
 		template<typename Logic>
 		constexpr Query& Where();
 
-	private:
+
+	//private:
 		enum struct Previous
 		{
 			None,

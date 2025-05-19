@@ -14,7 +14,7 @@ namespace tryn::gfx
 	class Step
 	{
 	public:
-		Step(const std::string& renderQueueID);
+		Step(const IGraphics& gfx, const std::string& renderQueueID);
 		Step(Step&& rhs) noexcept;
 		~Step();
 		void AddBindable(std::shared_ptr<class IBindable> bindable);

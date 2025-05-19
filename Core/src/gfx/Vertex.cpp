@@ -129,7 +129,7 @@ namespace tryn::gfx
 	VertexBuffer::VertexBuffer(VertexLayout layout_, const size_t size)
 	{
 		trynass_msg(layout_.GetElementCount() != 0 && layout_.Size() != 0, L"Attempted to create a VertexBuffer with an empty layout");
-		this->layout = std::move(layout_);
+		layout = std::move(layout_);
 		VertexBuffer::Resize(layout.Size() * size);
 		dirty = false;
 	}
@@ -166,7 +166,7 @@ namespace tryn::gfx
 
 			std::string accessorString = VertexLayout::VertexElementAttr<ElementType>::semantic;
 
-			if constexpr (VertexLayout::VertexElementAttr<ElementType>::semantic == "COLOR" || VertexLayout::VertexElementAttr<ElementType>::semantic == "TEXCOORD");
+			if constexpr (VertexLayout::VertexElementAttr<ElementType>::semantic == "COLOR" || VertexLayout::VertexElementAttr<ElementType>::semantic == "TEXCOORD")
 			{
 				accessorString += "_" + std::to_string(buffer.GetLayout().Resolve(ElementType, id).Index());
 			}

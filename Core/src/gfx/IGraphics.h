@@ -122,7 +122,7 @@ namespace tryn::gfx
 		}
 
 		// Resource Creation
-		virtual std::shared_ptr<IVertexBuffer>						CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string tag = "?") const = 0;
+		virtual std::shared_ptr<IVertexBuffer>						CreateVertexBuffer(const std::shared_ptr<VertexBuffer>&, std::string tag = "?") const = 0;
 		virtual std::shared_ptr<ISOAVertexBuffer>					CreateSOAVertexBuffer() const = 0;
 		virtual std::shared_ptr<IIndexBuffer>						CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string tag = "?") const = 0;
 		virtual std::shared_ptr<IVertexShader>						CreateVertexShader(std::string path) const = 0;

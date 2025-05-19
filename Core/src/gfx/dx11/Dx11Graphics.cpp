@@ -251,7 +251,7 @@ namespace tryn::gfx::dx11
 		}
 	}
 
-	std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(std::shared_ptr<VertexBuffer> pCpuBuffer, std::string tag) const 
+	std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(const std::shared_ptr<VertexBuffer>& pCpuBuffer, std::string tag) const 
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11VertexBuffer>(*this, pCpuBuffer, tag);

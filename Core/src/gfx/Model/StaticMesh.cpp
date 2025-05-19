@@ -11,18 +11,18 @@
 
 namespace tryn::gfx
 {
-	StaticMesh::StaticMesh(const IGraphics& gfx, const aiMesh& mesh, std::string_view tag, const std::shared_ptr<Material>& pMaterial, glm::vec3 scale, const std::optional<std::uint16_t> meshID)
+	StaticMesh::StaticMesh(const IGraphics& gfx, const aiMesh& mesh, std::string_view tag_, const std::shared_ptr<Material>& pMaterial, glm::vec3 scale, const std::optional<std::uint16_t> meshID)
 		: Mesh()
 	{
 		auto material = pMaterial ? pMaterial : Material::MakeDefault(gfx);
 
 		if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f)
 		{
-			this->tag = std::format("{}#Scale[X:{},Y:{},Z:{}]", tag, scale.x, scale.y, scale.z);
+			tag = std::format("{}#Scale[X:{},Y:{},Z:{}]", tag_, scale.x, scale.y, scale.z);
 		}
 		else
 		{
-			this->tag = tag;
+			tag = tag_;
 		}
 
 		ID = meshID.value_or(0);
@@ -36,9 +36,9 @@ namespace tryn::gfx
 		pTopology = IPrimitiveTopology::Resolve(gfx);
 		InitTransformCBuf(gfx);
 
-		this->pMaterials.clear();
-		this->pMaterials.emplace_back(std::move(material));
-		this->selectedMaterial = pMaterials.size() - 1;
+		pMaterials.clear();
+		pMaterials.emplace_back(std::move(material));
+		selectedMaterial = pMaterials.size() - 1;
 	}
 
 	StaticMesh::StaticMesh(const IGraphics& gfx, const Shape3D& shape,
@@ -71,7 +71,7 @@ namespace tryn::gfx
 		//this->selectedMaterial = pMaterials.size() - 1;
 	}
 
-	StaticMesh::StaticMesh(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::string_view tag,
+	StaticMesh::StaticMesh(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::string_view tag_,
 		const std::shared_ptr<Material>& pMaterial, glm::vec3 scale, const std::optional<std::uint16_t> meshID)
 			: Mesh()
 	{
@@ -79,11 +79,11 @@ namespace tryn::gfx
 
 		if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f)
 		{
-			this->tag = std::format("{}#Scale[X:{},Y:{},Z:{}]", tag, scale.x, scale.y, scale.z);
+			tag = std::format("{}#Scale[X:{},Y:{},Z:{}]", tag_, scale.x, scale.y, scale.z);
 		}
 		else
 		{
-			this->tag = tag;
+			tag = tag_;
 		}
 
 		ID = meshID.value_or(0);
@@ -97,9 +97,9 @@ namespace tryn::gfx
 		pTopology = IPrimitiveTopology::Resolve(gfx);
 		InitTransformCBuf(gfx);
 
-		this->pMaterials.clear();
-		this->pMaterials.emplace_back(std::move(material));
-		this->selectedMaterial = pMaterials.size() - 1;
+		pMaterials.clear();
+		pMaterials.emplace_back(std::move(material));
+		selectedMaterial = pMaterials.size() - 1;
 	}
 
 	MeshType StaticMesh::Type() const

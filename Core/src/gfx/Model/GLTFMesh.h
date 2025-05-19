@@ -24,6 +24,6 @@ namespace tryn::gfx
 		void EnableOrAddTechnique(const IGraphics& gfx, utl::UUID_t techniqueUUID, std::span<uint16_t> materialIndex) override;
 
 	private:
-		std::vector<std::shared_ptr<Mesh>> pPrimitives;
+		std::vector<std::shared_ptr<StaticMesh>> pPrimitives;
 	};
 }

@@ -37,7 +37,7 @@ namespace tryn::gfx
 		bool usesGlossAlphaChannel = false;
 
 		// Lambertian
-		Step step("Lambertian");
+		Step step(gfx, "Lambertian");
 		gfx.GetRenderGraph().AddRenderQueue("Lambertian");
 		auto& vLayout = step.GetVertexLayout();
 		vLayout.AppendElement(VertexLayout::Position3D);
@@ -51,11 +51,11 @@ namespace tryn::gfx
 				isTextured = true;
 				shaderCode += "Tex";
 				std::shared_ptr<Texture> pTexture;
-				try
+				if (material.HasTexture(TextureType::Diffuse))
 				{
 					pTexture = material.GetTexture(TextureType::Diffuse);
 				}
-				catch(std::exception& e)
+				else if (material.HasTexture(TextureType::MetallicRoughnessBaseColor))
 				{
 					pTexture = material.GetTexture(TextureType::MetallicRoughnessBaseColor);
 				}

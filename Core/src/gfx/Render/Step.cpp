@@ -11,10 +11,12 @@
 
 namespace tryn::gfx
 {
-	Step::Step(const std::string& renderQueueID)
+	Step::Step(const IGraphics& gfx, const std::string& renderQueueID)
 		:
 		renderQueueID(renderQueueID)
 	{
+		pVertexLayout = std::make_unique<VertexLayout>();
+		pSOAVertexBuffer = gfx.CreateSOAVertexBuffer();
 	}
 
 	Step::Step(Step&& rhs) noexcept
@@ -22,7 +24,8 @@ namespace tryn::gfx
 		bindables(std::move(rhs.bindables)),
 		pVertexLayout(std::move(rhs.pVertexLayout)),
 		pSOAVertexBuffer(std::move(rhs.pSOAVertexBuffer)),
-		bindablesToAccept(std::move(rhs.bindablesToAccept))
+		bindablesToAccept(std::move(rhs.bindablesToAccept)),
+		renderQueueID(std::move(rhs.renderQueueID))
 	{
 	}
 
@@ -38,6 +41,11 @@ namespace tryn::gfx
 		{
 			bind->Bind();
 		}
+		for (auto& bind : acceptedBindables)
+		{
+			bind->Bind();
+		}
+		pSOAVertexBuffer->Bind();
 	}
 	void Step::Bind(const IContext& context) const
 	{
@@ -45,6 +53,11 @@ namespace tryn::gfx
 		{
 			bind->Bind(context);
 		}
+		for (auto& bind : acceptedBindables)
+		{
+			bind->Bind(context);
+		}
+		pSOAVertexBuffer->Bind(context);
 	}
 	void Step::Draw(const IGraphics& gfx, const Drawable* parent)
 	{
@@ -72,7 +85,7 @@ namespace tryn::gfx
 
 	void Step::FillSOAVertexBuffer(const ISOAVertexBuffer& SOAVertexBuffer) const
 	{
-		this->pSOAVertexBuffer->AppendFrom(SOAVertexBuffer, *pVertexLayout);
+		pSOAVertexBuffer->AppendFrom(SOAVertexBuffer, *pVertexLayout);
 	}
 
 	const VertexLayout& Step::GetVertexLayout() const

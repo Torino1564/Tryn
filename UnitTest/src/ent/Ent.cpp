@@ -69,6 +69,20 @@ namespace tryn::ecs
 			sysGraph.Finalize();
 			sysGraph.Execute();
 		}
+		TEST_METHOD(QueryTests)
+		{
+//#include <Core/src/ecs/Query.h>
+//
+//			auto query = Select<int, float, char>().From().Where<And<Logic<decltype([](const std::tuple<int>& t) {return std::get<int>(t) == 69; })> , Logic<decltype([](const std::tuple<float>& t) {return std::get<float>(t) < 10.0f; })>>::type>();
+//
+//			std::vector<std::tuple<int, float, char>> ar = {{69, 420.0f, 4}, {69, 420.0f, 4}, {69, 420.0f, 4}, {69, 420.0f, 4}};
+//			std::array<bool, 4> result = { false, false, false, false };
+//			unsigned i = 0;
+//			for (auto& el : ar)
+//			{
+//				result[i++] = query.pLogic(el);
+//			}
+		}
 	private:
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;
 		std::unique_ptr<win::Window> pWnd;

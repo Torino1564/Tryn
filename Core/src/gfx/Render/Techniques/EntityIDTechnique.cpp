@@ -26,7 +26,7 @@ namespace tryn::gfx
 
 		// Common
 
-		Step step("EntityID");
+		Step step(gfx, "EntityID");
 		auto vLayout = step.GetVertexLayout();
 		vLayout.AppendElement(VertexLayout::Position3D);
 		gfx.GetRenderGraph().AddRenderQueue("EntityID");

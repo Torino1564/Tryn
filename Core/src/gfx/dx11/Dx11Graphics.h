@@ -68,7 +68,7 @@ namespace tryn::gfx::dx11
 		static std::vector<D3D11_INPUT_ELEMENT_DESC> GetSlottedLayout(const VertexLayout& vLayout, int slot);
 
 		// Resource Creation
-		std::shared_ptr<IVertexBuffer>						CreateVertexBuffer(std::shared_ptr<VertexBuffer>, std::string) const override;
+		std::shared_ptr<IVertexBuffer>						CreateVertexBuffer(const std::shared_ptr<VertexBuffer>& , std::string) const override;
 		std::shared_ptr<ISOAVertexBuffer>					CreateSOAVertexBuffer() const override;
 		std::shared_ptr<IIndexBuffer>						CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string) const override;
 		std::shared_ptr<IVertexShader>						CreateVertexShader(std::string path) const override;

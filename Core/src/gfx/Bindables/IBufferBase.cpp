@@ -34,7 +34,7 @@ namespace tryn::gfx
 
 	template <BufferType Type, CachingPolicy Policy>
 	std::shared_ptr<IVertexBuffer> IBufferBase<Type, Policy>::Resolve(const IGraphics& gfx,
-		std::shared_ptr<VertexBuffer> cpuBuffer,
+		const std::shared_ptr<VertexBuffer>& cpuBuffer,
 		std::string tag) requires (Type == BufferType::Vertex && Policy == CachingPolicy::Caching)
 	{
 		return gfx::BindablePool::Resolve<IVertexBuffer>(gfx, cpuBuffer, tag);
@@ -127,15 +127,9 @@ namespace tryn::gfx
 	}
 
 	template <BufferType Type, CachingPolicy Policy>
-	VertexLayout& IBufferBase<Type, Policy>::GetLayout() requires (Type == BufferType::Vertex)
-	{
-		return layout;
-	}
-
-	template <BufferType Type, CachingPolicy Policy>
 	const VertexLayout& IBufferBase<Type, Policy>::GetLayout() const requires (Type == BufferType::Vertex)
 	{
-		return layout;
+		return *pLayout;
 	}
 
 	template <BufferType Type, CachingPolicy Policy>

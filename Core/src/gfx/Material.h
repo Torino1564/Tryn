@@ -70,12 +70,11 @@ namespace tryn::gfx
 		template <typename T>
 		T GetAttributeOr(const AttributeType attribute, T&& orValue) const
 		{
-			try
+			if (const auto it = attributes.find(attribute); it != attributes.end())
 			{
-				auto& att = attributes.at(attribute);
-				return att.Get<T>();
+				return it->second.Get<T>();
 			}
-			catch (std::exception& e)
+			else
 			{
 				return std::forward<T>(orValue);
 			}

@@ -31,7 +31,7 @@ namespace tryn::gfx
 
 
 
-		Step step("Lambertian");
+		Step step(gfx, "Lambertian");
 		gfx.GetRenderGraph().AddRenderQueue("Lambertian");
 		auto& vLayout = step.GetVertexLayout();
 

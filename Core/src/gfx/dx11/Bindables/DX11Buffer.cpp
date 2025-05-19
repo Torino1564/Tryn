@@ -4,14 +4,21 @@
 namespace tryn::gfx::dx11
 {
 	template <BufferType Type, CachingPolicy Policy>
-	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, std::shared_ptr<CPUBuffer> pCpuBuffer, std::string tag)
+	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, const std::shared_ptr<CPUBuffer>& pCpuBuffer, std::string tag)
 		requires (Type == BufferType::Vertex || Type == BufferType::Index) && (Policy == CachingPolicy::Caching)
 		:
 		gfx(gfx)
 	{
+		this->type = GraphicAPI::DX11;
 		this->tag = tag;
 
 		trynass_msg(!pCpuBuffer->Dirty(), L"Cant initialize a dirty Vertex Buffer!");
+
+		if constexpr (Type == BufferType::Vertex)
+		{
+			const auto casted = std::static_pointer_cast<VertexBuffer>(pCpuBuffer);
+			this->pLayout = &casted->GetLayout();
+		}
 
 		this->pCPUBuffer = pCpuBuffer;
 		stride = (UINT)this->pCPUBuffer->Stride();
@@ -34,6 +41,7 @@ namespace tryn::gfx::dx11
 	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag)
 		requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant): gfx(gfx)
 	{
+		this->type = GraphicAPI::DX11;
 		this->slot = slot;
 		this->tag = tag;
 
@@ -48,6 +56,7 @@ namespace tryn::gfx::dx11
 	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, ConstantBufferLayout::Node arrayElement, int slot,
 		std::size_t numInstances) requires (Type == BufferType::Instance && Policy == CachingPolicy::Caching): gfx(gfx)
 	{
+		this->type = GraphicAPI::DX11;
 		ConstantBufferLayout layout;
 		layout.Append(cbType::Array, "InstanceArray");
 		this->slot = slot;
@@ -198,7 +207,7 @@ namespace tryn::gfx::dx11
 		::Vertex)
 	{
 		trynass_msg(Type == BufferType::Vertex, L"Can only get layouts from Vertex Buffer Types!");
-		const auto& vLayout = this->layout;
+		const auto& vLayout = *this->pLayout;
 		const auto descSize = vLayout.GetElementCount();
 
 		std::vector<std::any> layout;

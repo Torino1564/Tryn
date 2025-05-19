@@ -37,17 +37,23 @@ namespace tryn::gfx
 		pMaterials.emplace_back(pMaterial);
 		for (const auto& primitive : mesh.primitives)
 		{
-			pPrimitives.push_back(std::make_shared<StaticMesh>(gfx, primitive, context, tag, pMaterial, scale));
+			pPrimitives.push_back(std::move(std::make_shared<StaticMesh>(gfx, primitive, context, tag, pMaterial, scale)));
 		}
 	}
 
 	void GLTFMesh::EnableOrAddTechnique(const IGraphics& gfx, const utl::UUID_t techniqueUUID, const std::span<uint16_t> materialIndex)
 	{
-		EnableOrAddTechniqueEx(gfx, techniqueUUID, false, materialIndex);
+		for (const auto& mesh : pPrimitives)
+		{
+			mesh->EnableOrAddTechniqueEx(gfx, techniqueUUID, false, materialIndex);
+		}
 	}
 
 	void GLTFMesh::AddTechnique(const IGraphics& gfx, const utl::UUID_t techniqueUUID, const std::span<uint16_t> materialIndex, const bool enabled)
 	{
-		AddTechniqueEx(gfx, techniqueUUID, false, materialIndex, enabled);
+		for (const auto& mesh : pPrimitives)
+		{
+			mesh->AddTechniqueEx(gfx, techniqueUUID, false, materialIndex, enabled);
+		}
 	}
 }

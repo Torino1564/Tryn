@@ -41,12 +41,18 @@ namespace tryn::gfx
 				const auto id = std::string(VertexLayout::VertexElementAttr<NthElement>::semantic) + "_" + std::to_string(n);
 				if (primitive.HasAttribute(id))
 				{
-					VertexLayout layout;
-					layout.AppendElement(NthElement);
-					auto nThBuffer = std::make_shared<VertexBuffer>(layout, primitive, context);
-					auto pBuffer = IVertexBuffer::Resolve(gfx, nThBuffer);
-
-					buffer.Append(pBuffer, id);
+					try
+					{
+						VertexLayout layout;
+						layout.AppendElement(NthElement);
+						auto nThBuffer = std::make_shared<VertexBuffer>(layout, primitive, context);
+						auto pBuffer = IVertexBuffer::Resolve(gfx, nThBuffer);
+						buffer.Append(pBuffer, id);
+					}
+					catch(std::exception& e)
+					{
+						trylog.warn(L"Could not add element of type: " + utl::ToWide(id));
+					}
 				}
 			}
 		}
@@ -56,12 +62,19 @@ namespace tryn::gfx
 			const auto id = VertexLayout::VertexElementAttr<NthElement>::semantic;
 			if (primitive.HasAttribute(id))
 			{
-				VertexLayout layout;
-				layout.AppendElement(NthElement);
-				auto nThBuffer = std::make_shared<VertexBuffer>(layout, primitive, context);
-				auto pBuffer = IVertexBuffer::Resolve(gfx, nThBuffer);
+				try
+				{
+					VertexLayout layout;
+					layout.AppendElement(NthElement);
+					auto nThBuffer = std::make_shared<VertexBuffer>(layout, primitive, context);
+					auto pBuffer = IVertexBuffer::Resolve(gfx, nThBuffer);
 
-				buffer.Append(pBuffer, id);
+					buffer.Append(pBuffer, id);
+				}
+				catch (std::exception& e)
+				{
+					trylog.warn(L"Could not add element of type: " + utl::ToWide(id));
+				}
 			}
 		}
 
@@ -84,7 +97,8 @@ namespace tryn::gfx
 			for (unsigned n = 0; n < MAX_ITERABLE_NUMBER; n++)
 			{
 				std::string id = std::string(Attr::semantic) + "_" + std::to_string(n);
-				if (mesh.HasVertexColors(n) || mesh.HasTextureCoords(n))
+				if ((mesh.HasVertexColors(n) && elementType == VertexLayout::Float4Color ) ||
+					(mesh.HasTextureCoords(n) && elementType == VertexLayout::UV))
 				{
 					VertexLayout layout;
 					layout.AppendElement(elementType);
@@ -119,7 +133,7 @@ namespace tryn::gfx
 				VertexLayout layout;
 				layout.AppendElement(elementType);
 
-				auto nThBuffer = std::make_shared<VertexBuffer>(layout, mesh);
+				auto nThBuffer = std::make_shared<VertexBuffer>(std::move(layout), mesh);
 				auto pBuffer = IVertexBuffer::Resolve(gfx, nThBuffer);
 
 				buffer.Append(pBuffer, semanticName);
@@ -154,7 +168,7 @@ namespace tryn::gfx
 		{
 			dirty = true;
 			AssertApiMatch(vertexBuffer);
-			pBuffers.emplace(name, std::pair{vertexBuffer, slot});
+			pBuffers[name] = std::pair{vertexBuffer, slot};
 		}
 	}
 
@@ -163,9 +177,9 @@ namespace tryn::gfx
 		if (const auto it = soaVertexBuffer.pBuffers.find(name); it != soaVertexBuffer.pBuffers.end())
 		{
 			dirty = true;
-			auto& [buffer, _] = it->second;
+			const auto& buffer = it->second.first;
 			AssertApiMatch(buffer);
-			pBuffers.emplace(name, std::pair{ buffer, slot });
+			pBuffers[name] = std::pair{ buffer, slot };
 		}
 		else
 		{

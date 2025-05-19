@@ -20,7 +20,7 @@ namespace tryn::gfx::dx11
 	class DX11Buffer : public IBufferBase<Type, Policy>
 	{
 	public:
-		DX11Buffer(const Graphics& gfx, std::shared_ptr<CPUBuffer> pCpuBuffer, std::string tag = "?")
+		DX11Buffer(const Graphics& gfx, const std::shared_ptr<CPUBuffer>& pCpuBuffer, std::string tag = "?")
 			requires (Type == BufferType::Vertex || Type == BufferType::Index) && (Policy == CachingPolicy::Caching);
 		// TODO: Add NonCaching variant
 		DX11Buffer(const Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag = "?")

@@ -420,7 +420,10 @@ namespace tryn::gfx
 	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(UV, TexCoords);
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Float3Color, mColors[0]);
 	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Float3Color, Vertices);
-	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Float4Color, mColors[0]);
+	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::Float4Color>::ExtractAndFill(VertexBuffer& buf, const std::string& id, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
+	{
+		buf[i].Attr<VertexLayout::VertexElement::Float4Color>(id) = *reinterpret_cast<const SysType*>(&mesh.mColors[0][i]);
+	};
 	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Float4Color, Vertices);
 	DVTX_ELEMENT_AI_EXTRACTOR_DEFINITION(Char4Color, mColors[0]);
 	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Char4Color, Vertices);
