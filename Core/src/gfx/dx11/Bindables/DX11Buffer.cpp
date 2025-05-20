@@ -9,19 +9,13 @@ namespace tryn::gfx::dx11
 		:
 		gfx(gfx)
 	{
-		this->type = GraphicAPI::DX11;
-		this->tag = tag;
+		IBufferBase<Type, Policy>::type = GraphicAPI::DX11;
+		IBufferBase<Type, Policy>::tag = tag;
 
 		trynass_msg(!pCpuBuffer->Dirty(), L"Cant initialize a dirty Vertex Buffer!");
 
-		if constexpr (Type == BufferType::Vertex)
-		{
-			const auto casted = std::static_pointer_cast<VertexBuffer>(pCpuBuffer);
-			this->pLayout = &casted->GetLayout();
-		}
-
-		this->pCPUBuffer = pCpuBuffer;
-		stride = (UINT)this->pCPUBuffer->Stride();
+		IBufferBase<Type, Policy>::pCPUBuffer = pCpuBuffer;
+		stride = (UINT)IBufferBase<Type, Policy>::pCPUBuffer->Stride();
 
 		D3D11_BUFFER_DESC bd = {};
 		bd.Usage = D3D11_USAGE_DEFAULT;
@@ -29,10 +23,10 @@ namespace tryn::gfx::dx11
 		bd.CPUAccessFlags = 0u;
 		bd.MiscFlags = 0u;
 		bd.StructureByteStride = stride;
-		bd.ByteWidth = (UINT)this->pCPUBuffer->ByteSize();
+		bd.ByteWidth = (UINT)IBufferBase<Type, Policy>::pCPUBuffer->ByteSize();
 
 		D3D11_SUBRESOURCE_DATA srd = {};
-		srd.pSysMem = this->pCPUBuffer->Data();
+		srd.pSysMem = IBufferBase<Type, Policy>::pCPUBuffer->Data();
 
 		gfx.GetDevice().CreateBuffer(&bd, &srd, &pBuffer) >> chk;
 	}
@@ -41,13 +35,12 @@ namespace tryn::gfx::dx11
 	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag)
 		requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant): gfx(gfx)
 	{
-		this->type = GraphicAPI::DX11;
-		this->slot = slot;
-		this->tag = tag;
+		IBufferBase<Type, Policy>::type = GraphicAPI::DX11;
+		IBufferBase<Type, Policy>::slot = slot;
+		IBufferBase<Type, Policy>::tag = tag;
 
 		trynass_msg(cbl.IsSolid(), L"ConstantBuffer cannot be created with a non solidified layout!");
-		this->type = GraphicAPI::DX11;
-		this->pCPUBuffer = std::make_shared<ConstantBuffer>(std::move(cbl));
+		IBufferBase<Type, Policy>::pCPUBuffer = std::make_shared<ConstantBuffer>(std::move(cbl));
 
 		InitDynamicCBufferOnGPU();
 	}
@@ -56,14 +49,14 @@ namespace tryn::gfx::dx11
 	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, ConstantBufferLayout::Node arrayElement, int slot,
 		std::size_t numInstances) requires (Type == BufferType::Instance && Policy == CachingPolicy::Caching): gfx(gfx)
 	{
-		this->type = GraphicAPI::DX11;
+		IBufferBase<Type, Policy>::type = GraphicAPI::DX11;
 		ConstantBufferLayout layout;
 		layout.Append(cbType::Array, "InstanceArray");
-		this->slot = slot;
+		IBufferBase<Type, Policy>::slot = slot;
 		layout["InstanceArray"].Set(arrayElement, numInstances);
 		layout.Solidify();
-		this->pCPUBuffer = std::make_shared<ConstantBuffer>(std::move(layout));
-		this->gpuSize = this->pCPUBuffer->Size();
+		IBufferBase<Type, Policy>::pCPUBuffer = std::make_shared<ConstantBuffer>(std::move(layout));
+		IBufferBase<Type, Policy>::gpuSize = IBufferBase<Type, Policy>::pCPUBuffer->Size();
 		InitDynamicCBufferOnGPU();
 	}
 
@@ -203,11 +196,17 @@ namespace tryn::gfx::dx11
 	}
 
 	template <BufferType Type, CachingPolicy Policy>
+	std::string_view DX11Buffer<Type, Policy>::Test() const
+	{
+		return "hello from dx11Buffer";
+	}
+
+	template <BufferType Type, CachingPolicy Policy>
 	std::vector<std::any> DX11Buffer<Type, Policy>::GetSlottedLayoutFromVB_(int slot) const requires (Type == BufferType
 		::Vertex)
 	{
 		trynass_msg(Type == BufferType::Vertex, L"Can only get layouts from Vertex Buffer Types!");
-		const auto& vLayout = *this->pLayout;
+		const auto& vLayout = IBufferBase<Type, Policy>::GetLayout();
 		const auto descSize = vLayout.GetElementCount();
 
 		std::vector<std::any> layout;

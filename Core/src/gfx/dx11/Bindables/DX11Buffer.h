@@ -8,7 +8,7 @@ namespace tryn::gfx::dx11
 {
 	using cbType = ConstantBufferLayout::Type;
 	template <BufferType Type>
-	constexpr int GetBindFlag() {}
+	constexpr int GetBindFlag() { return 0;  }
 
 	template <>
 	constexpr int GetBindFlag<BufferType::Vertex>() { return D3D11_BIND_VERTEX_BUFFER; }
@@ -22,13 +22,14 @@ namespace tryn::gfx::dx11
 	public:
 		DX11Buffer(const Graphics& gfx, const std::shared_ptr<CPUBuffer>& pCpuBuffer, std::string tag = "?")
 			requires (Type == BufferType::Vertex || Type == BufferType::Index) && (Policy == CachingPolicy::Caching);
+
 		// TODO: Add NonCaching variant
 		DX11Buffer(const Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag = "?")
 			requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant);
 		DX11Buffer(const Graphics& gfx, ConstantBufferLayout::Node arrayElement, int slot, std::size_t numInstances = 50)
 			requires (Type == BufferType::Instance && Policy == CachingPolicy::Caching);
-		void Resize(const std::size_t newSize) override;
-		void Resize_(const std::size_t newSize);
+		void Resize(std::size_t newSize) override;
+		void Resize_(std::size_t newSize);
 		void InitDynamicCBufferOnGPU();
 		void Bind() override;
 		void Bind(const IContext& context) override;
@@ -38,6 +39,7 @@ namespace tryn::gfx::dx11
 		std::vector<std::any> GetSlottedLayoutFromVB(int slot) const override;
 
 	private:
+		std::string_view Test() const override;
 		void GPUSizeChanges() requires (Type == BufferType::Instance);
 		void GPUSizeChanges() requires (Type != BufferType::Instance);
 		void Bind_(ID3D11DeviceContext& context)

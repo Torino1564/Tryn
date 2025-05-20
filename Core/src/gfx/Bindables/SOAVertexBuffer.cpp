@@ -96,7 +96,7 @@ namespace tryn::gfx
 			// Iterate over COLOR_n or TEXCOORD_n
 			for (unsigned n = 0; n < MAX_ITERABLE_NUMBER; n++)
 			{
-				std::string id = std::string(Attr::semantic) + "_" + std::to_string(n);
+				std::string id = n == 0 ? "" : std::to_string(n);
 				if ((mesh.HasVertexColors(n) && elementType == VertexLayout::Float4Color ) ||
 					(mesh.HasTextureCoords(n) && elementType == VertexLayout::UV))
 				{
@@ -136,7 +136,7 @@ namespace tryn::gfx
 				auto nThBuffer = std::make_shared<VertexBuffer>(std::move(layout), mesh);
 				auto pBuffer = IVertexBuffer::Resolve(gfx, nThBuffer);
 
-				buffer.Append(pBuffer, semanticName);
+				buffer.Append(std::move(pBuffer), semanticName);
 			}
 		}
 

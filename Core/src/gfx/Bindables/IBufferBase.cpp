@@ -115,6 +115,12 @@ namespace tryn::gfx
 	}
 
 	template <BufferType Type, CachingPolicy Policy>
+	std::string_view IBufferBase<Type, Policy>::Test() const
+	{
+		return "hello from IBufferBase";
+	}
+
+	template <BufferType Type, CachingPolicy Policy>
 	std::string_view IBufferBase<Type, Policy>::GetPath() const
 	{
 		return path;
@@ -129,7 +135,7 @@ namespace tryn::gfx
 	template <BufferType Type, CachingPolicy Policy>
 	const VertexLayout& IBufferBase<Type, Policy>::GetLayout() const requires (Type == BufferType::Vertex)
 	{
-		return *pLayout;
+		return GetVertexBuffer().GetLayout();
 	}
 
 	template <BufferType Type, CachingPolicy Policy>
@@ -139,7 +145,7 @@ namespace tryn::gfx
 	}
 
 	template <BufferType Type, CachingPolicy Policy>
-	ElementView IBufferBase<Type, Policy>::operator[](std::string id) requires (Type == BufferType::VtxConstant || Type ==
+	ElementView IBufferBase<Type, Policy>::operator[](std::string id) const requires (Type == BufferType::VtxConstant || Type ==
 		BufferType::PxConstant)
 	{
 		return (*std::static_pointer_cast<ConstantBuffer>(pCPUBuffer))[id];
@@ -157,15 +163,31 @@ namespace tryn::gfx
 	}
 
 	template <BufferType Type, CachingPolicy Policy>
-	ConstantBuffer& IBufferBase<Type, Policy>::GetCPUBuffer()
+	CPUBuffer& IBufferBase<Type, Policy>::GetCPUBuffer()
 	{
-		if constexpr (Type == BufferType::Instance || Type == BufferType::VtxConstant || Type == BufferType::PxConstant)
-		{
-			pCPUBuffer->SetDirty();
-			return reinterpret_cast<ConstantBuffer&>(*pCPUBuffer.get());
-		}
-		trynchk_fail;
-		std::unreachable();
+		pCPUBuffer->SetDirty();
+		return *pCPUBuffer.get();
+	}
+
+	template <BufferType Type, CachingPolicy Policy>
+	ConstantBuffer& IBufferBase<Type, Policy>::GetConstantBuffer() const requires (Type != BufferType::Index && Type !=
+		BufferType::Vertex)
+	{
+		pCPUBuffer->SetDirty();
+		return static_cast<ConstantBuffer&>(*pCPUBuffer);
+	}
+
+	template <BufferType Type, CachingPolicy Policy>
+	VertexBuffer& IBufferBase<Type, Policy>::GetVertexBuffer() requires (Type == BufferType::Vertex)
+	{
+		pCPUBuffer->SetDirty();
+		return static_cast<VertexBuffer&>(*pCPUBuffer);
+	}
+
+	template <BufferType Type, CachingPolicy Policy>
+	const VertexBuffer& IBufferBase<Type, Policy>::GetVertexBuffer() const requires (Type == BufferType::Vertex)
+	{
+		return static_cast<VertexBuffer&>(*pCPUBuffer);
 	}
 
 	template class IBufferBase<BufferType::Index, CachingPolicy::Caching>;

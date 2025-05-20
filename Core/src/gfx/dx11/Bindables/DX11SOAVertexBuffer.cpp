@@ -62,11 +62,14 @@ namespace tryn::gfx::dx11
 
 
 		std::vector<D3D11_INPUT_ELEMENT_DESC> descBuffer;
-		for (const auto& [buffer, slot]: pBuffers | std::views::values)
+		for (const auto& pair : pBuffers | std::views::values)
 		{
-			//const auto& casted = std::static_pointer_cast<DX11VertexBuffer>(buffer);
+			const auto& casted = std::static_pointer_cast<DX11VertexBuffer>(pair.first);
 
 			// Input layout creation
+			const auto& buffer = pair.first;
+			const auto slot= pair.second;
+			trylog.info(utl::ToWide(buffer->Test().data()));
 			const auto nthDescBuffer = buffer->GetSlottedLayoutFromVB(slot);
 			for (auto& any : nthDescBuffer)
 			{
@@ -74,13 +77,13 @@ namespace tryn::gfx::dx11
 				descBuffer.push_back(elementDescriptor);
 			}
 
-			strides.push_back(buffer->GetCPUBuffer().Stride());
+			strides.push_back(buffer->GetVertexBuffer().Stride());
 			offsets.push_back(0u);
-			//buffArray.push_back(casted->Data());
+			buffArray.push_back(casted->Data());
 		}
 
 		// Input layout creation
-		pLayout = gfx.CreateInputLayout(descBuffer, *pVS);
+		pLayout = std::make_shared<DX11InputLayout>(gfx, descBuffer, *pVS);
 
 		dirty = false;
 	}

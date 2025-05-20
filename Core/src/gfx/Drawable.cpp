@@ -59,7 +59,7 @@ namespace tryn::gfx
 		ExtraSubmitBehavior();
 
 		auto& instanceBuffer = instancedParent.RequestInstanceBuffer(ID);
-		auto& constantBuffer = instanceBuffer.GetCPUBuffer();
+		auto& constantBuffer = instanceBuffer.GetConstantBuffer();
 		auto instanceArray = constantBuffer["InstanceArray"];
 
 		if (instanceArray.Node().Size() < transforms.size())

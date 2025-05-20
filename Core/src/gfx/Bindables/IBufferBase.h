@@ -43,7 +43,7 @@ namespace tryn::gfx
 	class IBuffer : public IBindable
 	{
 	public:
-		virtual ConstantBuffer& GetCPUBuffer() = 0;
+		virtual CPUBuffer& GetCPUBuffer() = 0;
 
 	protected:
 		std::shared_ptr<CPUBuffer> pCPUBuffer;
@@ -77,25 +77,27 @@ namespace tryn::gfx
 		void Bind(const IContext& context) override;
 		virtual std::vector<std::any> GetLayoutFromVB() const;
 		virtual std::vector<std::any> GetSlottedLayoutFromVB(int slot) const;
+		virtual std::string_view Test() const;
 		static constexpr const char* GetType();
 		std::string_view GetPath() const;
 		std::string_view GetTag() const;
 		const VertexLayout& GetLayout() const requires (Type == BufferType::Vertex);
 		virtual void Resize(const std::size_t newSize);
-		ElementView operator[](std::string id)
+		ElementView operator[](std::string id) const
 			requires (Type == BufferType::VtxConstant || Type == BufferType::PxConstant);
 		void Accept_(TechniqueProbe& probe)
 			requires (Type == BufferType::VtxConstant || Type == BufferType::PxConstant);
-		ConstantBuffer& GetCPUBuffer() override;
-
+		CPUBuffer& GetCPUBuffer() override;
+		ConstantBuffer& GetConstantBuffer() const requires (Type != BufferType::Index && Type != BufferType::Vertex);
+		VertexBuffer& GetVertexBuffer() requires (Type == BufferType::Vertex);
+		const VertexBuffer& GetVertexBuffer() const requires (Type == BufferType::Vertex);
 		static constexpr BufferType bufferType = Type;
 		static constexpr CachingPolicy policy = Policy;
 
 	protected:
 
-		[[msvc::no_unique_address]] std::conditional_t<Type != BufferType::Index && Type != BufferType::Vertex, uint16_t, utl::empty_t> slot;
-		[[msvc::no_unique_address]] std::conditional_t<Type == BufferType::Vertex, const VertexLayout*, utl::empty_t> pLayout;
-		[[msvc::no_unique_address]] std::conditional_t<Type == BufferType::Instance, size_t, utl::empty_t> gpuSize;
+		std::conditional_t<Type != BufferType::Index && Type != BufferType::Vertex, uint16_t, utl::empty_t> slot;
+		std::conditional_t<Type == BufferType::Instance, size_t, utl::empty_t> gpuSize;
 	};
 
 	template <BufferType Type, CachingPolicy Policy>

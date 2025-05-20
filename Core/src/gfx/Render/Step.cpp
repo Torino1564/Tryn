@@ -8,6 +8,7 @@
 #include <Core/src/gfx/IGraphics.h>
 
 #include "Core/src/gfx/Bindables/SOAVertexBuffer.h"
+#include "Core/src/gfx/Bindables/VertexShader.h"
 
 namespace tryn::gfx
 {
@@ -22,6 +23,8 @@ namespace tryn::gfx
 	Step::Step(Step&& rhs) noexcept
 		:
 		bindables(std::move(rhs.bindables)),
+		acceptedBindables(rhs.acceptedBindables),
+		pVertexShader(std::move(rhs.pVertexShader)),
 		pVertexLayout(std::move(rhs.pVertexLayout)),
 		pSOAVertexBuffer(std::move(rhs.pSOAVertexBuffer)),
 		bindablesToAccept(std::move(rhs.bindablesToAccept)),
@@ -31,10 +34,18 @@ namespace tryn::gfx
 
 	Step::~Step() = default;
 
-	void Step::AddBindable(std::shared_ptr<IBindable> bindable)
+	void Step::AddBindable(const std::shared_ptr<IBindable>& bindable)
 	{
 		bindables.push_back(std::move(bindable));
 	}
+
+	void Step::AddBindable(const std::shared_ptr<IVertexShader>& pVS)
+	{
+		pVertexShader = pVS;
+		pSOAVertexBuffer->SetVertexShader(pVS);
+		bindables.push_back(pVS);
+	}
+
 	void Step::Bind() const
 	{
 		for (auto& bind : bindables)

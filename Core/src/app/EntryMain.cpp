@@ -30,10 +30,15 @@ namespace tryn::app
 		{
 			MessageBoxA(nullptr, e.what(), nullptr, MB_OK | MB_ICONEXCLAMATION);
 		}
-		catch (...)
-		{
-			MessageBoxA(nullptr, "Unknown error", nullptr, MB_OK | MB_ICONEXCLAMATION);
-		}
+		//catch (std::exception& e)
+		//{
+		//	MessageBoxA(nullptr, e.what(), nullptr, MB_OK | MB_ICONEXCLAMATION);
+
+		//}
+		//catch (...)
+		//{
+		//	MessageBoxA(nullptr, "Unknown error", nullptr, MB_OK | MB_ICONEXCLAMATION);
+		//}
 
 		return 0;
 	}

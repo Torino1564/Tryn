@@ -21,8 +21,8 @@ namespace tryn::gfx
 	void PointLightJob::ExecuteImpl_() const
 	{
 		// Use JobID as the number in the buffer
-		auto& pCpuBuffer = pRenderGraph->pPointLightCBuf->GetCPUBuffer();
-		auto params = pCpuBuffer["pointLightArray"][jobID];
+		auto& cbuff = pRenderGraph->pPointLightCBuf->GetConstantBuffer();
+		auto params = cbuff["pointLightArray"][jobID];
 		auto& viewMatrix = pRenderGraph->pCameras[pRenderGraph->selectedCamera]->GetViewOnViewMatrix();
 
 		params["position"].Get<glm::vec4>() = viewMatrix * glm::vec4(*pPosition, 1.0f);

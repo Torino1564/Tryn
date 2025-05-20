@@ -1,6 +1,8 @@
 #include <TrynCppUnitTest.h>
 #include "Core/src/gfx/dx11/Bindables/DX11Buffer.h"
 #include <Core/src/win/WindowClass.h>
+
+#include "Core/src/gfx/dx11/DX11BufferFwd.h"
 using namespace tryn;
 
 namespace Gfx
@@ -22,9 +24,12 @@ namespace Gfx
 			vlayout.AppendElement(gfx::VertexLayout::UV);
 			std::shared_ptr<gfx::VertexBuffer> pCPUVB = std::make_shared<gfx::VertexBuffer>(std::move(vlayout),10);
 			pCPUVB->SetClean();
-			gfx::dx11::DX11Buffer<gfx::BufferType::Vertex> vertexBuffer(*pGfx, pCPUVB);
-			vertexBuffer.Bind();
-			vertexBuffer.Bind(pGfx->GetContextInterface());
+			auto vb = gfx::dx11::DX11Buffer<gfx::BufferType::Vertex>(*pGfx, pCPUVB);
+			vb.Bind(pGfx->GetContextInterface());
+			gfx::IVertexBuffer* pVbBase = &vb;
+			pVbBase->Bind();
+			auto test = pVbBase->GetSlottedLayoutFromVB(0);
+			trylog.debug(L"Debugging!");
 		}
 		TEST_METHOD(PixelConstantBufferTest)
 		{

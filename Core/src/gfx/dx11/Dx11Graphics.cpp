@@ -255,7 +255,6 @@ namespace tryn::gfx::dx11
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11VertexBuffer>(*this, pCpuBuffer, tag);
-
 		});
 		return future.get();
 	}
