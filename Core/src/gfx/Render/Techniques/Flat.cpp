@@ -59,7 +59,7 @@ namespace tryn::gfx
 				vLayout.AppendElement(VertexLayout::BoneWeights);
 			}
 			auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + (instanced ? "Inst" : "") + (skinned ? "Skn" : "") + "_VS.cso");
-			step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
+			//step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 			step.AddBindable(std::move(pvs));
 			step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
 			cbLayout.Solidify();

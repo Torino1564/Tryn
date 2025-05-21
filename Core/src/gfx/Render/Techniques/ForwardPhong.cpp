@@ -120,7 +120,6 @@ namespace tryn::gfx
 				vLayout.AppendElement(VertexLayout::UV);
 				step.AddBindable(ISampler::Resolve(gfx));
 			}
-			step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
 			step.AddBindable(std::move(pvs));
 			step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
 

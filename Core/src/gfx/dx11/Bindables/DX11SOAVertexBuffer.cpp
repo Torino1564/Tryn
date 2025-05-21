@@ -47,6 +47,7 @@ namespace tryn::gfx::dx11
 	void DX11SOAVertexBuffer::Bind_Impl(const IContext& context) const
 	{
 		const auto& dx11context = static_cast<const DX11Context&>(context);
+		pLayout->Bind(context);
 		dx11context.GetContext().IASetVertexBuffers((UINT)0, (UINT)buffArray.size(), buffArray.data(), strides.data(), offsets.data());
 
 	}
@@ -54,12 +55,11 @@ namespace tryn::gfx::dx11
 	void DX11SOAVertexBuffer::Update()
 	{
 		strides.clear();
-		strides.reserve(pBuffers.size());
+		strides.resize(pBuffers.size());
 		offsets.clear();
-		offsets.reserve(pBuffers.size());
+		offsets.resize(pBuffers.size());
 		buffArray.clear();
-		buffArray.reserve(pBuffers.size());
-
+		buffArray.resize(pBuffers.size());
 
 		std::vector<D3D11_INPUT_ELEMENT_DESC> descBuffer;
 		for (const auto& pair : pBuffers | std::views::values)
@@ -77,9 +77,9 @@ namespace tryn::gfx::dx11
 				descBuffer.push_back(elementDescriptor);
 			}
 
-			strides.push_back(buffer->GetVertexBuffer().Stride());
-			offsets.push_back(0u);
-			buffArray.push_back(casted->Data());
+			strides[slot] = buffer->GetVertexBuffer().Stride();
+			offsets[slot] = 0u;
+			buffArray[slot] = casted->Data();
 		}
 
 		// Input layout creation
