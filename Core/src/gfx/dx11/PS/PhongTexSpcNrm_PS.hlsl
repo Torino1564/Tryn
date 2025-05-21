@@ -30,11 +30,6 @@ cbuffer ObjectCBuf : register(b1)
 #endif
 };
 
-struct PS_Output
-{
-    float4 Color : SV_Target0;
-};
-
 #ifndef NoTex
 Texture2D tex : register(t0);
 #endif
@@ -52,7 +47,16 @@ Texture2D spec : register(t1);
 SamplerState splr : register(s0);
 #endif
 
-PS_Output main(const float3 viewPos : POSITION, float3 viewNormal : NORMAL, const float3 viewTangent : TANGENT, const float3 viewBitangent : BITANGENT, const float2 tc : Texcoord) : SV_TARGET
+float4 main(    const float3 viewPos : POSITION
+				,float3 viewNormal : NORMAL
+#ifndef NoNrm
+				,const float3 viewTangent : TANGENT
+				,const float3 viewBitangent : BITANGENT
+#endif
+#ifndef NoTex
+				,const float2 tc : Texcoord
+#endif
+			) : SV_TARGET
 {
 #ifndef NoTex
     const float4 diffuseSample = tex.Sample(splr, tc);
@@ -112,9 +116,5 @@ PS_Output main(const float3 viewPos : POSITION, float3 viewNormal : NORMAL, cons
 
     float3 specular = Speculate(diffuseColor * specularColor3, specularWeight, viewNormal, lv.vToL, viewPos, attenuation, specularPower);
 
-    PS_Output output;
-
-    output.Color = float4(saturate((diffuse + ambient) * diffuseColor3 + specular), 1.0f);
-
-    return output;
+    return float4(saturate((diffuse + ambient) * diffuseColor3 + specular), 1.0f);
 }

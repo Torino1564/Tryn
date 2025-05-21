@@ -123,7 +123,8 @@ namespace tryn::ecs
 		{
 			if (activeArray[i].active)
 			{
-				modelArray[i].pModel->Submit(transformArray[i].transform);
+				if (modelArray[i].pModel != nullptr)
+					modelArray[i].pModel->Submit(transformArray[i].transform);
 			}
 		}
 
@@ -131,7 +132,8 @@ namespace tryn::ecs
 		{
 			if (activeChildrenArray[i].active)
 			{
-				childrenModelArray[i].childModel.Submit(transformChildrenArray[i].transform);
+				if (childrenModelArray[i].childModel.pParentModel != nullptr)
+					childrenModelArray[i].childModel.Submit(transformChildrenArray[i].transform);
 			}
 		}
 
@@ -139,7 +141,8 @@ namespace tryn::ecs
 		{
 			if (activeParentArray[i].active)
 			{
-				parentModelArray[i].pParentModel->Submit(transformParentArray[i].transform);
+				if (parentModelArray[i].pParentModel != nullptr)
+					parentModelArray[i].pParentModel->Submit(transformParentArray[i].transform);
 			}
 		}
 
@@ -148,7 +151,8 @@ namespace tryn::ecs
 			if (!activeSkinnedArray[i].active)
 				continue;
 
-			skinnedModelArray[i].pModel->Submit(transformSkinnedArray[i].transform, boneTransformArray[i].transforms);
+			if (skinnedModelArray[i].pModel != nullptr)
+				skinnedModelArray[i].pModel->Submit(transformSkinnedArray[i].transform, boneTransformArray[i].transforms);
 		}
 
 		// Get handle to render graph

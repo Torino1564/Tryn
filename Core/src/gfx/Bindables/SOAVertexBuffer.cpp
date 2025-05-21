@@ -47,7 +47,7 @@ namespace tryn::gfx
 						layout.AppendElement(NthElement);
 						auto nThBuffer = std::make_shared<VertexBuffer>(layout, primitive, context);
 						auto pBuffer = IVertexBuffer::Resolve(gfx, nThBuffer);
-						buffer.Append(pBuffer, id);
+						buffer.Append(pBuffer, VertexLayout::VertexElementAttr<NthElement>::semantic);
 					}
 					catch(std::exception& e)
 					{
@@ -96,7 +96,7 @@ namespace tryn::gfx
 			// Iterate over COLOR_n or TEXCOORD_n
 			for (unsigned n = 0; n < MAX_ITERABLE_NUMBER; n++)
 			{
-				std::string id = n == 0 ? "" : std::to_string(n);
+				std::string id = Attr::semantic;
 				if ((mesh.HasVertexColors(n) && elementType == VertexLayout::Float4Color ) ||
 					(mesh.HasTextureCoords(n) && elementType == VertexLayout::UV))
 				{

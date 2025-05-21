@@ -44,7 +44,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 			.diffuseIntensity = 1.0f,
 			.constantAtt = 1.0f,
 			.linearAtt = 0.045f,
-			//.quadraticAtt = 0.0075f
+			//.quadraticAtt = 0.0075f,
 			.quadraticAtt = 0.000f
 		};
 		pLight->GetComponent<ecs::ScaleComponent>().scale = {1.0f, 1.0f, 1.0f};
@@ -67,22 +67,22 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 	//	sponza.GetComponent<ecs::ActiveComponent>().active = true;
 	//}
 
-	//{
-	//	entities.push_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
-	//	   ecs::ActiveComponent,
-	//	   ecs::PositionComponent,
-	//	   ecs::TransformComponent,
-	//	   ecs::ModelComponent,
-	//	   ecs::ScaleComponent,
-	//	   ecs::RotationComponent>(ECS(),"TestPlane")));
+	{
+		entities.push_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
+		   ecs::ActiveComponent,
+		   ecs::PositionComponent,
+		   ecs::TransformComponent,
+		   ecs::ModelComponent,
+		   ecs::ScaleComponent,
+		   ecs::RotationComponent>(ECS(),"TestPlane")));
 
-	//	auto& plane = *entities.back();
+		auto& plane = *entities.back();
 
-	//	plane.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-	//	plane.GetComponent<ecs::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
-	//	plane.GetComponent<ecs::ScaleComponent>().scale = { 10.0f, 10.0f, 10.0f };
-	//	plane.GetComponent<ecs::ActiveComponent>().active = true;
-	//}
+		plane.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
+		plane.GetComponent<ecs::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
+		plane.GetComponent<ecs::ScaleComponent>().scale = { 10.0f, 10.0f, 10.0f };
+		plane.GetComponent<ecs::ActiveComponent>().active = true;
+	}
 
 	{
 		entities.push_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
