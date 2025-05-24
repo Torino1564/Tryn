@@ -40,5 +40,6 @@ namespace tryn::ed
 		void(*createFunc) (scr::ScriptGraph* graph, spa::Vec2I screenPos, std::function<void()>&) = nullptr;
 		std::function<void(gph::TNode&)> submitBehaviour;
 		gph::TNodeRegister<scr::ScriptGraph> nodeRegister;
+		gph::TTypeRegister typeRegister;
 	};
 }

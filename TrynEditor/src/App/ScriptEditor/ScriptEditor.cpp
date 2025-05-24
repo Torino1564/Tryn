@@ -30,6 +30,14 @@ namespace tryn::ed
         nodeRegister.RegisterNodeType<scr::StateNode>();
         nodeRegister.RegisterNodeType<scr::SetVarNode>();
 
+        typeRegister.RegisterType<int>();
+        typeRegister.RegisterType<double>();
+        typeRegister.RegisterType<std::string>();
+        typeRegister.RegisterType<float>();
+        typeRegister.RegisterType<uint32_t>();
+        typeRegister.RegisterType<bool>();
+
+
         submitBehaviour = [](gph::TNode& node_)
         {
             auto& node = static_cast<scr::ScriptNode&>(node_);
@@ -96,7 +104,7 @@ namespace tryn::ed
         }
         if (ImGui::MenuItem("New"))
         {
-	        pGraph.release();
+	        pGraph.reset();
             pGraph = std::make_unique<scr::ScriptGraph>("NewGraph");
         }
 
@@ -279,52 +287,6 @@ namespace tryn::ed
 		sw.Field(&data.uniqueId, binary);
 		sw.Field(&data.m_NextLinkId, binary);
 		sw.Field(&data.name, binary);
-
-		// Create dll with type register
-		static auto workingDir = std::filesystem::current_path();
-		std::filesystem::path templatePath = workingDir / "src" / "dll" / "TypeRegisterTemplate.cpp";
-
-		templatePath = std::filesystem::absolute(templatePath);
-
-		if (!exists(templatePath))
-		{
-			trylog.fatal(L"File not found");
-		}
-
-		{
-			std::ifstream file(templatePath);
-    		std::stringstream buffer;
-
-    		std::string line;
-    		while (std::getline(file, line)) {
-    			buffer << line << '\n';
-    			if (line.find("// Begin type registering") != std::string::npos) {
-    				break; // Stop reading after this line
-    			}
-    		}
-
-    		for (auto& variable : data.variables)
-    		{
-    			buffer << std::format("pReg->RegisterType<{}>();", variable.typeName) << "\n";
-    		}
-
-    		// Append the rest of the file
-    		while (std::getline(file, line)) {
-    			buffer << line << '\n';
-    		}
-            std::filesystem::create_directories(binPath);
-
-    		std::ofstream outfile( (binPath / data.name).string() + ".cpp");
-
-    		outfile << buffer.str();
-
-    		outfile.close();
-		}
-
-		auto dllPath = (binPath / data.name).string();
-		pCompiler->CompileToDLL((binPath / (data.name + ".cpp")).string(), true);
-
-		sw.Field(&dllPath);
 		sw.Field(&data.variables, binary);
 
 	    std::ofstream file(folderPath / (pGraph->name + ".tscript"));
@@ -371,19 +333,7 @@ namespace tryn::ed
     		sr.Field(&data.m_NextLinkId, binary);
     		sr.Field(&data.name, binary);
 
-            std::string dllPath;
-	    	sr.Field<std::string>(&dllPath, binary);
-
-    		std::filesystem::path path(dllPath);
-
-    		const auto lib = dylib(path.parent_path(), path.filename().string());
-
-    		const auto pFunc = lib.get_function<bool(gph::TTypeRegister*)>("GetRegister");
-    		data.pRegister = std::make_unique<gph::TTypeRegister>();
-    		auto pRegister = data.pRegister.get();
-    		const auto er = pFunc(pRegister);
-
-    		sr.AddExtraElement(ser::ElementDataView(*data.pRegister, "pTypeRegister"));
+    		sr.AddExtraElement(ser::ElementDataView(typeRegister, "typeRegister"));
     		sr.Field(&data.variables, binary);
 
             for (auto& node : data.nodes)
