@@ -2806,5 +2806,6 @@
     <FxCompile Include="src\gfx\dx11\VS\PhongTexSpcSkn_VS.hlsl" />
     <FxCompile Include="src\gfx\dx11\VS\Fullscreen_VS.hlsl" />
     <FxCompile Include="src\gfx\dx11\PS\DefaultFullscreen_PS.hlsl" />
+    <FxCompile Include="src\gfx\dx11\PS\EntityID_PS.hlsl" />
   </ItemGroup>
 </Project>

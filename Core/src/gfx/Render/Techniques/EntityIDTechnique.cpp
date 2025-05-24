@@ -20,7 +20,7 @@ namespace tryn::gfx
 		const IGraphics& gfx, bool instanced, bool skinned)
 			: Technique("EntityIDTechnique")
 	{
-		auto shaderRootPath = IGraphics::GetShaderRootPath();
+		static const std::string shaderRootPath = IGraphics::GetShaderRootPath();
 		std::string shaderCode = "EntityID";
 
 
@@ -34,8 +34,7 @@ namespace tryn::gfx
 		step.AddBindable(std::move(IRasterizer::Resolve(gfx)));
 
 
-		auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + shaderCode + "_VS.cso");
-		step.AddBindable(IInputLayout::Resolve(gfx, vLayout, *pvs));
+		auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + "Flat_VS.cso");
 		step.AddBindable(std::move(pvs));
 		step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
 

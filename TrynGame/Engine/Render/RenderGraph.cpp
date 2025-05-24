@@ -15,15 +15,17 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 	{
 		// Init Global Resource
 
-		auto pSource = MakeUniqueSource(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"), Out<IPxConstantBuffer>("pointLightBuffer"), Out<IShaderResourceRenderTargetView>("OSRtv"));
+		auto pSource = MakeUniqueSource(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"), Out<IPxConstantBuffer>("pointLightBuffer"), Out<IShaderResourceRenderTargetView>("OSRtv"), Out<IShaderResourceRenderTargetView>("EntityIDRTV"));
 
 		pSource->Set(pRTV, "rtv");
 		pSource->Set(pDSV, "depthStencil");
 		pSource->Set(pPointLightCBuf, "pointLightBuffer");
 
 		pOffScreenBuffer = IShaderResourceRenderTargetView::Resolve(gfx, gfx.GetDimensions(), 0u);
-
 		pSource->Set(pOffScreenBuffer, "OSRtv");
+
+		pEntityIDRTV = IOutputOnlyRenderTargetView::Resolve(gfx, gfx.GetDimensions(), RenderTargetFormat::UINT32);
+		pSource->Set(pEntityIDRTV, "EntityIDRTV");
 
 		pGlobalSource = std::move(pSource);
 
@@ -46,6 +48,8 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 		AddLinkage(LinkageParam{ .passName = "lambertian", .resourceName = "rtv" }, LinkageParam{ .passName = "fullscreenPP",.resourceName = "OSBuf" });
 		AddLinkage(LinkageParam{ .passName = "initClear", .resourceName = "rtv" }, LinkageParam{ .passName = "fullscreenPP",.resourceName = "rtv" });
 		AddLinkage(LinkageParam{ .passName = "lambertian", .resourceName = "depthStencil" }, LinkageParam{ .passName = "fullscreenPP",.resourceName = "depthStencil" });
+
+		
 
 		AddLinkage(LinkageParam{ .passName = "fullscreenPP", .resourceName = "rtv" }, LinkageParam{ .passName = "global",.resourceName = "rtv" });
 	}

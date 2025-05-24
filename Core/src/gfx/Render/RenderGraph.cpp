@@ -73,24 +73,23 @@ namespace tryn::gfx
 	}
 	void IRenderGraph::AddRenderQueue(std::string renderQueueID)
 	{
-		if (queueKeys.find(renderQueueID.data()) != queueKeys.end())
+		if (queueKeys.contains(renderQueueID.data()))
 		{
 			return;
 		}
 		else
 		{
 			queues.emplace_back(renderQueueID);
-			trynass(queues.capacity() < 50).msg(L"Maximum queue number exceeded").ex();
+			trynass(queues.size() < MAX_RENDER_QUEUE_NUMBER).msg(L"Maximum queue number exceeded").ex();
 			queueKeys[renderQueueID] = (uint16_t)(queues.size() - 1);
 			return;
 		}
 	}
-	RenderQueue& IRenderGraph::GetRenderQueueByID(std::string_view ID)
+	RenderQueue& IRenderGraph::GetRenderQueueByID(const std::string_view ID)
 	{
-		auto it = queueKeys.find(ID.data());
-		if (it != queueKeys.end())
+		if (const auto it = queueKeys.find(ID.data()); it != queueKeys.end())
 		{
-			return queues[(*it).second];
+			return queues[it->second];
 		}
 
 		throw RenderGraphException{ std::format("Did not find a render queue with the ID: {}",ID.data()) };
@@ -101,7 +100,7 @@ namespace tryn::gfx
 		auto it = queueKeys.find(renderQueueName);
 		if (it != queueKeys.end())
 		{
-			return queues[(*it).second];
+			return queues[it->second];
 		}
 		else
 		{
@@ -136,7 +135,7 @@ namespace tryn::gfx
 		return gfx;
 	}
 
-	void IRenderGraph::AddLinkage(LinkageParam&& source_, LinkageParam&& destination_)
+	void IRenderGraph::AddLinkage(LinkageParam&& source_, LinkageParam&& destination_) const
 	{
 		// find both passes
 		bool sourceFound = false, destinationFound = false;

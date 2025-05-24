@@ -3,6 +3,13 @@
 
 namespace tryn::gfx
 {
+	enum struct RenderTargetFormat
+	{
+		B8G8R8A8_UNORM,
+		UINT32,
+		Unknown
+	};
+
 	class IGenericRenderTargetView;
 	class IGenericDepthStencil;
 

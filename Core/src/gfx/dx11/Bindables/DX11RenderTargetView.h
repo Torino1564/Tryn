@@ -11,9 +11,9 @@ namespace tryn::gfx::dx11
 	class DX11RenderTargetView : public IRenderTargetView<Type>
 	{
 	public:
-		DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions)
+		DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, RenderTargetFormat format)
 			requires (Type == BufferResourceType::OutputOnly);
-		DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, uint16_t slot)
+		DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, uint16_t slot, RenderTargetFormat format)
 			requires (Type == BufferResourceType::ShaderResource);
 		DX11RenderTargetView(const Graphics& gfx, ID3D11Texture2D* pTexture)
 			requires (Type == BufferResourceType::OutputOnly);
@@ -30,7 +30,7 @@ namespace tryn::gfx::dx11
 		void RegenerateResources(ID3D11Texture2D* pTextureIn);
 
 	private:
-		void RTVCreation(const Graphics& gfx, const spa::DimensionsI dimensions);
+		void RTVCreation(const Graphics& gfx, spa::DimensionsI dimensions);
 		void RTVCreation(ID3D11Texture2D* pTextureIn);
 		void SRVCreation(const Graphics& gfx, uint16_t slot)
 			requires (Type == BufferResourceType::ShaderResource);

@@ -1,6 +1,8 @@
 #include "Player.h"
 #include <Core/src/ecs/cmp/Components.h>
 #include <Core/src/gfx/Model/Model.h>
+
+#include "Core/src/gfx/Render/Techniques/EntityIDTechnique.h"
 #include "Core/src/gfx/Render/Techniques/ForwardPhong.h"
 
 using namespace tryn;
@@ -13,7 +15,7 @@ Player::Player(ecs::ECS& ecs, std::string name, const std::string& modelPath, gf
 		ecs::ScaleComponent,
 		ecs::VelocityComponent,
 		ecs::TransformComponent,
-		ecs::ModelComponent>(ecs, std::move(name)))
+		ecs::ModelComponent>(ecs, std::move(name))), name(std::move(name))
 {
 	auto& [active] = GetComponent<ecs::ActiveComponent>();
 	auto& [position] = GetComponent<ecs::PositionComponent>();
@@ -34,5 +36,5 @@ Player::Player(ecs::ECS& ecs, std::string name, const std::string& modelPath, gf
 
 	velocity = glm::vec3(0.0f);
 
-	pModel = std::make_unique<gfx::Model>(gfx, modelPath);
+	pModel = std::make_unique<gfx::Model>(gfx, modelPath, std::array{ ZT_TYPE_UUID(gfx::ForwardPhong), ZT_TYPE_UUID(gfx::EntityIDTechnique) });
 }

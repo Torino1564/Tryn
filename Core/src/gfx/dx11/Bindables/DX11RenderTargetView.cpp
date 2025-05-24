@@ -4,19 +4,21 @@
 namespace tryn::gfx::dx11
 {
 	template <BufferResourceType Type>
-	DX11RenderTargetView<Type>::DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions) requires (
-		Type == BufferResourceType::OutputOnly):
+	DX11RenderTargetView<Type>::DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, const RenderTargetFormat format)
+		requires (Type == BufferResourceType::OutputOnly):
 		gfx(gfx)
 	{
+		this->format = format;
 		this->dimensions = dimensions;
 		RTVCreation(gfx, dimensions);
 	}
 
 	template <BufferResourceType Type>
-	DX11RenderTargetView<Type>::DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions,
-		uint16_t slot) requires (Type == BufferResourceType::ShaderResource):
+	DX11RenderTargetView<Type>::DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, uint16_t slot, const RenderTargetFormat format)
+		requires (Type == BufferResourceType::ShaderResource):
 		gfx(gfx)
 	{
+		this->format = format;
 		this->dimensions = dimensions;
 		RTVCreation(gfx, dimensions);
 		SRVCreation(gfx, slot);
@@ -142,6 +144,20 @@ namespace tryn::gfx::dx11
 		}
 	}
 
+	static DXGI_FORMAT MapDXGIFormat(const RenderTargetFormat format)
+	{
+		switch (format)
+		{
+		case RenderTargetFormat::B8G8R8A8_UNORM:
+			return DXGI_FORMAT_B8G8R8A8_UNORM;
+		case RenderTargetFormat::UINT32:
+			return DXGI_FORMAT_R32_UINT;
+		case RenderTargetFormat::Unknown:
+			return DXGI_FORMAT_UNKNOWN;
+		}
+		return DXGI_FORMAT_UNKNOWN;
+	}
+
 	template <BufferResourceType Type>
 	void DX11RenderTargetView<Type>::RTVCreation(const Graphics& gfx, const spa::DimensionsI dimensions)
 	{
@@ -151,7 +167,7 @@ namespace tryn::gfx::dx11
 		textureDesc.Height = dimensions.height;
 		textureDesc.MipLevels = 1;
 		textureDesc.ArraySize = 1;
-		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		textureDesc.Format = MapDXGIFormat(this->format);
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -206,7 +222,7 @@ namespace tryn::gfx::dx11
 
 		// create the resource view on the texture
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		srvDesc.Format = MapDXGIFormat(this->format);
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;

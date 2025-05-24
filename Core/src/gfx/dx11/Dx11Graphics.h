@@ -86,8 +86,8 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<ITexture>							CreateTexture(std::shared_ptr<Texture> pTexture, int slot = 0) const override;
 		std::shared_ptr<IRasterizer>						CreateRasterizer(const bool twoSided = true) const override;
 		std::shared_ptr<ISampler>							CreateSampler(SamplerType type, bool reflect, int slot) const override;
-		std::shared_ptr<IOutputOnlyRenderTargetView>		CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions) const override;
-		std::shared_ptr<IShaderResourceRenderTargetView>	CreateShaderResourceRenderTargetView(const spa::DimensionsI, const uint16_t slot) const override;
+		std::shared_ptr<IOutputOnlyRenderTargetView>		CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions, RenderTargetFormat format) const override;
+		std::shared_ptr<IShaderResourceRenderTargetView>	CreateShaderResourceRenderTargetView(const spa::DimensionsI, const uint16_t slot, RenderTargetFormat format) const override;
 		std::shared_ptr<IOutputOnlyDepthStencil>			CreateOutputOnlyDepthStencil(const spa::DimensionsI, ComparissonMode mode = ComparissonMode::Less) const override;
 		std::shared_ptr<IShaderResourceDepthStencil>		CreateShaderResourceDepthStencil(const spa::DimensionsI, const uint16_t slot, ComparissonMode mode) const override;
 		std::unique_ptr<ITransformCBuf>						CreateTransformCBuf() const override;

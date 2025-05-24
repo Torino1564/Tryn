@@ -8,6 +8,7 @@
 
 #include "Core/src/ecs/cmp/UpdateJITBufferComponent.h"
 #include "Core/src/ecs/sys/SystemManager.h"
+#include "Core/src/gfx/Render/Techniques/EntityIDTechnique.h"
 
 TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::shared_ptr<tryn::gfx::IGraphics> pGraphics)
 	: App(pWindow, pGraphics)
@@ -36,7 +37,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		const auto& pLight = entities.back();
 
 		pLight->GetComponent<ecs::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
-		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat>(Gfx(), "Game/Resources/Models/sphere.obj");
+		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat, gfx::EntityIDTechnique>(Gfx(), "Game/Resources/Models/sphere.obj");
 		pLight->GetComponent<ecs::ActiveComponent>().active = true;
 		pLight->GetComponent<ecs::PointLightComponent>().parameters = gfx::PointLightParameters{
 			.ambient = {0.1f, 0.1f, 0.1f},
@@ -79,7 +80,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		auto& plane = *entities.back();
 
 		plane.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-		plane.GetComponent<ecs::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
+		plane.GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::ForwardPhong, gfx::EntityIDTechnique>(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
 		plane.GetComponent<ecs::ScaleComponent>().scale = { 10.0f, 10.0f, 10.0f };
 		plane.GetComponent<ecs::ActiveComponent>().active = true;
 	}
@@ -100,7 +101,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 		ent.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
 		auto& pModel = ent.GetComponent<ecs::ModelComponent>().pModel;
-		pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Wolf/Wolf-Blender-2.82a.glb", std::array{ZT_TYPE_UUID(gfx::ForwardPhong)});
+		pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Wolf/Wolf-Blender-2.82a.glb", std::array{ZT_TYPE_UUID(gfx::ForwardPhong), ZT_TYPE_UUID(gfx::EntityIDTechnique)});
 		ent.GetComponent<ecs::ScaleComponent>().scale = { 1.0f, 1.0f, 1.0f };
 		ent.GetComponent<ecs::ActiveComponent>().active = true;
 

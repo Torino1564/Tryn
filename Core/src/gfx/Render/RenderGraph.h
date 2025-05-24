@@ -12,6 +12,8 @@ namespace tryn::gfx
 	class IGraphics;
 	ZT_EX_DEF(RenderGraphException);
 
+	static constexpr auto MAX_RENDER_QUEUE_NUMBER = 50;
+
 	class Camera;
 	class PointLight;
 	class IRenderGraph
@@ -44,7 +46,7 @@ namespace tryn::gfx
 			std::string passName;
 			std::string resourceName;
 		};
-		void AddLinkage(LinkageParam&& source_, LinkageParam&& destination_);
+		void AddLinkage(LinkageParam&& source_, LinkageParam&& destination_) const;
 		void Finalize();
 		std::vector<std::unique_ptr<IRenderPass>> pPasses;
 		struct Level

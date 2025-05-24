@@ -140,10 +140,10 @@ namespace tryn::gfx
 		virtual std::shared_ptr<ITexture>							CreateTexture(std::shared_ptr<Texture> pTexture, int slot = 0) const = 0;
 		virtual std::shared_ptr<IRasterizer>						CreateRasterizer(const bool twoSided = true) const = 0;
 		virtual std::shared_ptr<ISampler>							CreateSampler(SamplerType type, bool reflect, int slot) const = 0;
-		virtual std::shared_ptr<IOutputOnlyRenderTargetView>		CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions) const = 0;
-		virtual std::shared_ptr<IShaderResourceRenderTargetView>	CreateShaderResourceRenderTargetView(const spa::DimensionsI, const uint16_t slot) const = 0;
-		virtual std::shared_ptr<IOutputOnlyDepthStencil>			CreateOutputOnlyDepthStencil(const spa::DimensionsI, ComparissonMode mode = ComparissonMode::Less) const = 0;
-		virtual std::shared_ptr<IShaderResourceDepthStencil>		CreateShaderResourceDepthStencil(const spa::DimensionsI, const uint16_t slot, ComparissonMode mode = ComparissonMode::Less) const = 0;
+		virtual std::shared_ptr<IOutputOnlyRenderTargetView>		CreateOutputOnlyRenderTargetView(spa::DimensionsI dimensions, RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM) const = 0;
+		virtual std::shared_ptr<IShaderResourceRenderTargetView>	CreateShaderResourceRenderTargetView(spa::DimensionsI, uint16_t slot, RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM) const = 0;
+		virtual std::shared_ptr<IOutputOnlyDepthStencil>			CreateOutputOnlyDepthStencil(spa::DimensionsI, ComparissonMode mode = ComparissonMode::Less) const = 0;
+		virtual std::shared_ptr<IShaderResourceDepthStencil>		CreateShaderResourceDepthStencil(spa::DimensionsI, uint16_t slot, ComparissonMode mode = ComparissonMode::Less) const = 0;
 		virtual std::unique_ptr<ITransformCBuf>						CreateTransformCBuf() const = 0;
 		virtual std::unique_ptr<RenderWorker>						CreateRenderWorker(ccr::Master*) const = 0;
 

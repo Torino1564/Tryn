@@ -425,17 +425,17 @@ namespace tryn::gfx::dx11
 			});
 		return future.get();
 	}
-	std::shared_ptr<IOutputOnlyRenderTargetView> Graphics::CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions) const
+	std::shared_ptr<IOutputOnlyRenderTargetView> Graphics::CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions, const RenderTargetFormat format) const
 	{
 		auto future = Dispatch_([&] {
-			return std::make_shared<DX11OutputOnlyRenderTargetView>(*this, dimensions);
+			return std::make_shared<DX11OutputOnlyRenderTargetView>(*this, dimensions, format);
 			});
 		return future.get();
 	}
-	std::shared_ptr<IShaderResourceRenderTargetView> Graphics::CreateShaderResourceRenderTargetView(const spa::DimensionsI dimensions, const uint16_t slot) const
+	std::shared_ptr<IShaderResourceRenderTargetView> Graphics::CreateShaderResourceRenderTargetView(const spa::DimensionsI dimensions, const uint16_t slot, const RenderTargetFormat format) const
 	{
 		auto future = Dispatch_([&] {
-			return std::make_shared<DX11ShaderResourceRenderTargetView>(*this, dimensions, slot);
+			return std::make_shared<DX11ShaderResourceRenderTargetView>(*this, dimensions, slot, format);
 			});
 		return future.get();
 	}

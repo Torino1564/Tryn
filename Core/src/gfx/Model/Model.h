@@ -46,7 +46,7 @@ namespace tryn::gfx
 		Model();
 		Model(const gfx::IGraphics& gfx, std::string_view path, std::span<const utl::UUID_t> techniqueUUIDs = {std::array{ZT_TYPE_UUID(ForwardPhong)}}, const glm::vec3& scale = {1.0f, 1.0f, 1.0f}, const bool instanced = false);
 		template <typename... Techniques>
-			requires std::derived_from<Techniques..., TechniqueBase>
+			requires (std::derived_from<Techniques, TechniqueBase> && ...)
 		static std::unique_ptr<Model> Make(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale = { 1.0f,1.0f,1.0f }, bool instanced = false);
 		~Model();
 		Model(Model&&) = default;
@@ -101,7 +101,7 @@ namespace tryn::gfx
 	};
 
 	template <typename... Techniques>
-	requires std::derived_from<Techniques..., TechniqueBase>
+	requires (std::derived_from<Techniques, TechniqueBase> && ...)
 	std::unique_ptr<Model> Model::Make(const gfx::IGraphics& gfx, std::string_view path, glm::vec3 scale, bool instanced)
 	{
 		static constexpr auto arr =  {ZT_TYPE_UUID(Techniques)...};

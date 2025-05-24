@@ -25,19 +25,21 @@ namespace tryn::gfx
 	public:
 		~IRenderTargetView() override = default;
 
-		static std::string GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, uint16_t slot)
+		static std::string GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, uint16_t slot, RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM)
 			requires (Type == BufferResourceType::ShaderResource);
 
-		static std::string GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions)
+		static std::string GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM)
 			requires (Type == BufferResourceType::OutputOnly);
 
-		static std::shared_ptr<IShaderResourceRenderTargetView> Resolve(const IGraphics& gfx, const spa::DimensionsI dimensions, uint16_t slot)
+		static std::shared_ptr<IShaderResourceRenderTargetView> Resolve(const IGraphics& gfx, const spa::DimensionsI dimensions, uint16_t slot, RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM)
 			requires (Type == BufferResourceType::ShaderResource);
 
-		static std::shared_ptr<IOutputOnlyRenderTargetView> Resolve(const IGraphics& gfx, const spa::DimensionsI dimensions)
+		static std::shared_ptr<IOutputOnlyRenderTargetView> Resolve(const IGraphics& gfx, const spa::DimensionsI dimensions, RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM)
 			requires (Type == BufferResourceType::OutputOnly);
 		
 	protected:
+		BufferResourceType type = Type;
+		RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM;
 		std::conditional_t<Type == BufferResourceType::ShaderResource, uint16_t, utl::empty_t> slot;
 	};
 }
