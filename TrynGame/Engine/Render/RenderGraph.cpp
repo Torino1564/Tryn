@@ -7,6 +7,8 @@
 #include "Core/src/gfx/Render/Passes/FullScreenRenderPass.h"
 #include <Core/src/gfx/Render/Passes/PointLightBindPass.h>
 
+#include "Core/src/gfx/Render/Passes/EntityIDPass.h"
+
 using namespace tryn::gfx;
 
 TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
@@ -15,7 +17,7 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 	{
 		// Init Global Resource
 
-		auto pSource = MakeUniqueSource(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"), Out<IPxConstantBuffer>("pointLightBuffer"), Out<IShaderResourceRenderTargetView>("OSRtv"), Out<IShaderResourceRenderTargetView>("EntityIDRTV"));
+		auto pSource = MakeUniqueSource(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"), Out<IPxConstantBuffer>("pointLightBuffer"), Out<IShaderResourceRenderTargetView>("OSRtv"), Out<IOutputOnlyRenderTargetView>("EntityIDRTV"));
 
 		pSource->Set(pRTV, "rtv");
 		pSource->Set(pDSV, "depthStencil");
@@ -44,12 +46,13 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 		AddLinkage(LinkageParam{ .passName = "initClear", .resourceName = "depthStencil" }, LinkageParam{ .passName = "lambertian", .resourceName = "depthStencil" });
 		AddLinkage(LinkageParam{ .passName = "PointLightBind", .resourceName = "pointLightBuffer" }, LinkageParam{ .passName = "lambertian", .resourceName = "pointLightBuffer" });
 
+		AddPass(std::move(EntityIDPass(*this, "entityIDPass")));
+		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "EntityIDRTV" }, LinkageParam{ .passName = "entityIDPass", .resourceName = "rtv" });
+
 		AddPass(std::move(FullscreenRenderPass(*this, "fullscreenPP")));
 		AddLinkage(LinkageParam{ .passName = "lambertian", .resourceName = "rtv" }, LinkageParam{ .passName = "fullscreenPP",.resourceName = "OSBuf" });
 		AddLinkage(LinkageParam{ .passName = "initClear", .resourceName = "rtv" }, LinkageParam{ .passName = "fullscreenPP",.resourceName = "rtv" });
 		AddLinkage(LinkageParam{ .passName = "lambertian", .resourceName = "depthStencil" }, LinkageParam{ .passName = "fullscreenPP",.resourceName = "depthStencil" });
-
-		
 
 		AddLinkage(LinkageParam{ .passName = "fullscreenPP", .resourceName = "rtv" }, LinkageParam{ .passName = "global",.resourceName = "rtv" });
 	}

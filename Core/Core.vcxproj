@@ -178,6 +178,7 @@
     <ClInclude Include="src\gfx\Model\GLTFMesh.h" />
     <ClInclude Include="src\gfx\Model\ShapeMesh.h" />
     <ClInclude Include="src\gfx\Render\Jobs\EntityIDJob.h" />
+    <ClInclude Include="src\gfx\Render\Passes\EntityIDPass.h" />
     <ClInclude Include="src\gfx\Render\Techniques\EntityIDTechnique.h" />
     <ClInclude Include="src\gfx\Shape.h" />
     <ClInclude Include="src\gfx\StbImageManager.h" />
@@ -945,7 +946,8 @@
     <FxCompile Include="src\gfx\dx11\PS\EntityID_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.5</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="src\gfx\dx11\VS\Fullscreen_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

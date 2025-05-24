@@ -4,7 +4,7 @@
 #include <imgui.h>
 #include <Core/src/gph/PinInfo.h>
 #include <Core/src/scr/ScriptGraph.h>
-#include "Core/src/utl/Assert.h"w
+#include "Core/src/utl/Assert.h"
 #include <imgui_stdlib.h>
 
 namespace tryn::scr

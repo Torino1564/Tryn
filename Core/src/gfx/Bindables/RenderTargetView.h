@@ -13,7 +13,7 @@ namespace tryn::gfx
 	{
 	public:
 		~IGenericRenderTargetView() override = default;
-		virtual void BindAsRTV(IGenericDepthStencil* pDSV);
+		virtual void BindAsRTV(IGenericDepthStencil* pDSV = nullptr);
 		virtual void Clear() const = 0;
 	protected:
 		spa::DimensionsI dimensions = {};
