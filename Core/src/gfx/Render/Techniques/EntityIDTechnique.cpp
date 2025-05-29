@@ -27,7 +27,7 @@ namespace tryn::gfx
 		// Common
 
 		Step step(gfx, "EntityID");
-		auto vLayout = step.GetVertexLayout();
+		auto& vLayout = step.GetVertexLayout();
 		vLayout.AppendElement(VertexLayout::Position3D);
 		gfx.GetRenderGraph().AddRenderQueue("EntityID");
 
@@ -38,6 +38,6 @@ namespace tryn::gfx
 		step.AddBindable(std::move(pvs));
 		step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
 
-		this->AddStep(std::move(step));
+		AddStep(std::move(step));
 	}
 }

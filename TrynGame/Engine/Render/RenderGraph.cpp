@@ -33,10 +33,16 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 
 		pGlobalSink = MakeUniqueSink(In<IShaderResourceRenderTargetView>("OSRtv"), In<IShaderResourceRenderTargetView>("rtv"));
 
-		AddPass(ClearTargetPass<TargetIn<IGenericDepthStencil, "depthStencil">, TargetIn<IGenericRenderTargetView, "rtv">, TargetIn<IShaderResourceRenderTargetView, "OSRtv">>("initClear"));
+		AddPass(ClearTargetPass<
+					TargetIn<IGenericDepthStencil, "depthStencil">,
+					TargetIn<IGenericRenderTargetView, "rtv">,
+					TargetIn<IShaderResourceRenderTargetView, "OSRtv">,
+					TargetIn<IOutputOnlyRenderTargetView, "EntityIDRTV">
+			>("initClear"));
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "rtv" }, LinkageParam{ .passName = "initClear", .resourceName = "rtv" });
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "OSRtv" }, LinkageParam{ .passName = "initClear", .resourceName = "OSRtv" });
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "depthStencil" }, LinkageParam{ .passName = "initClear", .resourceName = "depthStencil" });
+		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "EntityIDRTV" }, LinkageParam{ .passName = "initClear", .resourceName = "EntityIDRTV" });
 
 		AddPass(tryn::gfx::PointLightBindPass(*this));
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "pointLightBuffer" }, LinkageParam{ .passName = "PointLightBind", .resourceName = "pointLightBuffer" });
@@ -47,7 +53,7 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 		AddLinkage(LinkageParam{ .passName = "PointLightBind", .resourceName = "pointLightBuffer" }, LinkageParam{ .passName = "lambertian", .resourceName = "pointLightBuffer" });
 
 		AddPass(std::move(EntityIDPass(*this, "entityIDPass")));
-		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "EntityIDRTV" }, LinkageParam{ .passName = "entityIDPass", .resourceName = "rtv" });
+		AddLinkage(LinkageParam{ .passName = "initClear", .resourceName = "EntityIDRTV" }, LinkageParam{ .passName = "entityIDPass", .resourceName = "rtv" });
 
 		AddPass(std::move(FullscreenRenderPass(*this, "fullscreenPP")));
 		AddLinkage(LinkageParam{ .passName = "lambertian", .resourceName = "rtv" }, LinkageParam{ .passName = "fullscreenPP",.resourceName = "OSBuf" });

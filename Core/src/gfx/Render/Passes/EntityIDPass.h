@@ -9,7 +9,7 @@ namespace tryn::gfx
 	{
 	public:
 		EntityIDPass(IRenderGraph& graph, std::string name = "EntityIDPass")
-			: RenderQueuePass(std::move(name), graph, std::vector<std::string>{"entityIDQueue"})
+			: RenderQueuePass(std::move(name), graph, std::vector<std::string>{"EntityID"})
 		{
 			pSink = std::make_unique<SinkType>(In<IGenericRenderTargetView>("rtv"));
 			sink = static_cast<SinkType*>(pSink.get());
