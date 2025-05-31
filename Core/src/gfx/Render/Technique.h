@@ -80,6 +80,8 @@ namespace tryn::gfx
 			return *it;
 		}
 	protected:
+		static std::vector<std::string>& GetStepBindablesToAccept(Step&);
+
 		std::vector<IBindable*> pExtraBinds;
 		std::vector<std::shared_ptr<Material>> usedMaterials;
 		std::string name;
@@ -100,6 +102,8 @@ namespace tryn::gfx
 		static constexpr auto GetUUID();
 
 	protected:
+		static std::vector<std::string>& GetStepBindablesToAccept(Step&);
+
 		friend class TechniquePool;
 		using Type = T;
 		static constexpr auto uuid = ZT_TYPE_UUID(T);
@@ -117,6 +121,12 @@ namespace tryn::gfx
 	utl::UUID_t Technique<T>::UUID() const
 	{
 		return GetUUID();
+	}
+
+	template <class T>
+	std::vector<std::string>& Technique<T>::GetStepBindablesToAccept(Step& step)
+	{
+		return TechniqueBase::GetStepBindablesToAccept(step);
 	}
 
 	template <class T>

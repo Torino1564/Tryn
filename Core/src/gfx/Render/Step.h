@@ -11,10 +11,14 @@ namespace tryn::gfx
 	class Mesh;
 	class IGraphics;
 	class IContext;
+	class TechniqueBase;
 
 	class Step
 	{
 	public:
+
+		friend class TechniqueBase;
+
 		Step(const IGraphics& gfx, const std::string& renderQueueID);
 		Step(Step&& rhs) noexcept;
 		~Step();

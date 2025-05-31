@@ -53,6 +53,11 @@ namespace tryn::gfx
 		}
 	}
 
+	std::vector<std::string>& TechniqueBase::GetStepBindablesToAccept(Step& step)
+	{
+		return step.bindablesToAccept;
+	}
+
 	void TechniqueBase::AddStep(Step step)
 	{
 		steps.push_back(std::move(step));

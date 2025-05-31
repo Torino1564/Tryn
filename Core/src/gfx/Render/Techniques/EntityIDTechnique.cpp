@@ -28,6 +28,10 @@ namespace tryn::gfx
 
 		Step step(gfx, "EntityID");
 		auto& vLayout = step.GetVertexLayout();
+		auto& bindablesToAccept = GetStepBindablesToAccept(step);
+
+		bindablesToAccept.emplace_back("entityIDBuffer");
+
 		vLayout.AppendElement(VertexLayout::Position3D);
 		gfx.GetRenderGraph().AddRenderQueue("EntityID");
 
