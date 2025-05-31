@@ -31,6 +31,8 @@ namespace tryn::gfx
 
 		[[nodiscard]] MeshType Type() const override;
 
+		void SubmitBoned(const IGraphics& gfx, const glm::mat4& finalTransform, std::span<const glm::mat4> boneTransforms) override;
+
 		void EnableOrAddTechnique(const IGraphics& gfx, utl::UUID_t techniqueUUID, std::span<uint16_t> materialIndex) override;
 		void AddTechnique(const IGraphics& gfx, utl::UUID_t techniqueUUID, std::span<uint16_t> materialIndex, bool enabled = true) override;
 	};

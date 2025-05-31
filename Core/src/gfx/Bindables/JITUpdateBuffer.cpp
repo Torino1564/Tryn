@@ -2,7 +2,7 @@
 #include "JITUpdateBuffer.h"
 #include "IBufferBase.h"
 
-tryn::gfx::JITUpdateBuffer::JITUpdateBuffer(IBuffer* pBuffer, const void* pData, const size_t numBytes)
+tryn::gfx::JITUpdateBuffer::JITUpdateBuffer(const std::shared_ptr<IBuffer>& pBuffer, const void* pData, const size_t numBytes)
 	:
 	pData(pData), numBytes(numBytes), pBuffer(pBuffer)
 {
@@ -42,5 +42,5 @@ bool tryn::gfx::JITUpdateBuffer::Dirty() const
 
 tryn::gfx::IBuffer* tryn::gfx::JITUpdateBuffer::Get() const
 {
-	return pBuffer;
+	return pBuffer.get();
 }

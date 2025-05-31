@@ -92,13 +92,13 @@ namespace tryn::gfx::ani
 	{
 		return MeshType::Boned;
 	}
-	void BonedMesh::Submit(const IGraphics& gfx, const glm::mat4& finalTransform, std::span<const glm::mat4> boneTransforms)
+	void BonedMesh::SubmitBoned(const IGraphics& gfx, const glm::mat4& finalTransform, std::span<const glm::mat4> boneTransforms)
 	{
 		extraBindPtrs = {};
 
 		this->transform = finalTransform;
 
-		auto& jitBuffer = mem::ArenaAllocator<>::GP().Emplace(JITUpdateBuffer::Make(pSkeletonCBuffer.get(), (void*)boneTransforms.data(), boneTransforms.size_bytes()));
+		auto& jitBuffer = mem::ArenaAllocator<>::GP().Emplace(JITUpdateBuffer::Make(pSkeletonCBuffer, (void*)boneTransforms.data(), boneTransforms.size_bytes()));
 
 		AddExtraBind(&jitBuffer);
 

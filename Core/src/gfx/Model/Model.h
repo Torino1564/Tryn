@@ -51,8 +51,8 @@ namespace tryn::gfx
 		~Model();
 		Model(Model&&) = default;
 		// Submit the model to the render pipeline
-		void Submit(const glm::mat4& entityTransform);
-		void Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms) const;
+		void Submit(const glm::mat4& entityTransform) const;
+		void SubmitBoned(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms) const;
 
 		// Adds a bindable with an identifier that will be offered to the existing techinques to see if they link with it.
 		void AddPerTechniqueBindable(const std::shared_ptr<IBindable>& pBindable, const std::string& identifier);

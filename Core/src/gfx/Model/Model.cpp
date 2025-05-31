@@ -162,26 +162,42 @@ namespace tryn::gfx
 
 	Model::~Model() = default;
 
-	void Model::Submit(const glm::mat4& entityTransform = glm::identity<glm::mat4>())
+	void Model::Submit(const glm::mat4& entityTransform = glm::identity<glm::mat4>()) const
 	{
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
 		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
 		const auto transform = translation * rotation;
 		nodes[rootId].Submit(*pGfx, entityTransform * transform);
 	}
-	void Model::Submit(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms) const
+	void Model::SubmitBoned(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms) const
 	{
 		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
 		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
 		const auto transform = translation * rotation;
-		nodes[rootId].Submit(*pGfx, entityTransform * transform, boneTransforms );
+		nodes[rootId].SubmitBoned(*pGfx, entityTransform * transform, boneTransforms );
 	}
 
 	void Model::AddPerTechniqueBindable(const std::shared_ptr<IBindable>& pBindable, const std::string& identifier)
 	{
+		std::queue<Mesh*> queue;
+
 		for (auto& pMesh : pMeshes)
 		{
-			for (auto& pTechnique : pMesh->pTechniques | std::views::values)
+			queue.push(pMesh.get());
+		}
+
+		while (!queue.empty())
+		{
+			auto& mesh = *queue.front();
+			queue.pop();
+			if (mesh.IsParentMesh())
+			{
+				for (auto& pChild : mesh.GetChildren())
+				{
+					queue.push(pChild.get());
+				}
+			}
+			for (const auto& pTechnique : mesh.pTechniques | std::views::values)
 			{
 				pTechnique->OfferBindable(identifier, pBindable);
 			}

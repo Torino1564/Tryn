@@ -10,7 +10,7 @@ namespace tryn::gfx
 	{
 	public:
 		template <BufferType Type, CachingPolicy Policy>
-		static JITUpdateBuffer Make(IBufferBase<Type, Policy>* pBuffer, const void* pData = nullptr, size_t numBytes = 0)
+		static JITUpdateBuffer Make(const std::shared_ptr<IBufferBase<Type, Policy>>& pBuffer, const void* pData = nullptr, size_t numBytes = 0)
 			requires (Type == BufferType::VtxConstant || Type == BufferType::PxConstant || Type == BufferType::Instance)
 		{
 			return JITUpdateBuffer(pBuffer, pData, numBytes);
@@ -21,10 +21,10 @@ namespace tryn::gfx
 		bool Dirty() const;
 		IBuffer* Get() const;
 	private:
-		JITUpdateBuffer(IBuffer* pBuffer, const void* pData, size_t numBytes);
+		JITUpdateBuffer(const std::shared_ptr<IBuffer>& pBuffer, const void* pData, size_t numBytes);
 		const void* pData;
 		size_t numBytes;
-		IBuffer* pBuffer;
+		std::shared_ptr<IBuffer> pBuffer;
 		bool dirty = true;
 	};
 }

@@ -12,4 +12,19 @@ namespace tryn::gfx
 	{
 		return tag;
 	}
+
+	bool Mesh::IsParentMesh() const
+	{
+		return isParentMesh;
+	}
+
+	const std::vector<std::shared_ptr<Mesh>>& Mesh::GetChildren() const
+	{
+		return children;
+	}
+
+	std::vector<std::shared_ptr<Mesh>>& Mesh::GetChildren()
+	{
+		return children;
+	}
 }

@@ -107,8 +107,14 @@ namespace tryn::gfx
 		return MeshType::Static;
 	}
 
+	void StaticMesh::SubmitBoned(const IGraphics& gfx, const glm::mat4& finalTransform,
+		std::span<const glm::mat4> boneTransforms)
+	{
+		trylog.error(L"Cannot submit a static mesh with bone transforms!");
+	}
+
 	void StaticMesh::EnableOrAddTechnique(const IGraphics& gfx, const utl::UUID_t techniqueUUID,
-		const std::span<uint16_t> materialIndex)
+	                                      const std::span<uint16_t> materialIndex)
 	{
 		EnableOrAddTechniqueEx(gfx, techniqueUUID, false, materialIndex);
 	}

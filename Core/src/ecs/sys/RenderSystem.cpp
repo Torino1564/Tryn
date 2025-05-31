@@ -152,7 +152,7 @@ namespace tryn::ecs
 				continue;
 
 			if (skinnedModelArray[i].pModel != nullptr)
-				skinnedModelArray[i].pModel->Submit(transformSkinnedArray[i].transform, boneTransformArray[i].transforms);
+				skinnedModelArray[i].pModel->SubmitBoned(transformSkinnedArray[i].transform, boneTransformArray[i].transforms);
 		}
 
 		// Get handle to render graph

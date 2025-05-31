@@ -113,9 +113,9 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 			auto buffer = gfx::IPxConstantBuffer::Resolve(*gfx, std::move(cblayout));
 
-			auto pJITBuffer = std::make_shared<gfx::JITUpdateBuffer>(gfx::JITUpdateBuffer::Make(buffer.get()));
+			auto pJITBuffer = std::make_shared<gfx::JITUpdateBuffer>(gfx::JITUpdateBuffer::Make(buffer));
 
-			pModel->AddPerTechniqueBindable(buffer, "entityIDBuffer");
+			pModel->AddPerTechniqueBindable(pJITBuffer, "entityIDBuffer");
 
 			auto pFun = [](const std::shared_ptr<gfx::JITUpdateBuffer>& pBuffer, uint32_t entityID, const ecs::Archetype* pArchetype)
 				{
