@@ -39,8 +39,10 @@ namespace tryn::ecs
 			{
 				if (active.active)
 				{
-					auto& [pBuffer, pFunc] = jitComponent[entityID];
-					pFunc(pBuffer, entityID, &archetype);
+					for (auto& [pBuffer, pFunc] : jitComponent[entityID].jitCombinations)
+					{
+						pFunc(pBuffer, entityID, &archetype);
+					}
 				}
 			}
 		}

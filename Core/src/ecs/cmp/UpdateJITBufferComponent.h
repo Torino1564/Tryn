@@ -13,8 +13,11 @@ namespace tryn
 
 		struct UpdateJITBufferComponent
 		{
-			std::shared_ptr<gfx::JITUpdateBuffer> pJITBuffer = nullptr;
-			void(*pFunc)(const std::shared_ptr<gfx::JITUpdateBuffer>& pBuffer, uint32_t entityID, const Archetype* pArchetype) = nullptr;
+			using Func_t = void(*)(const std::shared_ptr<gfx::JITUpdateBuffer>& pBuffer, uint32_t entityID, const Archetype* pArchetype);
+
+			std::vector<std::pair<
+				std::shared_ptr<gfx::JITUpdateBuffer>,
+				Func_t>> jitCombinations;
 		};
 	}
 }

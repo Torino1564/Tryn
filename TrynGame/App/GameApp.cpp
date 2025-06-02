@@ -123,8 +123,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 					
 					pBuffer->Set(pEntityID, sizeof(decltype(entityID)));
 				};
-
-			ent.GetComponent<ecs::UpdateJITBufferComponent>() = { .pJITBuffer = pJITBuffer, .pFunc = pFun};
+			ent.GetComponent<ecs::UpdateJITBufferComponent>().jitCombinations.emplace_back(pJITBuffer, pFun);
 		}
 	}
 
