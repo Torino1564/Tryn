@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ecs\sys\JITBufferCallbackSystem.cpp" />
+    <ClCompile Include="src\ecs\Utils.cpp" />
     <ClCompile Include="src\gfx\Bindables\SOAVertexBuffer.cpp" />
     <ClCompile Include="src\gfx\CPUBuffer.cpp" />
     <ClCompile Include="src\gfx\Model\GLTFMesh.cpp" />
@@ -94,6 +95,7 @@
     <ClInclude Include="src\ecs\Query.h" />
     <ClInclude Include="src\ecs\SerializeLambda.h" />
     <ClInclude Include="src\ecs\sys\JITBufferCallbackSystem.h" />
+    <ClInclude Include="src\ecs\Utils.h" />
     <ClInclude Include="src\fsx\BoundingBox.h" />
     <ClInclude Include="src\fsx\IBoundingBox.h" />
     <ClInclude Include="src\gfx\Attribute.h" />

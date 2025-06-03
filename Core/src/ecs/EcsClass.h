@@ -20,9 +20,6 @@ namespace tryn::ecs
 {
 	class ComponentManager;
 
-	template <typename T, utl::StaticString>
-	class Component;
-
 	enum class AccessMode
 	{
 		ReadWrite,
@@ -60,7 +57,6 @@ namespace tryn::ecs
 		static constexpr auto accessMode = AccessMode::Discard;
 	};
 
-	class ComponentManager;
 	class ArchetypeManager;
 	class SystemManager;
 

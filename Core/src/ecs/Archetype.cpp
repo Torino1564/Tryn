@@ -19,28 +19,7 @@ namespace tryn::ecs
 
 	EntityID Archetype::ResolveEntityUUID()
 	{
-		auto nextFree = booker.find_next(bookerPointer);
-		while (nextFree == booker.npos)
-		{
-			Grow();
-			nextFree = booker.find_next(bookerPointer);
-		}
-		booker.flip(nextFree);
-
-		// Default initialize the subresource data structure
-		for (auto [index, componentUUID] : std::ranges::views::enumerate(components) )
-		{
-			auto pData = arrays[index][nextFree];
-			componentManager.Wrapper(componentUUID).New(pData);
-		}
-
-		bookerPointer = (uint32_t)nextFree;
-		if (bookerPointer > upperLimit)
-		{
-			upperLimit = (uint32_t)nextFree;
-		}
-
-		return {bookerPointer, UUID};
+		return ResolveEntityUUID_Impl(true);
 	}
 
 	ArchetypeID ArchetypeManager::ResolveUUID()
@@ -64,6 +43,33 @@ namespace tryn::ecs
 		return newlyAddedArchetype;
 	}
 
+	EntityID ArchetypeManager::MoveEntity(Archetype& destination, const EntityID entityID)
+	{
+		auto& source = archetypeBuffer[entityID.archetype];
+		trynass(source.HasEntity(entityID));
+
+		auto newID = destination.ResolveEntityUUID_Impl(false);
+
+		for (auto componentUUID : destination.components)
+		{
+			auto& destinationArray = destination.GetComponentArray(componentUUID);
+			if (std::ranges::contains(source.components, componentUUID))
+			{
+				// Then move component:
+				auto& sourceArray = source.GetComponentArray(componentUUID);
+				sourceArray.Wrapper().Move(sourceArray[entityID.ID], destinationArray[newID.ID]);
+			}
+			else
+			{
+				// Else we default construct it:
+				destinationArray.Wrapper().New(destinationArray[newID.ID]);
+			}
+		}
+
+		source.Free(entityID);
+		return newID;
+	}
+
 	ArchetypeManager::ArchetypeManager(ECS* pEcs)
 		: pEcs(pEcs)
 	{
@@ -77,55 +83,14 @@ namespace tryn::ecs
 
 	Archetype& ArchetypeManager::GetArchetype(const int archetypeCounter)
 	{
-		trynass(archetypeCounter <= this->archetypeCounter);
+		trynass(std::cmp_less_equal(archetypeCounter, this->archetypeCounter));
 		return archetypeBuffer[archetypeCounter];
 	}
 
-	//const Archetype& ArchetypeManager::GetArchetype(std::span<utl::UUID_t> componentUUIDs)
-	//{
-	//	trynass(componentUUIDs.size() != 0);
-	//	std::vector<const std::vector<ArchetypeID>*> pVectors;
-	//	for (const auto uuid : componentUUIDs)
-	//	{
-	//		auto it = archetypeTable.find(uuid);
-	//		if (it == archetypeTable.end())
-	//		{
-	//			// This path is only reached if the component uuid doesnt have an archetype list
-	//			// This means that the requested archetype does not exist and therefore has to be added
-
-	//			return AddArchetype(componentUUIDs);
-	//		}
-
-	//		pVectors.push_back(&it->second);
-	//	}
-	//	std::vector<ArchetypeID> partialResult = *pVectors.front();
-	//	for (const auto pVector : pVectors)
-	//	{
-	//		for (auto it = partialResult.begin(); it != partialResult.end(); )
-	//		{
-	//			if (std::ranges::find(*pVector, *it ) == pVector->end())
-	//				it = partialResult.erase(it);
-	//			else
-	//				++it;
-	//		}
-	//		if (partialResult.empty())
-	//			break;
-	//	}
-
-	//	// If the archetype doesnt exist, create a new one and return
-	//	if (partialResult.empty())
-	//		return AddArchetype(componentUUIDs);
-
-	//	// Discard archetypes that have more than just the required components
-	//	for (const auto archetypeID : partialResult)
-	//	{
-	//		if (auto& arch = archetypeBuffer[archetypeID]; arch.ComponentCount() == componentUUIDs.size())
-	//			return arch;
-	//	}
-
-	//	// Create a new one if it doesnt exist
-	//	return AddArchetype(componentUUIDs);
-	//}
+	bool Archetype::HasEntity(const EntityID id) const
+	{
+		return !booker.test(id.ID);
+	}
 
 	ArchetypeID Archetype::GetUUID() const
 	{
@@ -185,6 +150,35 @@ namespace tryn::ecs
 	const ArchetypeManager& Archetype::Manager() const
 	{
 		return archetypeManager;
+	}
+
+	EntityID Archetype::ResolveEntityUUID_Impl(bool defaultInit)
+	{
+		auto nextFree = booker.find_next(bookerPointer);
+		while (nextFree == booker.npos)
+		{
+			Grow();
+			nextFree = booker.find_next(bookerPointer);
+		}
+		booker.flip(nextFree);
+
+		if (defaultInit)
+		{
+			// Default initialize the subresource data structure
+			for (auto [index, componentUUID] : std::ranges::views::enumerate(components))
+			{
+				auto pData = arrays[index][nextFree];
+				componentManager.Wrapper(componentUUID).New(pData);
+			}
+		}
+
+		bookerPointer = (uint32_t)nextFree;
+		if (bookerPointer > upperLimit)
+		{
+			upperLimit = (uint32_t)nextFree;
+		}
+
+		return {.ID = bookerPointer, .archetype = UUID };
 	}
 
 	Archetype::Archetype(ArchetypeManager& manager, const uint16_t uuid)

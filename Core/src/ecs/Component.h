@@ -32,6 +32,14 @@ namespace tryn::ecs
 					new(pData) T();
 				};
 
+			retval.move_ = [](void* pSource_, void* pDestination_)
+				{
+					auto pSource = static_cast<T*>(pSource_);
+					auto pDestination = static_cast<T*>(pDestination_);
+
+					new(pDestination) T(std::move(*pSource));
+				};
+
 			retval.imguiPrint_ = [](void* pData_)
 			{
 				auto pData = static_cast<T*>(pData_);
@@ -46,6 +54,7 @@ namespace tryn::ecs
 		ComponentArray MakeArray(const uint16_t newSize = 0) const;
 		void Delete(void* pData) const;
 		void New(void* pData) const;
+		void Move(void* pSource, void* pDestination) const;
 		void ImGuiPrint(void* pData) const;
 		virtual ~ComponentWrapper() = default;
 	protected:
@@ -57,6 +66,7 @@ namespace tryn::ecs
 
 		void (*delete_)(void*) = nullptr;
 		void (*new_)(void*) = nullptr;
+		void (*move_)(void*, void*) = nullptr;
 		void (*imguiPrint_)(void*) = nullptr;
 	};
 
@@ -71,6 +81,7 @@ namespace tryn::ecs
 		std::byte* data();
 		void Delete(EntityID id);
 		std::byte* operator[](std::uint16_t);
+		const ComponentWrapper& Wrapper() const;
 	private:
 		explicit ComponentArray(const ComponentWrapper& parent);
 		std::vector<std::byte> buffer;

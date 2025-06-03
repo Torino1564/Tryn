@@ -16,6 +16,10 @@ namespace tryn::gfx
 		auto it = Get().techniqueMap.find(techniqueUuid);
 		trynass(it != Get().techniqueMap.end()).msg(utl::ToWide(std::format("Technique with UUID: [{}] is not registered", techniqueUuid))).lvl(log::Level::Error).ex();
 		auto tech = it->second->ConstructDerived(materials, gfx, instanced, skeleton);
+		for (const auto& mat : materials)
+		{
+			tech->usedMaterials.emplace_back(mat);
+		}
 		return tech;
 	}
 

@@ -131,6 +131,14 @@ namespace tryn::gfx
 			for (auto technique : techniqueUUIDs)
 			{
 				mesh->AddTechnique(gfx, technique);
+				
+			}
+			for (auto& technique : mesh->pTechniques | std::views::values)
+			{
+				for (auto& [id, addedBindable] : pAddedBindables)
+				{
+					technique->OfferBindable(id, addedBindable);
+				}
 			}
 		}
 
@@ -217,9 +225,15 @@ namespace tryn::gfx
 			for (auto& mesh : pMeshes | std::views::transform([](auto& pMesh) -> Mesh& { return *pMesh; }))
 			{
 				mesh.EnableOrAddTechnique(*pGfx, techniqueUUID);
+				for (auto& technique : mesh.pTechniques | std::views::values)
+				{
+					for (auto& [id, addedBindable] : pAddedBindables)
+					{
+						technique->OfferBindable(id, addedBindable);
+					}
+				}
 			}
 		}
-		
 	}
 
 	void Model::SpawnControlWindow()
@@ -519,6 +533,13 @@ namespace tryn::gfx
 					for (auto techniqueUUID : techniqueUUIDs)
 					{
 						pMeshes.back()->AddTechnique(gfx, techniqueUUID);
+					}
+					for (auto& pMesh = pMeshes.back(); const auto& technique : pMesh->pTechniques | std::views::values)
+					{
+						for (auto& [id, addedBindable] : pAddedBindables)
+						{
+							technique->OfferBindable(id, addedBindable);
+						}
 					}
 				}
 

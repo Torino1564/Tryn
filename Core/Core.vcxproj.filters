@@ -456,6 +456,9 @@
     <ClCompile Include="src\gfx\Bindables\SOAVertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -2301,6 +2304,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Render\Passes\EntityIDPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ecs\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

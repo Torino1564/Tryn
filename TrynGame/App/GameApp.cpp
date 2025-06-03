@@ -10,6 +10,8 @@
 #include "Core/src/ecs/sys/SystemManager.h"
 #include "Core/src/gfx/Render/Techniques/EntityIDTechnique.h"
 
+#include <Core/src/ecs/Utils.h>
+
 TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::shared_ptr<tryn::gfx::IGraphics> pGraphics)
 	: App(pWindow, pGraphics)
 {
@@ -22,6 +24,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		pPlayer = std::make_unique<Player>(ECS(), "player1", "Game/Resources/Models/PlayerModels/ShinySphere/ShinySphere.obj", Gfx());
 
 		pPlayer->GetComponent<ecs::PositionComponent>().position = {10.0f, 10.0f, 10.0f};
+		ecs::AddEntityIDJITBuffer(*pPlayer, ECS());
 	}
 
 	{
@@ -49,6 +52,9 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 			.quadraticAtt = 0.000f
 		};
 		pLight->GetComponent<ecs::ScaleComponent>().scale = {1.0f, 1.0f, 1.0f};
+
+		ecs::AddEntityIDJITBuffer(*pLight, ECS());
+
 	}
 
 	//{
@@ -83,6 +89,8 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		plane.GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::ForwardPhong, gfx::EntityIDTechnique>(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
 		plane.GetComponent<ecs::ScaleComponent>().scale = { 10.0f, 10.0f, 10.0f };
 		plane.GetComponent<ecs::ActiveComponent>().active = true;
+
+		ecs::AddEntityIDJITBuffer(plane, ECS());
 	}
 
 	{
@@ -101,30 +109,11 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 		ent.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
 		auto& pModel = ent.GetComponent<ecs::ModelComponent>().pModel;
-		pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Wolf/Wolf-Blender-2.82a.glb", std::array{ZT_TYPE_UUID(gfx::ForwardPhong), ZT_TYPE_UUID(gfx::EntityIDTechnique)});
+		pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Wolf/Wolf-Blender-2.82a.glb", std::array{ZT_TYPE_UUID(gfx::ForwardPhong)});
+		pModel->AddOrEnableTechniques(std::array{ ZT_TYPE_UUID(gfx::EntityIDTechnique) });
 		ent.GetComponent<ecs::ScaleComponent>().scale = { 1.0f, 1.0f, 1.0f };
 		ent.GetComponent<ecs::ActiveComponent>().active = true;
-
-		// Entity ID buffer
-		{
-			gfx::ConstantBufferLayout cblayout;
-			cblayout.Append(gfx::ConstantBufferLayout::Type::Int32, "entityID");
-			cblayout.Solidify();
-
-			auto buffer = gfx::IPxConstantBuffer::Resolve(*gfx, std::move(cblayout));
-
-			auto pJITBuffer = std::make_shared<gfx::JITUpdateBuffer>(gfx::JITUpdateBuffer::Make(buffer));
-
-			pModel->AddPerTechniqueBindable(pJITBuffer, "entityIDBuffer");
-
-			auto pFun = [](const std::shared_ptr<gfx::JITUpdateBuffer>& pBuffer, uint32_t entityID, const ecs::Archetype* pArchetype)
-				{
-					uint32_t* pEntityID = &pArchetype->Manager().GetArenaAllocator().Emplace(entityID);
-					
-					pBuffer->Set(pEntityID, sizeof(decltype(entityID)));
-				};
-			ent.GetComponent<ecs::UpdateJITBufferComponent>().jitCombinations.emplace_back(pJITBuffer, pFun);
-		}
+		ecs::AddEntityIDJITBuffer(ent, ECS());
 	}
 
 	{

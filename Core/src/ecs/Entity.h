@@ -5,7 +5,6 @@
 #include "EntityID.h"
 #include <Core/src/ser/StreamIO.h>
 
-#include "SerializeLambda.h"
 #include "Core/src/gfx/CoreGraphics.h"
 
 namespace tryn::gfx
@@ -15,11 +14,6 @@ namespace tryn::gfx
 
 namespace tryn::ecs
 {
-	template <typename T>
-	concept HasGfxPointer = requires (T t) {
-		std::same_as<decltype(t.pGfx), gfx::IGraphics*>;
-	};
-
 	class Entity
 	{
 	public:
@@ -27,28 +21,32 @@ namespace tryn::ecs
 		Entity(const Entity&) = delete;
 		Entity& operator=(const Entity&) = delete;
 
-		Entity(Entity&&);
-		Entity& operator=(Entity&&);
+		Entity(Entity&&) noexcept;
+		Entity& operator=(Entity&&) noexcept;
 		virtual ~Entity();
 
 		template <typename... Cs>
 		static Entity CreateNew(ECS& ecs, std::string name = "?");
-		std::span<utl::UUID_t> GetComponents();
+		std::span<utl::UUID_t> GetComponents() const;
 
 		template <typename C>
 		C& GetComponent();
 
-		void Instanciate(std::span<Entity> destination);
+		template <typename C>
+		const C& GetComponent() const;
+
+		template <typename C>
+		C& AddComponent(ECS& ecs);
+
+		template <typename C>
+		bool HasComponent() const;
+
+		void Instanciate(std::span<Entity> destination) const;
 
 		void SpawnControlWindow();
 
 	protected:
 		Entity(std::string name = "?");
-
-		template <typename... Cs>
-		void AddComponent(ECS& ecs);
-		void AddComponent(ECS& ecs, std::span<utl::UUID_t> componentList);
-
 
 		std::string name;
 		EntityID UUID = {};
@@ -71,10 +69,27 @@ namespace tryn::ecs
 		return data[UUID.ID - 1];
 	}
 
-	template<typename ...Cs>
-	void Entity::AddComponent(ECS& ecs)
+	template <typename C>
+	const C& Entity::GetComponent() const
 	{
-		std::array<utl::UUID_t, sizeof...(Cs)> newComponentIDs = { ZT_TYPE_UUID(Cs)... };
-		AddComponent(ecs, newComponentIDs);
+		auto data = pArchetype->GetComponentData<C>();
+		return data[UUID.ID - 1];
+	}
+
+	template <typename C>
+	C& Entity::AddComponent(ECS& ecs)
+	{
+		auto& manager = ecs.GetArchetypeManager();
+		auto currentComponents = pArchetype->components;
+		currentComponents.emplace_back(ZT_TYPE_UUID(C));
+		pArchetype = &manager.GetArchetype(currentComponents);
+		UUID = manager.MoveEntity(*pArchetype, UUID);
+		return GetComponent<C>();
+	}
+
+	template <typename C>
+	bool Entity::HasComponent() const
+	{
+		return std::ranges::contains(pArchetype->components, ZT_TYPE_UUID(C));
 	}
 }

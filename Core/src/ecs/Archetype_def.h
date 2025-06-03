@@ -39,20 +39,21 @@ namespace tryn::ecs
 
 		template <typename C>
 		void AppendComponents();
-
+		bool HasEntity(EntityID id) const;
 		ArchetypeID GetUUID() const;
 		size_t ComponentCount() const;
 		uint32_t ComponentArraySize() const;
-		struct EntityID ResolveEntityUUID();
-		void Free(struct EntityID);
+		EntityID ResolveEntityUUID();
+		void Free(EntityID);
 		void Grow();
 		void Resize(std::uint32_t newSize);
 		ComponentArray& GetComponentArray(utl::UUID_t);
 
-		void EntityControlWindow(struct EntityID id);
+		void EntityControlWindow(EntityID id);
 		const ArchetypeManager& Manager() const;
 	private:
-		Archetype(ArchetypeManager& manager, const uint16_t uuid);
+		EntityID ResolveEntityUUID_Impl(bool defaultInit);
+		Archetype(ArchetypeManager& manager, uint16_t uuid);
 
 		template <typename... Cs>
 		static Archetype Make(ArchetypeManager& manager, const uint16_t uuid);
@@ -98,6 +99,8 @@ namespace tryn::ecs
 		template <typename... Cs>
 		Archetype& AddArchetype();
 		Archetype& AddArchetype(std::span<utl::UUID_t> componentUUIDs);
+
+		EntityID MoveEntity(Archetype& destination, EntityID entityID);
 
 		ArchetypeManager(ECS* pEcs);
 

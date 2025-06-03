@@ -12,12 +12,7 @@ namespace tryn::ecs
 
 	}
 
-	void Entity::AddComponent(ECS& ecs, std::span<utl::UUID_t> componentList)
-	{
-
-	}
-
-	Entity::Entity(Entity&& e)
+	Entity::Entity(Entity&& e) noexcept
 	{
 		name = std::move(e.name);
 		UUID = std::move(e.UUID);
@@ -25,7 +20,7 @@ namespace tryn::ecs
 		e.pArchetype = nullptr;
 	}
 
-	Entity& Entity::operator=(Entity&& e)
+	Entity& Entity::operator=(Entity&& e) noexcept
 	{
 		name = std::move(e.name);
 		UUID = std::move(e.UUID);
@@ -40,12 +35,12 @@ namespace tryn::ecs
 			pArchetype->Free(UUID);
 	}
 
-	std::span<utl::UUID_t> Entity::GetComponents()
+	std::span<utl::UUID_t> Entity::GetComponents() const
 	{
 		return std::span(pArchetype->components.begin(), pArchetype->components.size());
 	}
 
-	void Entity::Instanciate(std::span<Entity> destination)
+	void Entity::Instanciate(std::span<Entity> destination) const
 	{
 		for (auto [instanceNum, ent] : std::ranges::views::enumerate(destination))
 		{

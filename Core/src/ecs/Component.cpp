@@ -36,6 +36,11 @@ namespace tryn::ecs
 		new_(pData);
 	}
 
+	void ComponentWrapper::Move(void* pSource, void* pDestination) const
+	{
+		move_(pSource, pDestination);
+	}
+
 	void ComponentWrapper::ImGuiPrint(void* pData) const
 	{
 		imguiPrint_(pData);
@@ -72,6 +77,11 @@ namespace tryn::ecs
 	{
 		trynass(elNumber < ElementCount());
 		return data() + elNumber * parentWrapper.ByteSize();
+	}
+
+	const ComponentWrapper& ComponentArray::Wrapper() const
+	{
+		return parentWrapper;
 	}
 
 	ComponentArray::ComponentArray(const ComponentWrapper& parent):
