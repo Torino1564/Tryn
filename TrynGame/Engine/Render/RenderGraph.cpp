@@ -26,7 +26,7 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 		pOffScreenBuffer = IShaderResourceRenderTargetView::Resolve(gfx, gfx.GetDimensions(), 0u);
 		pSource->Set(pOffScreenBuffer, "OSRtv");
 
-		pEntityIDRTV = IOutputOnlyRenderTargetView::Resolve(gfx, gfx.GetDimensions(), RenderTargetFormat::UINT32);
+		pEntityIDRTV = IOutputOnlyRenderTargetView::Resolve(gfx, gfx.GetDimensions(), RenderTargetFormat::UINT32_4);
 		pSource->Set(pEntityIDRTV, "EntityIDRTV");
 
 		pGlobalSource = std::move(pSource);

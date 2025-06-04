@@ -493,8 +493,13 @@ namespace tryn::gfx
 		return skeleton.value();
 	}
 
+	bool Model::HasTechnique(utl::UUID_t techniqueUUID) const
+	{
+		return std::ranges::contains(techniques, techniqueUUID);
+	}
+
 	void Model::GltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path,
-		std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
+	                               std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
 	{
 		using namespace Microsoft::glTF;
 

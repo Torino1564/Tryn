@@ -7,6 +7,7 @@ namespace tryn::gfx
 	{
 		B8G8R8A8_UNORM,
 		UINT32,
+		UINT32_4,
 		Unknown
 	};
 

@@ -40,7 +40,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		const auto& pLight = entities.back();
 
 		pLight->GetComponent<ecs::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
-		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat, gfx::EntityIDTechnique>(Gfx(), "Game/Resources/Models/sphere.obj");
+		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat>(Gfx(), "Game/Resources/Models/sphere.obj");
 		pLight->GetComponent<ecs::ActiveComponent>().active = true;
 		pLight->GetComponent<ecs::PointLightComponent>().parameters = gfx::PointLightParameters{
 			.ambient = {0.1f, 0.1f, 0.1f},
@@ -86,7 +86,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		auto& plane = *entities.back();
 
 		plane.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-		plane.GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::ForwardPhong, gfx::EntityIDTechnique>(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
+		plane.GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::ForwardPhong>(Gfx(), "Game/Resources/Models/Environments/TestPlane.obj");
 		plane.GetComponent<ecs::ScaleComponent>().scale = { 10.0f, 10.0f, 10.0f };
 		plane.GetComponent<ecs::ActiveComponent>().active = true;
 

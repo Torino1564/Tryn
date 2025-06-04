@@ -1,9 +1,13 @@
+
 cbuffer EntityID : register(b0)
 {
     uint entityID;
+    uint archetypeID;
+    uint padding;
+    uint empty;
 }
 
-uint main() : SV_TARGET
+uint1x4 main() : SV_TARGET
 {
-    return entityID;
+    return uint1x4(entityID, archetypeID, padding, empty);
 }

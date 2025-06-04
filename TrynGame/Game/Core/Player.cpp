@@ -36,5 +36,5 @@ Player::Player(ecs::ECS& ecs, std::string name, const std::string& modelPath, gf
 
 	velocity = glm::vec3(0.0f);
 
-	pModel = std::make_unique<gfx::Model>(gfx, modelPath, std::array{ ZT_TYPE_UUID(gfx::ForwardPhong), ZT_TYPE_UUID(gfx::EntityIDTechnique) });
+	pModel = std::make_unique<gfx::Model>(gfx, modelPath, std::array{ ZT_TYPE_UUID(gfx::ForwardPhong)});
 }

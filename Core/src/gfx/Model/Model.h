@@ -65,6 +65,7 @@ namespace tryn::gfx
 		ani::BonedMesh* GetMainMesh() const;
 		const gfx::IGraphics* GetGfx() const;
 		ani::Skeleton& GetSkeleton();
+		bool HasTechnique(utl::UUID_t techniqueUUID) const;
 	private:
 		void GltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = {1.0f, 1.0f, 1.0f}, const bool instanced = false);
 		std::uint32_t ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);

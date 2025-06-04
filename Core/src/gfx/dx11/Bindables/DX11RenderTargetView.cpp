@@ -155,6 +155,8 @@ namespace tryn::gfx::dx11
 			return DXGI_FORMAT_B8G8R8A8_UNORM;
 		case RenderTargetFormat::UINT32:
 			return DXGI_FORMAT_R32_UINT;
+		case RenderTargetFormat::UINT32_4:
+			return DXGI_FORMAT_R32G32B32A32_UINT;
 		case RenderTargetFormat::Unknown:
 			return DXGI_FORMAT_UNKNOWN;
 		}
