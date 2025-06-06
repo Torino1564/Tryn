@@ -37,9 +37,10 @@ namespace tryn::gfx
 		const IGraphics& Gfx() const;
 	protected:
 		template <typename Pass>
-		void AddPass(Pass&& pass)
+		Pass& AddPass(Pass&& pass)
 		{
 			pPasses.emplace_back(std::unique_ptr<Pass>(new Pass(std::forward<Pass>(pass))));
+			return *pPasses.back();
 		}
 		struct LinkageParam
 		{

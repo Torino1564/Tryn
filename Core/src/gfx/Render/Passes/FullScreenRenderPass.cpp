@@ -11,7 +11,7 @@
 
 namespace tryn::gfx
 {
-	FullscreenRenderPass::FullscreenRenderPass(IRenderGraph& renderGraph, std::string name)
+	FullscreenRenderPass::FullscreenRenderPass(IRenderGraph& renderGraph, std::string name, const std::shared_ptr<IPixelShader>* pPS)
 		:
 		IRenderPass(name)
 	{
@@ -39,7 +39,7 @@ namespace tryn::gfx
 		std::string shaderRootPathStr(shaderRootPath);
 
 		pFullscreenVS = IVertexShader::Resolve(renderGraph.Gfx(), shaderRootPathStr + "Fullscreen_VS.cso");
-		pFullscreenPS = IPixelShader::Resolve(renderGraph.Gfx(), shaderRootPathStr + "DefaultFullscreen_PS.cso");
+		pPS == nullptr ? pFullscreenPS = IPixelShader::Resolve(renderGraph.Gfx(), shaderRootPathStr + "DefaultFullscreen_PS.cso") : pFullscreenPS = *pPS;
 
 		pInputLayout = IInputLayout::Resolve(renderGraph.Gfx(), vtxLayout, *pFullscreenVS);
 		pSamplerState = ISampler::Resolve(renderGraph.Gfx());
@@ -49,7 +49,7 @@ namespace tryn::gfx
 	void FullscreenRenderPass::Execute(const IGraphics& gfx)
 	{
 		// Bind buffers and render targets
-		auto& concreteSink = *reinterpret_cast<SinkType*>(pSink.get());
+		auto& concreteSink = *static_cast<SinkType*>(pSink.get());
 		auto& pRTV = concreteSink.Get<IGenericRenderTargetView>("rtv");
 		auto& pDSV = concreteSink.Get<IGenericDepthStencil>("depthStencil");
 		auto& pOSRtv = concreteSink.Get<IShaderResourceRenderTargetView>("OSBuf");

@@ -6,13 +6,20 @@ namespace tryn::gfx
 {
 	class ISampler;
 
+	struct FullScreenPassDescriptor
+	{
+		std::string name = "FullScreenRenderPass";
+		const std::shared_ptr<IPixelShader>* pPS = nullptr;
+		std::unique_ptr<ISink> pSink;
+		std::unique_ptr<ISource>
+	};
+
 	class FullscreenRenderPass :public IRenderPass
 	{
 	public:
-		FullscreenRenderPass(class IRenderGraph& renderGraph, std::string name = "FullScreenRenderPass");
+		FullscreenRenderPass(class IRenderGraph& renderGraph, std::string name = "FullScreenRenderPass", const std::shared_ptr<IPixelShader>* pPS = nullptr);
 
 		void Execute(const IGraphics& gfx) override;
-
 		using SinkType = Sink<In<IGenericRenderTargetView>, In<IGenericDepthStencil>, In<IShaderResourceRenderTargetView>>;
 		using SourceType = Source<Out<IGenericRenderTargetView>, Out<IGenericDepthStencil>>;
 	private:

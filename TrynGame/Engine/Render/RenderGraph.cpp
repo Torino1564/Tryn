@@ -7,6 +7,7 @@
 #include "Core/src/gfx/Render/Passes/FullScreenRenderPass.h"
 #include <Core/src/gfx/Render/Passes/PointLightBindPass.h>
 
+#include "Core/src/gfx/Bindables/PixelShader.h"
 #include "Core/src/gfx/Render/Passes/EntityIDPass.h"
 
 using namespace tryn::gfx;
@@ -36,13 +37,34 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 		AddPass(ClearTargetPass<
 					TargetIn<IGenericDepthStencil, "depthStencil">,
 					TargetIn<IGenericRenderTargetView, "rtv">,
-					TargetIn<IShaderResourceRenderTargetView, "OSRtv">,
-					TargetIn<IOutputOnlyRenderTargetView, "EntityIDRTV">
+					TargetIn<IShaderResourceRenderTargetView, "OSRtv">
 			>("initClear"));
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "rtv" }, LinkageParam{ .passName = "initClear", .resourceName = "rtv" });
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "OSRtv" }, LinkageParam{ .passName = "initClear", .resourceName = "OSRtv" });
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "depthStencil" }, LinkageParam{ .passName = "initClear", .resourceName = "depthStencil" });
-		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "EntityIDRTV" }, LinkageParam{ .passName = "initClear", .resourceName = "EntityIDRTV" });
+
+
+		auto pEntityIDClearPS = IPixelShader::Resolve(gfx, gfx.GetShaderRootPath() + std::string{ "ClearUINT1x4_PS" });
+		auto& pass = AddPass(FullscreenRenderPass(*this, "entityIDClearPass", &pEntityIDClearPS));
+
+		auto cblayout = ConstantBufferLayout();
+		cblayout.Append(ConstantBufferLayout::Type::Int32, "entityID");
+		cblayout.Append(ConstantBufferLayout::Type::Int32, "archetypeID");
+		cblayout.Append(ConstantBufferLayout::Type::Int32, "padding");
+		cblayout.Append(ConstantBufferLayout::Type::Int32, "empty");
+
+		auto pPxCBuffer = IPxConstantBuffer::Resolve(gfx, std::move(cblayout));
+
+		auto& cbuf = pPxCBuffer->GetConstantBuffer();
+		cbuf["entityID"] = 0;
+		cbuf["archetypeID"] = 0;
+		cbuf["padding"] = 0;
+		cbuf["empty"] = 1;
+
+		pass.SetConstantBuffer(pPxCBuffer);
+
+		AddLinkage(LinkageParam{ .passName = "entityIDClearPass", .resourceName = "depthStencil" }, LinkageParam{ .passName = "initClear", .resourceName = "depthStencil" });
+
 
 		AddPass(tryn::gfx::PointLightBindPass(*this));
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "pointLightBuffer" }, LinkageParam{ .passName = "PointLightBind", .resourceName = "pointLightBuffer" });
