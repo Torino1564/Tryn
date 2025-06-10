@@ -43,16 +43,16 @@ namespace tryn::gfx
 			:
 			IRenderPass(name)
 		{
-			pSink = std::make_unique<SinkType>(In<typename Param::Type>(Param::name)...);
-			pSource = std::make_unique<SourceType>(Out<typename Param::Type>(Param::name)...);
+			pSink = std::make_unique<Sink>();
+			(pSink->AddDependency<typename Param::Type>(Param::name), ...);
+
+			pSource = std::make_unique<Source>();
+			(pSource->AddExposure<typename Param::Type>(Param::name), ...);
 		}
 		void Execute(const IGraphics& gfx) override
 		{
-			auto pConcreteSink = reinterpret_cast<SinkType*>(pSink.get());
-
-			auto& tupleInQuestion = pConcreteSink->GetDependencyTuple();
-
-			std::apply([&](auto&&... ppArg){ ((**ppArg)->Clear(), ...); BindSourceElement(forward_as_tuple(ppArg...));}, tupleInQuestion);
+			std::apply([&](auto&&... ppArg){ ((**ppArg)->Clear(), ...);
+			BindSourceElement(forward_as_tuple(ppArg...));}, tupleInQuestion);
 		}
 
 		template <unsigned N = 0, typename... Args>
@@ -70,7 +70,5 @@ namespace tryn::gfx
 
 	private:
 		using BufferParamTuple = std::tuple<Param...>;
-		using SinkType = Sink<In<typename Param::Type>...>;
-		using SourceType = Source<Out<typename Param::Type>...>;
 	};
 }

@@ -24,12 +24,12 @@ namespace tryn::gfx
 		return UIDcounter++;
 	}
 
-	ISink& IRenderPass::GetSink() const
+	Sink& IRenderPass::GetSink() const
 	{
 		return *pSink;
 	}
 
-	ISource& IRenderPass::GetSource() const
+	Source& IRenderPass::GetSource() const
 	{
 		return *pSource;
 	}

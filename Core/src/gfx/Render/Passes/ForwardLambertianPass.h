@@ -14,17 +14,20 @@ namespace tryn::gfx
 			RenderQueuePass(std::move(name), graph, std::vector<std::string>{"Lambertian"})
 		{
 			// declare sink and source
-			pSink = std::make_unique<SinkType>(In<IGenericRenderTargetView>("rtv"), In<IGenericDepthStencil>("depthStencil"), In<IPxConstantBuffer, Policy::Barrier>("pointLightBuffer"));
-			sink = static_cast<SinkType*>(pSink.get());
+			pSink = std::make_unique<Sink>();
+			pSink->AddDependency<IGenericRenderTargetView>("rtv");
+			pSink->AddDependency<IGenericDepthStencil>("depthStencil");
+			pSink->AddDependency<IPxConstantBuffer>("pointLightBuffer");
 
-			pSource = std::make_unique<SourceType>(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"));
-			source = static_cast<SourceType*>(pSource.get());
+			pSource = std::make_unique<Source>();
+			pSource->AddExposure<IGenericRenderTargetView>("rtv");
+			pSource->AddExposure<IGenericDepthStencil>("depthStencil");
 		}
 		void Execute(const IGraphics& gfx) override
 		{
 			// bind Render Target View
-			auto& pRTV = sink->Get<IGenericRenderTargetView>("rtv");
-			auto& pDSV = sink->Get<IGenericDepthStencil>("depthStencil");
+			const auto& pRTV = pSink->Get<IGenericRenderTargetView>("rtv");
+			const auto& pDSV = pSink->Get<IGenericDepthStencil>("depthStencil");
 
 			pRTV->BindAsRTV(pDSV.get());
 			
@@ -35,13 +38,8 @@ namespace tryn::gfx
 			lambertianQueue.RunJobs(gfx);
 			lambertianQueue.Clear();
 
-			source->Set(pRTV, "rtv");
-			source->Set(pDSV, "depthStencil");
+			pSource->Set(pRTV, "rtv");
+			pSource->Set(pDSV, "depthStencil");
 		}
-		using SinkType = Sink<In<IGenericRenderTargetView>, In<IGenericDepthStencil>, In<IPxConstantBuffer, Policy::Barrier>>;
-		using SourceType = Source<Out<IGenericRenderTargetView>, Out<IGenericDepthStencil>>;
-
-		SinkType* sink;
-		SourceType* source;
 	};
 }

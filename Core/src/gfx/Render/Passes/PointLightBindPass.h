@@ -14,14 +14,16 @@ namespace tryn::gfx
 			RenderQueuePass(std::move(name), graph, std::vector<std::string>{"PointLightBind"}), graph{graph}
 		{
 			// declare sink and source
-			pSink = std::make_unique<SinkType>(In<IPxConstantBuffer>("pointLightBuffer"));
-			pSource = std::make_unique<SourceType>(Out<IPxConstantBuffer>("pointLightBuffer"));
+			pSink = std::make_unique<Sink>();
+			pSink->AddDependency<IPxConstantBuffer>("pointLightBuffer");
+
+			pSource = std::make_unique<Source>();
+			pSource->AddExposure<IPxConstantBuffer>("pointLightBuffer");
 		}
 		void Execute(const IGraphics& gfx) override
 		{
 			// Get resources from sinks
-			auto& concreteSink = *reinterpret_cast<SinkType*>(pSink.get());
-			auto& pPointLightBuffer = concreteSink.Get<IPxConstantBuffer>("pointLightBuffer");
+			const auto& pPointLightBuffer = pSink->Get<IPxConstantBuffer>("pointLightBuffer");
 
 			// This queue pass knows that the first queue is the PointLightBind one (because it was declared that way on its constructor)
 			auto& pointLightBindQueue = *pQueues[0];
@@ -35,9 +37,8 @@ namespace tryn::gfx
 			pointLightBindQueue.Clear();
 
 			graph.pPointLightCBuf->Bind();
+			pSource->Set(pPointLightBuffer, "pointLightBuffer");
 		}
-		using SinkType = Sink<In<IPxConstantBuffer>>;
-		using SourceType = Source<Out<IPxConstantBuffer>>;
 	private:
 		IRenderGraph& graph;
 	};

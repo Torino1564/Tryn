@@ -19,14 +19,14 @@ namespace tryn::gfx
 		{
 			static uint16_t Resolve();
 		};
-		ISink& GetSink() const;
+		Sink& GetSink() const;
 
-		ISource& GetSource() const;
+		Source& GetSource() const;
 
 	protected:
 		// resources
-		std::unique_ptr<ISink> pSink;
-		std::unique_ptr<ISource> pSource;
+		std::unique_ptr<Sink> pSink;
+		std::unique_ptr<Source> pSource;
 
 		// identification
 		std::string name;

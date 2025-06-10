@@ -20,16 +20,20 @@ namespace tryn::gfx
 		if (initDefaultSourceAndSinks)
 		{
 			// Init Sink
-			pGlobalSink = MakeUniqueSink(In<IShaderResourceRenderTargetView>("rtv"));
+			pGlobalSink = std::make_unique<Sink>();
+			pGlobalSink->AddDependency<IShaderResourceRenderTargetView>("rtv");
 
 			// Init Source
-			auto pSource = MakeUniqueSource(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"), Out<IPxConstantBuffer>("pointLightBuffer"));
+			pGlobalSource = std::make_unique<Source>();
 
-			pSource->Set(pRTV, "rtv");
-			pSource->Set(pDSV, "depthStencil");
-			pSource->Set(pPointLightCBuf, "pointLightBuffer");
+			pGlobalSource->AddExposure<IGenericRenderTargetView>("rtv");
+			pGlobalSource->AddExposure<IGenericRenderTargetView>("depthStencil");
+			pGlobalSource->AddExposure<IPxConstantBuffer>("pointLightBuffer");
 
-			pGlobalSource = std::move(pSource);
+			pGlobalSource->Set(pRTV, "rtv");
+			pGlobalSource->Set(pDSV, "depthStencil");
+			pGlobalSource->Set(pPointLightCBuf, "pointLightBuffer");
+
 		}
 
 		// Point Light buffer init
@@ -143,8 +147,8 @@ namespace tryn::gfx
 		IRenderPass* pSourcePass = nullptr;
 		IRenderPass* pDestinationPass = nullptr;
 
-		ISource* pSource = nullptr;
-		ISink* pSink = nullptr;
+		Source* pSource = nullptr;
+		Sink* pSink = nullptr;
 
 		if (source_.passName == "global")
 		{
@@ -180,7 +184,7 @@ namespace tryn::gfx
 
 		trynass(sourceFound && destinationFound).msg(L"Failed to add the linkage! Reason: could not find the required pair.").ex();
 
-		pSource->Bind(*pSink, source_.resourceName, destination_.resourceName);
+		pSink->Bind(*pSource, source_.resourceName, destination_.resourceName);
 	}
 }
 

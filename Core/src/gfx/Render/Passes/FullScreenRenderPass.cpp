@@ -16,8 +16,15 @@ namespace tryn::gfx
 		IRenderPass(name)
 	{
 		// declare sink and source
-		pSink = std::make_unique<SinkType>(In<IGenericRenderTargetView>("rtv"), In<IGenericDepthStencil>("depthStencil"), In<IShaderResourceRenderTargetView>("OSBuf"));
-		pSource = std::make_unique<SourceType>(Out<IGenericRenderTargetView>("rtv"), Out<IGenericDepthStencil>("depthStencil"));
+		pSink = std::make_unique<Sink>();
+
+		pSink->AddDependency<IGenericRenderTargetView>("rtv");
+		pSink->AddDependency<IShaderResourceRenderTargetView>("OSBuf");
+		pSink->AddDependency<IGenericDepthStencil>("depthStencil");
+
+		pSource = std::make_unique<Source>();
+		pSource->AddExposure<IGenericRenderTargetView>("rtv");
+		pSource->AddExposure<IGenericDepthStencil>("depthStencil");
 
 		// Setup Fullscreen Geometry
 		VertexLayout vtxLayout;
@@ -49,10 +56,9 @@ namespace tryn::gfx
 	void FullscreenRenderPass::Execute(const IGraphics& gfx)
 	{
 		// Bind buffers and render targets
-		auto& concreteSink = *static_cast<SinkType*>(pSink.get());
-		auto& pRTV = concreteSink.Get<IGenericRenderTargetView>("rtv");
-		auto& pDSV = concreteSink.Get<IGenericDepthStencil>("depthStencil");
-		auto& pOSRtv = concreteSink.Get<IShaderResourceRenderTargetView>("OSBuf");
+		const auto& pRTV = pSink->Get<IGenericRenderTargetView>("rtv");
+		const auto& pDSV = pSink->Get<IGenericDepthStencil>("depthStencil");
+		const auto& pOSRtv = pSink->Get<IShaderResourceRenderTargetView>("OSBuf");
 
 		pRTV->BindAsRTV(pDSV.get());
 		pOSRtv->Bind();
@@ -66,6 +72,9 @@ namespace tryn::gfx
 		pSamplerState->Bind();
 		pPTopology->Bind();
 		gfx.DrawIndexed(6);
+
+		pSource->Set(pRTV, "rtv");
+		pSource->Set(pDSV, "depthStencil");
 	}
 }
 

@@ -63,8 +63,8 @@ namespace tryn::gfx
 		// Global graph resources
 		std::shared_ptr<IGenericRenderTargetView> pRTV;
 		std::shared_ptr<IGenericDepthStencil> pDSV;
-		std::unique_ptr<ISink> pGlobalSink;
-		std::unique_ptr<ISource> pGlobalSource;
+		std::unique_ptr<Sink> pGlobalSink;
+		std::unique_ptr<Source> pGlobalSource;
 
 		std::vector<PointLight*> pPointLights;
 		std::vector<Camera*> pCameras;
