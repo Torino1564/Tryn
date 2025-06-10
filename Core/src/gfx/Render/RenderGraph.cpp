@@ -17,15 +17,15 @@ namespace tryn::gfx
 		pRTV(gfx.GetRenderTargetView()),
 		pDSV(gfx.GetDepthStencilView())
 	{
+		pGlobalSink = std::make_unique<Sink>();
+		pGlobalSource = std::make_unique<Source>();
+
 		if (initDefaultSourceAndSinks)
 		{
 			// Init Sink
-			pGlobalSink = std::make_unique<Sink>();
 			pGlobalSink->AddDependency<IShaderResourceRenderTargetView>("rtv");
 
 			// Init Source
-			pGlobalSource = std::make_unique<Source>();
-
 			pGlobalSource->AddExposure<IGenericRenderTargetView>("rtv");
 			pGlobalSource->AddExposure<IGenericRenderTargetView>("depthStencil");
 			pGlobalSource->AddExposure<IPxConstantBuffer>("pointLightBuffer");

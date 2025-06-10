@@ -14,10 +14,8 @@ namespace tryn::gfx
 			RenderQueuePass(std::move(name), graph, std::vector<std::string>{"PointLightBind"}), graph{graph}
 		{
 			// declare sink and source
-			pSink = std::make_unique<Sink>();
 			pSink->AddDependency<IPxConstantBuffer>("pointLightBuffer");
 
-			pSource = std::make_unique<Source>();
 			pSource->AddExposure<IPxConstantBuffer>("pointLightBuffer");
 		}
 		void Execute(const IGraphics& gfx) override

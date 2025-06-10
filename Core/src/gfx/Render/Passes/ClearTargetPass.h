@@ -4,6 +4,8 @@
 #include "Core/src/gfx/Bindables/IBufferBase.h"
 #include <Core/src/utl/StatefulMeta/TemplateData.h>
 #include <Core/src/gfx/RTVDSFwd.h>
+#include <type_traits>
+#include <functional>
 
 namespace tryn::gfx
 {
@@ -16,59 +18,50 @@ namespace tryn::gfx
 	template <typename T>
 	concept RenderTargetOrDepthStencil = IsDepthStencil<T> || IsRenderTarget<T>;
 
-	template <typename T, utl::StaticString Name>
-		requires RenderTargetOrDepthStencil<T>
-	struct TargetIn
-	{
-		using Type = T;
-		static constexpr const utl::StaticString<Name.n> staticString = Name;
-		static constexpr const char* name = Name.v;
-	};
-
-	template <typename T>
-	struct IsTargetIn : std::false_type{};
-
-	template <typename T>
-	requires RenderTargetOrDepthStencil<typename T::Type>
-	struct IsTargetIn<T> : std::true_type{};
-
-	template <typename T>
-	concept TargetInType = IsTargetIn<T>::value;
-
-	template <TargetInType... Param>
 	class ClearTargetPass : public IRenderPass
 	{
 	public:
 		ClearTargetPass(const std::string& name)
 			:
-			IRenderPass(name)
-		{
-			pSink = std::make_unique<Sink>();
-			(pSink->AddDependency<typename Param::Type>(Param::name), ...);
+			IRenderPass(name) {}
+		template <RenderTargetOrDepthStencil T, typename Func = void>
+			requires std::invocable<Func> || std::is_same_v<Func, void>
+		void AddTarget(const std::string& name);
 
-			pSource = std::make_unique<Source>();
-			(pSource->AddExposure<typename Param::Type>(Param::name), ...);
-		}
 		void Execute(const IGraphics& gfx) override
 		{
-			std::apply([&](auto&&... ppArg){ ((**ppArg)->Clear(), ...);
-			BindSourceElement(forward_as_tuple(ppArg...));}, tupleInQuestion);
-		}
-
-		template <unsigned N = 0, typename... Args>
-		void BindSourceElement(std::tuple<Args...>&& ppArg)
-		{
-			if constexpr (N < std::tuple_size_v<std::tuple<Args...>>)
+			for (const auto& func : pFuncs)
 			{
-				auto pConcreteSource = reinterpret_cast<SourceType*>(pSource.get());
-				auto& pTarget = **std::get<N>(ppArg);
-				auto nthDesignator = std::tuple_element_t<N, BufferParamTuple>::name;
-				pConcreteSource->Set(pTarget, nthDesignator);
-				return BindSourceElement<N + 1>(std::forward<std::tuple<Args...>>(ppArg));
+				func(pSink.get(), pSource.get());
 			}
 		}
 
-	private:
-		using BufferParamTuple = std::tuple<Param...>;
+		std::vector<std::function<void(const Sink*, Source*)>> pFuncs;
 	};
+
+	template <RenderTargetOrDepthStencil T, typename Func>
+		requires std::invocable<Func> || std::is_same_v<Func, void>
+	void ClearTargetPass::AddTarget(const std::string& name)
+	{
+		using namespace std::placeholders;
+		pSink->AddDependency<T>(name);
+		pSource->AddExposure<T>(name);
+		if constexpr (std::is_same_v<Func, void>)
+		{
+			auto func = std::bind([](const Sink* pSink, Source* pSource, const std::string& name)
+				{
+					auto& target = pSink->Get<T>(name);
+					target.Clear();
+					pSource->Set(target, name);
+				}, _1, _2, std::move(name));
+
+			pFuncs.emplace_back(func);
+		}
+		else
+		{
+			static constexpr Func func;
+			pFuncs.emplace_back(func);
+		}
+		
+	}
 }

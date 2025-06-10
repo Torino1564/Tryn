@@ -197,7 +197,7 @@ namespace tryn::gfx
 			trynass_msg(ConstantBufferLayout::TypeAttrLookup<T>::valid == true, L"Get called with an unsupported type");
 			static_assert(ConstantBufferLayout::TypeAttrLookup<T>::valid == true);
 
-			return *reinterpret_cast<T*>(pBytes);
+			return *std::bit_cast<T*>(pBytes);
 		}
 		ConstantBufferLayout::Node& Node();
 		bool Exists() const;
@@ -206,8 +206,8 @@ namespace tryn::gfx
 		T& operator=(const T& rhs) const
 		{
 			static_assert(ConstantBufferLayout::ReverseTypeAttr<std::remove_const_t<T>>::valid, "Unsupported SysType used in assignment");
-			*(reinterpret_cast<T*>(pBytes)) = rhs;
-			return *(reinterpret_cast<T*>(pBytes));
+			*(std::bit_cast<T*>(pBytes)) = rhs;
+			return *(std::bit_cast<T*>(pBytes));
 		}
 	private:
 		ConstantBufferLayout::Node& node;

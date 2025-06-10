@@ -11,18 +11,15 @@ namespace tryn::gfx
 		EntityIDPass(IRenderGraph& graph, std::string name = "EntityIDPass")
 			: RenderQueuePass(std::move(name), graph, std::vector<std::string>{"EntityID"})
 		{
-			pSink = std::make_unique<SinkType>(In<IGenericRenderTargetView>("rtv"));
-			sink = static_cast<SinkType*>(pSink.get());
-
-			pSource = std::make_unique<SourceType>(Out<IGenericRenderTargetView>("rtv"));
-			source = static_cast<SourceType*>(pSource.get());
+			pSink->AddDependency<IGenericRenderTargetView>("rtv");
+			pSource->AddExposure<IGenericRenderTargetView>("rtv");
 		}
 
 		void Execute(const IGraphics& gfx) override
 		{
-			auto& pRTV = sink->Get<IGenericRenderTargetView>("rtv");
+			const auto& rtv = pSink->Get<IGenericRenderTargetView>("rtv");
 
-			pRTV->BindAsRTV();
+			rtv.BindAsRTV();
 
 			// This queue pass knows that the first queue is the entityID one (because it was declared that way on its constructor)
 			auto& entityIDQueue = *pQueues[0];
@@ -31,13 +28,7 @@ namespace tryn::gfx
 			entityIDQueue.RunJobs(gfx);
 			entityIDQueue.Clear();
 
-			source->Set(pRTV, "rtv");
+			pSource->Set(rtv, "rtv");
 		}
-	private:
-		using SinkType = Sink<In<IGenericRenderTargetView>>;
-		using SourceType = Source<Out<IGenericRenderTargetView>>;
-
-		SinkType* sink;
-		SourceType* source;
 	};
 }

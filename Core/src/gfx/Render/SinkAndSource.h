@@ -41,9 +41,10 @@ namespace tryn::gfx
 		template <typename T>
 		void AddDependency(const std::string& dependency);
 		void Bind(Source& source, const std::string& exposure, const std::string& dependency, std::optional<utl::UUID_t> uuid = std::nullopt);
-
 		template <typename T>
-		std::shared_ptr<T> Get(const std::string& dependency);
+		T& Get(const std::string& dependency);
+		template <typename T>
+		const T& Get(const std::string& dependency) const;
 	private:
 		struct Entry
 		{
@@ -71,14 +72,14 @@ namespace tryn::gfx
 		template <typename T>
 		void AddExposure(const std::string& name);
 		template <typename T>
-		void Set(const std::shared_ptr<T>& pResource, const std::string& exposureName);
-		std::any& Get(uint16_t index);
+		void Set(T& resource, const std::string& exposureName);
+		void* Get(uint16_t index) const;
 		bool IsNonConstBounded(const std::string& exposureName)
 		{
 		}
 
 		template <typename T>
-		const std::shared_ptr<T>& Get(const std::string& exposureName);
+		const T& Get(const std::string& exposureName);
 		
 
 		enum struct Type
@@ -91,12 +92,13 @@ namespace tryn::gfx
 		{
 			std::string name;
 			utl::UUID_t uuid;
-			std::any resource;
+			void* pResource;
 			std::vector<std::pair<Sink*, Type>> bindings;
 		};
 
 		// 0 means unbounded, 1 is bounded
 		std::vector<Entry> data;
+		class IRenderPass* pPass = nullptr;
 	};
 
 	template <typename T>
@@ -107,7 +109,7 @@ namespace tryn::gfx
 	}
 
 	template <typename T>
-	std::shared_ptr<T> Sink::Get(const std::string& dependency)
+	T& Sink::Get(const std::string& dependency)
 	{
 		auto it = std::ranges::find_if(data, [&](const Entry& entry)
 			{
@@ -116,37 +118,44 @@ namespace tryn::gfx
 		trynass(it != data.end()).msg(L"Could not find the dependency: " + utl::ToWide(dependency));
 		trynass(it->uuid == ZT_TYPE_UUID(T)).msg(L"Missmatch between dependency type and requested type");
 
-		return std::any_cast<std::shared_ptr<T>>(it->pSource->Get(it->exposureIndex));
+		return *static_cast<T*>(it->pSource->Get(it->exposureIndex));
+	}
+
+	template <typename T>
+	const T& Sink::Get(const std::string& dependency) const
+	{
+		auto it = std::ranges::find_if(data, [&](const Entry& entry)
+			{
+				return entry.name == dependency;
+			});
+		trynass(it != data.end()).msg(L"Could not find the dependency: " + utl::ToWide(dependency));
+		trynass(it->uuid == ZT_TYPE_UUID(T)).msg(L"Missmatch between dependency type and requested type");
+
+		return *std::bit_cast<T*>(it->pSource->Get(it->exposureIndex));
 	}
 
 	template <typename T>
 	void Source::AddExposure(const std::string& name)
 	{
 		// Todo: assert uniqueness
-		data.emplace_back(name, ZT_TYPE_UUID(T), {}, {});
+		data.emplace_back(std::move(Entry{ name, ZT_TYPE_UUID(T), nullptr, {} }));
 	}
 
 	template <typename T>
-	void Source::Set(const std::shared_ptr<T>& pResource, const std::string& exposureName)
+	void Source::Set(T& resource, const std::string& exposureName)
 	{
-		// assert no duplicate exposures:
-		const auto it = std::ranges::find_if(data, [&](const auto& tuple)
+		// assert existing exposure:
+		const auto it = std::ranges::find_if(data, [&](const Entry& tuple)
 			{
-				return tuple.first == exposureName;
+				return tuple.name == exposureName;
 			});
-		trynass(it == data.end());
+		trynass(it != data.end());
 
-		// Append new element
-		data.emplace_back({
-			exposureName,
-			ZT_TYPE_UUID(T),
-			pResource,
-			{}
-			});
+		it->pResource = (void*)&resource;
 	}
 
 	template <typename T>
-	const std::shared_ptr<T>& Source::Get(const std::string& exposureName)
+	const T& Source::Get(const std::string& exposureName)
 	{
 		const auto it = std::ranges::find_if(data, [&](const Entry& entry)
 			{
@@ -157,6 +166,6 @@ namespace tryn::gfx
 			});
 		trynass(it != data.end()).msg(L"Failed finding dependency: " + utl::ToWide(exposureName));
 
-		return std::any_cast<T>(it->resource);
+		return *std::bit_cast<T*>(it->pResource);
 	}
 }

@@ -1,5 +1,6 @@
 #include "TrynPCH.h"
 #include "SinkAndSource.h"
+#include <Core/src/gfx/Render/RenderPass.h>
 
 namespace tryn::gfx
 {
@@ -10,7 +11,7 @@ namespace tryn::gfx
 			{
 				return entry.name == exposure;
 			});
-		trynass(exposureIt != source.data.end()).msg(L"Could not find exposure: " + utl::ToWide(exposure));
+		trynass(exposureIt != source.data.end()).msg(L"Could not find exposure: [" + utl::ToWide(exposure) + L"] in pass: [" + (source.pPass != nullptr ? utl::ToWide(source.pPass->GetName()) : L"null") + L"]");
 
 		if (uuid.has_value())
 			trynass(exposureIt->uuid == uuid.value());
@@ -32,8 +33,8 @@ namespace tryn::gfx
 		exposureIt->bindings.emplace_back(this, Source::Type::NonConst);
 	}
 
-	std::any& Source::Get(const uint16_t index)
+	void* Source::Get(const uint16_t index) const
 	{
-		return data[index].resource;
+		return data[index].pResource;
 	}
 }

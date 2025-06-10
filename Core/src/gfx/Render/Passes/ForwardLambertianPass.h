@@ -14,22 +14,20 @@ namespace tryn::gfx
 			RenderQueuePass(std::move(name), graph, std::vector<std::string>{"Lambertian"})
 		{
 			// declare sink and source
-			pSink = std::make_unique<Sink>();
 			pSink->AddDependency<IGenericRenderTargetView>("rtv");
 			pSink->AddDependency<IGenericDepthStencil>("depthStencil");
 			pSink->AddDependency<IPxConstantBuffer>("pointLightBuffer");
 
-			pSource = std::make_unique<Source>();
 			pSource->AddExposure<IGenericRenderTargetView>("rtv");
 			pSource->AddExposure<IGenericDepthStencil>("depthStencil");
 		}
 		void Execute(const IGraphics& gfx) override
 		{
 			// bind Render Target View
-			const auto& pRTV = pSink->Get<IGenericRenderTargetView>("rtv");
-			const auto& pDSV = pSink->Get<IGenericDepthStencil>("depthStencil");
+			const auto& rtv = pSink->Get<IGenericRenderTargetView>("rtv");
+			auto& dsv = pSink->Get<IGenericDepthStencil>("depthStencil");
 
-			pRTV->BindAsRTV(pDSV.get());
+			rtv.BindAsRTV(&dsv);
 			
 			// This queue pass knows that the first queue is the lambertian one (because it was declared that way on its constructor)
 			auto& lambertianQueue = *pQueues[0];
@@ -38,8 +36,8 @@ namespace tryn::gfx
 			lambertianQueue.RunJobs(gfx);
 			lambertianQueue.Clear();
 
-			pSource->Set(pRTV, "rtv");
-			pSource->Set(pDSV, "depthStencil");
+			pSource->Set(rtv, "rtv");
+			pSource->Set(dsv, "depthStencil");
 		}
 	};
 }

@@ -11,18 +11,16 @@
 
 namespace tryn::gfx
 {
-	FullscreenRenderPass::FullscreenRenderPass(IRenderGraph& renderGraph, std::string name, const std::shared_ptr<IPixelShader>* pPS)
+	FullscreenRenderPass::FullscreenRenderPass(IRenderGraph& renderGraph, std::string name, bool bindOSRtv, bool bindDepthStencil, const std::shared_ptr<IPixelShader>* pPS)
 		:
-		IRenderPass(name)
+		IRenderPass(name), bindOSRtv(bindOSRtv), binddepthStencil(bindDepthStencil)
 	{
 		// declare sink and source
-		pSink = std::make_unique<Sink>();
 
 		pSink->AddDependency<IGenericRenderTargetView>("rtv");
 		pSink->AddDependency<IShaderResourceRenderTargetView>("OSBuf");
 		pSink->AddDependency<IGenericDepthStencil>("depthStencil");
 
-		pSource = std::make_unique<Source>();
 		pSource->AddExposure<IGenericRenderTargetView>("rtv");
 		pSource->AddExposure<IGenericDepthStencil>("depthStencil");
 
@@ -56,13 +54,25 @@ namespace tryn::gfx
 	void FullscreenRenderPass::Execute(const IGraphics& gfx)
 	{
 		// Bind buffers and render targets
-		const auto& pRTV = pSink->Get<IGenericRenderTargetView>("rtv");
-		const auto& pDSV = pSink->Get<IGenericDepthStencil>("depthStencil");
-		const auto& pOSRtv = pSink->Get<IShaderResourceRenderTargetView>("OSBuf");
+		const auto& rtv = pSink->Get<IGenericRenderTargetView>("rtv");
 
-		pRTV->BindAsRTV(pDSV.get());
-		pOSRtv->Bind();
-
+		if (binddepthStencil)
+		{
+			auto& dsv = pSink->Get<IGenericDepthStencil>("depthStencil");
+			rtv.BindAsRTV(&dsv);
+			pSource->Set(dsv, "depthStencil");
+		}
+		else
+		{
+			rtv.BindAsRTV();
+		}
+		if (bindOSRtv)
+		{
+			auto& osrtv = pSink->Get<IShaderResourceRenderTargetView>("OSBuf");
+			osrtv.Bind();
+		}
+		if (pPxConstantBuffer)
+			pPxConstantBuffer->Bind();
 		// Bind fullscreen Geometry
 		pVertexBuffer->Bind();
 		pIndexBuffer->Bind();
@@ -73,8 +83,12 @@ namespace tryn::gfx
 		pPTopology->Bind();
 		gfx.DrawIndexed(6);
 
-		pSource->Set(pRTV, "rtv");
-		pSource->Set(pDSV, "depthStencil");
+		pSource->Set(rtv, "rtv");
+	}
+
+	void FullscreenRenderPass::SetConstantBuffer(const std::shared_ptr<IPxConstantBuffer>& pPxConstantBuffer_)
+	{
+		pPxConstantBuffer = pPxConstantBuffer_;
 	}
 }
 

@@ -33,7 +33,7 @@ namespace tryn::gfx::dx11
 	}
 
 	template <BufferResourceType Type>
-	void DX11RenderTargetView<Type>::BindAsRTV(IGenericDepthStencil* pDSV)
+	void DX11RenderTargetView<Type>::BindAsRTV(IGenericDepthStencil* pDSV) const
 	{
 		ID3D11DepthStencilView* pDepthStencilView = nullptr;
 

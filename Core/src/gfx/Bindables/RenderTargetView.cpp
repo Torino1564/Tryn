@@ -6,7 +6,7 @@
 
 namespace tryn::gfx 
 {
-	void IGenericRenderTargetView::BindAsRTV(IGenericDepthStencil* pDSV)
+	void IGenericRenderTargetView::BindAsRTV(IGenericDepthStencil* pDSV) const
 	{
 		trylog.warn(L"BindAsRTV no implementation found!");
 	}

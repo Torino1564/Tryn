@@ -8,9 +8,14 @@ namespace tryn::gfx
 	class FullscreenRenderPass :public IRenderPass
 	{
 	public:
-		FullscreenRenderPass(class IRenderGraph& renderGraph, std::string name = "FullScreenRenderPass", const std::shared_ptr<IPixelShader>* pPS = nullptr);
+		FullscreenRenderPass(class IRenderGraph& renderGraph, std::string name = "FullScreenRenderPass", bool bindOSRtv = true, bool bindDepthStencil = true, const std::shared_ptr<IPixelShader>* pPS = nullptr);
 		void Execute(const IGraphics& gfx) override;
+		void SetConstantBuffer(const std::shared_ptr<IPxConstantBuffer>& pPxConstantBuffer);
 	private:
+		// bindables
+		bool bindOSRtv = true;
+		bool binddepthStencil = true;
+
 		// shaders
 		std::shared_ptr<class IPixelShader> pFullscreenPS;
 		std::shared_ptr<class IVertexShader> pFullscreenVS;
@@ -21,5 +26,6 @@ namespace tryn::gfx
 		std::shared_ptr<class IInputLayout> pInputLayout;
 		std::shared_ptr<ISampler> pSamplerState;
 		std::shared_ptr<class IPrimitiveTopology> pPTopology;
+		std::shared_ptr<IPxConstantBuffer> pPxConstantBuffer = nullptr;
 	};
 }

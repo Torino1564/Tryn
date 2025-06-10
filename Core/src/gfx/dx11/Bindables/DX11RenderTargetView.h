@@ -17,7 +17,7 @@ namespace tryn::gfx::dx11
 			requires (Type == BufferResourceType::ShaderResource);
 		DX11RenderTargetView(const Graphics& gfx, ID3D11Texture2D* pTexture)
 			requires (Type == BufferResourceType::OutputOnly);
-		void BindAsRTV(IGenericDepthStencil* pDSV = nullptr) override;
+		void BindAsRTV(IGenericDepthStencil* pDSV = nullptr) const override;
 		void Bind() override;
 		void Bind(const class IContext& ctx) override;
 		ID3D11RenderTargetView* Get() const;

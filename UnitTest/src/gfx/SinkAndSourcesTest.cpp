@@ -11,19 +11,11 @@ namespace Gfx
 	public:
 		TEST_METHOD(SinkCreation)
 		{
-			auto testSink = Sink(In<ITexture>("tex1"), In<JITUpdateBuffer>("buf1"));
-
-			static_assert(std::is_same<std::tuple_element_t<0,decltype(testSink)::DependencyTypeTuple>, std::shared_ptr<ITexture>::element_type>::value);
-			static_assert(std::is_same<std::tuple_element_t<1, decltype(testSink)::DependencyTypeTuple>, std::shared_ptr<JITUpdateBuffer>::element_type>::value);
+			
 		}
 		TEST_METHOD(SourceCreation)
 		{
-			auto testSource = Source(Out<ITexture>("tex1"), Out<JITUpdateBuffer>("buf1"));
-			decltype(testSource)::ExposureTuple testTuple;
-			for (auto& element : testSource.names)
-			{
-				std::cout << element << "\n";
-			}
+			
 		}
 	};
 }

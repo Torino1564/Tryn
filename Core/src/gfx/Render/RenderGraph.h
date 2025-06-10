@@ -40,7 +40,7 @@ namespace tryn::gfx
 		Pass& AddPass(Pass&& pass)
 		{
 			pPasses.emplace_back(std::unique_ptr<Pass>(new Pass(std::forward<Pass>(pass))));
-			return *pPasses.back();
+			return static_cast<Pass&>(*pPasses.back());
 		}
 		struct LinkageParam
 		{

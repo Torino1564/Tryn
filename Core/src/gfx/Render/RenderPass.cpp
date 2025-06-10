@@ -4,7 +4,11 @@
 namespace tryn::gfx
 {
 	IRenderPass::IRenderPass(std::string name): name(std::move(name))
-	{}
+	{
+		pSink = std::make_unique<Sink>();
+		pSource = std::make_unique<Source>();
+		pSource->pPass = this;
+	}
 
 	IRenderPass::IRenderPass(IRenderPass&& rhs) noexcept
 	{
