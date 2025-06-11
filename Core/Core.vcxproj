@@ -95,6 +95,7 @@
     <ClInclude Include="src\ecs\Component.h" />
     <ClInclude Include="src\ecs\Query.h" />
     <ClInclude Include="src\ecs\SerializeLambda.h" />
+    <ClInclude Include="src\ecs\sys\HoverEntitySystem.h" />
     <ClInclude Include="src\ecs\sys\JITBufferCallbackSystem.h" />
     <ClInclude Include="src\ecs\Utils.h" />
     <ClInclude Include="src\fsx\BoundingBox.h" />

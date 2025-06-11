@@ -7,6 +7,7 @@
 #include <Core/third/glm/glm.hpp>
 #include <thread>
 #include <semaphore>
+#include <filesystem>
 #include <Core/src/ccr/GenericTaskQueue.h>
 #include "Render/RenderGraph.h"
 #include <Core/src/gfx/IContext.h>
