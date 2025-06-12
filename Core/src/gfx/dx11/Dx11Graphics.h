@@ -13,13 +13,13 @@ namespace tryn::win
 	class Window;
 }
 
-template <typename Interface, typename Implementation, typename FunctionType = void>
+template <typename Interface, typename Implementation, typename FunctionArgTuple = void>
 	requires std::is_convertible_v<std::add_pointer_t<Implementation>, std::add_pointer_t<Interface>>
 struct LinkImplementation
 {
 	using Interface_t = Interface;
 	using Implementation_t = Implementation;
-	using FunctionType_t = FunctionType;
+	using FunctionArgTuple_t = FunctionArgTuple;
 };
 
 namespace tryn::gfx::dx11

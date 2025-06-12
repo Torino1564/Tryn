@@ -27,47 +27,92 @@
 #pragma comment (lib,"d3d11.lib")
 #pragma comment (lib,"D3DCompiler.lib")
 
+using namespace std::placeholders;
+
 namespace tryn::gfx::dx11
 {
-	using BindableLinking = std::tuple<
+	using BindableLinking = std::tuple <
 		LinkImplementation<IVertexShader, DX11VertexShader>,
-		LinkImplementation<IPixelShader, DX11PixelShader>
-	>;
+		LinkImplementation<IPixelShader, DX11PixelShader>,
+		LinkImplementation<IPrimitiveTopology, DX11PrimitiveTopology>,
+		LinkImplementation<ITransformCBuf, DX11TransformCBuf>,
+		LinkImplementation<IVertexBuffer, DX11VertexBuffer>,
+		//LinkImplementation<IDepthStencil, DX11DepthStencil>,
+		LinkImplementation<IRasterizer, DX11Rasterizer>,
+		LinkImplementation<ISampler, DX11Sampler>,
+		LinkImplementation<IRenderTargetView, DX11RenderTargetView>,
+		LinkImplementation<ISOAVertexBuffer, DX11SOAVertexBuffer>,
+
+		// Buffers
+		LinkImplementation<IIndexBuffer, DX11IndexBuffer>,
+		LinkImplementation<IVtxConstantBuffer, DX11VtxConstantBuffer>,
+		LinkImplementation<IVtxConstantBufferNCach, DX11VtxConstantBufferNCach>,
+		LinkImplementation<IPxConstantBuffer, DX11PxConstantBuffer>,
+		LinkImplementation<IPxConstantBufferNCach, DX11PxConstantBufferNCach>,
+		LinkImplementation<IInstanceBuffer, DX11InstanceBuffer>,
+
+		// Manually disambiguated overloads via FunctionArgTuple
+		LinkImplementation<IInputLayout, DX11InputLayout, std::tuple<IVertexBuffer&, IVertexShader&>>,
+		LinkImplementation<IInputLayout, DX11InputLayout, std::tuple<VertexLayout&, IVertexShader&>>,
+		LinkImplementation<ITexture, DX11Texture, std::tuple<const std::filesystem::path&, uint8_t>>,
+		LinkImplementation<ITexture, DX11Texture, std::tuple<const aiTexture&, uint8_t>>,
+		LinkImplementation<ITexture, DX11Texture, std::tuple<std::shared_ptr<Texture>, uint8_t>>
+	> ;
+
+	template <typename Implementation, typename FunctionArgTuple, bool HasArgs>
+	struct BindableFunctor;
+
+	template <typename Implementation, typename FunctionArgTuple>
+	struct BindableFunctor<Implementation, FunctionArgTuple, true>
+	{
+		static std::shared_ptr<Implementation> Impl(const IGraphics& gfx, FunctionArgTuple params)
+		{
+			auto future = gfx.Dispatch([&]
+				{
+					static constexpr auto impl = []<typename... Args>(const Graphics & gfx_, Args&&... unpackedArgs)
+					{
+						return std::make_shared<Implementation>(gfx_, std::forward<Args>(unpackedArgs)...);
+					};
+
+					return std::apply(std::bind(std::move(impl), std::cref(static_cast<const Graphics&>(gfx)), _1), std::move(params));
+				});
+			return future.get();
+		}
+	};
+
+	template <typename Implementation>
+	struct BindableFunctor<Implementation, std::tuple<>, false>
+	{
+		static std::shared_ptr<Implementation> Impl(const IGraphics& gfx, std::tuple<>)
+		{
+			auto future = gfx.Dispatch([&]
+				{
+					return std::make_shared<Implementation>(static_cast<const Graphics&>(gfx));
+				});
+			return future.get();
+		}
+	};
 
 	template <unsigned N = 0>
 	void AppendBindableImplementation(IGraphics::BindableVTable& vtable)
 	{
-		using namespace std::placeholders;
 		if constexpr (N < std::tuple_size_v<BindableLinking>)
 		{
 			using Pair = std::tuple_element_t<N, BindableLinking>;
 			using Interface = typename Pair::Interface_t;
 			using Implementation = typename Pair::Implementation_t;
-			using FunctionType = std::conditional_t<std::is_same_v<typename Pair::FunctionType_t, void>, decltype(&Interface::Resolve), typename Pair::FunctionType_t>;
+			using FunctionArgTuple = std::conditional_t<std::is_same_v<typename Pair::FunctionArgTuple_t, void>, typename utl::MethodArgTupleMinusFirst<decltype(&Interface::Resolve)>::t, typename Pair::FunctionArgTuple_t>;
 
-			struct Functor
-			{
-				static std::shared_ptr<Implementation> Impl(const IGraphics& gfx, typename utl::MethodArgTupleMinusFirst<FunctionType>::t params)
-				{
-					auto future = gfx.Dispatch([&]
-						{
-							static constexpr auto impl = []<typename... Args>(const Graphics& gfx_, Args&&... unpackedArgs) {
-								return std::make_shared<Implementation>(gfx_, std::forward<Args>(unpackedArgs)...);
-							};
+			using Functor = BindableFunctor<Implementation, FunctionArgTuple, (std::tuple_size_v<FunctionArgTuple> != 0)>;
 
-							return std::apply(std::bind(std::move(impl), std::cref(static_cast<const Graphics&>(gfx)), _1), std::move(params));
-						});
-					return future.get();
-				}
-			};
-
-			trylog.info(utl::ToWide(ZT_TYPE_OF(typename utl::MethodArgTupleMinusFirst<FunctionType>::t).data()));
+			trylog.info(utl::ToWide(ZT_TYPE_OF(FunctionArgTuple).data()));
 			trylog.info(utl::ToWide(ZT_TYPE_OF(decltype(&Functor::Impl)).data()));
 			for (auto& entry : vtable[utl::GetTypeIndex<Interface, IGraphics::SupportedBindables>()])
 			{
 				if (entry.first != nullptr)
 					continue;
-				entry = std::pair<void*, utl::UUID_t>(static_cast<void*>(&Functor::Impl), ZT_TYPE_UUID(typename utl::MethodArgTupleMinusFirst<FunctionType>::t));
+
+				entry = std::pair<void*, utl::UUID_t>(static_cast<void*>(&Functor::Impl), ZT_TYPE_UUID(FunctionArgTuple));
 				break;
 			}
 			return AppendBindableImplementation<N + 1>(vtable);

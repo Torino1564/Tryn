@@ -142,7 +142,8 @@ namespace tryn::gfx
 			IRasterizer,
 			ISampler,
 			IRenderTargetView,
-			IDepthStencil
+			IDepthStencil,
+			ITransformCBuf
 		>;
 
 		using BindableVTable = std::array<std::array<std::pair<void*, utl::UUID_t>, MAX_CONSTRUCTORS_ALLOWED>, std::tuple_size_v<SupportedBindables>>;

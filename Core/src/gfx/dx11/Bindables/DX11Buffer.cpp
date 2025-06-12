@@ -5,7 +5,7 @@ namespace tryn::gfx::dx11
 {
 	template <BufferType Type, CachingPolicy Policy>
 	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, const std::shared_ptr<CPUBuffer>& pCpuBuffer, std::string tag)
-		requires (Type == BufferType::Vertex || Type == BufferType::Index) && (Policy == CachingPolicy::Caching)
+		requires (Type == BufferType::Vertex || Type == BufferType::Index)
 		:
 		gfx(gfx)
 	{
@@ -46,8 +46,8 @@ namespace tryn::gfx::dx11
 	}
 
 	template <BufferType Type, CachingPolicy Policy>
-	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, ConstantBufferLayout::Node arrayElement, int slot,
-		std::size_t numInstances) requires (Type == BufferType::Instance && Policy == CachingPolicy::Caching): gfx(gfx)
+	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, const ConstantBufferLayout::Node& arrayElement, int slot,
+	                                     const std::size_t numInstances) requires (Type == BufferType::Instance): gfx(gfx)
 	{
 		IBufferBase<Type, Policy>::type = GraphicAPI::DX11;
 		ConstantBufferLayout layout;

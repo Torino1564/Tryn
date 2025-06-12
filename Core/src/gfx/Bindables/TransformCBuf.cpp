@@ -5,6 +5,11 @@
 
 namespace tryn::gfx
 {
+	std::shared_ptr<ITransformCBuf> ITransformCBuf::Resolve(const IGraphics& gfx)
+	{
+		return gfx.CreateTransformCBuf();
+	}
+
 	void ITransformCBuf::BindTransformCBuf(const Drawable* parent)
 	{
 		BindParent(parent);

@@ -9,6 +9,7 @@ namespace tryn::gfx
 	class ITransformCBuf : public IBindable
 	{
 	public:
+		static std::shared_ptr<ITransformCBuf> Resolve(const IGraphics& gfx);
 		void BindTransformCBuf(const Drawable* parent);
 		void BindTransformCBuf(const Drawable* parent, const IContext& context);
 		void BindParent(const Drawable* parent) const;

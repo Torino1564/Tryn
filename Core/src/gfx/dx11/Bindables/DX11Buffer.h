@@ -21,13 +21,13 @@ namespace tryn::gfx::dx11
 	{
 	public:
 		DX11Buffer(const Graphics& gfx, const std::shared_ptr<CPUBuffer>& pCpuBuffer, std::string tag = "?")
-			requires (Type == BufferType::Vertex || Type == BufferType::Index) && (Policy == CachingPolicy::Caching);
+			requires (Type == BufferType::Vertex || Type == BufferType::Index);
 
 		// TODO: Add NonCaching variant
 		DX11Buffer(const Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag = "?")
 			requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant);
-		DX11Buffer(const Graphics& gfx, ConstantBufferLayout::Node arrayElement, int slot, std::size_t numInstances = 50)
-			requires (Type == BufferType::Instance && Policy == CachingPolicy::Caching);
+		DX11Buffer(const Graphics& gfx, const ConstantBufferLayout::Node& arrayElement, int slot, std::size_t numInstances = 50)
+			requires (Type == BufferType::Instance);
 		void Resize(std::size_t newSize) override;
 		void Resize_(std::size_t newSize);
 		void InitDynamicCBufferOnGPU();

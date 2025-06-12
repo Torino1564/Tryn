@@ -54,23 +54,23 @@ namespace tryn::gfx
 	class IBufferBase : public IBuffer
 	{
 	public:
-		static std::shared_ptr<IVtxConstantBuffer> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
+		static std::shared_ptr<IVtxConstantBuffer> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, const std::string& tag = "?")
 			requires (Type == BufferType::VtxConstant && Policy == CachingPolicy::Caching);
-		static std::shared_ptr<IVtxConstantBufferNCach> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
+		static std::shared_ptr<IVtxConstantBufferNCach> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, const std::string& tag = "?")
 			requires (Type == BufferType::VtxConstant && Policy == CachingPolicy::NonCaching);
-		static std::shared_ptr<IPxConstantBuffer> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
+		static std::shared_ptr<IPxConstantBuffer> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, const std::string& tag = "?")
 			requires (Type == BufferType::PxConstant && Policy == CachingPolicy::Caching);
-		static std::shared_ptr<IPxConstantBufferNCach> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, std::string tag = "?")
+		static std::shared_ptr<IPxConstantBufferNCach> Resolve(const IGraphics& gfx, ConstantBufferLayout&& cbl, int slot = 0, const std::string& tag = "?")
 			requires (Type == BufferType::PxConstant && Policy == CachingPolicy::NonCaching);
-		static std::shared_ptr<IVertexBuffer> Resolve(const IGraphics& gfx, const std::shared_ptr<VertexBuffer>& cpuBuffer, std::string tag = "?")
+		static std::shared_ptr<IVertexBuffer> Resolve(const IGraphics& gfx, const std::shared_ptr<VertexBuffer>& cpuBuffer, const std::string& tag = "?")
 			requires (Type == BufferType::Vertex && Policy == CachingPolicy::Caching);
-		static std::shared_ptr<IIndexBuffer> Resolve(const IGraphics& gfx, std::shared_ptr<IndexBuffer> indices, std::string tag = "?")
+		static std::shared_ptr<IIndexBuffer> Resolve(const IGraphics& gfx, std::shared_ptr<IndexBuffer> indices, const std::string& tag = "?")
 			requires (Type == BufferType::Index && Policy == CachingPolicy::Caching);
-		static std::string GenerateID(const IGraphics& gfx, const std::shared_ptr<VertexBuffer>& cpuBuffer, std::string tag = "?")
+		static std::string GenerateID(const IGraphics& gfx, const std::shared_ptr<VertexBuffer>& cpuBuffer, const std::string& tag = "?")
 			requires (Type == BufferType::Vertex);
-		static std::string GenerateID(const IGraphics& gfx, const std::shared_ptr<IndexBuffer>& indices, std::string tag = "?")
+		static std::string GenerateID(const IGraphics& gfx, const std::shared_ptr<IndexBuffer>& indices, const std::string& tag = "?")
 			requires (Type == BufferType::Index);
-		static std::string GenerateID(const IGraphics& gfx, ConstantBufferLayout& cbl, int slot = 0, std::string tag = "?")
+		static std::string GenerateID(const IGraphics& gfx, ConstantBufferLayout& cbl, int slot = 0, const std::string& tag = "?")
 			requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant);
 		void Bind() override;
 		void Bind(const IContext& context) override;
@@ -82,7 +82,7 @@ namespace tryn::gfx
 		std::string_view GetTag() const;
 		const VertexLayout& GetLayout() const requires (Type == BufferType::Vertex);
 		virtual void Resize(const std::size_t newSize);
-		ElementView operator[](std::string id) const
+		ElementView operator[](const std::string& id) const
 			requires (Type == BufferType::VtxConstant || Type == BufferType::PxConstant);
 		void Accept_(TechniqueProbe& probe)
 			requires (Type == BufferType::VtxConstant || Type == BufferType::PxConstant);
@@ -94,9 +94,8 @@ namespace tryn::gfx
 		static constexpr CachingPolicy policy = Policy;
 
 	protected:
-
-		std::conditional_t<Type != BufferType::Index && Type != BufferType::Vertex, uint16_t, utl::empty_t> slot;
-		std::conditional_t<Type == BufferType::Instance, size_t, utl::empty_t> gpuSize;
+		uint16_t slot = 0;
+		size_t gpuSize = 0;
 	};
 
 	template <BufferType Type, CachingPolicy Policy>

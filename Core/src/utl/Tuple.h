@@ -36,7 +36,7 @@ namespace tryn::utl
 		}
 	}
 
-	template <typename T>
+		template <typename T>
 	struct ArgTuple;
 
 	template <typename Func, typename... Args>
