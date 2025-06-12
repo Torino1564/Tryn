@@ -37,7 +37,7 @@ namespace tryn::gfx::dx11
 		LinkImplementation<IPrimitiveTopology, DX11PrimitiveTopology>,
 		LinkImplementation<ITransformCBuf, DX11TransformCBuf>,
 		LinkImplementation<IVertexBuffer, DX11VertexBuffer>,
-		//LinkImplementation<IDepthStencil, DX11DepthStencil>,
+		LinkImplementation<IDepthStencil, DX11DepthStencil>,
 		LinkImplementation<IRasterizer, DX11Rasterizer>,
 		LinkImplementation<ISampler, DX11Sampler>,
 		LinkImplementation<IRenderTargetView, DX11RenderTargetView>,
@@ -67,14 +67,15 @@ namespace tryn::gfx::dx11
 	{
 		static std::shared_ptr<Implementation> Impl(const IGraphics& gfx, FunctionArgTuple params)
 		{
+			trylog.debug(utl::ToWide(ZT_TYPE_OF(FunctionArgTuple).data()));
 			auto future = gfx.Dispatch([&]
 				{
-					static constexpr auto impl = []<typename... Args>(const Graphics & gfx_, Args&&... unpackedArgs)
+					static constexpr auto impl = []<typename... Args>(Args&&... unpackedArgs)
 					{
-						return std::make_shared<Implementation>(gfx_, std::forward<Args>(unpackedArgs)...);
+						(trylog.debug(utl::ToWide(ZT_TYPE_OF(decltype(unpackedArgs)).data())), ...);
+						return std::make_shared<Implementation>(std::forward<Args>(unpackedArgs)...);
 					};
-
-					return std::apply(std::bind(std::move(impl), std::cref(static_cast<const Graphics&>(gfx)), _1), std::move(params));
+					return std::apply(std::move(impl), std::tuple_cat(std::move(std::tuple(std::cref(static_cast<const Graphics&>(gfx)))), std::move(params)));
 				});
 			return future.get();
 		}
@@ -101,21 +102,36 @@ namespace tryn::gfx::dx11
 			using Pair = std::tuple_element_t<N, BindableLinking>;
 			using Interface = typename Pair::Interface_t;
 			using Implementation = typename Pair::Implementation_t;
-			using FunctionArgTuple = std::conditional_t<std::is_same_v<typename Pair::FunctionArgTuple_t, void>, typename utl::MethodArgTupleMinusFirst<decltype(&Interface::Resolve)>::t, typename Pair::FunctionArgTuple_t>;
-
-			using Functor = BindableFunctor<Implementation, FunctionArgTuple, (std::tuple_size_v<FunctionArgTuple> != 0)>;
-
-			trylog.info(utl::ToWide(ZT_TYPE_OF(FunctionArgTuple).data()));
-			trylog.info(utl::ToWide(ZT_TYPE_OF(decltype(&Functor::Impl)).data()));
-			for (auto& entry : vtable[utl::GetTypeIndex<Interface, IGraphics::SupportedBindables>()])
+			if constexpr (std::is_same_v<typename Pair::FunctionArgTuple_t, void>)
 			{
-				if (entry.first != nullptr)
-					continue;
+				using FunctionArgTuple = typename utl::MethodArgTupleMinusFirst<decltype(&Interface::Resolve)>::t;
+				using Functor = BindableFunctor<Implementation, FunctionArgTuple, (std::tuple_size_v<FunctionArgTuple> != 0)>;
 
-				entry = std::pair<void*, utl::UUID_t>(static_cast<void*>(&Functor::Impl), ZT_TYPE_UUID(FunctionArgTuple));
-				break;
+				for (auto& entry : vtable[utl::GetTypeIndex<Interface, IGraphics::SupportedBindables>()])
+				{
+					if (entry.first != nullptr)
+						continue;
+
+					entry = std::pair<void*, utl::UUID_t>(static_cast<void*>(&Functor::Impl), ZT_TYPE_UUID(FunctionArgTuple));
+					break;
+				}
+				return AppendBindableImplementation<N + 1>(vtable);
 			}
-			return AppendBindableImplementation<N + 1>(vtable);
+			else
+			{
+				using FunctionArgTuple = typename Pair::FunctionArgTuple_t;
+				using Functor = BindableFunctor<Implementation, FunctionArgTuple, (std::tuple_size_v<FunctionArgTuple> != 0)>;
+
+				for (auto& entry : vtable[utl::GetTypeIndex<Interface, IGraphics::SupportedBindables>()])
+				{
+					if (entry.first != nullptr)
+						continue;
+
+					entry = std::pair<void*, utl::UUID_t>(static_cast<void*>(&Functor::Impl), ZT_TYPE_UUID(FunctionArgTuple));
+					break;
+				}
+				return AppendBindableImplementation<N + 1>(vtable);
+			}
 		}
 	}
 
@@ -441,7 +457,7 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::shared_ptr<IInstanceBuffer> Graphics::CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot) const
+	std::shared_ptr<IInstanceBuffer> Graphics::CreateInstanceBuffer(const ConstantBufferLayout::Node& node, int slot, std::size_t size) const
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11InstanceBuffer>(*this, node, slot, size);

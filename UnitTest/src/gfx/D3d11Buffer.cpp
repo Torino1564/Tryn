@@ -1,7 +1,7 @@
 #include <TrynCppUnitTest.h>
 #include "Core/src/gfx/dx11/Bindables/DX11Buffer.h"
 #include <Core/src/win/WindowClass.h>
-
+#include <Core/src/gfx/Bindables/TextureResource.h>
 #include "Core/src/gfx/dx11/DX11BufferFwd.h"
 using namespace tryn;
 
@@ -55,8 +55,8 @@ namespace Gfx
 		}
 		TEST_METHOD(BindableVTableTest)
 		{
-			const std::string test = "Test";
-			auto pBindable = pGfx->CreateBindable<gfx::IVertexShader>(test);
+			const std::filesystem::path test = "Test";
+			auto pBindable = pGfx->CreateBindable<gfx::ITexture>(test, (uint8_t)0);
 		}
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;
 		std::unique_ptr<win::Window> pWnd;

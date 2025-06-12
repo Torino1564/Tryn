@@ -48,6 +48,13 @@ namespace tryn::gfx
 	}
 
 	template <BufferType Type, CachingPolicy Policy>
+	std::shared_ptr<IInstanceBuffer> IBufferBase<Type, Policy>::Resolve(const IGraphics& gfx,
+		const ConstantBufferLayout::Node& node, const int slot, const std::size_t size) requires (Type == BufferType::Instance)
+	{
+		return gfx.CreateInstanceBuffer(node, slot, size);
+	}
+
+	template <BufferType Type, CachingPolicy Policy>
 	std::string IBufferBase<Type, Policy>::GenerateID(const IGraphics& gfx, const std::shared_ptr<VertexBuffer>& cpuBuffer,
 		const std::string& tag) requires (Type == BufferType::Vertex)
 	{

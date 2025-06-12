@@ -18,7 +18,7 @@ namespace tryn::log
 		// Severy Level Policy
 		ioc::Get().Register<log::ISeverityLevelPolicy>([]
 			{
-				return std::make_shared<log::SeverityLevelPolicy>(log::Level::Info);
+				return std::make_shared<log::SeverityLevelPolicy>(log::Level::Debug);
 			});
 
 		// container
