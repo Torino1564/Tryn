@@ -2315,6 +2315,9 @@
     <ClInclude Include="src\gfx\TextureFormat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\utl\Tuple.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="third\glm\detail\func_common.inl">

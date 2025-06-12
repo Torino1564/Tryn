@@ -8,7 +8,7 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11VertexShader::DX11VertexShader(const Graphics& gfx, std::string& path)
+	DX11VertexShader::DX11VertexShader(const Graphics& gfx, const std::string& path)
 		:
 		gfx(gfx)
 	{

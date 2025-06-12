@@ -7,7 +7,7 @@ namespace tryn::gfx::dx11
 	class DX11VertexShader : public IVertexShader
 	{
 	public:
-		DX11VertexShader(const Graphics& gfx, std::string& path);
+		DX11VertexShader(const Graphics& gfx, const std::string& path);
 		static DX11VertexShader Constructor(auto&&... args)
 		{
 			return DX11VertexShader(args...);

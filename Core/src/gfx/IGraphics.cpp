@@ -93,7 +93,7 @@ namespace tryn::gfx
 		return shaderRootPath.data();
 	}
 
-	const std::unordered_map<utl::UUID_t, void*>& IGraphics::GetBindableVTable() const
+	const IGraphics::BindableVTable& IGraphics::GetBindableVTable() const
 	{
 		return bindableVtable;
 	}

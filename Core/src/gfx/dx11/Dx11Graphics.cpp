@@ -30,44 +30,46 @@
 namespace tryn::gfx::dx11
 {
 	using BindableLinking = std::tuple<
-		LinkImplementation<IVertexShader, DX11VertexShader>
+		LinkImplementation<IVertexShader, DX11VertexShader>,
+		LinkImplementation<IPixelShader, DX11PixelShader>
 	>;
 
-	template <typename T>
-	struct ArgTuple;
-
-	template <typename Func, typename... Args>
-	struct ArgTuple<Func(Args...)>
-	{
-		using t = std::tuple<Args...>;
-	};
-
-	template <typename T>
-	struct MethodArgTupleMinusGfx;
-
-	template <typename Func, typename... Args>
-	struct MethodArgTupleMinusGfx<Func(*)(Args...)>
-	{
-		using t = std::tuple<Args...>;
-	};
-
 	template <unsigned N = 0>
-	void AppendBindableImplementation(std::unordered_map<utl::UUID_t, void*>& vtable)
+	void AppendBindableImplementation(IGraphics::BindableVTable& vtable)
 	{
-		if constexpr (N < std::tuple_size_v<Graphics::BindableLinking>)
+		using namespace std::placeholders;
+		if constexpr (N < std::tuple_size_v<BindableLinking>)
 		{
 			using Pair = std::tuple_element_t<N, BindableLinking>;
 			using Interface = typename Pair::Interface_t;
 			using Implementation = typename Pair::Implementation_t;
+			using FunctionType = std::conditional_t<std::is_same_v<typename Pair::FunctionType_t, void>, decltype(&Interface::Resolve), typename Pair::FunctionType_t>;
 
-			static constexpr auto func = [](typename MethodArgTupleMinusGfx<decltype(&Interface::Resolve)>::t params)
+			struct Functor
+			{
+				static std::shared_ptr<Implementation> Impl(const IGraphics& gfx, typename utl::MethodArgTupleMinusFirst<FunctionType>::t params)
 				{
-					auto newTuple = std::tuple_cat((IGraphics*)nullptr, std::move(params));
-					return std::shared_ptr<Interface>(std::move(std::make_from_tuple<Implementation>(std::move(newTuple))));
-				};
+					auto future = gfx.Dispatch([&]
+						{
+							static constexpr auto impl = []<typename... Args>(const Graphics& gfx_, Args&&... unpackedArgs) {
+								return std::make_shared<Implementation>(gfx_, std::forward<Args>(unpackedArgs)...);
+							};
 
+							return std::apply(std::bind(std::move(impl), std::cref(static_cast<const Graphics&>(gfx)), _1), std::move(params));
+						});
+					return future.get();
+				}
+			};
 
-			vtable.emplace(ZT_TYPE_UUID(Interface), (void*)&func);
+			trylog.info(utl::ToWide(ZT_TYPE_OF(typename utl::MethodArgTupleMinusFirst<FunctionType>::t).data()));
+			trylog.info(utl::ToWide(ZT_TYPE_OF(decltype(&Functor::Impl)).data()));
+			for (auto& entry : vtable[utl::GetTypeIndex<Interface, IGraphics::SupportedBindables>()])
+			{
+				if (entry.first != nullptr)
+					continue;
+				entry = std::pair<void*, utl::UUID_t>(static_cast<void*>(&Functor::Impl), ZT_TYPE_UUID(typename utl::MethodArgTupleMinusFirst<FunctionType>::t));
+				break;
+			}
 			return AppendBindableImplementation<N + 1>(vtable);
 		}
 	}
@@ -153,7 +155,6 @@ namespace tryn::gfx::dx11
 		InitDefaults();
 
 		// init bindable vtable
-		bindableVtable.reserve(std::tuple_size_v<SupportedBindables>);
 		AppendBindableImplementation<>(bindableVtable);
 	}
 
@@ -395,10 +396,10 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::unique_ptr<IInstanceBuffer> Graphics::CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot) const
+	std::shared_ptr<IInstanceBuffer> Graphics::CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot) const
 	{
 		auto future = Dispatch_([&] {
-			return std::make_unique<DX11InstanceBuffer>(*this, node, slot, size);
+			return std::make_shared<DX11InstanceBuffer>(*this, node, slot, size);
 			});
 		return future.get();
 	}
@@ -407,15 +408,15 @@ namespace tryn::gfx::dx11
 		std::optional<uint16_t> slot, ComparissonMode mode) const
 	{
 		auto future = Dispatch_([&] {
-			return std::make_unique<DX11DepthStencil>(*this, dimensions, shaderResource, slot, mode);
+			return std::make_shared<DX11DepthStencil>(*this, dimensions, shaderResource, slot, mode);
 			});
 		return future.get();
 	}
 
-	std::unique_ptr<ITransformCBuf> Graphics::CreateTransformCBuf() const
+	std::shared_ptr<ITransformCBuf> Graphics::CreateTransformCBuf() const
 	{
 		auto future = Dispatch_([&] {
-			return std::make_unique<DX11TransformCBuf>(*this);
+			return std::make_shared<DX11TransformCBuf>(*this);
 			});
 		return future.get();
 	}

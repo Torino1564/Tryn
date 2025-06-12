@@ -16,6 +16,7 @@
 #include <Core/src/gfx/ComparissonMode.h>
 #include <Core/src/win/WindowHandle.h>
 #include <Core/src/gfx/TextureFormat.h>
+#include <Core/src/utl/Tuple.h>
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
@@ -122,21 +123,51 @@ namespace tryn::gfx
 		{
 			return Dispatch_(std::forward<F>(f));
 		}
+		static constexpr auto MAX_CONSTRUCTORS_ALLOWED = 5;
 
-		virtual const std::unordered_map<utl::UUID_t, void*>& GetBindableVTable() const;
+		using SupportedBindables = std::tuple<
+			IVertexBuffer,
+			ISOAVertexBuffer,
+			IIndexBuffer,
+			IVertexShader,
+			IPixelShader,
+			IInputLayout,
+			IPrimitiveTopology,
+			IVtxConstantBuffer,
+			IVtxConstantBufferNCach,
+			IPxConstantBuffer,
+			IPxConstantBufferNCach,
+			IInstanceBuffer,
+			ITexture,
+			IRasterizer,
+			ISampler,
+			IRenderTargetView,
+			IDepthStencil
+		>;
+
+		using BindableVTable = std::array<std::array<std::pair<void*, utl::UUID_t>, MAX_CONSTRUCTORS_ALLOWED>, std::tuple_size_v<SupportedBindables>>;
+		const BindableVTable& GetBindableVTable() const;
 
 		// Bindable Creation
 		template <typename T, typename... Args>
-		requires std::derived_from<T, IBindable>
-		std::shared_ptr<T> CreateBindable(Args... args) const
-		{
+			requires std::is_convertible_v<std::add_pointer_t<T>, std::add_pointer_t<IBindable>>
+		std::shared_ptr<T> CreateBindable(Args&&... args) const
+		{ 
+			static_assert(utl::tuple_contains_type_v<T, SupportedBindables>, "Attempting to create unsupported bindable type");
 			const auto& vtable = GetBindableVTable();
-			auto func = static_cast<std::shared_ptr<T>(*)(Args...)>(vtable.at(ZT_TYPE_UUID(T)));
-			auto pBindable = func(args...);
-			return std::static_pointer_cast<T>(pBindable);
+			auto& funcArray = vtable[utl::GetTypeIndex<T, SupportedBindables>()];
+			for (auto [pFunc, uuid] : funcArray)
+			{
+				trylog.info(utl::ToWide(ZT_TYPE_OF(std::tuple<Args...>).data()));
+				if (uuid != ZT_TYPE_UUID(std::tuple<Args...>))
+					continue;
+				auto func = static_cast<std::shared_ptr<T>(*)(const IGraphics&, std::tuple<Args...>)>(pFunc);
+				auto pBindable = func(*this, std::forward_as_tuple(std::forward<Args>(args)...));
+				return std::static_pointer_cast<T>(pBindable);
+			}
+			std::runtime_error{"Attempting to create a bindable with incorrect parameters. See the Resolve declarations"};
+			std::unreachable();
 		}
-
-		using SupportedBindables = std::tuple<int>;
 
 		virtual std::shared_ptr<IVertexBuffer>						CreateVertexBuffer(const std::shared_ptr<VertexBuffer>&, std::string tag = "?") const = 0;
 		virtual std::shared_ptr<ISOAVertexBuffer>					CreateSOAVertexBuffer() const = 0;
@@ -150,7 +181,7 @@ namespace tryn::gfx
 		virtual std::shared_ptr<IVtxConstantBufferNCach>			CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") const= 0;
 		virtual std::shared_ptr<IPxConstantBuffer>					CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") const = 0;
 		virtual std::shared_ptr<IPxConstantBufferNCach>				CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") const = 0;
-		virtual std::unique_ptr<IInstanceBuffer>					CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot = 2) const = 0;
+		virtual std::shared_ptr<IInstanceBuffer>					CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot = 2) const = 0;
 		virtual std::shared_ptr<ITexture>							CreateTexture(std::filesystem::path path, int slot = 0) const = 0;
 		virtual std::shared_ptr<ITexture>							CreateTexture(const aiTexture& tex, int slot = 0) const = 0;
 		virtual std::shared_ptr<ITexture>							CreateTexture(std::shared_ptr<Texture> pTexture, int slot = 0) const = 0;
@@ -158,7 +189,7 @@ namespace tryn::gfx
 		virtual std::shared_ptr<ISampler>							CreateSampler(SamplerType type, bool reflect, int slot) const = 0;
 		virtual std::shared_ptr<IRenderTargetView>					CreateRenderTargetView(spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format = TextureFormat::B8G8R8A8_UNORM) const = 0;
 		virtual std::shared_ptr<IDepthStencil>						CreateDepthStencil(spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot = std::nullopt, ComparissonMode mode = ComparissonMode::Less) const = 0;
-		virtual std::unique_ptr<ITransformCBuf>						CreateTransformCBuf() const = 0;
+		virtual std::shared_ptr<ITransformCBuf>						CreateTransformCBuf() const = 0;
 \
 		// Other resource creation
 		virtual std::unique_ptr<IRenderWorker>						CreateRenderWorker(ccr::Master*) const = 0;
@@ -194,9 +225,9 @@ namespace tryn::gfx
 			return future;
 		}
 		std::unique_ptr<IContext> pContext;
-		std::unordered_map<utl::UUID_t, void*> bindableVtable;
+		BindableVTable bindableVtable;
 		bool vsync = false;
-	protected:
+
 		// Instaced Parents:
 		std::unordered_map<std::string, std::shared_ptr<class InstancedModelParent>> rogueInstancedModelParentMap;
 	};

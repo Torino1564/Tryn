@@ -37,7 +37,7 @@ namespace tryn::gfx
 		std::shared_ptr<ISOAVertexBuffer> pSOAVertexBuffer;
 		std::shared_ptr<IIndexBuffer> pIndexBuffer;
 		std::shared_ptr<IPrimitiveTopology> pTopology;
-		std::unique_ptr<ITransformCBuf> pTransformCBuf;
+		std::shared_ptr<ITransformCBuf> pTransformCBuf;
 		uint32_t indexCount = 0;
 		std::uint16_t ID = 0;
 		std::vector<std::shared_ptr<Material>> pMaterials = {};

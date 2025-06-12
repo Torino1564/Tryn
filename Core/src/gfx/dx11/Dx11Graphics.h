@@ -13,12 +13,13 @@ namespace tryn::win
 	class Window;
 }
 
-template <typename Interface, typename Implementation>
+template <typename Interface, typename Implementation, typename FunctionType = void>
 	requires std::is_convertible_v<std::add_pointer_t<Implementation>, std::add_pointer_t<Interface>>
 struct LinkImplementation
 {
 	using Interface_t = Interface;
 	using Implementation_t = Implementation;
+	using FunctionType_t = FunctionType;
 };
 
 namespace tryn::gfx::dx11
@@ -87,7 +88,7 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<IVtxConstantBufferNCach>			CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") const override;
 		std::shared_ptr<IPxConstantBuffer>					CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") const override;
 		std::shared_ptr<IPxConstantBufferNCach>				CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") const override;
-		std::unique_ptr<IInstanceBuffer>					CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot = 2) const override;
+		std::shared_ptr<IInstanceBuffer>					CreateInstanceBuffer(ConstantBufferLayout::Node node, std::size_t size, int slot = 2) const override;
 		std::shared_ptr<ITexture>							CreateTexture(std::filesystem::path path, int slot = 0) const override;
 		std::shared_ptr<ITexture>							CreateTexture(const aiTexture& tex, int slot = 0) const override;
 		std::shared_ptr<ITexture>							CreateTexture(std::shared_ptr<Texture> pTexture, int slot = 0) const override;
@@ -95,7 +96,7 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<ISampler>							CreateSampler(SamplerType type, bool reflect, int slot) const override;
 		std::shared_ptr<IRenderTargetView>					CreateRenderTargetView(spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format) const override;
 		std::shared_ptr<IDepthStencil>						CreateDepthStencil(spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, ComparissonMode mode) const override;
-		std::unique_ptr<ITransformCBuf>						CreateTransformCBuf() const override;
+		std::shared_ptr<ITransformCBuf>						CreateTransformCBuf() const override;
 		std::unique_ptr<IRenderWorker>						CreateRenderWorker(ccr::Master*) const override;
 		std::shared_ptr<class DX11InputLayout>				CreateInputLayout(const std::vector<D3D11_INPUT_ELEMENT_DESC>& descriptorBuffer, const class DX11VertexShader& vs) const;
 
