@@ -5,6 +5,8 @@
 #include <format>
 #include <Core/src/gfx/StbImageManager.h>
 
+#include "TextureFormat.h"
+
 struct aiTexture;
 
 namespace tryn::gfx
@@ -28,6 +30,7 @@ namespace tryn::gfx
 		Texture(const std::filesystem::path& path, std::optional<glm::vec3> scale = std::nullopt);
 		Texture(const aiTexture& tex, std::optional<glm::vec3> scale = std::nullopt);
 		Texture(const class GLTFTextureData& textureData, std::optional<glm::vec3> scale = std::nullopt);
+		Texture(spa::DimensionsI dimensions, TextureFormat format);
 		static constexpr std::string GenerateID(const std::string& name, std::optional<glm::vec3> scale = std::nullopt);
 		std::string GetID() const noexcept;
 		const std::byte* Data() const noexcept;
@@ -44,7 +47,7 @@ namespace tryn::gfx
 		spa::DimensionsI dimensions;
 		int numChannels = 0;
 		bool hasAlpha = false;
-
+		TextureFormat format = TextureFormat::B8G8R8A8_UNORM;
 		// Bytes
 		std::unique_ptr<std::byte, Deleter> buffer;
 	};

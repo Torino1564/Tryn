@@ -5,6 +5,8 @@
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/win/IWindow.h>
 
+#include "Core/src/ecs/cmp/ComponentManager.h"
+
 namespace tryn::app
 {
 	App::App(const std::shared_ptr<win::IWindow>& wnd, const std::shared_ptr<gfx::IGraphics>& gfx)
@@ -12,7 +14,11 @@ namespace tryn::app
 		pEcs(std::make_unique<ecs::ECS>(this)),
 		wnd(wnd),
 		gfx(gfx)
-	{}
+	{
+		/*pEcs->GetComponentManager().RegisterSingleton(gfx);
+		pEcs->GetComponentManager().RegisterSingleton(wnd);
+		pEcs->GetComponentManager().RegisterSingleton(std::shared_ptr<App>(this));*/
+	}
 
 	App::~App()
 	{

@@ -1,12 +1,12 @@
 #pragma once
 #include <d3d11.h>
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
-#include <Core/src/gfx/Render/RenderWorker.h>
+#include <Core/src/gfx/Render/IRenderWorker.h>
 #include <Core/src/gfx/dx11/Dx11Context.h>
 
 namespace tryn::gfx::dx11
 {
-	class DX11RenderWorker : public gfx::RenderWorker
+	class DX11RenderWorker : public gfx::IRenderWorker
 	{
 		friend class Graphics;
 	public:

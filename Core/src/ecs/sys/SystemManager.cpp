@@ -211,6 +211,16 @@ namespace tryn::ecs
 		return pManager->Gfx();
 	}
 
+	uint32_t System::Tick()
+	{
+		return tickCount++;
+	}
+
+	void System::ResetTickCount()
+	{
+		tickCount = 0;
+	}
+
 	System::System(const SystemGraph& graph)
 		:
 		pEcs(graph.GetSystemManager().GetECS()), pGraph(&graph)

@@ -1,23 +1,16 @@
 #pragma once
 #include <Core/src/gfx/bindables/RenderTargetView.h>
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
-#include <Core/src/utl/EmptyType.h>
-#include <Core/src/gfx/dx11/DX11RTVDSVFwd.h>
 #include <Core/src/gfx/dx11/Bindables/DX11DepthStencil.h>
 
 namespace tryn::gfx::dx11
 {
-	template <BufferResourceType Type>
-	class DX11RenderTargetView : public IRenderTargetView<Type>
+	class DX11RenderTargetView : public IRenderTargetView
 	{
 	public:
-		DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, RenderTargetFormat format)
-			requires (Type == BufferResourceType::OutputOnly);
-		DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, uint16_t slot, RenderTargetFormat format)
-			requires (Type == BufferResourceType::ShaderResource);
-		DX11RenderTargetView(const Graphics& gfx, ID3D11Texture2D* pTexture)
-			requires (Type == BufferResourceType::OutputOnly);
-		void BindAsRTV(IGenericDepthStencil* pDSV = nullptr) const override;
+		DX11RenderTargetView(const Graphics& gfx, spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format);
+		DX11RenderTargetView(const Graphics& gfx, ID3D11Texture2D* pTexture, bool shaderResource, std::optional<uint16_t> slot);
+		void BindAsRTV(IDepthStencil* pDSV = nullptr) const override;
 		void Bind() override;
 		void Bind(const class IContext& ctx) override;
 		ID3D11RenderTargetView* Get() const;
@@ -29,15 +22,16 @@ namespace tryn::gfx::dx11
 		void RegenerateResources(const spa::DimensionsI dimensions);
 		void RegenerateResources(ID3D11Texture2D* pTextureIn);
 
+		void FillTexture(const std::shared_ptr<ITexture>&) override;
+		void FillTextureRegion(const std::shared_ptr<ITexture>&, uint32_t startX, uint32_t endX, uint32_t startY, uint32_t endY) override;
+
 	private:
 		void RTVCreation(const Graphics& gfx, spa::DimensionsI dimensions);
 		void RTVCreation(ID3D11Texture2D* pTextureIn);
-		void SRVCreation(const Graphics& gfx, uint16_t slot)
-			requires (Type == BufferResourceType::ShaderResource);
-
+		void SRVCreation(const Graphics& gfx, uint16_t slot);
 
 		const Graphics& gfx;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRTV;
-		[[no_unique_address]] std::conditional_t<Type == BufferResourceType::ShaderResource, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, utl::empty_t> pSRV;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pSRV;
 	};
 }

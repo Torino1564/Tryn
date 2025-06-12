@@ -9,5 +9,7 @@ namespace tryn::ecs
 		HoverEntitySystem(const SystemGraph& graph);
 		static void InitDependencies(System* self);
 		void Execute() override;
+	private:
+		TICK_INTERVAL(0);
 	};
 }

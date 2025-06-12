@@ -4,49 +4,25 @@
 
 namespace tryn::gfx
 {
-	template <BufferResourceType Type>
-	std::string IDepthStencil<Type>::GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, ComparissonMode mode)
-		requires (Type == BufferResourceType::OutputOnly)
+	std::string IDepthStencil::GenerateID(const IGraphics& gfx, spa::DimensionsI dimensions, const bool shaderResource, const std::optional<uint16_t> slot, const ComparissonMode mode)
 	{
 		static uint16_t depthStencil = 0u;
 
-		auto out = std::format("{}#DS#W:{}H:{}#Mode:{}#{}",
+		auto out = std::format("{}#DS#W:{}H:{}{}#Mode:{}#{}",
 			IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())],
-			dimensions.width, dimensions.height, (int)mode, depthStencil++
+			dimensions.width, dimensions.height,shaderResource ? "#SR#S:" + std::to_string(slot.value_or(0)):"", to_string(mode), depthStencil++
 			);
 
 		return out;
 	}
 
-	template <BufferResourceType Type>
-	std::string IDepthStencil<Type>::GenerateID(const IGraphics& gfx, spa::DimensionsI dimensions, const uint16_t slot, ComparissonMode mode)
-		requires (Type == BufferResourceType::ShaderResource)
+	std::shared_ptr<IDepthStencil> IDepthStencil::Resolve(const IGraphics& gfx, const spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, ComparissonMode mode)
 	{
-		static uint16_t depthStencil = 0u;
-
-			auto out = std::format("{}#DS#W:{}H:{}#Slot:{}#Mode:{}#{}",
-				IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())],
-				dimensions.width, dimensions.height, slot, (int)mode, depthStencil++
-			);
-
-			return out;
+		return BindablePool::Resolve<IDepthStencil>(gfx, dimensions, shaderResource, slot, mode);
 	}
 
-	template <BufferResourceType Type>
-	std::shared_ptr<IOutputOnlyDepthStencil> IDepthStencil<Type>::Resolve(const IGraphics& gfx,
-		const spa::DimensionsI dimensions, ComparissonMode mode) requires (Type == BufferResourceType::OutputOnly)
+	bool IDepthStencil::IsShaderResource() const
 	{
-			return BindablePool::Resolve<IOutputOnlyDepthStencil>(gfx, dimensions, mode);
+		return shaderResource;
 	}
-
-	template <BufferResourceType Type>
-	std::shared_ptr<IShaderResourceDepthStencil> IDepthStencil<Type>::Resolve(const IGraphics& gfx,
-		const spa::DimensionsI dimensions, uint16_t slot,
-		ComparissonMode mode) requires (Type == BufferResourceType::ShaderResource)
-	{
-			return BindablePool::Resolve<IShaderResourceDepthStencil>(gfx, dimensions, slot, mode);
-	}
-
-	template class IDepthStencil<BufferResourceType::OutputOnly>;
-	template class IDepthStencil<BufferResourceType::ShaderResource>;
 }

@@ -125,36 +125,20 @@ namespace tryn::gfx
 				return gfx.CreateSampler(std::forward<Args>(args)...);
 			}
 		};
-		template <> struct ResolveHelper<IOutputOnlyRenderTargetView>
+		template <> struct ResolveHelper<IRenderTargetView>
 		{
 			template <class... Args>
-			std::shared_ptr<IOutputOnlyRenderTargetView> operator()(const IGraphics& gfx, Args&&... args)
+			std::shared_ptr<IRenderTargetView> operator()(const IGraphics& gfx, Args&&... args)
 			{
-				return gfx.CreateOutputOnlyRenderTargetView(std::forward<Args>(args)...);
+				return gfx.CreateRenderTargetView(std::forward<Args>(args)...);
 			}
 		};
-		template <> struct ResolveHelper<IShaderResourceRenderTargetView>
+		template <> struct ResolveHelper<IDepthStencil>
 		{
 			template <class... Args>
-			std::shared_ptr<IShaderResourceRenderTargetView> operator()(const IGraphics& gfx, Args&&... args)
+			std::shared_ptr<IDepthStencil> operator()(const IGraphics& gfx, Args&&... args)
 			{
-				return gfx.CreateShaderResourceRenderTargetView(std::forward<Args>(args)...);
-			}
-		};
-		template <> struct ResolveHelper<IOutputOnlyDepthStencil>
-		{
-			template <class... Args>
-			std::shared_ptr<IOutputOnlyDepthStencil> operator()(const IGraphics& gfx, Args&&... args)
-			{
-				return gfx.CreateOutputOnlyDepthStencil(std::forward<Args>(args)...);
-			}
-		};
-		template <> struct ResolveHelper<IShaderResourceDepthStencil>
-		{
-			template <class... Args>
-			std::shared_ptr<IShaderResourceDepthStencil> operator()(const IGraphics& gfx, Args&&... args)
-			{
-				return gfx.CreateShaderResourceDepthStencil(std::forward<Args>(args)...);
+				return gfx.CreateDepthStencil(std::forward<Args>(args)...);
 			}
 		};
 

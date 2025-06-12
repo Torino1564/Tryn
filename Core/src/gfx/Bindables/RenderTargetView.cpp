@@ -2,52 +2,25 @@
 #include "RenderTargetView.h"
 #include <Core/src/gfx/BindablePool.h>
 
-#include "Core/src/utl/TypeName.h"
-
 namespace tryn::gfx 
 {
-	void IGenericRenderTargetView::BindAsRTV(IGenericDepthStencil* pDSV) const
-	{
-		trylog.warn(L"BindAsRTV no implementation found!");
-	}
-
-	template <BufferResourceType Type>
-	std::string IRenderTargetView<Type>::GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, const uint16_t slot, const RenderTargetFormat format)
-		requires (Type == BufferResourceType::ShaderResource)
-	{
-			static uint16_t rtvCounter = 0u;
-			decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
-			std::string UID(typeStr);
-			UID += "#";
-			UID += "SR";
-			UID += "RTV#W:";
-			UID += dimensions.width;
-			UID += "#H:";
-			UID += dimensions.height;
-			UID += "#";
-			UID += "Slot:";
-			UID += slot;
-			UID += "F:";
-			UID += std::to_underlying(format);
-			UID += "#";
-			UID += rtvCounter++;
-
-			return UID;
-	}
-
-	template <BufferResourceType Type>
-	std::string IRenderTargetView<Type>::GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, const RenderTargetFormat format)
-		requires (Type == BufferResourceType::OutputOnly)
+	std::string IRenderTargetView::GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, const TextureFormat format)
 	{
 		static uint16_t rtvCounter = 0u;
 		decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 		std::string UID(typeStr);
 		UID += "#";
-		UID += "OO";
 		UID += "RTV#W:";
 		UID += dimensions.width;
 		UID += "#H:";
 		UID += dimensions.height;
+		if (shaderResource)
+		{
+			UID += "#SR#Slot:";
+			UID += slot.value_or(0);
+			if (!slot.has_value())
+				trylog.warn(L"Render Target View marked as shader resource but binding slot not specified! Defaulting to slot 0.");
+		}
 		UID += "F:";
 		UID += std::to_underlying(format);
 		UID += "#";
@@ -56,20 +29,8 @@ namespace tryn::gfx
 		return UID;
 	}
 
-	template <BufferResourceType Type>
-	std::shared_ptr<IShaderResourceRenderTargetView> IRenderTargetView<Type>::Resolve(const IGraphics& gfx,
-		const spa::DimensionsI dimensions, uint16_t slot, const RenderTargetFormat format) requires (Type == BufferResourceType::ShaderResource)
+	std::shared_ptr<IRenderTargetView> IRenderTargetView::Resolve(const IGraphics& gfx, spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format)
 	{
-		return BindablePool::Resolve<IShaderResourceRenderTargetView>(gfx, dimensions, slot, format);
+		return BindablePool::Resolve<IRenderTargetView>(gfx, dimensions, shaderResource, slot, format);
 	}
-
-	template <BufferResourceType Type>
-	std::shared_ptr<IOutputOnlyRenderTargetView> IRenderTargetView<Type>::Resolve(const IGraphics& gfx,
-		const spa::DimensionsI dimensions, const RenderTargetFormat format) requires (Type == BufferResourceType::OutputOnly)
-	{
-		return BindablePool::Resolve<IOutputOnlyRenderTargetView>(gfx, dimensions, format);
-	}
-
-	template class IRenderTargetView<BufferResourceType::OutputOnly>;
-	template class IRenderTargetView<BufferResourceType::ShaderResource>;
 }

@@ -3,37 +3,35 @@
 
 namespace tryn::gfx::dx11
 {
-	template <BufferResourceType Type>
-	DX11RenderTargetView<Type>::DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, const RenderTargetFormat format)
-		requires (Type == BufferResourceType::OutputOnly):
+	DX11RenderTargetView::DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, const TextureFormat format)
+		:
 		gfx(gfx)
 	{
+		this->shaderResource = shaderResource;
+		this->slot = slot.value_or(0);
 		this->format = format;
 		this->dimensions = dimensions;
 		RTVCreation(gfx, dimensions);
+		if (shaderResource)
+		{
+			SRVCreation(gfx, this->slot);
+		}
 	}
 
-	template <BufferResourceType Type>
-	DX11RenderTargetView<Type>::DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, uint16_t slot, const RenderTargetFormat format)
-		requires (Type == BufferResourceType::ShaderResource):
+	DX11RenderTargetView::DX11RenderTargetView(const Graphics& gfx, ID3D11Texture2D* pTexture, const bool shaderResource, const std::optional<uint16_t> slot)
+		:
 		gfx(gfx)
 	{
-		this->format = format;
-		this->dimensions = dimensions;
-		RTVCreation(gfx, dimensions);
-		SRVCreation(gfx, slot);
-	}
-
-	template <BufferResourceType Type>
-	DX11RenderTargetView<Type>::DX11RenderTargetView(const Graphics& gfx, ID3D11Texture2D* pTexture) requires (Type ==
-		BufferResourceType::OutputOnly):
-		gfx(gfx)
-	{
+		this->shaderResource = shaderResource;
+		this->slot = slot.value_or(0);
 		RTVCreation(pTexture);
+		if (shaderResource)
+		{
+			SRVCreation(gfx, this->slot);
+		}
 	}
 
-	template <BufferResourceType Type>
-	void DX11RenderTargetView<Type>::BindAsRTV(IGenericDepthStencil* pDSV) const
+	void DX11RenderTargetView::BindAsRTV(IDepthStencil* pDSV) const
 	{
 		ID3D11DepthStencilView* pDepthStencilView = nullptr;
 
@@ -41,14 +39,7 @@ namespace tryn::gfx::dx11
 		if (pDSV != nullptr)
 		{
 			trynass(pDSV->GetAPI() == GraphicAPI::DX11).msg(L"Invalid Depth Stencil View passed to the BindAsRTV function (API type missmatch)").ex();
-			if (pDSV->GetType() == BufferResourceType::OutputOnly)
-			{
-				pDepthStencilView = static_cast<DX11OutputOnlyDepthStencil*>(pDSV)->Get();
-			}
-			else
-			{
-				pDepthStencilView = static_cast<DX11ShaderResourceDepthStencil*>(pDSV)->Get();
-			}
+			pDepthStencilView = static_cast<DX11DepthStencil*>(pDSV)->Get();
 		}
 
 		gfx.GetContext().OMSetRenderTargets(1u, pRTV.GetAddressOf(), pDepthStencilView);
@@ -64,10 +55,9 @@ namespace tryn::gfx::dx11
 		gfx.GetContext().RSSetViewports(1u, &vp);
 	}
 
-	template <BufferResourceType Type>
-	void DX11RenderTargetView<Type>::Bind()
+	void DX11RenderTargetView::Bind()
 	{
-		if constexpr (Type == BufferResourceType::OutputOnly)
+		if (!shaderResource)
 		{
 			trynass(false).msg(L"Cannot bind a render target view as a shader resource. Use ShaderInputRenderTargetView instead.");
 		}
@@ -77,10 +67,9 @@ namespace tryn::gfx::dx11
 		}
 	}
 
-	template <BufferResourceType Type>
-	void DX11RenderTargetView<Type>::Bind(const IContext& ctx)
+	void DX11RenderTargetView::Bind(const IContext& ctx)
 	{
-		if constexpr (Type == BufferResourceType::OutputOnly)
+		if (!shaderResource)
 		{
 			trynass(false).msg(L"Cannot bind a render target view as a shader resource. Use ShaderInputRenderTargetView instead.");
 		}
@@ -93,78 +82,74 @@ namespace tryn::gfx::dx11
 		}
 	}
 
-	template <BufferResourceType Type>
-	ID3D11RenderTargetView* DX11RenderTargetView<Type>::Get() const
+	ID3D11RenderTargetView* DX11RenderTargetView::Get() const
 	{
 		return pRTV.Get();
 	}
 
-	template <BufferResourceType Type>
-	ID3D11RenderTargetView* const* DX11RenderTargetView<Type>::GetAddressOf() const
+	ID3D11RenderTargetView* const* DX11RenderTargetView::GetAddressOf() const
 	{
 		return pRTV.GetAddressOf();
 	}
 
-	template <BufferResourceType Type>
-	ID3D11RenderTargetView** DX11RenderTargetView<Type>::GetAddressOf()
+	ID3D11RenderTargetView** DX11RenderTargetView::GetAddressOf()
 	{
 		return pRTV.GetAddressOf();
 	}
 
-	template <BufferResourceType Type>
-	void DX11RenderTargetView<Type>::Clear() const
+	void DX11RenderTargetView::Clear() const
 	{
 		gfx.GetContext().ClearRenderTargetView(pRTV.Get(), gfx.GetBackgroundColor());
 	}
 
-	template <BufferResourceType Type>
-	void DX11RenderTargetView<Type>::Release()
+	void DX11RenderTargetView::Release()
 	{
 		pRTV->Release();
-		if constexpr (Type == BufferResourceType::ShaderResource)
+		if (shaderResource)
 		{
 			pSRV->Release();
 		}
 	}
 
-	template <BufferResourceType Type>
-	void DX11RenderTargetView<Type>::RegenerateResources(const spa::DimensionsI dimensions)
+	void DX11RenderTargetView::RegenerateResources(const spa::DimensionsI dimensions)
 	{
 		RTVCreation(gfx, dimensions);
-		if constexpr (Type == BufferResourceType::ShaderResource)
+		if (shaderResource)
 		{
 			SRVCreation(gfx, this->slot);
 		}
 	}
 
-	template <BufferResourceType Type>
-	void DX11RenderTargetView<Type>::RegenerateResources(ID3D11Texture2D* pTextureIn)
+	void DX11RenderTargetView::RegenerateResources(ID3D11Texture2D* pTextureIn)
 	{
 		RTVCreation(pTextureIn);
-		if constexpr (Type == BufferResourceType::ShaderResource)
+		if (shaderResource)
 		{
 			SRVCreation(gfx, this->slot);
 		}
 	}
 
-	static DXGI_FORMAT MapDXGIFormat(const RenderTargetFormat format)
+	void DX11RenderTargetView::FillTexture(const std::shared_ptr<ITexture>&)
 	{
-		switch (format)
-		{
-		case RenderTargetFormat::B8G8R8A8_UNORM:
-			return DXGI_FORMAT_B8G8R8A8_UNORM;
-		case RenderTargetFormat::UINT32:
-			return DXGI_FORMAT_R32_UINT;
-		case RenderTargetFormat::UINT32_4:
-			return DXGI_FORMAT_R32G32B32A32_UINT;
-		case RenderTargetFormat::Unknown:
-			return DXGI_FORMAT_UNKNOWN;
-		}
-		return DXGI_FORMAT_UNKNOWN;
 	}
 
-	template <BufferResourceType Type>
-	void DX11RenderTargetView<Type>::RTVCreation(const Graphics& gfx, const spa::DimensionsI dimensions)
+	void DX11RenderTargetView::FillTextureRegion(const std::shared_ptr<ITexture>&, uint32_t startX, uint32_t endX, uint32_t startY, uint32_t endY)
+	{
+		D3D11_TEXTURE2D_DESC textureDesc = {};
+		textureDesc.Width = endX - startX;
+		textureDesc.Height = startY - endY;
+		textureDesc.MipLevels = 1;
+		textureDesc.ArraySize = 1;
+		textureDesc.Format = Graphics::MapDXGIFormat(this->format);
+		textureDesc.SampleDesc.Count = 1;
+		textureDesc.SampleDesc.Quality = 0;
+		textureDesc.Usage = D3D11_USAGE_DEFAULT;
+		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE; // never do we not want to bind offscreen RTs as inputs
+		textureDesc.CPUAccessFlags = 0;
+		textureDesc.MiscFlags = 0;
+	}
+
+	void DX11RenderTargetView::RTVCreation(const Graphics& gfx, const spa::DimensionsI dimensions)
 	{
 		// RTV Creation
 		D3D11_TEXTURE2D_DESC textureDesc = {};
@@ -172,7 +157,7 @@ namespace tryn::gfx::dx11
 		textureDesc.Height = dimensions.height;
 		textureDesc.MipLevels = 1;
 		textureDesc.ArraySize = 1;
-		textureDesc.Format = MapDXGIFormat(this->format);
+		textureDesc.Format = Graphics::MapDXGIFormat(this->format);
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -196,14 +181,15 @@ namespace tryn::gfx::dx11
 		) >> chk;
 	}
 
-	template <BufferResourceType Type>
-	void DX11RenderTargetView<Type>::RTVCreation(ID3D11Texture2D* pTextureIn)
+	void DX11RenderTargetView::RTVCreation(ID3D11Texture2D* pTextureIn)
 	{
 		// get information from texture about dimensions
 		D3D11_TEXTURE2D_DESC textureDesc;
 		pTextureIn->GetDesc(&textureDesc);
 		this->dimensions.width = textureDesc.Width;
 		this->dimensions.height = textureDesc.Height;
+
+		// TODO: Add format here
 
 		// create the target view on the texture
 		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
@@ -217,9 +203,7 @@ namespace tryn::gfx::dx11
 		) >> chk;
 	}
 
-	template <BufferResourceType Type>
-	void DX11RenderTargetView<Type>::SRVCreation(const Graphics& gfx, uint16_t slot)
-		requires (Type == BufferResourceType::ShaderResource)
+	void DX11RenderTargetView::SRVCreation(const Graphics& gfx, uint16_t slot)
 	{
 		// SRV Creation
 		Microsoft::WRL::ComPtr<ID3D11Resource> pTexture;
@@ -227,7 +211,7 @@ namespace tryn::gfx::dx11
 
 		// create the resource view on the texture
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = MapDXGIFormat(this->format);
+		srvDesc.Format = Graphics::MapDXGIFormat(this->format);
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;
@@ -237,7 +221,4 @@ namespace tryn::gfx::dx11
 
 		this->slot = slot;
 	}
-
-	template class DX11RenderTargetView<BufferResourceType::ShaderResource>;
-	template class DX11RenderTargetView<BufferResourceType::OutputOnly>;
 }

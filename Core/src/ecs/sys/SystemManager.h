@@ -9,6 +9,8 @@
 #define ZT_DEFINE_SYSTEM(x) class x : public tryn::ecs::SystemImpl<x>
 #define ZT_NATIVE_ARRAY(x) private: tryn::utl::MultiSpan<x>
 
+#define TICK_INTERVAL(x) private: static constexpr auto tickInterval = x##u;
+
 namespace tryn::app
 {
 	class App;
@@ -33,6 +35,9 @@ namespace tryn::ecs
 	};
 
 	class ECS;
+
+	template <ValidSystem S>
+	struct SystemState {};
 
 	class SystemGraph
 	{
@@ -69,6 +74,7 @@ namespace tryn::ecs
 		{
 			return *pManager;
 		}
+
 	private:
 
 		SystemManager* pManager = nullptr;
@@ -119,6 +125,10 @@ namespace tryn::ecs
 			prerequisiteOfUIDs.push_back(S::UID);
 		}
 	protected:
+		uint32_t Tick();
+		void ResetTickCount();
+
+		uint32_t tickCount = 0u;
 		struct SystemUID
 		{
 			int id;
@@ -157,7 +167,8 @@ namespace tryn::ecs
 			return UID.id;
 		}
 		const static inline auto UID = SystemUID::Resolve();
-
+	protected:
+		static constexpr auto tickInvertval = 0u;
 	private:
 		static constexpr auto name = ZT_TYPE_OF(T);
 	};

@@ -462,6 +462,9 @@
     <ClCompile Include="src\gfx\Render\SinkAndSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\sys\HoverEntitySystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ioc\Container.h">
@@ -1802,7 +1805,7 @@
     <ClInclude Include="src\gfx\dx11\Dx11RenderWorker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\Render\RenderWorker.h">
+    <ClInclude Include="src\gfx\Render\IRenderWorker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\dx11\Dx11Context.h">
@@ -2039,13 +2042,7 @@
     <ClInclude Include="src\utl\StatefulMeta\CTC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\RTVDSFwd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\gui\Element.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gfx\dx11\DX11RTVDSVFwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Render\DefaultRenderGraphs\DefaultRenderGraph.h">
@@ -2313,6 +2310,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ecs\sys\HoverEntitySystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\TextureFormat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

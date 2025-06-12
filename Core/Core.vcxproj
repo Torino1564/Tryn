@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ecs\sys\HoverEntitySystem.cpp" />
     <ClCompile Include="src\ecs\sys\JITBufferCallbackSystem.cpp" />
     <ClCompile Include="src\ecs\Utils.cpp" />
     <ClCompile Include="src\gfx\Bindables\SOAVertexBuffer.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="src\gfx\Shape.h" />
     <ClInclude Include="src\gfx\StbImageManager.h" />
     <ClInclude Include="src\gfx\Terrain\Plane.h" />
+    <ClInclude Include="src\gfx\TextureFormat.h" />
     <ClInclude Include="src\gfx\win\gltfSDK.h" />
     <ClInclude Include="src\gph\TGraph.h" />
     <ClInclude Include="src\gph\TLink.h" />
@@ -242,7 +244,6 @@
     <ClInclude Include="src\gfx\dx11\Bindables\DX11PrimitiveTopology.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11RenderTargetView.h" />
     <ClInclude Include="src\gfx\dx11\Bindables\DX11Sampler.h" />
-    <ClInclude Include="src\gfx\dx11\DX11RTVDSVFwd.h" />
     <ClInclude Include="src\gfx\PointLightParameters.h" />
     <ClInclude Include="src\gfx\Render\DefaultRenderGraphs\DefaultRenderGraph.h" />
     <ClInclude Include="src\gfx\Render\Jobs\BasicJob.h" />
@@ -331,7 +332,6 @@
     <ClInclude Include="src\gfx\Render\TechniqueProbe.h" />
     <ClInclude Include="src\gfx\Render\Techniques\Flat.h" />
     <ClInclude Include="src\gfx\Render\Techniques\ForwardPhong.h" />
-    <ClInclude Include="src\gfx\RTVDSFwd.h" />
     <ClInclude Include="src\gfx\TexturePool.h" />
     <ClInclude Include="src\gfx\IContext.h" />
     <ClInclude Include="src\gfx\Material.h" />
@@ -353,7 +353,7 @@
     <ClInclude Include="src\gfx\Render\RenderGraph.h" />
     <ClInclude Include="src\gfx\Render\RenderQueue.h" />
     <ClInclude Include="src\gfx\Render\RenderTask.h" />
-    <ClInclude Include="src\gfx\Render\RenderWorker.h" />
+    <ClInclude Include="src\gfx\Render\IRenderWorker.h" />
     <ClInclude Include="src\gfx\Texture.h" />
     <ClInclude Include="src\gfx\Vertex.h" />
     <ClInclude Include="src\gfx\VertexFormat.h" />

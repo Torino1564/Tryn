@@ -3,41 +3,33 @@
 
 namespace tryn::gfx::dx11
 {
-	template <BufferResourceType Type>
-	ID3D11DepthStencilView* DX11DepthStencil<Type>::Get() const
+	ID3D11DepthStencilView* DX11DepthStencil::Get() const
 	{
 		return pDSV.Get();
 	}
 
-	template <BufferResourceType Type>
-	ID3D11DepthStencilView** DX11DepthStencil<Type>::GetAddressOf()
+	ID3D11DepthStencilView** DX11DepthStencil::GetAddressOf()
 	{
 		return pDSV.GetAddressOf();
 	}
 
-	template <BufferResourceType Type>
-	DX11DepthStencil<Type>::DX11DepthStencil(const Graphics& gfx, const spa::DimensionsI dimensions,
-		ComparissonMode mode) requires (Type == BufferResourceType::OutputOnly):
-		gfx(gfx), mode(mode)
+	DX11DepthStencil::DX11DepthStencil(const Graphics& gfx, spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, ComparissonMode mode)
+	:
+		mode(mode), gfx(gfx)
 	{
+		this->shaderResource = shaderResource;
+		this->slot = slot.value_or(0);
 		this->type = GraphicAPI::DX11;
-		DSVCreation(gfx, dimensions, mode, (Type == BufferResourceType::ShaderResource));
+		DSVCreation(gfx, dimensions, mode, (shaderResource));
+		if (shaderResource)
+		{
+			SRVCreation(gfx, this->slot);
+		}
 	}
 
-	template <BufferResourceType Type>
-	DX11DepthStencil<Type>::DX11DepthStencil(const Graphics& gfx, const spa::DimensionsI dimensions,
-		const uint16_t slot, ComparissonMode mode) requires (Type == BufferResourceType::ShaderResource):
-		gfx(gfx), mode(mode)
+	void DX11DepthStencil::Bind()
 	{
-		this->type = GraphicAPI::DX11;
-		DSVCreation(gfx, dimensions, mode, (Type == BufferResourceType::ShaderResource));
-		SRVCreation(gfx, slot);
-	}
-
-	template <BufferResourceType Type>
-	void DX11DepthStencil<Type>::Bind()
-	{
-		if constexpr (Type == BufferResourceType::OutputOnly)
+		if (!shaderResource)
 		{
 			trynass(false).msg(L"Cannot bind a depth stencil view as a shader resource. Use ShaderInputDepthStencil instead.");
 		}
@@ -47,10 +39,9 @@ namespace tryn::gfx::dx11
 		}
 	}
 
-	template <BufferResourceType Type>
-	void DX11DepthStencil<Type>::Bind(const IContext& ctx)
+	void DX11DepthStencil::Bind(const IContext& ctx)
 	{
-		if constexpr (Type == BufferResourceType::OutputOnly)
+		if (!shaderResource)
 		{
 			trynass(false).msg(L"Cannot bind a depth stencil view as a shader resource. Use ShaderInputDepthStencil instead.");
 		}
@@ -63,34 +54,30 @@ namespace tryn::gfx::dx11
 		}
 	}
 
-	template <BufferResourceType Type>
-	void DX11DepthStencil<Type>::Clear() const
+	void DX11DepthStencil::Clear() const
 	{
 		gfx.GetContext().ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	}
 
-	template <BufferResourceType Type>
-	void DX11DepthStencil<Type>::Release()
+	void DX11DepthStencil::Release() const
 	{
 		pDSV->Release();
-		if constexpr (Type == BufferResourceType::ShaderResource)
+		if (shaderResource)
 		{
 			pSRV->Release();
 		}
 	}
 
-	template <BufferResourceType Type>
-	void DX11DepthStencil<Type>::RegenerateResource(const spa::DimensionsI dimensions)
+	void DX11DepthStencil::RegenerateResource(const spa::DimensionsI dimensions)
 	{
-		DSVCreation(gfx, dimensions, mode, Type == BufferResourceType::ShaderResource);
-		if constexpr (Type == BufferResourceType::ShaderResource)
+		DSVCreation(gfx, dimensions, mode, shaderResource);
+		if (shaderResource)
 		{
 			SRVCreation(gfx, this->slot);
 		}
 	}
 
-	template <BufferResourceType Type>
-	void DX11DepthStencil<Type>::DSVCreation(const Graphics& gfx, const spa::DimensionsI dimensions,
+	void DX11DepthStencil::DSVCreation(const Graphics& gfx, const spa::DimensionsI dimensions,
 		ComparissonMode mode, bool isShaderResource)
 	{
 		// DSV Creation
@@ -122,9 +109,7 @@ namespace tryn::gfx::dx11
 		gfx.GetDevice().CreateDepthStencilView(pDepthStencil.Get(), &dsvd, pDSV.GetAddressOf()) >> chk;
 	}
 
-	template <BufferResourceType Type>
-	void DX11DepthStencil<Type>::SRVCreation(const Graphics& gfx, const uint16_t slot)
-		requires (Type == BufferResourceType::ShaderResource)
+	void DX11DepthStencil::SRVCreation(const Graphics& gfx, const uint16_t slot)
 	{
 		// SRV Creation
 		Microsoft::WRL::ComPtr<ID3D11Resource> pRes;
@@ -142,7 +127,4 @@ namespace tryn::gfx::dx11
 
 		this->slot = slot;
 	}
-
-	template class DX11DepthStencil<BufferResourceType::OutputOnly>;
-	template class DX11DepthStencil<BufferResourceType::ShaderResource>;
 }

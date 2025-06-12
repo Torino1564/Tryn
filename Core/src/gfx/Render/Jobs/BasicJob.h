@@ -8,7 +8,7 @@ namespace tryn::gfx
 {
 	class Drawable;
 	class Step;
-	class RenderWorker;
+	class IRenderWorker;
 	class RenderTask;
 
 	class BasicJob : public IJob

@@ -4,7 +4,6 @@
 #include <Core/src/utl/Exception.h>
 #include <map>
 #include <vector>
-#include <Core/src/gfx/RTVDSFwd.h>
 #include <Core/src/gfx/ConstantBuffer.h>
 
 namespace tryn::gfx
@@ -35,6 +34,13 @@ namespace tryn::gfx
 		std::uint16_t GetMaxPointLights() const;
 		void ResizePointLightBuffer(const std::uint16_t newSize);
 		const IGraphics& Gfx() const;
+		
+		template <typename Self>
+		auto& GetPasses(this Self&& self)
+		{
+			return std::forward<Self>(self).pPasses;
+		}
+
 	protected:
 		template <typename Pass>
 		Pass& AddPass(Pass&& pass)
@@ -47,7 +53,7 @@ namespace tryn::gfx
 			std::string passName;
 			std::string resourceName;
 		};
-		void AddLinkage(LinkageParam&& source_, LinkageParam&& destination_) const;
+		void AddLinkage(LinkageParam&& source, LinkageParam&& destination) const;
 		void Finalize();
 		std::vector<std::unique_ptr<IRenderPass>> pPasses;
 		struct Level
@@ -61,8 +67,8 @@ namespace tryn::gfx
 		const IGraphics& gfx;
 
 		// Global graph resources
-		std::shared_ptr<IGenericRenderTargetView> pRTV;
-		std::shared_ptr<IGenericDepthStencil> pDSV;
+		std::shared_ptr<class IRenderTargetView> pRTV;
+		std::shared_ptr<class IDepthStencil> pDSV;
 		std::unique_ptr<Sink> pGlobalSink;
 		std::unique_ptr<Source> pGlobalSource;
 

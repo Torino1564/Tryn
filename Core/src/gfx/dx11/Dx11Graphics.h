@@ -1,6 +1,5 @@
 #pragma once
 #include <Core/src/gfx/IGraphics.h>
-#include "DX11RTVDSVFwd.h"
 #include "Dx11Context.h"
 #include <Core/src/gfx/VertexFormat.h>
 
@@ -13,6 +12,14 @@ namespace tryn::win
 {
 	class Window;
 }
+
+template <typename Interface, typename Implementation>
+	requires std::is_convertible_v<std::add_pointer_t<Implementation>, std::add_pointer_t<Interface>>
+struct LinkImplementation
+{
+	using Interface_t = Interface;
+	using Implementation_t = Implementation;
+};
 
 namespace tryn::gfx::dx11
 {
@@ -32,8 +39,8 @@ namespace tryn::gfx::dx11
 		ID3D11Device& GetDevice() const;
 		IDXGISwapChain& GetSwapChain() const;
 		constexpr const char* GetAPIString() const override;
-		std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() const override;
-		std::shared_ptr<IGenericDepthStencil> GetDepthStencilView() const override;
+		std::shared_ptr<IRenderTargetView> GetRenderTargetView() const override;
+		std::shared_ptr<IDepthStencil> GetDepthStencilView() const override;
 		void Resize() override;
 
 
@@ -64,7 +71,7 @@ namespace tryn::gfx::dx11
 				break;
 			}
 		}
-		
+		static constexpr DXGI_FORMAT MapDXGIFormat(TextureFormat format);
 		static std::vector<D3D11_INPUT_ELEMENT_DESC> GetSlottedLayout(const VertexLayout& vLayout, int slot);
 
 		// Resource Creation
@@ -86,14 +93,21 @@ namespace tryn::gfx::dx11
 		std::shared_ptr<ITexture>							CreateTexture(std::shared_ptr<Texture> pTexture, int slot = 0) const override;
 		std::shared_ptr<IRasterizer>						CreateRasterizer(const bool twoSided = true) const override;
 		std::shared_ptr<ISampler>							CreateSampler(SamplerType type, bool reflect, int slot) const override;
-		std::shared_ptr<IOutputOnlyRenderTargetView>		CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions, RenderTargetFormat format) const override;
-		std::shared_ptr<IShaderResourceRenderTargetView>	CreateShaderResourceRenderTargetView(const spa::DimensionsI, const uint16_t slot, RenderTargetFormat format) const override;
-		std::shared_ptr<IOutputOnlyDepthStencil>			CreateOutputOnlyDepthStencil(const spa::DimensionsI, ComparissonMode mode = ComparissonMode::Less) const override;
-		std::shared_ptr<IShaderResourceDepthStencil>		CreateShaderResourceDepthStencil(const spa::DimensionsI, const uint16_t slot, ComparissonMode mode) const override;
+		std::shared_ptr<IRenderTargetView>					CreateRenderTargetView(spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format) const override;
+		std::shared_ptr<IDepthStencil>						CreateDepthStencil(spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, ComparissonMode mode) const override;
 		std::unique_ptr<ITransformCBuf>						CreateTransformCBuf() const override;
-		std::unique_ptr<RenderWorker>						CreateRenderWorker(ccr::Master*) const override;
-
+		std::unique_ptr<IRenderWorker>						CreateRenderWorker(ccr::Master*) const override;
 		std::shared_ptr<class DX11InputLayout>				CreateInputLayout(const std::vector<D3D11_INPUT_ELEMENT_DESC>& descriptorBuffer, const class DX11VertexShader& vs) const;
+
+		class Base {};
+		class Derived : public Base {};
+
+
+		using BindableLinking = std::tuple<
+			LinkImplementation<Base, Derived>>;
+
+		template <unsigned N>
+		friend void AppendBindableImplementation();
 
 	private:
 
@@ -101,8 +115,43 @@ namespace tryn::gfx::dx11
 
 		Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
-		std::shared_ptr<DX11OutputOnlyRenderTargetView> pTarget;
-		std::shared_ptr<DX11OutputOnlyDepthStencil> pDSV;
+		std::shared_ptr<class DX11RenderTargetView> pTarget;
+		std::shared_ptr<class DX11DepthStencil> pDSV;
 		D3D11_VIEWPORT viewport = {};
 	};
+
+	constexpr DXGI_FORMAT Graphics::MapDXGIFormat(const TextureFormat format)
+	{
+		using TF = TextureFormat;
+		switch (format)
+		{
+		case TF::R8G8B8A8_UNORM:         return DXGI_FORMAT_R8G8B8A8_UNORM;
+		case TF::B8G8R8A8_UNORM:         return DXGI_FORMAT_B8G8R8A8_UNORM;
+		case TF::R8G8B8A8_UNORM_SRGB:    return DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		case TF::B8G8R8A8_UNORM_SRGB:    return DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+
+		case TF::R32_FLOAT:              return DXGI_FORMAT_R32_FLOAT;
+		case TF::R32G32_FLOAT:           return DXGI_FORMAT_R32G32_FLOAT;
+		case TF::R32G32B32_FLOAT:        return DXGI_FORMAT_R32G32B32_FLOAT;
+		case TF::R32G32B32A32_FLOAT:     return DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		case TF::R16_FLOAT:              return DXGI_FORMAT_R16_FLOAT;
+		case TF::R16G16_FLOAT:           return DXGI_FORMAT_R16G16_FLOAT;
+		case TF::R16G16B16A16_FLOAT:     return DXGI_FORMAT_R16G16B16A16_FLOAT;
+
+		case TF::R32_UINT:               return DXGI_FORMAT_R32_UINT;
+		case TF::R32G32_UINT:            return DXGI_FORMAT_R32G32_UINT;
+		case TF::R32G32B32_UINT:         return DXGI_FORMAT_R32G32B32_UINT;
+		case TF::R32G32B32A32_UINT:      return DXGI_FORMAT_R32G32B32A32_UINT;
+
+		case TF::D32_FLOAT:              return DXGI_FORMAT_D32_FLOAT;
+		case TF::D24_UNORM_S8_UINT:      return DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+		case TF::BC1_UNORM:              return DXGI_FORMAT_BC1_UNORM;
+		case TF::BC3_UNORM:              return DXGI_FORMAT_BC3_UNORM;
+		case TF::BC7_UNORM:              return DXGI_FORMAT_BC7_UNORM;
+
+		default:                         return DXGI_FORMAT_UNKNOWN;
+		}
+	}
 }

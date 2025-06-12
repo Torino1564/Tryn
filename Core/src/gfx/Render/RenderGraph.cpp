@@ -23,11 +23,11 @@ namespace tryn::gfx
 		if (initDefaultSourceAndSinks)
 		{
 			// Init Sink
-			pGlobalSink->AddDependency<IShaderResourceRenderTargetView>("rtv");
+			pGlobalSink->AddDependency<IRenderTargetView>("rtv");
 
 			// Init Source
-			pGlobalSource->AddExposure<IGenericRenderTargetView>("rtv");
-			pGlobalSource->AddExposure<IGenericRenderTargetView>("depthStencil");
+			pGlobalSource->AddExposure<IRenderTargetView>("rtv");
+			pGlobalSource->AddExposure<IRenderTargetView>("depthStencil");
 			pGlobalSource->AddExposure<IPxConstantBuffer>("pointLightBuffer");
 
 			pGlobalSource->Set(pRTV, "rtv");

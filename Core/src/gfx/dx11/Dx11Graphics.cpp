@@ -29,6 +29,49 @@
 
 namespace tryn::gfx::dx11
 {
+	using BindableLinking = std::tuple<
+		LinkImplementation<IVertexShader, DX11VertexShader>
+	>;
+
+	template <typename T>
+	struct ArgTuple;
+
+	template <typename Func, typename... Args>
+	struct ArgTuple<Func(Args...)>
+	{
+		using t = std::tuple<Args...>;
+	};
+
+	template <typename T>
+	struct MethodArgTupleMinusGfx;
+
+	template <typename Func, typename... Args>
+	struct MethodArgTupleMinusGfx<Func(*)(Args...)>
+	{
+		using t = std::tuple<Args...>;
+	};
+
+	template <unsigned N = 0>
+	void AppendBindableImplementation(std::unordered_map<utl::UUID_t, void*>& vtable)
+	{
+		if constexpr (N < std::tuple_size_v<Graphics::BindableLinking>)
+		{
+			using Pair = std::tuple_element_t<N, BindableLinking>;
+			using Interface = typename Pair::Interface_t;
+			using Implementation = typename Pair::Implementation_t;
+
+			static constexpr auto func = [](typename MethodArgTupleMinusGfx<decltype(&Interface::Resolve)>::t params)
+				{
+					auto newTuple = std::tuple_cat((IGraphics*)nullptr, std::move(params));
+					return std::shared_ptr<Interface>(std::move(std::make_from_tuple<Implementation>(std::move(newTuple))));
+				};
+
+
+			vtable.emplace(ZT_TYPE_UUID(Interface), (void*)&func);
+			return AppendBindableImplementation<N + 1>(vtable);
+		}
+	}
+
 	Graphics::Graphics(win::WindowHandle hWnd, int width, int height)
 	{
 		InitThread();
@@ -80,7 +123,7 @@ namespace tryn::gfx::dx11
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
 			pSwap->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer) >> chk;
 
-			pTarget = std::shared_ptr<DX11OutputOnlyRenderTargetView>{ new DX11OutputOnlyRenderTargetView(*this, pBackBuffer.Get()) };
+			pTarget = std::shared_ptr<DX11RenderTargetView>{ new DX11RenderTargetView(*this, pBackBuffer.Get(), false, {}) };
 
 			dimensions.height = height;
 			dimensions.width = width;
@@ -98,7 +141,7 @@ namespace tryn::gfx::dx11
 			pContext = std::unique_ptr<IContext>(tempContext);
 
 			//Z Buffer
-			pDSV = std::make_shared<DX11OutputOnlyDepthStencil>(*this, dimensions);
+			pDSV = std::shared_ptr<DX11DepthStencil>{ new DX11DepthStencil(*this, dimensions, false, {}, ComparissonMode::Less)};
 
 			pSwap->SetFullscreenState((BOOL)false, nullptr) >> chk;
 
@@ -108,6 +151,10 @@ namespace tryn::gfx::dx11
 		startSignal_.release();
 		future.get();
 		InitDefaults();
+
+		// init bindable vtable
+		bindableVtable.reserve(std::tuple_size_v<SupportedBindables>);
+		AppendBindableImplementation<>(bindableVtable);
 	}
 
 	Graphics::~Graphics()
@@ -180,11 +227,11 @@ namespace tryn::gfx::dx11
 	{
 		return APIString;
 	}
-	std::shared_ptr<IGenericRenderTargetView> Graphics::GetRenderTargetView() const
+	std::shared_ptr<IRenderTargetView> Graphics::GetRenderTargetView() const
 	{
 		return pTarget;
 	}
-	std::shared_ptr<IGenericDepthStencil> Graphics::GetDepthStencilView() const
+	std::shared_ptr<IDepthStencil> Graphics::GetDepthStencilView() const
 	{
 		return pDSV;
 	}
@@ -300,14 +347,6 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	/*std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(IPolyVBuffer& pvb, IVertexShader& vs)
-	{
-		auto future = Dispatch_([&] {
-			return std::make_shared<DX11InputLayout>(*this, pvb, vs);
-			});
-		return future.get();
-	}*/
-
 	std::shared_ptr<IInputLayout> Graphics::CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) const
 	{
 		auto future = Dispatch_([&] {
@@ -364,6 +403,15 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
+	std::shared_ptr<IDepthStencil> Graphics::CreateDepthStencil(spa::DimensionsI dimensions, bool shaderResource,
+		std::optional<uint16_t> slot, ComparissonMode mode) const
+	{
+		auto future = Dispatch_([&] {
+			return std::make_unique<DX11DepthStencil>(*this, dimensions, shaderResource, slot, mode);
+			});
+		return future.get();
+	}
+
 	std::unique_ptr<ITransformCBuf> Graphics::CreateTransformCBuf() const
 	{
 		auto future = Dispatch_([&] {
@@ -372,12 +420,12 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::unique_ptr<RenderWorker> Graphics::CreateRenderWorker(ccr::Master* pMaster) const
+	std::unique_ptr<IRenderWorker> Graphics::CreateRenderWorker(ccr::Master* pMaster) const
 	{
 		return std::make_unique<DX11RenderWorker>(pMaster, *this);
 	}
 
-	std::shared_ptr<class DX11InputLayout> Graphics::CreateInputLayout(
+	std::shared_ptr<DX11InputLayout> Graphics::CreateInputLayout(
 		const std::vector<D3D11_INPUT_ELEMENT_DESC>& descriptorBuffer, const DX11VertexShader& vs) const
 	{
 		auto future = Dispatch_([&] {
@@ -425,31 +473,11 @@ namespace tryn::gfx::dx11
 			});
 		return future.get();
 	}
-	std::shared_ptr<IOutputOnlyRenderTargetView> Graphics::CreateOutputOnlyRenderTargetView(const spa::DimensionsI dimensions, const RenderTargetFormat format) const
+
+	std::shared_ptr<IRenderTargetView> Graphics::CreateRenderTargetView(spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format) const
 	{
 		auto future = Dispatch_([&] {
-			return std::make_shared<DX11OutputOnlyRenderTargetView>(*this, dimensions, format);
-			});
-		return future.get();
-	}
-	std::shared_ptr<IShaderResourceRenderTargetView> Graphics::CreateShaderResourceRenderTargetView(const spa::DimensionsI dimensions, const uint16_t slot, const RenderTargetFormat format) const
-	{
-		auto future = Dispatch_([&] {
-			return std::make_shared<DX11ShaderResourceRenderTargetView>(*this, dimensions, slot, format);
-			});
-		return future.get();
-	}
-	std::shared_ptr<IOutputOnlyDepthStencil> Graphics::CreateOutputOnlyDepthStencil(const spa::DimensionsI, ComparissonMode mode) const
-	{
-		auto future = Dispatch_([&] {
-			return std::make_shared<DX11OutputOnlyDepthStencil>(*this, dimensions, mode);
-			});
-		return future.get();
-	}
-	std::shared_ptr<IShaderResourceDepthStencil> Graphics::CreateShaderResourceDepthStencil(const spa::DimensionsI, const uint16_t slot, ComparissonMode mode) const
-	{
-		auto future = Dispatch_([&] {
-			return std::make_shared<DX11ShaderResourceDepthStencil>(*this, dimensions, slot, mode);
+			return std::make_shared<DX11RenderTargetView>(*this, dimensions, shaderResource, slot, format);
 			});
 		return future.get();
 	}

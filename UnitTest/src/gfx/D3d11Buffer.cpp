@@ -53,6 +53,11 @@ namespace Gfx
 			pxConstantBuffer.Bind();
 			pxConstantBuffer.Bind(pGfx->GetContextInterface());
 		}
+		TEST_METHOD(BindableVTableTest)
+		{
+			auto pBindable = pGfx->CreateBindable<gfx::IVertexShader>("Test");
+
+		}
 		std::unique_ptr<gfx::dx11::Graphics> pGfx;
 		std::unique_ptr<win::Window> pWnd;
 	};

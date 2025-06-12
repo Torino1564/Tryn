@@ -93,6 +93,11 @@ namespace tryn::gfx
 		return shaderRootPath.data();
 	}
 
+	const std::unordered_map<utl::UUID_t, void*>& IGraphics::GetBindableVTable() const
+	{
+		return bindableVtable;
+	}
+
 	void IGraphics::InitThread()
 	{
 		kernelThread_ = std::jthread(&IGraphics::KernelLoop_, this);

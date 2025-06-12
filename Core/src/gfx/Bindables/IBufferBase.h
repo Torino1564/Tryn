@@ -7,7 +7,6 @@
 #include <Core/src/utl/EmptyType.h>
 #include <memory>
 #include "Bindable.h"
-#include <Core/src/gfx/RTVDSFwd.h>
 
 ZT_EX_DEF(BufferMissmatchException);
 

@@ -18,32 +18,32 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 {
 	// Init Global Resources
 	{
-		pGlobalSource->AddExposure<IGenericRenderTargetView>("rtv");
-		pGlobalSource->AddExposure<IGenericDepthStencil>("depthStencil");
+		pGlobalSource->AddExposure<IRenderTargetView>("rtv");
+		pGlobalSource->AddExposure<IDepthStencil>("depthStencil");
 		pGlobalSource->AddExposure<IPxConstantBuffer>("pointLightBuffer");
-		pGlobalSource->AddExposure<IShaderResourceRenderTargetView>("OSRtv");
-		pGlobalSource->AddExposure<IOutputOnlyRenderTargetView>("EntityIDRTV");
+		pGlobalSource->AddExposure<IRenderTargetView>("OSRtv");
+		pGlobalSource->AddExposure<IRenderTargetView>("EntityIDRTV");
 
 		pGlobalSource->Set(*pRTV, "rtv");
 		pGlobalSource->Set(*pDSV, "depthStencil");
 		pGlobalSource->Set(*pPointLightCBuf, "pointLightBuffer");
 
-		pOffScreenBuffer = IShaderResourceRenderTargetView::Resolve(gfx, gfx.GetDimensions(), 0u);
+		pOffScreenBuffer = IRenderTargetView::Resolve(gfx, gfx.GetDimensions(), true, 0u);
 		pGlobalSource->Set(*pOffScreenBuffer, "OSRtv");
 
-		pEntityIDRTV = IOutputOnlyRenderTargetView::Resolve(gfx, gfx.GetDimensions(), RenderTargetFormat::UINT32_4);
+		pEntityIDRTV = IRenderTargetView::Resolve(gfx, gfx.GetDimensions(), false, {}, TextureFormat::R32G32B32A32_UINT);
 		pGlobalSource->Set(*pEntityIDRTV, "EntityIDRTV");
 
 
-		pGlobalSink->AddDependency<IShaderResourceRenderTargetView>("OSRtv");
-		pGlobalSink->AddDependency<IShaderResourceRenderTargetView>("rtv");
+		pGlobalSink->AddDependency<IRenderTargetView>("OSRtv");
+		pGlobalSink->AddDependency<IRenderTargetView>("rtv");
 	}
 
 	{
 		auto& clearPass = AddPass(ClearTargetPass("initClear"));
-		clearPass.AddTarget<IGenericRenderTargetView>("rtv");
-		clearPass.AddTarget<IGenericDepthStencil>("depthStencil");
-		clearPass.AddTarget<IShaderResourceRenderTargetView>("OSRtv");
+		clearPass.AddTarget<IRenderTargetView>("rtv");
+		clearPass.AddTarget<IDepthStencil>("depthStencil");
+		clearPass.AddTarget<IRenderTargetView>("OSRtv");
 
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "rtv" }, LinkageParam{ .passName = "initClear", .resourceName = "rtv" });
 		AddLinkage(LinkageParam{ .passName = "global", .resourceName = "OSRtv" }, LinkageParam{ .passName = "initClear", .resourceName = "OSRtv" });
@@ -87,7 +87,7 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 	}
 
 	{
-		AddPass(std::move(EntityIDPass(*this, "entityIDPass")));
+		AddPass(std::move(EntityIDPass(*this)));
 		AddLinkage(LinkageParam{ .passName = "entityIDClearPass", .resourceName = "rtv" }, LinkageParam{ .passName = "entityIDPass", .resourceName = "rtv" });
 	}
 

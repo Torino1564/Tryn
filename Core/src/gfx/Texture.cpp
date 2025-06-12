@@ -4,6 +4,7 @@
 #include <Core/src/utl/String.h>
 #include <assimp/texture.h>
 
+#include "IGraphics.h"
 #include "win/gltfSDK.h"
 
 namespace tryn::gfx
@@ -102,6 +103,24 @@ namespace tryn::gfx
 		static const Deleter deleter(pDeleterFunc);
 
 		buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+	}
+
+	Texture::Texture(const spa::DimensionsI dimensions, const TextureFormat format)
+		: dimensions(dimensions), format(format)
+	{
+		const auto pDeleterFunc = [](std::byte* bytes)
+			{
+				free(bytes);
+			};
+
+		static const Deleter deleter(pDeleterFunc);
+
+
+		const auto stride = IGraphics::MapTextureFormatStride(format);
+		const auto byteSize = dimensions.height * dimensions.width * stride;
+		auto data = new std::byte[byteSize];
+
+		buffer = std::move(std::unique_ptr<std::byte, Deleter>(data, deleter));
 	}
 
 	std::string Texture::GetID() const noexcept

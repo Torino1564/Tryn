@@ -1,45 +1,31 @@
 #pragma once
 #include "Bindable.h"
-#include <concepts>
-#include <Core/src/utl/EmptyType.h>
-#include <Core/src/gfx/Bindables/BufferResourceType.h>
 #include <Core/src/spa/Dimensions.h>
 #include <memory>
-#include <Core/src/gfx/RTVDSFwd.h>
+#include <Core/src/gfx/TextureFormat.h>
+
+#include "DepthStencil.h"
 
 namespace tryn::gfx
 {
-	class IGenericRenderTargetView : public IBindable
+	class ITexture;
+	class IDepthStencil;
+	class IRenderTargetView : public IBindable
 	{
 	public:
-		~IGenericRenderTargetView() override = default;
-		virtual void BindAsRTV(IGenericDepthStencil* pDSV = nullptr) const;
+		static std::string GenerateID(const IGraphics& gfx, spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format = TextureFormat::B8G8R8A8_UNORM);
+		// The optional slot parameter is unused if the shaderResource flag is set to false. 
+		static std::shared_ptr<IRenderTargetView> Resolve(const IGraphics& gfx, spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format = TextureFormat::B8G8R8A8_UNORM);
+
+		virtual void BindAsRTV(IDepthStencil* pDSV = nullptr) const = 0;
 		virtual void Clear() const = 0;
+		virtual void FillTextureRegion(const std::shared_ptr<ITexture>&, uint32_t startX, uint32_t endX, uint32_t startY, uint32_t endY) = 0;
+		virtual void FillTexture(const std::shared_ptr<ITexture>&) = 0;
+
 	protected:
 		spa::DimensionsI dimensions = {};
-	};
-
-	template <BufferResourceType Type = BufferResourceType::OutputOnly>
-	class IRenderTargetView : public IGenericRenderTargetView
-	{
-	public:
-		~IRenderTargetView() override = default;
-
-		static std::string GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, uint16_t slot, RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM)
-			requires (Type == BufferResourceType::ShaderResource);
-
-		static std::string GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM)
-			requires (Type == BufferResourceType::OutputOnly);
-
-		static std::shared_ptr<IShaderResourceRenderTargetView> Resolve(const IGraphics& gfx, const spa::DimensionsI dimensions, uint16_t slot, RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM)
-			requires (Type == BufferResourceType::ShaderResource);
-
-		static std::shared_ptr<IOutputOnlyRenderTargetView> Resolve(const IGraphics& gfx, const spa::DimensionsI dimensions, RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM)
-			requires (Type == BufferResourceType::OutputOnly);
-		
-	protected:
-		BufferResourceType type = Type;
-		RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM;
-		std::conditional_t<Type == BufferResourceType::ShaderResource, uint16_t, utl::empty_t> slot;
+		bool shaderResource = true;
+		TextureFormat format = TextureFormat::B8G8R8A8_UNORM;
+		uint16_t slot = 0;
 	};
 }

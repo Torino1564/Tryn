@@ -88,16 +88,16 @@ namespace tryn::ecs
 			const auto it = singletonWrappers.find(ZT_TYPE_UUID(T));
 			trynass(it != singletonWrappers.end()).msg(L"The requested singleton is not registered!");
 
-			return static_cast<T&>(*it->second.GetData());
+			return *std::bit_cast<T*>(it->second.GetData());
 		}
 
 		template <typename T>
-		const T& RequestSingleton()
+		const T& RequestSingleton() const
 		{
 			const auto it = singletonWrappers.find(ZT_TYPE_UUID(T));
 			trynass(it != singletonWrappers.end()).msg(L"The requested singleton is not registered!");
 
-			return static_cast<const T&>(*it->second.GetData());
+			return *std::bit_cast<T*>(it->second.GetData());
 		}
 
 	private:

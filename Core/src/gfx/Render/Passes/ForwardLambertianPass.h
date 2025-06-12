@@ -14,18 +14,18 @@ namespace tryn::gfx
 			RenderQueuePass(std::move(name), graph, std::vector<std::string>{"Lambertian"})
 		{
 			// declare sink and source
-			pSink->AddDependency<IGenericRenderTargetView>("rtv");
-			pSink->AddDependency<IGenericDepthStencil>("depthStencil");
+			pSink->AddDependency<IRenderTargetView>("rtv");
+			pSink->AddDependency<IDepthStencil>("depthStencil");
 			pSink->AddDependency<IPxConstantBuffer>("pointLightBuffer");
 
-			pSource->AddExposure<IGenericRenderTargetView>("rtv");
-			pSource->AddExposure<IGenericDepthStencil>("depthStencil");
+			pSource->AddExposure<IRenderTargetView>("rtv");
+			pSource->AddExposure<IDepthStencil>("depthStencil");
 		}
 		void Execute(const IGraphics& gfx) override
 		{
 			// bind Render Target View
-			const auto& rtv = pSink->Get<IGenericRenderTargetView>("rtv");
-			auto& dsv = pSink->Get<IGenericDepthStencil>("depthStencil");
+			const auto& rtv = pSink->Get<IRenderTargetView>("rtv");
+			auto& dsv = pSink->Get<IDepthStencil>("depthStencil");
 
 			rtv.BindAsRTV(&dsv);
 			

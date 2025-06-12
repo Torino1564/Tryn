@@ -11,12 +11,12 @@ namespace tryn::gfx
 	class Step;
 	class IGraphics;
 
-	class RenderWorker : public ccr::Worker
+	class IRenderWorker : public ccr::Worker
 	{
 	friend class IGraphics;
 	public:
-		RenderWorker() : pGfx(nullptr) {}
-		virtual ~RenderWorker()
+		IRenderWorker() : pGfx(nullptr) {}
+		virtual ~IRenderWorker()
 		{
 			Kill();
 		}

@@ -13,8 +13,8 @@ namespace tryn::gfx
 	{
 		{
 			auto& clearPass = AddPass(ClearTargetPass("initClear"));
-			clearPass.AddTarget<IGenericDepthStencil>("depthStencil");
-			clearPass.AddTarget<IGenericRenderTargetView>("rtv");
+			clearPass.AddTarget<IDepthStencil>("depthStencil");
+			clearPass.AddTarget<IRenderTargetView>("rtv");
 			AddLinkage(LinkageParam{ .passName = "global", .resourceName = "rtv" }, LinkageParam{ .passName = "initClear", .resourceName = "rtv" });
 			AddLinkage(LinkageParam{ .passName = "global", .resourceName = "depthStencil" }, LinkageParam{ .passName = "initClear", .resourceName = "depthStencil" });
 		}

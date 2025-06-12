@@ -3,17 +3,16 @@
 
 #include "Core/src/gfx/Bindables/IBufferBase.h"
 #include <Core/src/utl/StatefulMeta/TemplateData.h>
-#include <Core/src/gfx/RTVDSFwd.h>
 #include <type_traits>
 #include <functional>
 
 namespace tryn::gfx
 {
 	template <typename T>
-	concept IsRenderTarget = std::derived_from<T, IGenericRenderTargetView> || std::is_same_v<T, IGenericRenderTargetView>;
+	concept IsRenderTarget = std::derived_from<T, IRenderTargetView> || std::is_same_v<T, IRenderTargetView>;
 
 	template <typename T>
-	concept IsDepthStencil = std::derived_from<T, IGenericDepthStencil> || std::is_same_v<T, IGenericDepthStencil>;
+	concept IsDepthStencil = std::derived_from<T, IDepthStencil> || std::is_same_v<T, IDepthStencil>;
 
 	template <typename T>
 	concept RenderTargetOrDepthStencil = IsDepthStencil<T> || IsRenderTarget<T>;

@@ -6,6 +6,6 @@ class TrynGameRenderGraph : public tryn::gfx::IRenderGraph
 public:
 	explicit TrynGameRenderGraph(tryn::gfx::IGraphics& gfx);
 private:
-	std::shared_ptr<tryn::gfx::IShaderResourceRenderTargetView> pOffScreenBuffer;
-	std::shared_ptr<tryn::gfx::IOutputOnlyRenderTargetView> pEntityIDRTV;
+	std::shared_ptr<tryn::gfx::IRenderTargetView> pOffScreenBuffer;
+	std::shared_ptr<tryn::gfx::IRenderTargetView> pEntityIDRTV;
 };

@@ -19,7 +19,7 @@ namespace tryn::gfx
 		}
 	}
 
-	void RenderQueue::RunJobsAsync(const IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<RenderWorker>>& workers, gfx::PointLight* pPointLight)
+	void RenderQueue::RunJobsAsync(const IGraphics& gfx, ccr::Master& pMaster, std::vector<std::unique_ptr<IRenderWorker>>& workers, gfx::PointLight* pPointLight)
 	{
 		for (int i = 0; i < anyVector.Size(); i++)
 		{
@@ -106,7 +106,7 @@ namespace tryn::gfx
 		return anyVector;
 	}
 
-	void RenderQueue::ExecuteBatchAsync(const IGraphics& gfx, RenderWorker* worker, std::vector<IJob*>::iterator beginIt, std::vector<IJob*>::iterator endIt, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr)
+	void RenderQueue::ExecuteBatchAsync(const IGraphics& gfx, IRenderWorker* worker, std::vector<IJob*>::iterator beginIt, std::vector<IJob*>::iterator endIt, std::optional<std::shared_ptr<BatchRenderTask>> taskPtr)
 	{
 		auto batchRenderTask = taskPtr.value_or(std::make_shared<BatchRenderTask>());
 		batchRenderTask->params.begin = beginIt;
@@ -117,7 +117,7 @@ namespace tryn::gfx
 		worker->AddTask(std::move(batchRenderTask));
 	}
 
-	void RenderQueue::BindPointLight(RenderWorker* worker, PointLight* pPointLight, std::optional<std::shared_ptr<BindPointLightTask>> taskPtr)
+	void RenderQueue::BindPointLight(IRenderWorker* worker, PointLight* pPointLight, std::optional<std::shared_ptr<BindPointLightTask>> taskPtr)
 	{
 		auto bindPointLightTask = taskPtr.value_or(std::make_unique<BindPointLightTask>());
 		bindPointLightTask->params.pLight = pPointLight;

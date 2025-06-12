@@ -14,9 +14,8 @@
 #include <Core/src/gfx/GraphicAPI.h>
 #include <Core/src/gfx/IBufferFwd.h>
 #include <Core/src/gfx/ComparissonMode.h>
-#include <Core/src/gfx/RTVDSFwd.h>
 #include <Core/src/win/WindowHandle.h>
-
+#include <Core/src/gfx/TextureFormat.h>
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
@@ -53,8 +52,9 @@ namespace tryn::gfx
 	class IRasterizer;
 	class StaticMesh;
 	class VertexLayout;
-	class RenderWorker;
-	class IGenericRenderTargetView;
+	class IRenderWorker;
+	class IRenderTargetView;
+	class IDepthStencil;
 
 	class IGraphics
 	{
@@ -86,8 +86,9 @@ namespace tryn::gfx
 		const spa::DimensionsI& GetDimensions() const;
 		virtual constexpr GraphicAPI GetType() const = 0;
 		virtual void Resize() = 0;
-		virtual std::shared_ptr<IGenericRenderTargetView> GetRenderTargetView() const = 0;
-		virtual std::shared_ptr<IGenericDepthStencil> GetDepthStencilView() const = 0;
+		virtual std::shared_ptr<IRenderTargetView> GetRenderTargetView() const = 0;
+		virtual std::shared_ptr<IDepthStencil> GetDepthStencilView() const = 0;
+		static constexpr uint32_t MapTextureFormatStride(TextureFormat format);
 		static const std::vector<std::string>& GetApiArray()
 		{
 			static std::vector<std::string> graphicApiString = {
@@ -122,7 +123,21 @@ namespace tryn::gfx
 			return Dispatch_(std::forward<F>(f));
 		}
 
-		// Resource Creation
+		virtual const std::unordered_map<utl::UUID_t, void*>& GetBindableVTable() const;
+
+		// Bindable Creation
+		template <typename T, typename... Args>
+		requires std::derived_from<T, IBindable>
+		std::shared_ptr<T> CreateBindable(Args... args) const
+		{
+			const auto& vtable = GetBindableVTable();
+			auto func = static_cast<std::shared_ptr<T>(*)(Args...)>(vtable.at(ZT_TYPE_UUID(T)));
+			auto pBindable = func(args...);
+			return std::static_pointer_cast<T>(pBindable);
+		}
+
+		using SupportedBindables = std::tuple<int>;
+
 		virtual std::shared_ptr<IVertexBuffer>						CreateVertexBuffer(const std::shared_ptr<VertexBuffer>&, std::string tag = "?") const = 0;
 		virtual std::shared_ptr<ISOAVertexBuffer>					CreateSOAVertexBuffer() const = 0;
 		virtual std::shared_ptr<IIndexBuffer>						CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string tag = "?") const = 0;
@@ -139,14 +154,14 @@ namespace tryn::gfx
 		virtual std::shared_ptr<ITexture>							CreateTexture(std::filesystem::path path, int slot = 0) const = 0;
 		virtual std::shared_ptr<ITexture>							CreateTexture(const aiTexture& tex, int slot = 0) const = 0;
 		virtual std::shared_ptr<ITexture>							CreateTexture(std::shared_ptr<Texture> pTexture, int slot = 0) const = 0;
-		virtual std::shared_ptr<IRasterizer>						CreateRasterizer(const bool twoSided = true) const = 0;
+		virtual std::shared_ptr<IRasterizer>						CreateRasterizer(bool twoSided = true) const = 0;
 		virtual std::shared_ptr<ISampler>							CreateSampler(SamplerType type, bool reflect, int slot) const = 0;
-		virtual std::shared_ptr<IOutputOnlyRenderTargetView>		CreateOutputOnlyRenderTargetView(spa::DimensionsI dimensions, RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM) const = 0;
-		virtual std::shared_ptr<IShaderResourceRenderTargetView>	CreateShaderResourceRenderTargetView(spa::DimensionsI, uint16_t slot, RenderTargetFormat format = RenderTargetFormat::B8G8R8A8_UNORM) const = 0;
-		virtual std::shared_ptr<IOutputOnlyDepthStencil>			CreateOutputOnlyDepthStencil(spa::DimensionsI, ComparissonMode mode = ComparissonMode::Less) const = 0;
-		virtual std::shared_ptr<IShaderResourceDepthStencil>		CreateShaderResourceDepthStencil(spa::DimensionsI, uint16_t slot, ComparissonMode mode = ComparissonMode::Less) const = 0;
+		virtual std::shared_ptr<IRenderTargetView>					CreateRenderTargetView(spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format = TextureFormat::B8G8R8A8_UNORM) const = 0;
+		virtual std::shared_ptr<IDepthStencil>						CreateDepthStencil(spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot = std::nullopt, ComparissonMode mode = ComparissonMode::Less) const = 0;
 		virtual std::unique_ptr<ITransformCBuf>						CreateTransformCBuf() const = 0;
-		virtual std::unique_ptr<RenderWorker>						CreateRenderWorker(ccr::Master*) const = 0;
+\
+		// Other resource creation
+		virtual std::unique_ptr<IRenderWorker>						CreateRenderWorker(ccr::Master*) const = 0;
 
 	protected:
 		void InitDefaults();
@@ -179,10 +194,66 @@ namespace tryn::gfx
 			return future;
 		}
 		std::unique_ptr<IContext> pContext;
-
+		std::unordered_map<utl::UUID_t, void*> bindableVtable;
 		bool vsync = false;
 	protected:
 		// Instaced Parents:
 		std::unordered_map<std::string, std::shared_ptr<class InstancedModelParent>> rogueInstancedModelParentMap;
 	};
+
+	constexpr uint32_t IGraphics::MapTextureFormatStride(const TextureFormat format)
+	{
+		using TF = TextureFormat;
+		switch (format)
+		{
+		case TF::R8G8B8A8_UNORM:
+		case TF::R8G8B8A8_UNORM_SRGB:
+		case TF::B8G8R8A8_UNORM:
+		case TF::B8G8R8A8_UNORM_SRGB:
+			return 4;
+
+		case TF::R32_FLOAT:
+		case TF::R32_UINT:
+			return 4;
+
+		case TF::R32G32_FLOAT:
+		case TF::R32G32_UINT:
+			return 8;
+
+		case TF::R32G32B32_FLOAT:
+		case TF::R32G32B32_UINT:
+			return 12;
+
+		case TF::R32G32B32A32_FLOAT:
+		case TF::R32G32B32A32_UINT:
+			return 16;
+
+		case TF::R16_FLOAT:
+			return 2;
+
+		case TF::R16G16_FLOAT:
+			return 4;
+
+		case TF::R16G16B16A16_FLOAT:
+			return 8;
+
+		case TF::D32_FLOAT:
+			return 4;
+
+		case TF::D24_UNORM_S8_UINT:
+			return 4;
+
+			// Compressed formats use block-based compression (typically 4x4 blocks)
+		case TF::BC1_UNORM:
+			return 8; // 8 bytes per 4x4 block
+
+		case TF::BC3_UNORM:
+		case TF::BC7_UNORM:
+			return 16; // 16 bytes per 4x4 block
+
+		case TF::UNKNOWN:
+		default:
+			return 0;
+		}
+	}
 }

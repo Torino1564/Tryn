@@ -8,16 +8,18 @@ namespace tryn::gfx
 	class EntityIDPass : public RenderQueuePass
 	{
 	public:
-		EntityIDPass(IRenderGraph& graph, std::string name = "EntityIDPass")
-			: RenderQueuePass(std::move(name), graph, std::vector<std::string>{"EntityID"})
+		static constexpr auto RESOURCE_NAME = "rtv";
+		static constexpr auto PASS_NAME = "EntityIDPass";
+		EntityIDPass(IRenderGraph& graph)
+			: RenderQueuePass(std::move("EntityIDPass"), graph, std::vector<std::string>{"EntityID"})
 		{
-			pSink->AddDependency<IGenericRenderTargetView>("rtv");
-			pSource->AddExposure<IGenericRenderTargetView>("rtv");
+			pSink->AddDependency<IRenderTargetView>(RESOURCE_NAME);
+			pSource->AddExposure<IRenderTargetView>(RESOURCE_NAME);
 		}
 
 		void Execute(const IGraphics& gfx) override
 		{
-			const auto& rtv = pSink->Get<IGenericRenderTargetView>("rtv");
+			const auto& rtv = pSink->Get<IRenderTargetView>(RESOURCE_NAME);
 
 			rtv.BindAsRTV();
 
@@ -28,7 +30,7 @@ namespace tryn::gfx
 			entityIDQueue.RunJobs(gfx);
 			entityIDQueue.Clear();
 
-			pSource->Set(rtv, "rtv");
+			pSource->Set(rtv, RESOURCE_NAME);
 		}
 	};
 }
