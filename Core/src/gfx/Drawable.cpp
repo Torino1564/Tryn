@@ -136,7 +136,7 @@ namespace tryn::gfx
 	}
 	void Drawable::InitTransformCBuf(const IGraphics& gfx)
 	{
-		pTransformCBuf = gfx.CreateTransformCBuf();
+		pTransformCBuf = ITransformCBuf::Resolve(gfx);
 	}
 	ISOAVertexBuffer& Drawable::GetVertexBuffer() const
 	{

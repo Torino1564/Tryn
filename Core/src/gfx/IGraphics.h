@@ -35,28 +35,6 @@ namespace tryn::ccr
 
 namespace tryn::gfx
 {
-	class Texture;
-	class VertexBuffer;
-	class ISOAVertexBuffer;
-	class IndexBuffer;
-	class IVertexShader;
-	class IPixelShader;
-	class IPolyVBuffer;
-	class IPolyInputLayout;
-	class IInputLayout;
-	class IBindable;
-	class IPrimitiveTopology;
-	class ITransformCBuf;
-	class ITexture;
-	class ISampler;
-	enum class SamplerType;
-	class IRasterizer;
-	class StaticMesh;
-	class VertexLayout;
-	class IRenderWorker;
-	class IRenderTargetView;
-	class IDepthStencil;
-
 	class IGraphics
 	{
 		friend class app::App;
@@ -67,6 +45,7 @@ namespace tryn::gfx
 			std::optional<int> height = std::nullopt;
 			win::WindowHandle hWnd = nullptr;
 		};
+		IGraphics();
 		virtual ~IGraphics() = default;
 		virtual void BeginFrame() = 0;
 		virtual void EndFrame() = 0;
@@ -90,110 +69,93 @@ namespace tryn::gfx
 		virtual std::shared_ptr<IRenderTargetView> GetRenderTargetView() const = 0;
 		virtual std::shared_ptr<IDepthStencil> GetDepthStencilView() const = 0;
 		static constexpr uint32_t MapTextureFormatStride(TextureFormat format);
-		static const std::vector<std::string>& GetApiArray()
-		{
-			static std::vector<std::string> graphicApiString = {
-	#define X(el) GENERATE_STRING(el)
-			GRAPHIC_APIS
-	#undef X
-			};
-			return graphicApiString;
-		}
-		virtual constexpr void AssertContextCoherence(const IContext& context) const
-		{
-			trynass(context.GetApi() == GetType());
-		}
+		static const std::vector<std::string>& GetApiArray();
+		virtual constexpr void AssertContextCoherence(const IContext& context) const;
 		IContext& GetContextInterface() const;
 		constexpr virtual const char* GetAPIString() const = 0;
-
 		static const char* GetShaderRootPath();
-		const float* GetBackgroundColor() const
-		{
-			return bgcolor;
-		}
-		void SetBackgroundColor(const float r, const float g, const float b, const float a)
-		{
-			bgcolor[0] = r;
-			bgcolor[1] = g;
-			bgcolor[2] = b;
-			bgcolor[3] = a;
-		}
+		const float* GetBackgroundColor() const;
+		void SetBackgroundColor(const float r, const float g, const float b, const float a);
+
 		template<std::invocable F>
-		auto Dispatch(F&& f) const
-		{
-			return Dispatch_(std::forward<F>(f));
-		}
+		auto Dispatch(F&& f) const;
 		static constexpr auto MAX_CONSTRUCTORS_ALLOWED = 5;
 
+		template <typename Bindable, typename... ParameterTuples>
+		struct Register
+		{
+			using Bindable_t = Bindable;
+			using ParameterTuplesTuple_t = std::tuple<ParameterTuples...>;
+		};
+
+		// Bindable Registration
 		using SupportedBindables = std::tuple<
-			IVertexBuffer,
-			ISOAVertexBuffer,
-			IIndexBuffer,
-			IVertexShader,
-			IPixelShader,
-			IInputLayout,
-			IPrimitiveTopology,
-			IVtxConstantBuffer,
-			IVtxConstantBufferNCach,
-			IPxConstantBuffer,
-			IPxConstantBufferNCach,
-			IInstanceBuffer,
-			ITexture,
-			IRasterizer,
-			ISampler,
-			IRenderTargetView,
-			IDepthStencil,
-			ITransformCBuf
+			Register<IVertexBuffer>,
+			Register<class ISOAVertexBuffer>,
+			Register<IIndexBuffer>,
+			Register<class IVertexShader>,
+			Register<class IPixelShader>,
+			Register<class IInputLayout,
+					std::tuple<IVertexBuffer&, class IVertexShader&>,
+					std::tuple<class VertexLayout&, class IVertexShader&>>,
+			Register<class IPrimitiveTopology>,
+			Register<IVtxConstantBuffer>,
+			Register<IVtxConstantBufferNCach>,
+			Register<IPxConstantBuffer>,
+			Register<IPxConstantBufferNCach>,
+			Register<IInstanceBuffer>,
+			Register<class ITexture,
+					std::tuple<const std::filesystem::path&, uint8_t>,
+					std::tuple<const aiTexture&, uint8_t>,
+					std::tuple<std::shared_ptr<class Texture>, uint8_t>>,
+			Register<class IRasterizer>,
+			Register<class ISampler>,
+			Register<IRenderTargetView>,
+			Register<IDepthStencil>,
+			Register<class ITransformCBuf>
 		>;
 
-		using BindableVTable = std::array<std::array<std::pair<void*, utl::UUID_t>, MAX_CONSTRUCTORS_ALLOWED>, std::tuple_size_v<SupportedBindables>>;
+		using BindableVTable = std::array<std::array<std::any, MAX_CONSTRUCTORS_ALLOWED>, std::tuple_size_v<SupportedBindables>>;
 		const BindableVTable& GetBindableVTable() const;
 
 		// Bindable Creation
-		template <typename T, typename... Args>
-			requires std::is_convertible_v<std::add_pointer_t<T>, std::add_pointer_t<IBindable>>
+		template <typename T, typename ... Args> requires std::is_convertible_v<std::add_pointer_t<T>, IBindable*>
 		std::shared_ptr<T> CreateBindable(Args&&... args) const
-		{ 
-			static_assert(utl::tuple_contains_type_v<T, SupportedBindables>, "Attempting to create unsupported bindable type");
+		{
+			//static_assert(utl::tuple_contains_type_v<T, SupportedBindables>, "Attempting to create unsupported bindable type");
 			const auto& vtable = GetBindableVTable();
-			auto& funcArray = vtable[utl::GetTypeIndex<T, SupportedBindables>()];
-			for (auto [pFunc, uuid] : funcArray)
+			static constexpr auto indexInTupleOfBindables = utl::GetTypeIndexFromTupleOfRegister<T, SupportedBindables>();
+			trylog.debug(std::to_wstring(indexInTupleOfBindables));
+			auto& funcArray = vtable[indexInTupleOfBindables];
+			using ConstRefTuple = utl::ConstRefTuple_t<std::tuple<Args...>>;
+			using Register = std::tuple_element_t<utl::GetTypeIndexFromTupleOfRegister<T, SupportedBindables>(), SupportedBindables>;
+			static constexpr auto paramTupleUUID = ZT_TYPE_UUID(ConstRefTuple);
+			trylog.info(utl::ToWide(ZT_TYPE_OF(ConstRefTuple).data()));
+			for (const std::any& any : funcArray)
 			{
-				trylog.info(utl::ToWide(ZT_TYPE_OF(std::tuple<Args...>).data()));
-				if (uuid != ZT_TYPE_UUID(std::tuple<Args...>))
-					continue;
-				auto func = static_cast<std::shared_ptr<T>(*)(const IGraphics&, std::tuple<Args...>)>(pFunc);
-				auto pBindable = func(*this, std::forward_as_tuple(std::forward<Args>(args)...));
-				return std::static_pointer_cast<T>(pBindable);
+				for (auto [index, rtti] : bindableConstructorsRTTI[indexInTupleOfBindables] | std::ranges::views::enumerate)
+				{
+					if (rtti.has_value() && any.has_value() && rtti.type() == any.type())
+					{
+						if (TestConvertible<Register, 0, Args...>(index))
+						{
+							return CastAndCallToNth<Register>(any, index, std::forward<Args>(args)...);
+						}
+					}
+				}
 			}
-			std::runtime_error{"Attempting to create a bindable with incorrect parameters. See the Resolve declarations"};
+			std::runtime_error{ "Attempting to create a bindable with incorrect parameters. See the Resolve declarations" };
 			std::unreachable();
 		}
 
-		virtual std::shared_ptr<IVertexBuffer>						CreateVertexBuffer(const std::shared_ptr<VertexBuffer>&, std::string tag = "?") const = 0;
-		virtual std::shared_ptr<ISOAVertexBuffer>					CreateSOAVertexBuffer() const = 0;
-		virtual std::shared_ptr<IIndexBuffer>						CreateIndexBuffer(std::shared_ptr<IndexBuffer> indices, std::string tag = "?") const = 0;
-		virtual std::shared_ptr<IVertexShader>						CreateVertexShader(std::string path) const = 0;
-		virtual std::shared_ptr<IPixelShader>						CreatePixelShader(std::string path) const = 0;
-		virtual std::shared_ptr<IInputLayout>						CreateInputLayout(IVertexBuffer& vb, IVertexShader& vs) const = 0;
-		virtual std::shared_ptr<IInputLayout>						CreateInputLayout(VertexLayout& vLayout, IVertexShader& vs) const = 0;
-		virtual std::shared_ptr<IPrimitiveTopology>					CreatePrimitiveTopology() const = 0;
-		virtual std::shared_ptr<IVtxConstantBuffer>					CreateVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") const = 0;
-		virtual std::shared_ptr<IVtxConstantBufferNCach>			CreateNonCachVtxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") const= 0;
-		virtual std::shared_ptr<IPxConstantBuffer>					CreatePxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") const = 0;
-		virtual std::shared_ptr<IPxConstantBufferNCach>				CreateNonCachPxConstantBuffer(ConstantBufferLayout&&, int slot = 0, std::string tag = "?") const = 0;
-		virtual std::shared_ptr<IInstanceBuffer>					CreateInstanceBuffer(const ConstantBufferLayout::Node& node, int slot = 2, std::size_t size = 50) const = 0;
-		virtual std::shared_ptr<ITexture>							CreateTexture(std::filesystem::path path, int slot = 0) const = 0;
-		virtual std::shared_ptr<ITexture>							CreateTexture(const aiTexture& tex, int slot = 0) const = 0;
-		virtual std::shared_ptr<ITexture>							CreateTexture(std::shared_ptr<Texture> pTexture, int slot = 0) const = 0;
-		virtual std::shared_ptr<IRasterizer>						CreateRasterizer(bool twoSided = true) const = 0;
-		virtual std::shared_ptr<ISampler>							CreateSampler(SamplerType type, bool reflect, int slot) const = 0;
-		virtual std::shared_ptr<IRenderTargetView>					CreateRenderTargetView(spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format = TextureFormat::B8G8R8A8_UNORM) const = 0;
-		virtual std::shared_ptr<IDepthStencil>						CreateDepthStencil(spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot = std::nullopt, ComparissonMode mode = ComparissonMode::Less) const = 0;
-		virtual std::shared_ptr<ITransformCBuf>						CreateTransformCBuf() const = 0;
-\
+		template <typename Register, unsigned N = 0, typename... Args>
+		bool TestConvertible(unsigned n) const;
+
+		template <typename Register, unsigned N = 0, typename... Args>
+		std::shared_ptr<typename Register::Bindable_t> CastAndCallToNth(const std::any& pFunc, unsigned n, Args&&... args) const;
+
 		// Other resource creation
-		virtual std::unique_ptr<IRenderWorker>						CreateRenderWorker(ccr::Master*) const = 0;
+		virtual std::unique_ptr<IRenderWorker> CreateRenderWorker(ccr::Master*) const = 0;
 
 	protected:
 		void InitDefaults();
@@ -218,20 +180,85 @@ namespace tryn::gfx
 		virtual void KernelLoop_();
 
 		template<std::invocable F>
-		auto Dispatch_(F&& f) const
-		{
-			std::lock_guard lk{ mtx };
-			auto future = tasks_.Push(std::forward<F>(f));
-			cv.notify_one();
-			return future;
-		}
-		std::unique_ptr<IContext> pContext;
-		BindableVTable bindableVtable;
+		auto Dispatch_(F&& f) const;
+		std::unique_ptr<IContext> pContext = nullptr;
+		BindableVTable bindableVtable = {};
+		std::array<std::array<std::any, MAX_CONSTRUCTORS_ALLOWED>, std::tuple_size_v<SupportedBindables>> bindableConstructorsRTTI = {};
 		bool vsync = false;
 
 		// Instaced Parents:
 		std::unordered_map<std::string, std::shared_ptr<class InstancedModelParent>> rogueInstancedModelParentMap;
 	};
+
+	template <std::invocable F>
+	auto IGraphics::Dispatch(F&& f) const
+	{
+		return Dispatch_(std::forward<F>(f));
+	}
+
+	template <typename Register, unsigned N, typename ... Args>
+	bool IGraphics::TestConvertible(const unsigned n) const
+	{
+		using Interface = typename Register::Bindable_t;
+		using ParameterTuplesTuple = typename Register::ParameterTuplesTuple_t;
+
+		if constexpr (N == 0 && std::tuple_size_v<ParameterTuplesTuple> == 0)
+		{
+			// The case where no tuple parameters are specified means that it should get the static Resolve Method
+			return true;
+		}
+		else if constexpr (N < std::tuple_size_v<ParameterTuplesTuple>)
+		{
+			if (N == n)
+			{
+				using FunctionArgTuple = std::tuple_element_t<N, ParameterTuplesTuple>;
+				return std::is_convertible_v<std::tuple<Args...>, FunctionArgTuple>;
+			}
+			return TestConvertible<Register, N + 1, Args...>(n);
+		}
+		std::unreachable();
+	}
+
+	template <typename Register, unsigned N, typename ... Args>
+	std::shared_ptr<typename Register::Bindable_t> IGraphics::CastAndCallToNth(const std::any& pFunc, unsigned n,
+		Args&&... args) const
+	{
+		using Interface = typename Register::Bindable_t;
+		using ParameterTuplesTuple = typename Register::ParameterTuplesTuple_t;
+
+		if constexpr (N == 0 && std::tuple_size_v<ParameterTuplesTuple> == 0)
+		{
+			// The case where no tuple parameters are specified means that it should get the static Resolve Method
+			auto pCastedFunc = std::any_cast<std::shared_ptr<Interface>(*)(const IGraphics&, typename utl::MethodArgTupleMinusFirst<decltype(&Interface::Resolve)>::t)>(pFunc);
+			return pCastedFunc(*this, std::forward_as_tuple(std::forward<Args>(args)...));
+		}
+		else if constexpr (N < std::tuple_size_v<ParameterTuplesTuple>)
+		{
+			using FunctionArgTuple = std::tuple_element_t<N, ParameterTuplesTuple>;
+			trylog.debug(L"From tuple:" + utl::ToWide(ZT_TYPE_OF(ParameterTuplesTuple).data()) + L" selecting: " + std::to_wstring(N));
+			trylog.debug(L"From: " + utl::ToWide(ZT_TYPE_OF(std::tuple<Args...>).data()));
+			trylog.debug(L"To: " + utl::ToWide(ZT_TYPE_OF(FunctionArgTuple).data()));
+			if constexpr (std::is_convertible_v<std::tuple<Args...>, FunctionArgTuple>)
+			{
+				if (N == n)
+				{
+					auto pCastedFunc = std::any_cast<std::shared_ptr<Interface>(*)(const IGraphics&, FunctionArgTuple)>(pFunc);
+					return pCastedFunc(*this, std::forward_as_tuple(std::forward<Args>(args)...));
+				}
+			}
+			return CastAndCallToNth<Register, N + 1>(pFunc, n, std::forward<Args>(args)...);
+		}
+		std::unreachable();
+	}
+
+	template <std::invocable F>
+	auto IGraphics::Dispatch_(F&& f) const
+	{
+		std::lock_guard lk{ mtx };
+		auto future = tasks_.Push(std::forward<F>(f));
+		cv.notify_one();
+		return future;
+	}
 
 	constexpr uint32_t IGraphics::MapTextureFormatStride(const TextureFormat format)
 	{
@@ -287,5 +314,10 @@ namespace tryn::gfx
 		default:
 			return 0;
 		}
+	}
+
+	constexpr void IGraphics::AssertContextCoherence(const IContext& context) const
+	{
+		trynass(context.GetApi() == GetType());
 	}
 }

@@ -88,7 +88,7 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 
 	{
 		AddPass(std::move(EntityIDPass(*this)));
-		AddLinkage(LinkageParam{ .passName = "entityIDClearPass", .resourceName = "rtv" }, LinkageParam{ .passName = "entityIDPass", .resourceName = "rtv" });
+		AddLinkage(LinkageParam{ .passName = "entityIDClearPass", .resourceName = "rtv" }, LinkageParam{ .passName = "EntityIDPass", .resourceName = "rtv" });
 	}
 
 	{

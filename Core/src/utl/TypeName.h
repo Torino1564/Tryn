@@ -87,12 +87,6 @@ namespace tryn::utl
         return to_string_view(GetTypeNameString<T>());
     }
 
-    template <typename T>
-    constexpr std::string_view type_of(T&& arg)
-    {
-        return to_string_view(GetTypeNameString<T>());
-    }
-
 	template <> constexpr std::string_view type_of<bool>()
     {
 		return "bool";

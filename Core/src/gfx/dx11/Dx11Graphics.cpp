@@ -31,6 +31,7 @@ using namespace std::placeholders;
 
 namespace tryn::gfx::dx11
 {
+	// Register Bindable Implementations
 	using BindableLinking = std::tuple <
 		LinkImplementation<IVertexShader, DX11VertexShader>,
 		LinkImplementation<IPixelShader, DX11PixelShader>,
@@ -42,30 +43,23 @@ namespace tryn::gfx::dx11
 		LinkImplementation<ISampler, DX11Sampler>,
 		LinkImplementation<IRenderTargetView, DX11RenderTargetView>,
 		LinkImplementation<ISOAVertexBuffer, DX11SOAVertexBuffer>,
-
-		// Buffers
 		LinkImplementation<IIndexBuffer, DX11IndexBuffer>,
 		LinkImplementation<IVtxConstantBuffer, DX11VtxConstantBuffer>,
 		LinkImplementation<IVtxConstantBufferNCach, DX11VtxConstantBufferNCach>,
 		LinkImplementation<IPxConstantBuffer, DX11PxConstantBuffer>,
 		LinkImplementation<IPxConstantBufferNCach, DX11PxConstantBufferNCach>,
 		LinkImplementation<IInstanceBuffer, DX11InstanceBuffer>,
+		LinkImplementation<IInputLayout, DX11InputLayout>,
+		LinkImplementation<ITexture, DX11Texture>
+	>;
 
-		// Manually disambiguated overloads via FunctionArgTuple
-		LinkImplementation<IInputLayout, DX11InputLayout, std::tuple<IVertexBuffer&, IVertexShader&>>,
-		LinkImplementation<IInputLayout, DX11InputLayout, std::tuple<VertexLayout&, IVertexShader&>>,
-		LinkImplementation<ITexture, DX11Texture, std::tuple<const std::filesystem::path&, uint8_t>>,
-		LinkImplementation<ITexture, DX11Texture, std::tuple<const aiTexture&, uint8_t>>,
-		LinkImplementation<ITexture, DX11Texture, std::tuple<std::shared_ptr<Texture>, uint8_t>>
-	> ;
-
-	template <typename Implementation, typename FunctionArgTuple, bool HasArgs>
+	template <typename Interface, typename Implementation, typename FunctionArgTuple, bool HasArgs>
 	struct BindableFunctor;
 
-	template <typename Implementation, typename FunctionArgTuple>
-	struct BindableFunctor<Implementation, FunctionArgTuple, true>
+	template <typename Interface, typename Implementation, typename FunctionArgTuple>
+	struct BindableFunctor<Interface, Implementation, FunctionArgTuple, true>
 	{
-		static std::shared_ptr<Implementation> Impl(const IGraphics& gfx, FunctionArgTuple params)
+		static std::shared_ptr<Interface> Impl(const IGraphics& gfx, FunctionArgTuple params)
 		{
 			trylog.debug(utl::ToWide(ZT_TYPE_OF(FunctionArgTuple).data()));
 			auto future = gfx.Dispatch([&]
@@ -81,10 +75,10 @@ namespace tryn::gfx::dx11
 		}
 	};
 
-	template <typename Implementation>
-	struct BindableFunctor<Implementation, std::tuple<>, false>
+	template <typename Interface, typename Implementation>
+	struct BindableFunctor<Interface, Implementation, std::tuple<>, false>
 	{
-		static std::shared_ptr<Implementation> Impl(const IGraphics& gfx, std::tuple<>)
+		static std::shared_ptr<Interface> Impl(const IGraphics& gfx, std::tuple<>)
 		{
 			auto future = gfx.Dispatch([&]
 				{
@@ -94,42 +88,63 @@ namespace tryn::gfx::dx11
 		}
 	};
 
+	template<typename Interface, typename Implementation, typename ParamTuplesTuple, unsigned N = 0>
+	static void AppendNonDefaultResolvableImplementation(std::array<std::any, IGraphics::MAX_CONSTRUCTORS_ALLOWED>& vtableEntry)
+	{
+		trylog.debug(utl::ToWide(ZT_TYPE_OF(ParamTuplesTuple).data()));
+		if constexpr (N < std::tuple_size_v<ParamTuplesTuple>)
+		{
+			using FunctionArgTuple = std::tuple_element_t<N, ParamTuplesTuple>;
+			trylog.debug(utl::ToWide(ZT_TYPE_OF(FunctionArgTuple).data()));
+			//if constexpr (utl::is_constructible_from_tuple_v<Implementation, FunctionArgTuple>)
+			{
+				using Functor = BindableFunctor<Interface, Implementation, FunctionArgTuple, (std::tuple_size_v<FunctionArgTuple> != 0)>;
+
+				for (auto& entry : vtableEntry)
+				{
+					if (entry.has_value())
+						continue;
+
+					entry = {&Functor::Impl};
+					break;
+				}
+			}
+			return AppendNonDefaultResolvableImplementation<Interface, Implementation, ParamTuplesTuple, N + 1>(vtableEntry);
+		}
+	}
+
 	template <unsigned N = 0>
-	void AppendBindableImplementation(IGraphics::BindableVTable& vtable)
+	static void AppendBindableImplementation(IGraphics::BindableVTable& vtable)
 	{
 		if constexpr (N < std::tuple_size_v<BindableLinking>)
 		{
+			trylog.debug(std::to_wstring(N));
 			using Pair = std::tuple_element_t<N, BindableLinking>;
 			using Interface = typename Pair::Interface_t;
 			using Implementation = typename Pair::Implementation_t;
-			if constexpr (std::is_same_v<typename Pair::FunctionArgTuple_t, void>)
-			{
-				using FunctionArgTuple = typename utl::MethodArgTupleMinusFirst<decltype(&Interface::Resolve)>::t;
-				using Functor = BindableFunctor<Implementation, FunctionArgTuple, (std::tuple_size_v<FunctionArgTuple> != 0)>;
 
-				for (auto& entry : vtable[utl::GetTypeIndex<Interface, IGraphics::SupportedBindables>()])
+			using ParamTuplesTuple = typename std::tuple_element_t<utl::GetTypeIndexFromTupleOfRegister<Interface, IGraphics::SupportedBindables>(), IGraphics::SupportedBindables>::ParameterTuplesTuple_t;
+			auto& vtableEntry = vtable[utl::GetTypeIndexFromTupleOfRegister<Interface, IGraphics::SupportedBindables>()];
+			if constexpr (std::tuple_size_v<ParamTuplesTuple> == 0)
+			{
+				// Resort to Resolve Method
+				using FunctionArgTuple = typename utl::MethodArgTupleMinusFirst<decltype(&Interface::Resolve)>::t;
+				using Functor = BindableFunctor<Interface, Implementation, FunctionArgTuple, (std::tuple_size_v<FunctionArgTuple> != 0)>;
+
+				for (auto& entry : vtableEntry)
 				{
-					if (entry.first != nullptr)
+					if (entry.has_value())
 						continue;
 
-					entry = std::pair<void*, utl::UUID_t>(static_cast<void*>(&Functor::Impl), ZT_TYPE_UUID(FunctionArgTuple));
+					entry = {&Functor::Impl};
 					break;
 				}
 				return AppendBindableImplementation<N + 1>(vtable);
 			}
 			else
 			{
-				using FunctionArgTuple = typename Pair::FunctionArgTuple_t;
-				using Functor = BindableFunctor<Implementation, FunctionArgTuple, (std::tuple_size_v<FunctionArgTuple> != 0)>;
-
-				for (auto& entry : vtable[utl::GetTypeIndex<Interface, IGraphics::SupportedBindables>()])
-				{
-					if (entry.first != nullptr)
-						continue;
-
-					entry = std::pair<void*, utl::UUID_t>(static_cast<void*>(&Functor::Impl), ZT_TYPE_UUID(FunctionArgTuple));
-					break;
-				}
+				// Check all other combinations and append
+				AppendNonDefaultResolvableImplementation<Interface, Implementation, ParamTuplesTuple>(vtableEntry);
 				return AppendBindableImplementation<N + 1>(vtable);
 			}
 		}
@@ -138,6 +153,9 @@ namespace tryn::gfx::dx11
 	Graphics::Graphics(win::WindowHandle hWnd, int width, int height)
 	{
 		InitThread();
+
+		// init bindable vtable
+		AppendBindableImplementation<>(bindableVtable);
 
 		auto future = Dispatch_([=, this] {
 			
@@ -214,9 +232,6 @@ namespace tryn::gfx::dx11
 		startSignal_.release();
 		future.get();
 		InitDefaults();
-
-		// init bindable vtable
-		AppendBindableImplementation<>(bindableVtable);
 	}
 
 	Graphics::~Graphics()
@@ -360,7 +375,7 @@ namespace tryn::gfx::dx11
 		}
 	}
 
-	std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(const std::shared_ptr<VertexBuffer>& pCpuBuffer, std::string tag) const 
+	/*std::shared_ptr<IVertexBuffer> Graphics::CreateVertexBuffer(const std::shared_ptr<VertexBuffer>& pCpuBuffer, std::string tag) const 
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11VertexBuffer>(*this, pCpuBuffer, tag);
@@ -482,20 +497,6 @@ namespace tryn::gfx::dx11
 		return future.get();
 	}
 
-	std::unique_ptr<IRenderWorker> Graphics::CreateRenderWorker(ccr::Master* pMaster) const
-	{
-		return std::make_unique<DX11RenderWorker>(pMaster, *this);
-	}
-
-	std::shared_ptr<DX11InputLayout> Graphics::CreateInputLayout(
-		const std::vector<D3D11_INPUT_ELEMENT_DESC>& descriptorBuffer, const DX11VertexShader& vs) const
-	{
-		auto future = Dispatch_([&] {
-			return std::make_shared<DX11InputLayout>(*this, descriptorBuffer, vs);
-			});
-		return future.get();
-	}
-
 	std::shared_ptr<ITexture> Graphics::CreateTexture(const std::filesystem::path path, const int slot) const
 	{
 		auto future = Dispatch_([&] {
@@ -540,6 +541,19 @@ namespace tryn::gfx::dx11
 	{
 		auto future = Dispatch_([&] {
 			return std::make_shared<DX11RenderTargetView>(*this, dimensions, shaderResource, slot, format);
+			});
+		return future.get();
+	}*/
+	std::unique_ptr<IRenderWorker> Graphics::CreateRenderWorker(ccr::Master* pMaster) const
+	{
+		return std::make_unique<DX11RenderWorker>(pMaster, *this);
+	}
+
+	std::shared_ptr<DX11InputLayout> Graphics::CreateInputLayout(
+		const std::vector<D3D11_INPUT_ELEMENT_DESC>& descriptorBuffer, const DX11VertexShader& vs) const
+	{
+		auto future = Dispatch_([&] {
+			return std::make_shared<DX11InputLayout>(*this, descriptorBuffer, vs);
 			});
 		return future.get();
 	}

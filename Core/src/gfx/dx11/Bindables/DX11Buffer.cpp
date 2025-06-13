@@ -4,7 +4,7 @@
 namespace tryn::gfx::dx11
 {
 	template <BufferType Type, CachingPolicy Policy>
-	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, const std::shared_ptr<CPUBuffer>& pCpuBuffer, std::string tag)
+	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, const std::shared_ptr<CPUBuffer>& pCpuBuffer, const std::string& tag)
 		requires (Type == BufferType::Vertex || Type == BufferType::Index)
 		:
 		gfx(gfx)
@@ -32,7 +32,7 @@ namespace tryn::gfx::dx11
 	}
 
 	template <BufferType Type, CachingPolicy Policy>
-	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, ConstantBufferLayout&& cbl, int slot, std::string tag)
+	DX11Buffer<Type, Policy>::DX11Buffer(const Graphics& gfx, const ConstantBufferLayout& cbl, int slot, const std::string& tag)
 		requires (Type == BufferType::PxConstant || Type == BufferType::VtxConstant): gfx(gfx)
 	{
 		IBufferBase<Type, Policy>::type = GraphicAPI::DX11;
@@ -40,7 +40,7 @@ namespace tryn::gfx::dx11
 		IBufferBase<Type, Policy>::tag = tag;
 
 		trynass_msg(cbl.IsSolid(), L"ConstantBuffer cannot be created with a non solidified layout!");
-		IBufferBase<Type, Policy>::pCPUBuffer = std::make_shared<ConstantBuffer>(std::move(cbl));
+		IBufferBase<Type, Policy>::pCPUBuffer = std::make_shared<ConstantBuffer>(cbl);
 
 		InitDynamicCBufferOnGPU();
 	}

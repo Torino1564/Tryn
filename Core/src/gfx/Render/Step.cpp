@@ -17,7 +17,7 @@ namespace tryn::gfx
 		renderQueueID(renderQueueID)
 	{
 		pVertexLayout = std::make_unique<VertexLayout>();
-		pSOAVertexBuffer = gfx.CreateSOAVertexBuffer();
+		pSOAVertexBuffer = ISOAVertexBuffer::Resolve(gfx);
 	}
 
 	Step::Step(Step&& rhs) noexcept

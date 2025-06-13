@@ -74,7 +74,7 @@ namespace tryn::gfx::ani
 		ConstantBufferLayout::Node arrayElement(ConstantBufferLayout::Matrix4, "boneTransform");
 		cblayout["boneArray"].Set(std::move(arrayElement), skeleton.bones.size());
 		cblayout.Solidify();
-		pSkeletonCBuffer = gfx.CreateVtxConstantBuffer(std::move(cblayout), 5);
+		pSkeletonCBuffer = IVtxConstantBuffer::Resolve(gfx, std::move(cblayout), 5);
 
 		pMaterials.push_back(std::move(pMaterial));
 		selectedMaterial = pMaterials.size() - 1;

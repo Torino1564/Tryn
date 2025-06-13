@@ -5,6 +5,8 @@
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Model/Model.h>
+#undef max
+#include <algorithm>
 
 namespace tryn::gfx
 {
@@ -86,10 +88,7 @@ namespace tryn::gfx
 			numInstanced = slot;
 			numInstanced++;
 			booker[slot].flip();
-			if (numInstanced + 1 > upperLimit)
-			{
-				upperLimit = numInstanced + 1;
-			}
+			upperLimit = std::max(numInstanced + 1, upperLimit);
 		}
 
 		return slot;
@@ -101,7 +100,7 @@ namespace tryn::gfx
 		pTransformationBuffers.clear();
 		for (auto i = 0; i < pBase->GetMeshAmount(); i++)
 		{
-			pTransformationBuffers.emplace_back(pBase->GetGfx()->CreateInstanceBuffer(arrayElement, upperLimit));
+			pTransformationBuffers.emplace_back(IInstanceBuffer::Resolve(*pBase->GetGfx(), arrayElement, 2, upperLimit));
 		}
 	}
 	InstancedModelChild::~InstancedModelChild()

@@ -36,6 +36,21 @@ namespace tryn::utl
 		}
 	}
 
+	template <typename T, typename TupleOfRegisters, unsigned N = 0>
+	consteval unsigned GetTypeIndexFromTupleOfRegister()
+	{
+		static_assert(N < std::tuple_size_v<TupleOfRegisters>, "Type not found in tuple");
+
+		if constexpr (std::is_same_v<T, typename std::tuple_element_t<N, TupleOfRegisters>::Bindable_t>)
+		{
+			return N;
+		}
+		else
+		{
+			return GetTypeIndexFromTupleOfRegister<T, TupleOfRegisters, N + 1>();
+		}
+	}
+
 		template <typename T>
 	struct ArgTuple;
 
@@ -53,4 +68,47 @@ namespace tryn::utl
 	{
 		using t = std::tuple<Args...>;
 	};
+
+	template <typename Tuple>
+	struct DecayTuple;
+
+	template <typename... Ts>
+	struct DecayTuple<std::tuple<Ts...>> {
+		using type = std::tuple<std::decay_t<Ts>...>;
+	};
+
+	template <typename T>
+	using DecayTuple_t = typename DecayTuple<T>::type;
+
+	template <typename Tuple>
+	struct RemoveCVRefTuple;
+
+	template <typename... Ts>
+	struct RemoveCVRefTuple<std::tuple<Ts...>> {
+		using type = std::tuple<std::remove_cvref_t<Ts>...>;
+	};
+
+	template <typename T>
+	using RemoveCVRefTuple_t = typename RemoveCVRefTuple<T>::type;
+
+	template <typename Tuple>
+	struct ConstRefTuple;
+
+	template <typename... Ts>
+	struct ConstRefTuple<std::tuple<Ts...>> {
+		using type = std::tuple<const std::remove_cvref_t<Ts>&...>;
+	};
+
+	template <typename T>
+	using ConstRefTuple_t = typename ConstRefTuple<T>::type;
+
+	template <typename T, typename Tuple>
+	struct is_constructible_from_tuple;
+
+	template <typename T, typename... Args>
+	struct is_constructible_from_tuple<T, std::tuple<Args...>>
+		: std::is_constructible<T, Args...> {};
+
+	template <typename T, typename Tuple>
+	static constexpr bool is_constructible_from_tuple_v = is_constructible_from_tuple<T, Tuple>::type::value;
 }

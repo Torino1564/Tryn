@@ -120,7 +120,7 @@ namespace tryn::gfx
 #undef X
 
 			template<template<ConstantBufferLayout::Type> class F, typename... Args>
-		static constexpr auto Bridge(ConstantBufferLayout::Type type, Args&&... args)
+		static constexpr auto Bridge(const ConstantBufferLayout::Type type, Args&&... args)
 		{
 			switch (type)
 			{
@@ -174,7 +174,7 @@ namespace tryn::gfx
 		Node& operator[](const std::string& id);
 		Node& GetRoot();
 	private:
-		std::unique_ptr<Node> root;
+		std::shared_ptr<Node> root;
 		bool solid = false;
 		size_t size = 0;
 	};

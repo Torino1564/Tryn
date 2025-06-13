@@ -55,7 +55,7 @@ namespace tryn::gfx
 		cblayout["pointLightArray"].Set(pointLightElement, maxPointLights);
 		cblayout.Solidify();
 
-		pPointLightCBuf = gfx.CreatePxConstantBuffer(std::move(cblayout), 0, "PointLightBuffer");
+		pPointLightCBuf = IPxConstantBuffer::Resolve(gfx, cblayout, 0, "PointLightBuffer");
 
 		// reserve queue space
 		queues.reserve(maxQueues);
