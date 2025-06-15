@@ -27,10 +27,10 @@ namespace tryn::gfx
 	{
 
 	public:
-		Texture(const std::filesystem::path& path, std::optional<glm::vec3> scale = std::nullopt);
-		Texture(const aiTexture& tex, std::optional<glm::vec3> scale = std::nullopt);
-		Texture(const class GLTFTextureData& textureData, std::optional<glm::vec3> scale = std::nullopt);
-		Texture(spa::DimensionsI dimensions, TextureFormat format);
+		Texture(const std::filesystem::path& path);
+		Texture(const aiTexture& tex);
+		Texture(const class GLTFTextureData& textureData);
+		Texture(spa::DimensionsI dimensions, TextureFormat format = TextureFormat::B8G8R8A8_UNORM);
 		static constexpr std::string GenerateID(const std::string& name, std::optional<glm::vec3> scale = std::nullopt);
 		std::string GetID() const noexcept;
 		const std::byte* Data() const noexcept;

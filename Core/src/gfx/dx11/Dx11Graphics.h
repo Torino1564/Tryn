@@ -44,6 +44,7 @@ namespace tryn::gfx::dx11
 		void Resize() override;
 		static constexpr DXGI_FORMAT MapDXGIFormat(const VertexFormat format);
 		static constexpr DXGI_FORMAT MapDXGIFormat(TextureFormat format);
+		static constexpr struct D3D11UsageDesc MapD3D11Usage(TextureUsage usage);
 		static std::vector<D3D11_INPUT_ELEMENT_DESC> GetSlottedLayout(const VertexLayout& vLayout, int slot);
 		std::shared_ptr<class DX11InputLayout> CreateInputLayout(const std::vector<D3D11_INPUT_ELEMENT_DESC>& descriptorBuffer, const class DX11VertexShader& vs) const;
 		std::unique_ptr<IRenderWorker> CreateRenderWorker(ccr::Master*) const override;
@@ -118,6 +119,35 @@ namespace tryn::gfx::dx11
 		default:
 			return DXGI_FORMAT_UNKNOWN;
 			break;
+		}
+	}
+
+	struct D3D11UsageDesc
+	{
+		D3D11_USAGE usage;
+		UINT cpuAccessFlags;
+		UINT bindFlags;
+	};
+
+	constexpr D3D11UsageDesc Graphics::MapD3D11Usage(const TextureUsage usage)
+	{
+		switch (usage)
+		{
+		case TextureUsage::GPUOnly:
+			return { D3D11_USAGE_DEFAULT, 0, D3D11_BIND_SHADER_RESOURCE };
+
+		case TextureUsage::Upload:
+			return { D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, D3D11_BIND_SHADER_RESOURCE };
+
+		case TextureUsage::Readback:
+			return { D3D11_USAGE_STAGING, D3D11_CPU_ACCESS_READ, 0 };
+
+		case TextureUsage::CPUReadWrite:
+			return { D3D11_USAGE_STAGING, D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE, 0 };
+
+		case TextureUsage::Unknown:
+		default:
+			return { D3D11_USAGE_DEFAULT, 0, 0 };
 		}
 	}
 }

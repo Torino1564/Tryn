@@ -5,41 +5,22 @@
 
 namespace tryn::gfx
 {
-	std::string ITexture::GenerateID(const IGraphics& gfx, const std::filesystem::path& path, const uint8_t slot)
+	std::string ITexture::GenerateID(const IGraphics& gfx, const std::shared_ptr<Texture>& pTexture, uint8_t slot, TextureUsage usage)
 	{
 		decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 		std::string UID(typeStr);
 		UID += "#Texture#";
-		UID += path.string();
-		UID += "#";
+		UID += pTexture->GetPath();
+		UID += "#S:";
 		UID += std::to_string(slot);
-
+		UID += "#U:";
+		UID += to_string(usage);
 		return UID;
 	}
 
-	std::string ITexture::GenerateID(const IGraphics& gfx, const aiTexture& tex, const uint8_t slot)
+	std::shared_ptr<ITexture> ITexture::Resolve(const IGraphics& gfx, const std::shared_ptr<Texture>& pTexture, uint8_t slot, TextureUsage usage)
 	{
-		return GenerateID(gfx, tex.mFilename.C_Str(), slot);
-	}
-
-	std::string ITexture::GenerateID(const IGraphics& gfx, const std::shared_ptr<Texture>& pTexture, const uint8_t slot)
-	{
-		return GenerateID(gfx, pTexture->GetPath(), slot);
-	}
-
-	std::shared_ptr<ITexture> ITexture::Resolve(const IGraphics& gfx, const std::filesystem::path& path, uint8_t slot)
-	{
-		return BindablePool::Resolve<ITexture>(gfx, path, slot);
-	}
-
-	std::shared_ptr<ITexture> ITexture::Resolve(const IGraphics& gfx, const aiTexture& texture, uint8_t slot)
-	{
-		return BindablePool::Resolve<ITexture>(gfx, texture, slot);
-	}
-
-	std::shared_ptr<ITexture> ITexture::Resolve(const IGraphics& gfx, std::shared_ptr<Texture> pTexture, uint8_t slot)
-	{
-		return BindablePool::Resolve<ITexture>(gfx, pTexture, slot);
+		return BindablePool::Resolve<ITexture>(gfx, std::move(pTexture), slot, usage);
 	}
 
 	bool ITexture::HasAlpha() const
@@ -54,6 +35,16 @@ namespace tryn::gfx
 
 	const std::string& ITexture::GetPath() const
 	{
-		return path;
+		return pTextureResource->GetPath();
+	}
+
+	TextureUsage ITexture::GetUsage() const
+	{
+		return usage;
+	}
+
+	void ITexture::SetSlot(uint16_t slot)
+	{
+		this->slot = slot;
 	}
 }

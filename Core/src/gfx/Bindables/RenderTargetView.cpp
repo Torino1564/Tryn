@@ -2,18 +2,20 @@
 #include "RenderTargetView.h"
 #include <Core/src/gfx/BindablePool.h>
 
+#include "TextureResource.h"
+
 namespace tryn::gfx 
 {
-	std::string IRenderTargetView::GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, const TextureFormat format)
+	std::string IRenderTargetView::GenerateID(const IGraphics& gfx, const std::shared_ptr<ITexture>& pTexture, uint16_t slot)
 	{
 		static uint16_t rtvCounter = 0u;
 		decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 		std::string UID(typeStr);
 		UID += "#";
 		UID += "RTV#W:";
-		UID += dimensions.width;
+		UID += pTexture->GetTextureResource().GetWidth();
 		UID += "#H:";
-		UID += dimensions.height;
+		UID += pTexture->GetTextureResource().GetHeight();
 		if (shaderResource)
 		{
 			UID += "#SR#Slot:";
@@ -32,5 +34,20 @@ namespace tryn::gfx
 	std::shared_ptr<IRenderTargetView> IRenderTargetView::Resolve(const IGraphics& gfx, spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format)
 	{
 		return BindablePool::Resolve<IRenderTargetView>(gfx, dimensions, shaderResource, slot, format);
+	}
+
+	void IRenderTargetView::SetDepthStencil(IDepthStencil& dsv)
+	{
+		pDSV = &dsv;
+	}
+
+	ITexture& IRenderTargetView::GetTexture()
+	{
+		return *pTexture;
+	}
+
+	const ITexture& IRenderTargetView::GetTexture() const
+	{
+		return *pTexture;
 	}
 }

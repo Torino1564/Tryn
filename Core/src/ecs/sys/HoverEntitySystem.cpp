@@ -18,6 +18,7 @@ namespace tryn::ecs
 		const gfx::IRenderGraph* renderGraph;
 		gfx::IRenderPass* pPass;
 		const gfx::IRenderTargetView* pRTV;
+		const gfx::IRenderTargetView* pStagingRTV;
 		std::shared_ptr<gfx::ITexture> pStagingTexture;
 	};
 
@@ -37,7 +38,8 @@ namespace tryn::ecs
 		auto& rtv = it->get()->GetSource().Get<gfx::IRenderTargetView>(gfx::EntityIDPass::RESOURCE_NAME);
 
 		auto pTex = std::shared_ptr<gfx::Texture>(new gfx::Texture({ .width = 50, .height = 50 }, gfx::TextureFormat::R32G32B32A32_UINT));
-		
+
+		//auto pStagingRtv = gfx::IRenderTargetView::Resolve(gfx, )
 
 		SystemState<HoverEntitySystem> state{
 			.gfx = pGfx.get(),
@@ -61,7 +63,7 @@ namespace tryn::ecs
 			return;
 
 		// Logic
-		auto& [gfx, wnd, renderGraph, pass, rtv, pTex] = pEcs->GetComponentManager().RequestSingleton<SystemState<HoverEntitySystem>>();
+		auto& [gfx, wnd, renderGraph, pass, rtv, stagingRtv, pTex] = pEcs->GetComponentManager().RequestSingleton<SystemState<HoverEntitySystem>>();
 
 
 	}

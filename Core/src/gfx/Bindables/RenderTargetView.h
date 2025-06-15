@@ -13,19 +13,17 @@ namespace tryn::gfx
 	class IRenderTargetView : public IBindable
 	{
 	public:
-		static std::string GenerateID(const IGraphics& gfx, spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format = TextureFormat::B8G8R8A8_UNORM);
-		// The optional slot parameter is unused if the shaderResource flag is set to false. 
-		static std::shared_ptr<IRenderTargetView> Resolve(const IGraphics& gfx, spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format = TextureFormat::B8G8R8A8_UNORM);
+		static std::string GenerateID(const IGraphics& gfx, const std::shared_ptr<ITexture>& pTexture, uint16_t slot);
+		static std::shared_ptr<IRenderTargetView> Resolve(const IGraphics& gfx, const std::shared_ptr<ITexture>& pTexture, uint16_t slot);
 
-		virtual void BindAsRTV(IDepthStencil* pDSV = nullptr) const = 0;
 		virtual void Clear() const = 0;
-		virtual void FillTextureRegion(const std::shared_ptr<ITexture>&, uint32_t startX, uint32_t endX, uint32_t startY, uint32_t endY) = 0;
-		virtual void FillTexture(const std::shared_ptr<ITexture>&) = 0;
+		void SetDepthStencil(IDepthStencil& dsv);
+		ITexture& GetTexture();
+		const ITexture& GetTexture() const;
 
 	protected:
-		spa::DimensionsI dimensions = {};
-		bool shaderResource = true;
-		TextureFormat format = TextureFormat::B8G8R8A8_UNORM;
+		std::shared_ptr<ITexture> pTexture;
+		IDepthStencil* pDSV = nullptr;
 		uint16_t slot = 0;
 	};
 }

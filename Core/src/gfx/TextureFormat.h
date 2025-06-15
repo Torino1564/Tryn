@@ -41,4 +41,26 @@ namespace tryn::gfx
         // Other
         UNKNOWN
     };
+
+    enum struct TextureUsage
+    {
+	    GPUOnly,
+	    CPUReadWrite,
+	    Upload,
+	    Readback,
+	    Unknown
+    };
+
+    inline const char* to_string(const TextureUsage e)
+    {
+	    switch (e)
+	    {
+	    case TextureUsage::GPUOnly: return "GPUOnly";
+	    case TextureUsage::CPUReadWrite: return "CPUReadWrite";
+	    case TextureUsage::Upload: return "Upload";
+	    case TextureUsage::Readback: return "Readback";
+	    case TextureUsage::Unknown: return "Unknown";
+	    default: return "unknown";
+	    }
+    }
 }

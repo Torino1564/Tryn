@@ -9,7 +9,7 @@
 
 namespace tryn::gfx
 {
-	Texture::Texture(const std::filesystem::path& path, std::optional<glm::vec3> scale)
+	Texture::Texture(const std::filesystem::path& path)
 	{
 		auto texture = StbImageManager::Load(path.string(), dimensions, numChannels, StbImageManager::RGB_ALPHA());
 
@@ -21,10 +21,6 @@ namespace tryn::gfx
 		}
 
 		this->path = path.string();
-		if (scale)
-		{
-			this->scale = scale;
-		}
 
 		auto pDeleterFunc = [](std::byte* bytes)
 			{
@@ -36,7 +32,8 @@ namespace tryn::gfx
 		buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
 	}
 
-	Texture::Texture(const aiTexture& tex, std::optional<glm::vec3> scale)
+	Texture::Texture(const aiTexture& tex)
+
 	{
 		this->path = tex.mFilename.C_Str();
 
@@ -71,10 +68,6 @@ namespace tryn::gfx
 			std::memcpy(buffer_, tex.pcData, bufferSize);
 
 			this->path = tex.mFilename.C_Str();
-			if (scale)
-			{
-				this->scale = scale;
-			}
 			const auto pDeleterFunc = [](std::byte* bytes)
 			{
 				free(bytes);
@@ -86,14 +79,10 @@ namespace tryn::gfx
 		}
 	}
 
-	Texture::Texture(const GLTFTextureData& textureData, const std::optional<glm::vec3> scale)
+	Texture::Texture(const GLTFTextureData& textureData)
 	{
 		auto texture = StbImageManager::Load(std::span{(std::byte*)std::move(textureData.data.data()), textureData.byteSize}, dimensions, numChannels, StbImageManager::RGB_ALPHA());
 		this->path = textureData.name;
-		if (scale)
-		{
-			this->scale = scale;
-		}
 
 		auto pDeleterFunc = [](std::byte* bytes)
 		{
