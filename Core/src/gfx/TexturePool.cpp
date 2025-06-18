@@ -17,15 +17,15 @@ namespace tryn::gfx
 		return remover;
 	}
 
-	std::shared_ptr<Texture> TexturePool::Resolve(const std::filesystem::path& path, std::optional<glm::vec3> scale)
+	std::shared_ptr<Texture> TexturePool::Resolve(const std::filesystem::path& path)
 	{
-		auto id = Texture::GenerateID(path.string(), scale);
+		auto id = Texture::GenerateID(path.string());
 
 		const auto it = Get().pool.find(id);
 
 		if (it == Get().pool.end() || it != Get().pool.end() && it->second.expired())
 		{
-			auto ptr = std::shared_ptr<Texture>(new Texture(path, scale), Remover{});
+			auto ptr = std::shared_ptr<Texture>(new Texture(path), Remover{});
 
 			Get().pool[id] = std::weak_ptr(ptr);
 			return ptr;
@@ -36,15 +36,15 @@ namespace tryn::gfx
 		}
 	}
 
-	std::shared_ptr<Texture> TexturePool::Resolve(const aiTexture& tex, std::optional<glm::vec3> scale)
+	std::shared_ptr<Texture> TexturePool::Resolve(const aiTexture& tex)
 	{
-		auto id = Texture::GenerateID( tex.mFilename.C_Str(), scale);
+		auto id = Texture::GenerateID( tex.mFilename.C_Str());
 
 		const auto it = Get().pool.find(id);
 
 		if (it == Get().pool.end() || it != Get().pool.end() && it->second.expired())
 		{
-			auto ptr = std::shared_ptr<Texture>(new Texture(tex, scale), Remover{});
+			auto ptr = std::shared_ptr<Texture>(new Texture(tex), Remover{});
 
 			Get().pool[id] = std::weak_ptr(ptr);
 			return ptr;
@@ -55,15 +55,15 @@ namespace tryn::gfx
 		}
 	}
 
-	std::shared_ptr<Texture> TexturePool::Resolve(const GLTFTextureData& textureData, std::optional<glm::vec3> scale)
+	std::shared_ptr<Texture> TexturePool::Resolve(const GLTFTextureData& textureData)
 	{
-		auto id = Texture::GenerateID( textureData.name, scale);
+		auto id = Texture::GenerateID( textureData.name);
 
 		const auto it = Get().pool.find(id);
 
 		if (it == Get().pool.end() || it != Get().pool.end() && it->second.expired())
 		{
-			auto ptr = std::shared_ptr<Texture>(new Texture(textureData, scale), Remover{});
+			auto ptr = std::shared_ptr<Texture>(new Texture(textureData), Remover{});
 
 			Get().pool[id] = std::weak_ptr(ptr);
 			return ptr;

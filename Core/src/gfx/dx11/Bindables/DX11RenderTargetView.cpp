@@ -1,16 +1,16 @@
 #include "TrynPCH.h"
 #include "DX11RenderTargetView.h"
 
+#include "DX11Texture.h"
+#include "Core/src/gfx/Bindables/TextureResource.h"
+
 namespace tryn::gfx::dx11
 {
-	DX11RenderTargetView::DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, const TextureFormat format)
+	DX11RenderTargetView::DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, const uint16_t rtvSlot, const TextureFormat format, const TextureUsage usage, const uint16_t textureSlot)
 		:
 		gfx(gfx)
 	{
-		this->shaderResource = shaderResource;
-		this->slot = slot.value_or(0);
-		this->format = format;
-		this->dimensions = dimensions;
+		slot = rtvSlot;
 		RTVCreation(gfx, dimensions);
 		if (shaderResource)
 		{
@@ -128,27 +128,6 @@ namespace tryn::gfx::dx11
 			SRVCreation(gfx, this->slot);
 		}
 	}
-
-	void DX11RenderTargetView::FillTexture(const std::shared_ptr<ITexture>&)
-	{
-	}
-
-	void DX11RenderTargetView::FillTextureRegion(const std::shared_ptr<ITexture>&, uint32_t startX, uint32_t endX, uint32_t startY, uint32_t endY)
-	{
-		D3D11_TEXTURE2D_DESC textureDesc = {};
-		textureDesc.Width = endX - startX;
-		textureDesc.Height = startY - endY;
-		textureDesc.MipLevels = 1;
-		textureDesc.ArraySize = 1;
-		textureDesc.Format = Graphics::MapDXGIFormat(this->format);
-		textureDesc.SampleDesc.Count = 1;
-		textureDesc.SampleDesc.Quality = 0;
-		textureDesc.Usage = D3D11_USAGE_DEFAULT;
-		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE; // never do we not want to bind offscreen RTs as inputs
-		textureDesc.CPUAccessFlags = 0;
-		textureDesc.MiscFlags = 0;
-	}
-
 	void DX11RenderTargetView::RTVCreation(const Graphics& gfx, const spa::DimensionsI dimensions)
 	{
 		// RTV Creation

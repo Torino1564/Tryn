@@ -114,7 +114,7 @@ namespace tryn::gfx
 
 	std::string Texture::GetID() const noexcept
 	{
-		return GenerateID(path, scale);
+		return GenerateID(path);
 	}
 
 	const std::byte* Texture::Data() const noexcept
@@ -141,7 +141,6 @@ namespace tryn::gfx
 	{
 		return hasAlpha;
 	}
-
 	std::string Texture::GetPath() const
 	{
 		return path;

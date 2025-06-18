@@ -6,34 +6,36 @@
 
 namespace tryn::gfx 
 {
-	std::string IRenderTargetView::GenerateID(const IGraphics& gfx, const std::shared_ptr<ITexture>& pTexture, uint16_t slot)
+	std::string IRenderTargetView::GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, const uint16_t rtvSlot, const TextureFormat format, const TextureUsage usage, const uint16_t textureSlot)
 	{
-		static uint16_t rtvCounter = 0u;
-		decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
+		using namespace std::string_literals;
+
+		auto& typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
 		std::string UID(typeStr);
 		UID += "#";
 		UID += "RTV#W:";
-		UID += pTexture->GetTextureResource().GetWidth();
+		UID += dimensions.width;
 		UID += "#H:";
-		UID += pTexture->GetTextureResource().GetHeight();
-		if (shaderResource)
-		{
-			UID += "#SR#Slot:";
-			UID += slot.value_or(0);
-			if (!slot.has_value())
-				trylog.warn(L"Render Target View marked as shader resource but binding slot not specified! Defaulting to slot 0.");
-		}
-		UID += "F:";
+		UID += dimensions.height;
+		UID += "#Usage:"s + to_string(usage);
+		UID += "#Slot:" + std::to_string(rtvSlot);
+		UID += "#Tex#Slot:";
+		UID += textureSlot;
+		UID += "#F:";
 		UID += std::to_underlying(format);
 		UID += "#";
-		UID += rtvCounter++;
 
 		return UID;
 	}
 
-	std::shared_ptr<IRenderTargetView> IRenderTargetView::Resolve(const IGraphics& gfx, spa::DimensionsI dimensions, bool shaderResource, std::optional<uint16_t> slot, TextureFormat format)
+	void IRenderTargetView::SetSlot(const uint16_t slot)
 	{
-		return BindablePool::Resolve<IRenderTargetView>(gfx, dimensions, shaderResource, slot, format);
+		this->slot = slot;
+	}
+
+	std::shared_ptr<IRenderTargetView> IRenderTargetView::Resolve(const IGraphics& gfx, const spa::DimensionsI dimensions, const uint16_t rtvSlot, const TextureFormat format, const TextureUsage usage, const uint16_t textureSlot)
+	{
+		return BindablePool::Resolve<IRenderTargetView>(gfx, dimensions, rtvSlot, format, usage, textureSlot);
 	}
 
 	void IRenderTargetView::SetDepthStencil(IDepthStencil& dsv)

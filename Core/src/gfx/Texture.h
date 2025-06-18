@@ -31,7 +31,7 @@ namespace tryn::gfx
 		Texture(const aiTexture& tex);
 		Texture(const class GLTFTextureData& textureData);
 		Texture(spa::DimensionsI dimensions, TextureFormat format = TextureFormat::B8G8R8A8_UNORM);
-		static constexpr std::string GenerateID(const std::string& name, std::optional<glm::vec3> scale = std::nullopt);
+		static constexpr std::string GenerateID(const std::string& name);
 		std::string GetID() const noexcept;
 		const std::byte* Data() const noexcept;
 		int GetHeight() const noexcept;
@@ -43,7 +43,6 @@ namespace tryn::gfx
 	private:
 		// Data
 		std::string path;
-		std::optional<glm::vec3> scale;
 		spa::DimensionsI dimensions;
 		int numChannels = 0;
 		bool hasAlpha = false;
@@ -52,15 +51,10 @@ namespace tryn::gfx
 		std::unique_ptr<std::byte, Deleter> buffer;
 	};
 
-	constexpr std::string Texture::GenerateID(const std::string& name, std::optional<glm::vec3> scale)
+	constexpr std::string Texture::GenerateID(const std::string& name)
 	{
 		std::string id = "#Texture#";
 		id += name;
-		if (scale)
-		{
-			id += "#Scale:";
-			id += std::format("X:{}Y:{}Z:{}", scale->x, scale->y, scale->z);
-		}
 		return id;
 	}
 }

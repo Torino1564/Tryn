@@ -16,9 +16,9 @@ namespace tryn::gfx
 			static Remover& Get();
 		};
 
-		static std::shared_ptr<Texture> Resolve(const std::filesystem::path& path, std::optional<glm::vec3> scale = std::nullopt);
-		static std::shared_ptr<Texture> Resolve(const aiTexture& tex, std::optional<glm::vec3> scale = std::nullopt);
-		static std::shared_ptr<Texture> Resolve(const class GLTFTextureData& textureData, std::optional<glm::vec3> scale = std::nullopt);
+		static std::shared_ptr<Texture> Resolve(const std::filesystem::path& path);
+		static std::shared_ptr<Texture> Resolve(const aiTexture& tex);
+		static std::shared_ptr<Texture> Resolve(const class GLTFTextureData& textureData);
 
 	private:
 		static TexturePool& Get()

@@ -13,9 +13,9 @@ namespace tryn::gfx
 	class IRenderTargetView : public IBindable
 	{
 	public:
-		static std::string GenerateID(const IGraphics& gfx, const std::shared_ptr<ITexture>& pTexture, uint16_t slot);
-		static std::shared_ptr<IRenderTargetView> Resolve(const IGraphics& gfx, const std::shared_ptr<ITexture>& pTexture, uint16_t slot);
-
+		static std::string GenerateID(const IGraphics& gfx, spa::DimensionsI dimensions, uint16_t rtvSlot, TextureFormat format = TextureFormat::B8G8R8A8_UNORM, TextureUsage usage = TextureUsage::GPUOnly, uint16_t textureSlot = 0);
+		static std::shared_ptr<IRenderTargetView> Resolve(const IGraphics& gfx, spa::DimensionsI dimensions, uint16_t rtvSlot, TextureFormat format = TextureFormat::B8G8R8A8_UNORM, TextureUsage usage = TextureUsage::GPUOnly, uint16_t textureSlot = 0);
+		void SetSlot(uint16_t slot);
 		virtual void Clear() const = 0;
 		void SetDepthStencil(IDepthStencil& dsv);
 		ITexture& GetTexture();
