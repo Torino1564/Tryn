@@ -145,6 +145,12 @@ namespace tryn::gfx::dx11
 		case TextureUsage::CPUReadWrite:
 			return { D3D11_USAGE_STAGING, D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE, 0 };
 
+		case TextureUsage::RenderTarget:
+			return { D3D11_USAGE_DEFAULT, 0, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE };
+
+		case TextureUsage::DepthStencil:
+			return { D3D11_USAGE_DEFAULT, 0, D3D11_BIND_DEPTH_STENCIL };
+
 		case TextureUsage::Unknown:
 		default:
 			return { D3D11_USAGE_DEFAULT, 0, 0 };

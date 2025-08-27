@@ -40,7 +40,9 @@ namespace tryn::gfx
 		int GetRowPitch() const noexcept;
 		bool HasAlpha() const noexcept;
 		std::string GetPath() const;
-	private:
+		TextureFormat GetFormat() const;
+
+	private: 
 		// Data
 		std::string path;
 		spa::DimensionsI dimensions;

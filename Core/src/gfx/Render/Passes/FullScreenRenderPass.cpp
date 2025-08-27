@@ -54,17 +54,18 @@ namespace tryn::gfx
 	void FullscreenRenderPass::Execute(const IGraphics& gfx)
 	{
 		// Bind buffers and render targets
-		const auto& rtv = pSink->Get<IRenderTargetView>("rtv");
+		auto& rtv = pSink->Get<IRenderTargetView>("rtv");
 
 		if (binddepthStencil)
 		{
 			auto& dsv = pSink->Get<IDepthStencil>("depthStencil");
-			rtv.BindAsRTV(&dsv);
+			rtv.SetDepthStencil(dsv);
+			rtv.Bind();
 			pSource->Set(dsv, "depthStencil");
 		}
 		else
 		{
-			rtv.BindAsRTV();
+			rtv.Bind();
 		}
 		if (bindOSRtv)
 		{

@@ -4,7 +4,7 @@
 
 #include "TextureResource.h"
 
-namespace tryn::gfx 
+namespace tryn::gfx
 {
 	std::string IRenderTargetView::GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, const uint16_t rtvSlot, const TextureFormat format, const TextureUsage usage, const uint16_t textureSlot)
 	{
@@ -33,6 +33,11 @@ namespace tryn::gfx
 		this->slot = slot;
 	}
 
+	uint16_t IRenderTargetView::GetSlot() const
+	{
+		return slot;
+	}
+
 	std::shared_ptr<IRenderTargetView> IRenderTargetView::Resolve(const IGraphics& gfx, const spa::DimensionsI dimensions, const uint16_t rtvSlot, const TextureFormat format, const TextureUsage usage, const uint16_t textureSlot)
 	{
 		return BindablePool::Resolve<IRenderTargetView>(gfx, dimensions, rtvSlot, format, usage, textureSlot);
@@ -51,5 +56,15 @@ namespace tryn::gfx
 	const ITexture& IRenderTargetView::GetTexture() const
 	{
 		return *pTexture;
+	}
+
+	TextureFormat IRenderTargetView::GetFormat() const
+	{
+		return pTexture->GetFormat();
+	}
+
+	spa::DimensionsI IRenderTargetView::GetDimensions() const
+	{
+		return pTexture->GetDimensions();
 	}
 }
