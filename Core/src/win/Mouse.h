@@ -1,5 +1,6 @@
 #pragma once
 #include <queue>
+#include <optional>
 
 namespace tryn::win
 {

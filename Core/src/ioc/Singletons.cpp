@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Singletons.h"
 
 namespace tryn::ioc

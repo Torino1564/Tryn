@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "DX11Rasterizer.h"
 #include <Core/src/gfx/dx11/GraphicsError.h>
 

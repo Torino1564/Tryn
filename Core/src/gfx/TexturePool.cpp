@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "TexturePool.h"
 #include <assimp/scene.h>
 

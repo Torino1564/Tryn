@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "PointLight.h"
 #include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Render/Techniques/Flat.h>

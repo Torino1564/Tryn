@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Container.h"
 
 namespace tryn::ioc

@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "RenderSystem.h"
 #include <Core/src/ecs/cmp/ComponentManager.h>
 #include <Core/src/gfx/Render/Jobs/PointLightJob.h>

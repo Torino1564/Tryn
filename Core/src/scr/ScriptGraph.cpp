@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "ScriptGraph.h"
 
 namespace tryn::scr

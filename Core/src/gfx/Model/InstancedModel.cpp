@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "InstancedModel.h"
 #include <Core/src/mem/ArenaAllocator.h>
 #include "Core/third/glm/gtx/euler_angles.hpp"

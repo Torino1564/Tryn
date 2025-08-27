@@ -7,6 +7,7 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "WindowHandle.h"
+#include <filesystem>
 
 namespace tryn::win
 {

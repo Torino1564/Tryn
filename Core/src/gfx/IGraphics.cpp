@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "IGraphics.h"
 #include <Core/src/log/Log.h>
 #include <Core/src/gfx/Render/DefaultRenderGraphs/DefaultRenderGraph.h>

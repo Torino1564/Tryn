@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <core/third/glm/glm.hpp>
-
+#include <span>
 #include "Core/src/utl/StringHasher.h"
 
 namespace tryn::gfx

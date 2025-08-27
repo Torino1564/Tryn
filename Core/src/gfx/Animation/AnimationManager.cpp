@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "AnimationManager.h"
 #include <Core/src/utl/Assert.h>
 #include <assimp/anim.h>

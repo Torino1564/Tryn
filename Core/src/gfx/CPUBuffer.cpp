@@ -1,4 +1,3 @@
-#include "TrynPCH.h"
 #include "CPUBuffer.h"
 
 #include <GLTFSDK/MeshPrimitiveUtils.h>

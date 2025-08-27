@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Win.h"
 #include <Core/src/ioc/Container.h>
 #include <Core/src/ioc/Singletons.h>

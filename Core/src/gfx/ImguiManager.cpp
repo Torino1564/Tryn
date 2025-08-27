@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "ImguiManager.h"
 
 namespace tryn::gfx

@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Gfx.h"
 #include <Core/src/ioc/Container.h>
 #include "ImguiManager.h"

@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "FullScreenRenderPass.h"
 #include <Core/src/gfx/Vertex.h>
 #include <Core/src/gfx/Bindables/IBufferBase.h>

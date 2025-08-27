@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Vertex.h"
 #include <Core/src/utl/Assert.h>
 #include <Core/src/gfx/Animation/Bone.h>

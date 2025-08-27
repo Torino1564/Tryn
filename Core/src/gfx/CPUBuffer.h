@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/src/utl/Exception.h>
+#include <vector>
 
 ZT_EX_DEF(CPUBufferException);
 

@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Component.h"
 
 #include "EntityID.h"

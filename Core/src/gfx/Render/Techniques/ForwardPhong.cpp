@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "ForwardPhong.h"
 #include <assimp/types.h>
 #include <Core/src/gfx/IGraphics.h>

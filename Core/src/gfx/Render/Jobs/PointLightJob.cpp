@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "PointLightJob.h"
 #include <Core/src/gfx/Render/RenderGraph.h>
 #include <Core/src/gfx/Bindables/IBufferBase.h>

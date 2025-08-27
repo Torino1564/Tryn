@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Mesh.h"
 
 namespace tryn::gfx

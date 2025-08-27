@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "InputLayout.h"
 #include <Core/src/gfx/BindablePool.h>
 #include "VertexShader.h"

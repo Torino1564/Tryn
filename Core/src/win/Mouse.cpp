@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Mouse.h"
 
 // TODO: THIS DOES NOT HAVE TO BE A DEFINE

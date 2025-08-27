@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "TLink.h"
 #include "TGraph.h"
 #include <Core/src/gph/TNode.h>

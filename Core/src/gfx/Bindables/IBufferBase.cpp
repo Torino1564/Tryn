@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "IBufferBase.h"
 #include <Core/src/gfx/BindablePool.h>
 

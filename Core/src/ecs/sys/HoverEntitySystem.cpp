@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "HoverEntitySystem.h"
 
 #include "Core/src/ecs/cmp/ComponentManager.h"

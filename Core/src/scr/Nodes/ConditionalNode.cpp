@@ -1,7 +1,7 @@
-#include "TrynPCH.h"
 #include "ConditionalNode.h"
 #include <imgui.h>
 #include <imgui_stdlib.h>
+#include <variant>
 
 namespace tryn::scr
 {

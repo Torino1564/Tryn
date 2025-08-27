@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/src/spa/Dimensions.h>
+#include <memory>
 
 namespace tryn::gfx
 {

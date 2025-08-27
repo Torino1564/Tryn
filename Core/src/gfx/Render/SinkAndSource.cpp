@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "SinkAndSource.h"
 #include <Core/src/gfx/Render/RenderPass.h>
 

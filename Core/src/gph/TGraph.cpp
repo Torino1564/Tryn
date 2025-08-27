@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "TGraph.h"
 #include "TNode.h"
 

@@ -1,4 +1,3 @@
-#include "TrynPCH.h"
 #include "Model.h"
 
 #include <imgui.h>
@@ -19,7 +18,7 @@
 #include "Core/third/glm/gtx/euler_angles.hpp"
 #include <Core/src/gfx/win/gltfSDK.h>
 #include <GLTFSDK/Deserialize.h>
-
+#include <ranges>
 #include "GLTFMesh.h"
 #include "Core/third/glm/gtx/quaternion.hpp"
 

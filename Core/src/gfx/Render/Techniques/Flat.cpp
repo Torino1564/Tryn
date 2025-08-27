@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Flat.h"
 #include <assimp/material.h>
 #include <assimp/StringUtils.h>

@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Archetype.h"
 
 #include "cmp/ComponentManager.h"

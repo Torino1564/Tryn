@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Thread.h"
 
 namespace tryn::ccr

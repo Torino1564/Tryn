@@ -1,6 +1,5 @@
-#include "TrynPCH.h"
 #include "SetVarNode.h"
-
+#include <variant>
 #include <imgui.h>
 #include <imgui_stdlib.h>
 

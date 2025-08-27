@@ -1,4 +1,3 @@
-#include "TrynPCH.h"
 #include "gltfSDK.h"
 
 #undef min

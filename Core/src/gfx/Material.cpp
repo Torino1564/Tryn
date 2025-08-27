@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Material.h"
 #include <assimp/material.h>
 #include <assimp/types.h>

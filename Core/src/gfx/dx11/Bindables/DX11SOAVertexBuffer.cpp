@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "DX11SOAVertexBuffer.h"
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
 

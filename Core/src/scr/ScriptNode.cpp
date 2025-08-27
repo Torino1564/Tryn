@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "ScriptNode.h"
 #include <Core/src/ser/StreamIO.h>
 

@@ -2,6 +2,7 @@
 #include <Core/src/gfx/Bindables/Bindable.h>
 #include <Core/src/gfx/ComparissonMode.h>
 #include <Core/src/spa/Dimensions.h>
+#include <optional>
 
 namespace tryn::gfx
 {

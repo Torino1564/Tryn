@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "EntityIDTechnique.h"
 #include <Core/src/gfx/IGraphics.h>
 

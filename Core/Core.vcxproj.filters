@@ -330,9 +330,6 @@
     <ClCompile Include="src\gfx\Render\RenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="third\TrynPCH.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ser\StreamIO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -2148,9 +2145,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\VertexFormat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="third\TrynPCH.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Bindables\PrimitiveTopology.h">

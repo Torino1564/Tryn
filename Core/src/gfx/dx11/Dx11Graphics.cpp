@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "TrynWLR.h"
 #include "Dx11Graphics.h"
 #include "GraphicsError.h"

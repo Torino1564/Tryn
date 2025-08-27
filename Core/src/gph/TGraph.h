@@ -3,6 +3,7 @@
 #include "Core/src/spa/Vec2.h"
 #include "TTypeRegister.h"
 #include "TLink.h"
+#include <unordered_map>
 
 namespace tryn::gph
 {

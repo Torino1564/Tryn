@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "DX11Texture.h"
 #include <Core/src/gfx/dx11/GraphicsError.h>
 #include <Core/src/gfx/dx11/Dx11Context.h>

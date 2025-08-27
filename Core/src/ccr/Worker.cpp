@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "Worker.h"
 #include "Master.h"
 

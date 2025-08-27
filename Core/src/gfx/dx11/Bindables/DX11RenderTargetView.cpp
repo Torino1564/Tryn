@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "DX11RenderTargetView.h"
 
 #include "DX11Texture.h"

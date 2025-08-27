@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "ComponentManager.h"
 
 #include <Core/src/ecs/cmp/Components.h>

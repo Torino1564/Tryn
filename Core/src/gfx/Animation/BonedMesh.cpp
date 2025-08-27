@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "BonedMesh.h"
 #include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/mem/ArenaAllocator.h>

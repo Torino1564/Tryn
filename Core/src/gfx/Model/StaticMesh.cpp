@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "StaticMesh.h"
 #include <Core/src/gfx/BindablePool.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>

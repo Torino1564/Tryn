@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "RenderTargetView.h"
 #include <Core/src/gfx/BindablePool.h>
 

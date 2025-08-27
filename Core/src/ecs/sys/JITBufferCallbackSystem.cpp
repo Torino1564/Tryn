@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "JITBufferCallbackSystem.h"
 
 #include "Core/src/ecs/Archetype_def.h"

@@ -17,6 +17,8 @@
 #include <Core/src/win/WindowHandle.h>
 #include <Core/src/gfx/TextureFormat.h>
 #include <Core/src/utl/Tuple.h>
+#include <ranges>
+#include <tuple>
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,

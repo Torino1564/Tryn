@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/src/gfx/Animation/AnimationState.h>
+#include <cstdint>
 
 namespace tryn::gfx::ani
 {

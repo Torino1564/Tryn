@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "TextureResource.h"
 #include <Core/src/gfx/BindablePool.h>
 #include <assimp/texture.h>

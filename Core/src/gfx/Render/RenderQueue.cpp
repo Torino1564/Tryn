@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "RenderQueue.h"
 #include <Core/src/gfx/Render/RenderTask.h>
 #include <Core/src/gfx/PointLight.h>

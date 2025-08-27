@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "GLTFMesh.h"
 
 #include <GLTFSDK/GLTF.h>

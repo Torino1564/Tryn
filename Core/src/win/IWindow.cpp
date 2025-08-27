@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "IWindow.h"
 #include <imgui.h>
 #include <Core/src/log/Log.h>

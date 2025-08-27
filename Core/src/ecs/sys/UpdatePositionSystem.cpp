@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "UpdatePositionSystem.h"
 #include <Core/src/ecs/cmp/ComponentManager.h>
 #include <Core/src/ecs/Archetype.h>

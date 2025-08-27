@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "MsvcDebugDriver.h"
 #include <Core/src/win/TrynWin.h>
 #include "TextFormatter.h"

@@ -1,4 +1,4 @@
-#include "TrynPCH.h"
+
 #include "TransformSystem.h"
 #include <Core/third/glm/ext.hpp>
 #include <Core/third/glm/gtx/euler_angles.hpp>

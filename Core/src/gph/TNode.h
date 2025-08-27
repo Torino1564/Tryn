@@ -1,5 +1,8 @@
 #pragma once
 #include "Core/src/spa/Vec2.h"
+#include <functional>
+#include <vector>
+#include <string>
 
 namespace tryn
 {
