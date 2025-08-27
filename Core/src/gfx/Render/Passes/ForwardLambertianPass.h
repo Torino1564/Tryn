@@ -24,10 +24,11 @@ namespace tryn::gfx
 		void Execute(const IGraphics& gfx) override
 		{
 			// bind Render Target View
-			const auto& rtv = pSink->Get<IRenderTargetView>("rtv");
+			auto& rtv = pSink->Get<IRenderTargetView>("rtv");
 			auto& dsv = pSink->Get<IDepthStencil>("depthStencil");
 
-			rtv.BindAsRTV(&dsv);
+			rtv.SetDepthStencil(dsv);
+			rtv.Bind();
 			
 			// This queue pass knows that the first queue is the lambertian one (because it was declared that way on its constructor)
 			auto& lambertianQueue = *pQueues[0];

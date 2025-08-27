@@ -48,7 +48,9 @@ namespace tryn::gfx
 	    CPUReadWrite,
 	    Upload,
 	    Readback,
-	    Unknown
+	    Unknown,
+        RenderTarget,
+        DepthStencil
     };
 
     inline const char* to_string(const TextureUsage e)
@@ -58,7 +60,9 @@ namespace tryn::gfx
 	    case TextureUsage::GPUOnly: return "GPUOnly";
 	    case TextureUsage::CPUReadWrite: return "CPUReadWrite";
 	    case TextureUsage::Upload: return "Upload";
-	    case TextureUsage::Readback: return "Readback";
+        case TextureUsage::Readback: return "Readback";
+        case TextureUsage::RenderTarget: return "RenderTarget";
+        case TextureUsage::DepthStencil: return "DepthStencil";
 	    case TextureUsage::Unknown: return "Unknown";
 	    default: return "unknown";
 	    }

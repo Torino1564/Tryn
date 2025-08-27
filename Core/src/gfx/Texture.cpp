@@ -145,4 +145,9 @@ namespace tryn::gfx
 	{
 		return path;
 	}
+
+	TextureFormat Texture::GetFormat() const
+	{
+		return format;
+	}
 }

@@ -19,9 +19,9 @@ namespace tryn::gfx
 
 		void Execute(const IGraphics& gfx) override
 		{
-			const auto& rtv = pSink->Get<IRenderTargetView>(RESOURCE_NAME);
+			auto& rtv = pSink->Get<IRenderTargetView>(RESOURCE_NAME);
 
-			rtv.BindAsRTV();
+			rtv.Bind();
 
 			// This queue pass knows that the first queue is the entityID one (because it was declared that way on its constructor)
 			auto& entityIDQueue = *pQueues[0];

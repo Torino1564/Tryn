@@ -10,6 +10,7 @@ namespace tryn::gfx::dx11
 	{
 	public:
 		DX11Texture(const Graphics& gfx, const std::shared_ptr<Texture>& pTexture, uint8_t slot, TextureUsage usage);
+		DX11Texture(const Graphics& gfx, spa::DimensionsI dimensions, TextureFormat format, uint8_t slot, TextureUsage usage);
 		void Bind() override;
 		void Bind(const IContext&) override;
 	private:

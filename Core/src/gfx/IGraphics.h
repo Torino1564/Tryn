@@ -7,16 +7,15 @@
 #include <Core/third/glm/glm.hpp>
 #include <thread>
 #include <semaphore>
-#include <filesystem>
 #include <Core/src/ccr/GenericTaskQueue.h>
 #include "Render/RenderGraph.h"
 #include <Core/src/gfx/IContext.h>
 #include <Core/src/gfx/GraphicAPI.h>
 #include <Core/src/gfx/IBufferFwd.h>
-#include <Core/src/gfx/ComparissonMode.h>
 #include <Core/src/win/WindowHandle.h>
 #include <Core/src/gfx/TextureFormat.h>
 #include <Core/src/utl/Tuple.h>
+#include <ranges>
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
@@ -104,7 +103,9 @@ namespace tryn::gfx
 			Register<IPxConstantBuffer>,
 			Register<IPxConstantBufferNCach>,
 			Register<IInstanceBuffer>,
-			Register<class ITexture>,
+			Register<class ITexture,
+					std::tuple<const std::shared_ptr<class Texture>&, uint8_t, TextureUsage>,
+					std::tuple<spa::DimensionsI, TextureFormat, uint8_t, TextureUsage>>,
 			Register<class IRasterizer>,
 			Register<class ISampler>,
 			Register<IRenderTargetView>,
@@ -130,7 +131,7 @@ namespace tryn::gfx
 			trylog.info(utl::ToWide(ZT_TYPE_OF(ConstRefTuple).data()));
 			for (const std::any& any : funcArray)
 			{
-				for (auto [index, rtti] : bindableConstructorsRTTI[indexInTupleOfBindables] | std::ranges::views::enumerate)
+				for (auto [index, rtti] : std::views::enumerate(bindableConstructorsRTTI[indexInTupleOfBindables]))
 				{
 					if (rtti.has_value() && any.has_value() && rtti.type() == any.type())
 					{
