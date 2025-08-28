@@ -213,9 +213,13 @@ namespace tryn::gfx::dx11
 
 			tempContext->GetContext().RSSetViewports(1u, &viewport);
 
+			//backbuffer
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
+			pSwap->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer) >> chk;
+
 			pContext = std::unique_ptr<IContext>(tempContext);
 
-			pTarget = std::make_shared<DX11RenderTargetView>(*this, dimensions, 0, swapFormat);
+			pTarget = std::make_shared<DX11RenderTargetView>(*this, pBackBuffer.Get(), 0);
 
 			//Z Buffer
 			pDSV = std::shared_ptr<DX11DepthStencil>{ new DX11DepthStencil(*this, dimensions, false, {}, ComparissonMode::Less) };

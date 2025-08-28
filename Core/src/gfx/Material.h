@@ -3,7 +3,7 @@
 #include <Core/src/gfx/Vertex.h>
 #include <concepts>
 #include <span>
-
+#include <filesystem>
 #include "Core/src/utl/StringHasher.h"
 
 namespace tryn::gfx

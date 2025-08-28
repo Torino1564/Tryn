@@ -6,14 +6,33 @@
 
 namespace tryn::gfx::dx11
 {
-	DX11RenderTargetView::DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions, const uint16_t rtvSlot, const TextureFormat format, const TextureUsage usage, const uint16_t textureSlot)
+	DX11RenderTargetView::DX11RenderTargetView(const Graphics& gfx, const spa::DimensionsI dimensions_, const uint16_t rtvSlot_, const TextureFormat format_, const uint16_t textureSlot_)
 		:
 		gfx(gfx)
 	{
+		slot = rtvSlot_;
+		textureSlot = textureSlot_;
+		dimensions = dimensions_;
+		format = format_;
+		RTVCreation();
+		SRVCreation();
+	}
+
+	DX11RenderTargetView::DX11RenderTargetView(const Graphics& gfx, ID3D11Texture2D* pTexture, uint16_t rtvSlot, uint16_t textureSlot)
+		: gfx(gfx)
+	{
 		slot = rtvSlot;
-		pTexture = std::make_unique<DX11Texture>(gfx, dimensions, format, textureSlot, usage);
-		RTVCreation(dimensions, format, usage);
-		SRVCreation(textureSlot);
+		D3D11_TEXTURE2D_DESC texDesc = {};
+		pTexture->GetDesc(&texDesc);
+		this->pTexture = nullptr;
+		// create the target view on the texture
+		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+		rtvDesc.Format = texDesc.Format;
+		rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
+		gfx.GetDevice().CreateRenderTargetView(
+			pTexture, &rtvDesc, pRTV.GetAddressOf()
+		) >> chk;
 	}
 
 	void DX11RenderTargetView::Bind()
@@ -73,48 +92,26 @@ namespace tryn::gfx::dx11
 
 	void DX11RenderTargetView::RegenerateResources(const spa::DimensionsI dimensions)
 	{
-		const auto format = pTexture->GetFormat();
-		const auto textureSlot = pTexture->GetSlot();
-		const auto usage = pTexture->GetUsage();
 		pTexture.reset();
-		pTexture = std::make_unique<DX11Texture>(gfx, dimensions, format, textureSlot, usage);
-		RTVCreation(pTexture->GetDimensions(), pTexture->GetFormat(), pTexture->GetUsage());
-		SRVCreation(pTexture->GetSlot());
+		RTVCreation();
+		SRVCreation();
 	}
 
-	void DX11RenderTargetView::RTVCreation(const spa::DimensionsI dimensions, TextureFormat format, TextureUsage usage)
+	void DX11RenderTargetView::RTVCreation()
 	{
-		// RTV Creation
-		D3D11_TEXTURE2D_DESC textureDesc;
-		textureDesc.Width = dimensions.width;
-		textureDesc.Height = dimensions.height;
-		textureDesc.MipLevels = 1;
-		textureDesc.ArraySize = 1;
-		textureDesc.Format = Graphics::MapDXGIFormat(format);
-		textureDesc.SampleDesc.Count = 1;
-		textureDesc.SampleDesc.Quality = 0;
-		textureDesc.Usage = Graphics::MapD3D11Usage(usage).usage;
-		textureDesc.BindFlags = Graphics::MapD3D11Usage(usage).bindFlags;
-		textureDesc.CPUAccessFlags = Graphics::MapD3D11Usage(usage).cpuAccessFlags;
-		textureDesc.MiscFlags = 0;
-
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
-
-		gfx.GetDevice().CreateTexture2D(
-			&textureDesc, nullptr, pTexture.GetAddressOf()
-		) >> chk;
-
+		std::shared_ptr<DX11Texture> pTex = std::make_shared<DX11Texture>(gfx, dimensions, format, slot, TextureUsage::RenderTarget);
+		pTexture = pTex;
 		// create the target view on the texture
 		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-		rtvDesc.Format = textureDesc.Format;
+		rtvDesc.Format = Graphics::MapDXGIFormat(format);
 		rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
 		gfx.GetDevice().CreateRenderTargetView(
-			pTexture.Get(), &rtvDesc, pRTV.GetAddressOf()
+			pTex->GetD3D11Texture(), &rtvDesc, pRTV.GetAddressOf()
 		) >> chk;
 	}
 
-	void DX11RenderTargetView::SRVCreation(uint16_t slot)
+	void DX11RenderTargetView::SRVCreation()
 	{
 		// SRV Creation
 		Microsoft::WRL::ComPtr<ID3D11Resource> pTex;
@@ -129,7 +126,5 @@ namespace tryn::gfx::dx11
 		gfx.GetDevice().CreateShaderResourceView(
 			pTex.Get(), &srvDesc, pSRV.GetAddressOf()
 		) >> chk;
-
-		this->slot = slot;
 	}
 }

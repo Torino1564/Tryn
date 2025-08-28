@@ -8,7 +8,8 @@ namespace tryn::gfx::dx11
 	class DX11RenderTargetView : public IRenderTargetView
 	{
 	public:
-		DX11RenderTargetView(const Graphics& gfx, spa::DimensionsI dimensions, uint16_t rtvSlot, TextureFormat format = TextureFormat::B8G8R8A8_UNORM, TextureUsage usage = TextureUsage::GPUOnly, uint16_t textureSlot = 0);
+		DX11RenderTargetView(const Graphics& gfx, spa::DimensionsI dimensions, uint16_t rtvSlot, TextureFormat format = TextureFormat::B8G8R8A8_UNORM, uint16_t textureSlot = 0);
+		DX11RenderTargetView(const Graphics& gfx, ID3D11Texture2D* pTexture, uint16_t rtvSlot, uint16_t textureSlot = 0);
 		void Bind() override;
 		void Bind(const class IContext& ctx) override;
 		ID3D11RenderTargetView* Get() const;
@@ -20,8 +21,8 @@ namespace tryn::gfx::dx11
 		void RegenerateResources(const spa::DimensionsI dimensions);
 
 	private:
-		void RTVCreation(spa::DimensionsI dimensions, TextureFormat format, TextureUsage usage);
-		void SRVCreation(uint16_t slot);
+		void RTVCreation();
+		void SRVCreation();
 
 		const Graphics& gfx;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRTV;

@@ -28,10 +28,10 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 		pGlobalSource->Set(*pDSV, "depthStencil");
 		pGlobalSource->Set(*pPointLightCBuf, "pointLightBuffer");
 
-		pOffScreenBuffer = IRenderTargetView::Resolve(gfx, gfx.GetDimensions(), 0, TextureFormat::B8G8R8A8_UNORM, TextureUsage::GPUOnly, 0);
+		pOffScreenBuffer = IRenderTargetView::Resolve(gfx, gfx.GetDimensions(), 0, TextureFormat::B8G8R8A8_UNORM, 0);
 		pGlobalSource->Set(*pOffScreenBuffer, "OSRtv");
 
-		pEntityIDRTV = IRenderTargetView::Resolve(gfx, gfx.GetDimensions(), 0, TextureFormat::R32G32B32A32_UINT, TextureUsage::Readback);
+		pEntityIDRTV = IRenderTargetView::Resolve(gfx, gfx.GetDimensions(), 0, TextureFormat::R32G32B32A32_UINT);
 		pGlobalSource->Set(*pEntityIDRTV, "EntityIDRTV");
 
 

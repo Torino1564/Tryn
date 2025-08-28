@@ -12,7 +12,7 @@ namespace tryn::gfx
 		gfx(gfx)
 	{
 		this->slot = slot;
-		this->pTextureResource = std::move(pTexture);
+		this->pTextureResource = pTexture;
 		this->usage = usage;
 		this->format = pTexture->GetFormat();
 		this->dimensions = { .width = pTexture->GetWidth(), .height = pTexture->GetHeight() };
@@ -72,7 +72,6 @@ namespace tryn::gfx
 		td.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 		td.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> pD3D11Texture;
 		gfx.GetDevice().CreateTexture2D(&td, nullptr, &pD3D11Texture) >> chk;
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvd = {};
@@ -98,5 +97,9 @@ namespace tryn::gfx
 		gfx.AssertContextCoherence(ctxt);
 		auto& dx11ctxt = static_cast<const DX11Context&>(ctxt).GetContext();
 		dx11ctxt.PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+	}
+	ID3D11Texture2D* dx11::DX11Texture::GetD3D11Texture()
+	{
+		return pD3D11Texture.Get();
 	}
 }

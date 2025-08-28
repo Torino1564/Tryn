@@ -13,8 +13,11 @@ namespace tryn::gfx::dx11
 		DX11Texture(const Graphics& gfx, spa::DimensionsI dimensions, TextureFormat format, uint8_t slot, TextureUsage usage);
 		void Bind() override;
 		void Bind(const IContext&) override;
+
+		ID3D11Texture2D* GetD3D11Texture();
 	private:
 		const Graphics& gfx;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTextureView;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> pD3D11Texture;
 	};
 }

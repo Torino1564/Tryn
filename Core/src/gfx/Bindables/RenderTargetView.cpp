@@ -6,7 +6,7 @@
 
 namespace tryn::gfx
 {
-	std::string IRenderTargetView::GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, const uint16_t rtvSlot, const TextureFormat format, const TextureUsage usage, const uint16_t textureSlot)
+	std::string IRenderTargetView::GenerateID(const IGraphics& gfx, const spa::DimensionsI dimensions, const uint16_t rtvSlot, const TextureFormat format, const uint16_t textureSlot)
 	{
 		using namespace std::string_literals;
 
@@ -17,7 +17,6 @@ namespace tryn::gfx
 		UID += dimensions.width;
 		UID += "#H:";
 		UID += dimensions.height;
-		UID += "#Usage:"s + to_string(usage);
 		UID += "#Slot:" + std::to_string(rtvSlot);
 		UID += "#Tex#Slot:";
 		UID += textureSlot;
@@ -38,9 +37,9 @@ namespace tryn::gfx
 		return slot;
 	}
 
-	std::shared_ptr<IRenderTargetView> IRenderTargetView::Resolve(const IGraphics& gfx, const spa::DimensionsI dimensions, const uint16_t rtvSlot, const TextureFormat format, const TextureUsage usage, const uint16_t textureSlot)
+	std::shared_ptr<IRenderTargetView> IRenderTargetView::Resolve(const IGraphics& gfx, const spa::DimensionsI dimensions, const uint16_t rtvSlot, const TextureFormat format, const uint16_t textureSlot)
 	{
-		return BindablePool::Resolve<IRenderTargetView>(gfx, dimensions, rtvSlot, format, usage, textureSlot);
+		return BindablePool::Resolve<IRenderTargetView>(gfx, dimensions, rtvSlot, format, textureSlot);
 	}
 
 	void IRenderTargetView::SetDepthStencil(IDepthStencil& dsv)

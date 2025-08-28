@@ -8,7 +8,8 @@
 #include <GLTFSDK/GLBResourceReader.h>
 #include <filesystem>
 #include <GLTFSDK/ExtensionsKHR.h>
-
+#include <sstream>
+#include <fstream>
 #include "Core/src/log/Log.h"
 #include "Core/src/utl/String.h"
 
