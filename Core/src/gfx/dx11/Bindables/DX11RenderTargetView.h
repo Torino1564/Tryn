@@ -9,16 +9,17 @@ namespace tryn::gfx::dx11
 	{
 	public:
 		DX11RenderTargetView(const Graphics& gfx, spa::DimensionsI dimensions, uint16_t rtvSlot, TextureFormat format = TextureFormat::B8G8R8A8_UNORM, uint16_t textureSlot = 0);
-		DX11RenderTargetView(const Graphics& gfx, ID3D11Texture2D* pTexture, uint16_t rtvSlot, uint16_t textureSlot = 0);
+		DX11RenderTargetView(const Graphics& gfx, ID3D11Texture2D* pTexture, TextureFormat format, uint16_t rtvSlot, uint16_t textureSlot = 0);
 		void Bind() override;
 		void Bind(const class IContext& ctx) override;
-		ID3D11RenderTargetView* Get() const;
+		ID3D11RenderTargetView* Get() const; 
 		ID3D11RenderTargetView* const* GetAddressOf() const;
 		ID3D11RenderTargetView** GetAddressOf();
 		void Clear() const override;
 		void Release();
 
 		void RegenerateResources(const spa::DimensionsI dimensions);
+		void RegenerateResources(ID3D11Texture2D* pTex);
 
 	private:
 		void RTVCreation();

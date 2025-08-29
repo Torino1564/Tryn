@@ -87,6 +87,34 @@ namespace tryn::gfx
 		gfx.GetContext().GenerateMips(pTextureView.Get());
 	}
 
+	dx11::DX11Texture::DX11Texture(const Graphics& gfx, ID3D11Texture2D* pTexture, TextureFormat format, uint8_t slot, TextureUsage usage)
+		: gfx(gfx)
+	{
+		this->slot = slot;
+		this->pTextureResource = nullptr;
+		this->usage = usage;
+		this->format = format;
+
+		D3D11_TEXTURE2D_DESC td = {};
+		pTexture->GetDesc(&td);
+		this->dimensions = {.width = (int)td.Width, .height = (int)td.Height};
+
+		if (!(Graphics::MapD3D11Usage(usage).bindFlags & D3D11_BIND_RENDER_TARGET))
+		{
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvd = {};
+			srvd.Format = td.Format;
+			srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			srvd.Texture2D.MostDetailedMip = 0;
+			srvd.Texture2D.MipLevels = -1;
+
+			gfx.GetDevice().CreateShaderResourceView(
+				pD3D11Texture.Get(), &srvd, &pTextureView
+			) >> chk;
+
+			gfx.GetContext().GenerateMips(pTextureView.Get());
+		}
+	}
+
 	void dx11::DX11Texture::Bind()
 	{
 		gfx.GetContext().PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());

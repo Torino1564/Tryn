@@ -8,6 +8,7 @@
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 #include "Core/src/gfx/Bindables/RenderTargetView.h"
 #include "Core/src/gfx/Bindables/Sampler.h"
+#include "Core/src/gfx/Bindables/TextureResource.h"
 
 namespace tryn::gfx
 {
@@ -70,7 +71,9 @@ namespace tryn::gfx
 		if (bindOSRtv)
 		{
 			auto& osrtv = pSink->Get<IRenderTargetView>("OSBuf");
-			osrtv.Bind();
+			auto& tex = osrtv.GetTexture();
+			tex.SetSlot(0);
+			tex.Bind();
 		}
 		if (pPxConstantBuffer)
 			pPxConstantBuffer->Bind();

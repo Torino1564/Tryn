@@ -219,7 +219,7 @@ namespace tryn::gfx::dx11
 
 			pContext = std::unique_ptr<IContext>(tempContext);
 
-			pTarget = std::make_shared<DX11RenderTargetView>(*this, pBackBuffer.Get(), 0);
+			pTarget = std::make_shared<DX11RenderTargetView>(*this, pBackBuffer.Get(), swapFormat, 0);
 
 			//Z Buffer
 			pDSV = std::shared_ptr<DX11DepthStencil>{ new DX11DepthStencil(*this, dimensions, false, {}, ComparissonMode::Less) };
@@ -331,7 +331,7 @@ namespace tryn::gfx::dx11
 			pBackBuffer->GetDesc(&tDesc);
 			dimensions = { .width = static_cast<int>(tDesc.Width), .height = static_cast<int>(tDesc.Height) };
 
-			pTarget->RegenerateResources(dimensions);
+			pTarget->RegenerateResources(pBackBuffer.Get());
 			pDSV->RegenerateResource(dimensions);
 
 			//viewport
