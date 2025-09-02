@@ -18,6 +18,8 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 	Gfx().SetRenderGraph(std::make_unique<TrynGameRenderGraph>(Gfx()));
 	ECS().GetSystemManager().Finalize();
 	Gfx().SetBackgroundColor(000.0f, 000.0f, 000.0f, 1);
+	wnd->SetResizableFlag(true);
+
 	wnd->keyboard.DisableAutoRepeat();
 
 	{
