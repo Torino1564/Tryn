@@ -13,7 +13,10 @@
   <ItemGroup>
     <ClCompile Include="src\ecs\sys\HoverEntitySystem.cpp" />
     <ClCompile Include="src\ecs\sys\JITBufferCallbackSystem.cpp" />
-    <ClCompile Include="src\ecs\Utils.cpp" />
+    <ClCompile Include="src\ecs\Utils.cpp">
+      <ShowIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ShowIncludes>
+      <ShowIncludes Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ShowIncludes>
+    </ClCompile>
     <ClCompile Include="src\gfx\Bindables\SOAVertexBuffer.cpp" />
     <ClCompile Include="src\gfx\CPUBuffer.cpp" />
     <ClCompile Include="src\gfx\Model\GLTFMesh.cpp" />

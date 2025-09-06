@@ -15,7 +15,7 @@ Player::Player(ecs::ECS& ecs, std::string name, const std::string& modelPath, gf
 		ecs::ScaleComponent,
 		ecs::VelocityComponent,
 		ecs::TransformComponent,
-		ecs::ModelComponent>(ecs, std::move(name))), name(std::move(name))
+		ecs::ModelComponent>(ecs, name)), name(std::move(name))
 {
 	auto& [active] = GetComponent<ecs::ActiveComponent>();
 	auto& [position] = GetComponent<ecs::PositionComponent>();
