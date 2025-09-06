@@ -32,7 +32,7 @@ namespace tryn::gfx
 	void GLTFMesh::SubmitBoned(const IGraphics& gfx, const glm::mat4& finalTransform,
 		std::span<const glm::mat4> boneTransforms)
 	{
-		trylog.warn(L"Cannot submit a gltf mesh with bone transforms! (Unimplemented)");
+		trylog.debug(L"Cannot submit a gltf mesh with bone transforms! (Unimplemented)");
 		Submit(gfx, finalTransform);
 	}
 

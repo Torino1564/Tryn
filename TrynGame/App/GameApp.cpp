@@ -18,6 +18,8 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 	Gfx().SetRenderGraph(std::make_unique<TrynGameRenderGraph>(Gfx()));
 	ECS().GetSystemManager().Finalize();
 	Gfx().SetBackgroundColor(000.0f, 000.0f, 000.0f, 1);
+	wnd->SetResizableFlag(true);
+
 	wnd->keyboard.DisableAutoRepeat();
 
 	{
@@ -57,22 +59,22 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 	}
 
-	//{
-	//	entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
-	//	   ecs::ActiveComponent,
-	//	   ecs::PositionComponent,
-	//	   ecs::TransformComponent,
-	//	   ecs::ModelComponent,
-	//	   ecs::ScaleComponent,
-	//	   ecs::RotationComponent>(ECS(),"sponza")));
+	{
+		entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
+		   ecs::ActiveComponent,
+		   ecs::PositionComponent,
+		   ecs::TransformComponent,
+		   ecs::ModelComponent,
+		   ecs::ScaleComponent,
+		   ecs::RotationComponent>(ECS(),"sponza")));
 
-	//	auto& sponza = *entities.back();
+		auto& sponza = *entities.back();
 
-	//	sponza.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-	//	sponza.GetComponent<ecs::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
-	//	sponza.GetComponent<ecs::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
-	//	sponza.GetComponent<ecs::ActiveComponent>().active = true;
-	//}
+		sponza.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
+		sponza.GetComponent<ecs::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
+		sponza.GetComponent<ecs::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
+		sponza.GetComponent<ecs::ActiveComponent>().active = true;
+	}
 
 	{
 		entities.push_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
