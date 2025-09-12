@@ -1,15 +1,23 @@
 #include "LightVector.hlsli"
 #include "Operations.hlsli"
 
-cbuffer PointLightCBuf : register(b0)
+#define MAX_POINT_LIGHTS 16
+
+struct PointLightParams
 {
     float3 viewLightPos;
-    float3 ambient;
     float3 diffuseColor;
     float diffuseIntensity;
     float constantAtt;
     float linearAtt;
     float quadraticAtt;
+};
+
+cbuffer PointLightCBuf : register(b0)
+{
+    uint numPointLights;
+    float3 ambient;
+    PointLightParams pointLights[MAX_POINT_LIGHTS];
 };
 
 cbuffer ObjectCBuf : register(b1)
@@ -59,8 +67,8 @@ float4 main(    const float3 viewPos : POSITION
 			) : SV_TARGET
 {
 #ifndef NoTex
-    const float4 diffuseSample = tex.Sample(splr, tc);
-    const float3 diffuseColor3 = diffuseSample.rgb;
+    float4 diffuseSample = tex.Sample(splr, tc);
+    float3 diffuseColor3 = diffuseSample.rgb;
 #else
 	const float3 diffuseColor3 = materialColor;
 #endif
@@ -87,34 +95,52 @@ float4 main(    const float3 viewPos : POSITION
     }
 #endif
 
-    const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewPos);
-
-    const float attenuation = Attenuate(constantAtt, linearAtt, quadraticAtt, lv.distToL);
-    const float3 diffuse = Diffuse(diffuseColor, diffuseIntensity, attenuation, lv.dirToL, viewNormal);
-
-
-    float specularPower = specularGloss;
-
-    float3 specularColor3 = specularColor;
-#ifndef NoSpc
-    const float4 specularSample = spec.Sample(splr, tc);
-
-    if (useSpecularMap)
+    float3 result = { 0.0f, 0.0f, 0.0f };
+    float attenuation = { 0.0f };
+    float3 diffuse = { 0.0f, 0.0f, 0.0f };
+    float specularPower = { 0.0f };
+    float specular = { 0.0f };
+    float3 specularColor3 = { 0.0f, 0.0f, 0.0f };
+    float4 specularSample = { 0.0f, 0.0f, 0.0f, 0.0f };
+    LightVectorData lv;
+    
+    
+    for (uint i = 0; i < 4; i++)
     {
-        specularColor3 = specularSample.rgb;
-    }
+        if (i >= numPointLights)
+            break;
+        
+        lv = CalculateLightVectorData(pointLights[i].viewLightPos, viewPos);
 
-    if (useSpecularAlpha)
-    {
-        specularPower = pow(2.0f, specularSample.a * 13.0f); 
-    }
-    else
-    {
+        attenuation = Attenuate(pointLights[i].constantAtt, pointLights[i].linearAtt, pointLights[i].quadraticAtt, lv.distToL);
+        diffuse = Diffuse(pointLights[i].diffuseColor, pointLights[i].diffuseIntensity, attenuation, lv.dirToL, viewNormal);
+
+
         specularPower = specularGloss;
-    }
+
+        specularColor3 = specularColor;
+#ifndef NoSpc
+        specularSample = spec.Sample(splr, tc);
+
+        if (useSpecularMap)
+        {
+            specularColor3 = specularSample.rgb;
+        }
+
+        if (useSpecularAlpha)
+        {
+            specularPower = pow(2.0f, specularSample.a * 13.0f);
+        }
+        else
+        {
+            specularPower = specularGloss;
+        }
 #endif
 
-    float3 specular = Speculate(diffuseColor * specularColor3, specularWeight, viewNormal, lv.vToL, viewPos, attenuation, specularPower);
+        specular = Speculate(pointLights[i].diffuseColor * specularColor3, specularWeight, viewNormal, lv.vToL, viewPos, attenuation, specularPower);
+        result += (diffuse + ambient) * diffuseColor3 + specular;
 
-    return float4(saturate((diffuse + ambient) * diffuseColor3 + specular), 1.0f);
+    }
+
+    return float4(saturate(result), 1.0f);
 }

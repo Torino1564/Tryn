@@ -39,10 +39,10 @@ namespace tryn::gfx
 		// Point Light buffer init
 		
 		gfx::ConstantBufferLayout cblayout;
-
+		cblayout.Append(ConstantBufferLayout::UInt32, "numPointLights");
+		cblayout.Append(ConstantBufferLayout::Float3, "ambient");
 		gfx::ConstantBufferLayout::Node pointLightElement(ConstantBufferLayout::Type::Struct, "pointLightParams");
 		pointLightElement.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float4, "position"));
-		pointLightElement.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float3, "ambient"));
 		pointLightElement.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float3, "diffuseColor"));
 		pointLightElement.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float, "diffuseIntensity"));
 		pointLightElement.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float, "constantAtt"));

@@ -26,7 +26,6 @@ namespace tryn::gfx
 		auto& viewMatrix = pRenderGraph->pCameras[pRenderGraph->selectedCamera]->GetViewOnViewMatrix();
 
 		params["position"].Get<glm::vec4>() = viewMatrix * glm::vec4(*pPosition, 1.0f);
-		params["ambient"].Get<glm::vec3>() = pParams->ambient;
 		params["diffuseColor"].Get<glm::vec3>() = pParams->diffuseColor;
 		params["diffuseIntensity"].Get<float>() = pParams->diffuseIntensity;
 		params["constantAtt"].Get<float>() = pParams->constantAtt;

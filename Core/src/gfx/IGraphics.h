@@ -63,6 +63,8 @@ namespace tryn::gfx
 		void SetProjection(glm::mat4 projection);
 		bool GetVsyncFlag() const;
 		void SetVsyncFlag(bool vsync);
+		glm::vec3 GetAmbientColor() const;
+		void SetAmbientColor(glm::vec3 color);
 		const spa::DimensionsI& GetDimensions() const;
 		virtual constexpr GraphicAPI GetType() const = 0;
 		virtual void Resize() = 0;
@@ -160,6 +162,7 @@ namespace tryn::gfx
 		void InitDefaults();
 		virtual void InitDefaultRenderGraph();
 		spa::DimensionsI dimensions = spa::DimensionsI(0, 0);
+		glm::vec3 ambientColor = { 0.01f, 0.01f, 0.01f };
 		glm::mat4 camera = {};
 		glm::mat4 projection = {};
 		std::unique_ptr<IRenderGraph> pRenderGraph;

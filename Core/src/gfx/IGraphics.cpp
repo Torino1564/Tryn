@@ -116,6 +116,16 @@ namespace tryn::gfx
 		vsync = vsync_;
 	}
 
+	glm::vec3 IGraphics::GetAmbientColor() const
+	{
+		return ambientColor;
+	}
+
+	void IGraphics::SetAmbientColor(glm::vec3 color)
+	{
+		ambientColor = color;
+	}
+
 	const spa::DimensionsI& IGraphics::GetDimensions() const
 	{
 		return dimensions;

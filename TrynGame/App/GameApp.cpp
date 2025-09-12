@@ -17,7 +17,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 {
 	Gfx().SetRenderGraph(std::make_unique<TrynGameRenderGraph>(Gfx()));
 	ECS().GetSystemManager().Finalize();
-	Gfx().SetBackgroundColor(000.0f, 000.0f, 000.0f, 1);
+	Gfx().SetBackgroundColor(000.0f, 000.0f, 010.0f, 1);
 	wnd->SetResizableFlag(true);
 
 	wnd->keyboard.DisableAutoRepeat();
@@ -45,13 +45,11 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat>(Gfx(), "Game/Resources/Models/sphere.obj");
 		pLight->GetComponent<ecs::ActiveComponent>().active = true;
 		pLight->GetComponent<ecs::PointLightComponent>().parameters = gfx::PointLightParameters{
-			.ambient = {0.1f, 0.1f, 0.1f},
 			.diffuseColor = glm::normalize(glm::vec3{1.0f, 1.0f, 1.0f}),
 			.diffuseIntensity = 1.0f,
 			.constantAtt = 1.0f,
 			.linearAtt = 0.045f,
-			//.quadraticAtt = 0.0075f,
-			.quadraticAtt = 0.000f
+			.quadraticAtt = 0.0075f
 		};
 		pLight->GetComponent<ecs::ScaleComponent>().scale = {1.0f, 1.0f, 1.0f};
 
@@ -59,7 +57,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 	}
 
-	{
+	/*{
 		entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
 		   ecs::ActiveComponent,
 		   ecs::PositionComponent,
@@ -74,7 +72,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		sponza.GetComponent<ecs::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
 		sponza.GetComponent<ecs::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
 		sponza.GetComponent<ecs::ActiveComponent>().active = true;
-	}
+	}*/
 
 	{
 		entities.push_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
