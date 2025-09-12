@@ -30,11 +30,14 @@ namespace tryn::gfx
 			{
 				graph.ResizePointLightBuffer(static_cast<uint16_t>(1.2f * pointLightBindQueue.GetNumberOfJobs()));
 			}
-
+			auto& pointLightBuffer = *graph.pPointLightCBuf;
+			pointLightBuffer.GetConstantBuffer()["ambient"] = gfx.GetAmbientColor();
+			pointLightBuffer.GetConstantBuffer()["numPointLights"] = (uint32_t)pointLightBindQueue.GetNumberOfJobs();
+			
 			pointLightBindQueue.RunJobs(gfx);
 			pointLightBindQueue.Clear();
 
-			graph.pPointLightCBuf->Bind();
+			pointLightBuffer.Bind();
 			pSource->Set(pPointLightBuffer, "pointLightBuffer");
 		}
 	private:

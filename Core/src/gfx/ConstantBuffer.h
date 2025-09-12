@@ -20,8 +20,8 @@ ZT_EX_DEF(DcbException);
 		X( Float4 ) \
 		X( Matrix4 ) \
 		X( Matrix3 ) \
-		X( Int32 ) \
-		X( Int64 )
+		X( UInt32 ) \
+		X( UInt64 )
 
 namespace tryn::gfx
 {
@@ -79,12 +79,12 @@ namespace tryn::gfx
 			using TrueType = glm::mat3;
 			static constexpr size_t TrueTypeSize = sizeof(glm::mat3);
 		};
-		template <> struct TypeAttr<Int32>
+		template <> struct TypeAttr<UInt32>
 		{
 			using TrueType = uint32_t;
 			static constexpr size_t TrueTypeSize = sizeof(TrueType);
 		};
-		template <> struct TypeAttr<Int64>
+		template <> struct TypeAttr<UInt64>
 		{
 			using TrueType = uint64_t;
 			static constexpr size_t TrueTypeSize = sizeof(TrueType);

@@ -26,10 +26,10 @@ namespace tryn::ecs
 		auto& jitBufferComponent = entity.GetComponent<UpdateJITBufferComponent>();
 
 		gfx::ConstantBufferLayout cblayout;
-		cblayout.Append(gfx::ConstantBufferLayout::Type::Int32, "entityID");
-		cblayout.Append(gfx::ConstantBufferLayout::Type::Int32, "archetypeID");
-		cblayout.Append(gfx::ConstantBufferLayout::Type::Int32, "padding");
-		cblayout.Append(gfx::ConstantBufferLayout::Type::Int32, "empty");
+		cblayout.Append(gfx::ConstantBufferLayout::Type::UInt32, "entityID");
+		cblayout.Append(gfx::ConstantBufferLayout::Type::UInt32, "archetypeID");
+		cblayout.Append(gfx::ConstantBufferLayout::Type::UInt32, "padding");
+		cblayout.Append(gfx::ConstantBufferLayout::Type::UInt32, "empty");
 		cblayout.Solidify();
 
 		auto buffer = gfx::IPxConstantBuffer::Resolve(ecs.Gfx(), std::move(cblayout));
