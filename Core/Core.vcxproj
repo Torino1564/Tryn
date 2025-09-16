@@ -18,6 +18,7 @@
     <ClCompile Include="src\gfx\CPUBuffer.cpp" />
     <ClCompile Include="src\gfx\Model\GLTFMesh.cpp" />
     <ClCompile Include="src\gfx\Model\Mesh.cpp" />
+    <ClCompile Include="src\gfx\Render\Passes\PointLightBindPass.cpp" />
     <ClCompile Include="src\gfx\Render\SinkAndSource.cpp" />
     <ClCompile Include="src\gfx\Render\Techniques\EntityIDTechnique.cpp" />
     <ClCompile Include="src\gfx\TexturePool.cpp" />
@@ -1286,7 +1287,6 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <EnableFuzzer>false</EnableFuzzer>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <PropertyGroup>
@@ -1308,11 +1308,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
-    <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
-  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <VcpkgHostTriplet />
     <VcpkgConfiguration>Debug</VcpkgConfiguration>
@@ -1330,7 +1327,6 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -1344,8 +1340,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
@@ -1356,8 +1350,6 @@
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -1369,9 +1361,7 @@
     <FxCompile>
       <ObjectFileOutput>$(SolutionDir)$(Platform)\$(Configuration)\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
-    <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)src\third\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
+    <Lib />
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

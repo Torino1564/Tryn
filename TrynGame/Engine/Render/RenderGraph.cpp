@@ -55,10 +55,10 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 		auto& pass = AddPass(FullscreenRenderPass(*this, "entityIDClearPass", false, false, &pEntityIDClearPS));
 
 		auto cblayout = ConstantBufferLayout();
-		cblayout.Append(ConstantBufferLayout::Type::Int32, "entityID");
-		cblayout.Append(ConstantBufferLayout::Type::Int32, "archetypeID");
-		cblayout.Append(ConstantBufferLayout::Type::Int32, "padding");
-		cblayout.Append(ConstantBufferLayout::Type::Int32, "empty");
+		cblayout.Append(ConstantBufferLayout::Type::UInt32, "entityID");
+		cblayout.Append(ConstantBufferLayout::Type::UInt32, "archetypeID");
+		cblayout.Append(ConstantBufferLayout::Type::UInt32, "padding");
+		cblayout.Append(ConstantBufferLayout::Type::UInt32, "empty");
 		cblayout.Solidify();
 
 		auto pPxCBuffer = IPxConstantBuffer::Resolve(gfx, std::move(cblayout));
