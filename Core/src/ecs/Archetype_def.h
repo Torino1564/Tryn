@@ -28,6 +28,7 @@ namespace tryn::ecs
 	{
 		friend class Entity;
 		friend class ArchetypeManager;
+		friend class ECS;
 		friend void ser::Serialize(ser::StreamIO& io, Archetype* data, bool binary, const std::string& name);
 
 	public:
@@ -74,7 +75,7 @@ namespace tryn::ecs
 	{
 	public:
 		friend class Archetype;
-
+		friend class ECS;
 		// TODO: Access Modes
 
 		template <typename... ACs>

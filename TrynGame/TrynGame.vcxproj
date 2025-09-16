@@ -100,12 +100,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <PreBuildEvent>
-      <Command>set INCLUDE=%INCLUDE%;$(ProjectDir)EngineConfigs</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Adds the engine configs to the library include directories</Message>
-    </PreBuildEvent>
+    <PreBuildEvent />
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App\EntryPoint.cpp" />

@@ -49,6 +49,7 @@ namespace tryn::gfx
 	}
 	void PointLight::Reset()
 	{
+		// Do something here
 		position = { 0.0f,0.0f,0.0f };
 		parameters.viewLightPos = glm::vec3(0.0f, 0.0f, 0.0f);
 		parameters.diffuseColor = glm::vec3(1.0f, 1.0f, 1.0f);

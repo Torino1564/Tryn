@@ -37,7 +37,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		   ecs::ModelComponent,
 		   ecs::ScaleComponent,
 		   ecs::RotationComponent,
-		   ecs::PointLightComponent>(ECS(), "light")));
+		   ecs::PointLightComponent>(ECS(), "light1")));
 
 		const auto& pLight = entities.back();
 
@@ -55,6 +55,33 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 		ecs::AddEntityIDJITBuffer(*pLight, ECS());
 
+	}
+
+	{
+		entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
+			ecs::ActiveComponent,
+			ecs::PositionComponent,
+			ecs::TransformComponent,
+			ecs::ModelComponent,
+			ecs::ScaleComponent,
+			ecs::RotationComponent,
+			ecs::PointLightComponent>(ECS(), "light2")));
+
+		const auto& pLight = entities.back();
+
+		pLight->GetComponent<ecs::PositionComponent>().position = { 10.0f, 15.0f, 10.0f };
+		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat>(Gfx(), "Game/Resources/Models/sphere.obj");
+		pLight->GetComponent<ecs::ActiveComponent>().active = true;
+		pLight->GetComponent<ecs::PointLightComponent>().parameters = gfx::PointLightParameters{
+			.diffuseColor = glm::normalize(glm::vec3{1.0f, 0.3f, 0.3f}),
+			.diffuseIntensity = 1.0f,
+			.constantAtt = 1.0f,
+			.linearAtt = 0.045f,
+			.quadraticAtt = 0.0005f
+		};
+		pLight->GetComponent<ecs::ScaleComponent>().scale = { 1.0f, 1.0f, 1.0f };
+
+		ecs::AddEntityIDJITBuffer(*pLight, ECS());
 	}
 
 	/*{
@@ -130,6 +157,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 void TrynGameApp::DoFrame()
 {
+	ECS().ShowDebugInfo();
 	// Process input
 	auto& playerVelocity = pPlayer->GetComponent<ecs::VelocityComponent>().velocity;
 	playerVelocity = { 0.0f, 0.0f, 0.0f };

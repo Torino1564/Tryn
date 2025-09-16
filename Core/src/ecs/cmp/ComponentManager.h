@@ -24,6 +24,7 @@ namespace tryn::ecs
 
 	class ComponentManager
 	{
+		friend class ECS;
 	public:
 		ComponentManager(const ECS* pEcs);
 
@@ -99,7 +100,6 @@ namespace tryn::ecs
 
 			return *std::bit_cast<T*>(it->second.GetData());
 		}
-
 	private:
 		uint16_t NextFreeAndIncrement();
 		const ECS* pEcs = nullptr;
