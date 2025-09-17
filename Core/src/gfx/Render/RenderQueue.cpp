@@ -93,7 +93,7 @@ namespace tryn::gfx
 
 	std::uint16_t RenderQueue::GetNumberOfJobs() const
 	{
-		return pJobs.size();
+		return anyVector.Size();
 	}
 
 	void RenderQueue::Push(IJob* pJob)

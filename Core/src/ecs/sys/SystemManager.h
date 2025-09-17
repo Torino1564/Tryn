@@ -41,6 +41,7 @@ namespace tryn::ecs
 
 	class SystemGraph
 	{
+		friend class ECS;
 	public:
 		SystemGraph() = default;
 		SystemGraph(SystemManager& manager);
@@ -175,6 +176,7 @@ namespace tryn::ecs
 
 	class SystemManager
 	{
+		friend class ECS;
 	public:
 		SystemManager(ECS* pEcs);
 		void ExecuteSystems() const;

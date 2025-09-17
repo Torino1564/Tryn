@@ -82,6 +82,8 @@ namespace tryn::ecs
 		const SystemManager& GetSystemManager() const;
 		SystemManager& GetSystemManager();
 		void ExecuteSystems() const;
+		void ShowDebugInfo() const;
+
 	private:
 		const app::App* pApp;
 		std::unique_ptr<ComponentManager> pComponentManager;

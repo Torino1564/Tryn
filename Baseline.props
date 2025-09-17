@@ -6,6 +6,7 @@
     <IncludePath>$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\include;$(SolutionDir);$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>..\Baseline.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <ExcludePath>E:\RivaTuner Statistics Server;$(ExcludePath)</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <EnableASAN>false</EnableASAN>
@@ -25,11 +26,12 @@
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
-      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <FxCompile>
       <ObjectFileOutput>$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>
