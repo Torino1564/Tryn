@@ -41,7 +41,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 		const auto& pLight = entities.back();
 
-		pLight->GetComponent<ecs::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
+		pLight->GetComponent<ecs::PositionComponent>().position = { 0.0f, 7.0f, 0.0f };
 		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat>(Gfx(), "Game/Resources/Models/sphere.obj");
 		pLight->GetComponent<ecs::ActiveComponent>().active = true;
 		pLight->GetComponent<ecs::PointLightComponent>().parameters = gfx::PointLightParameters{
@@ -69,11 +69,11 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 		const auto& pLight = entities.back();
 
-		pLight->GetComponent<ecs::PositionComponent>().position = { 10.0f, 15.0f, 10.0f };
+		pLight->GetComponent<ecs::PositionComponent>().position = { 20.0f, 7.0f, 10.0f };
 		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat>(Gfx(), "Game/Resources/Models/sphere.obj");
 		pLight->GetComponent<ecs::ActiveComponent>().active = true;
 		pLight->GetComponent<ecs::PointLightComponent>().parameters = gfx::PointLightParameters{
-			.diffuseColor = glm::normalize(glm::vec3{1.0f, 0.3f, 0.3f}),
+			.diffuseColor = glm::normalize(glm::vec3{1.0f, 1.0f, 1.0f}),
 			.diffuseIntensity = 1.0f,
 			.constantAtt = 1.0f,
 			.linearAtt = 0.045f,
@@ -84,7 +84,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		ecs::AddEntityIDJITBuffer(*pLight, ECS());
 	}
 
-	/*{
+	{
 		entities.emplace_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
 		   ecs::ActiveComponent,
 		   ecs::PositionComponent,
@@ -99,9 +99,9 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		sponza.GetComponent<ecs::ModelComponent>().pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Sponza/sponza.obj");
 		sponza.GetComponent<ecs::ScaleComponent>().scale = { 0.01f, 0.01f, 0.01f };
 		sponza.GetComponent<ecs::ActiveComponent>().active = true;
-	}*/
+	}
 
-	{
+	/*{
 		entities.push_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
 		   ecs::ActiveComponent,
 		   ecs::PositionComponent,
@@ -118,7 +118,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		plane.GetComponent<ecs::ActiveComponent>().active = true;
 
 		ecs::AddEntityIDJITBuffer(plane, ECS());
-	}
+	}*/
 
 	{
 		entities.push_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<

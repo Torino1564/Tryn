@@ -10,6 +10,12 @@ namespace tryn::ecs
 {
 	void AddEntityIDJITBuffer(Entity& entity, ECS& ecs)
 	{
+		if (!entity.HasComponent<UpdateJITBufferComponent>())
+		{
+			// Add component if it doesnt already have it:
+			entity.AddComponent<UpdateJITBufferComponent>(ecs);
+		}
+
 		const auto& pModel = entity.GetComponent<ModelComponent>().pModel;
 
 		if (!pModel->HasTechnique(ZT_TYPE_UUID(gfx::EntityIDTechnique)))
@@ -18,11 +24,6 @@ namespace tryn::ecs
 			pModel->AddOrEnableTechniques(std::array{ ZT_TYPE_UUID(gfx::EntityIDTechnique) });
 		}
 
-		if (!entity.HasComponent<UpdateJITBufferComponent>())
-		{
-			// Add component if it doesnt already have it:
-			entity.AddComponent<UpdateJITBufferComponent>(ecs);
-		}
 		auto& jitBufferComponent = entity.GetComponent<UpdateJITBufferComponent>();
 
 		gfx::ConstantBufferLayout cblayout;

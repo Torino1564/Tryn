@@ -1,7 +1,7 @@
 #include "LightVector.hlsli"
 #include "Operations.hlsli"
 
-#define MAX_POINT_LIGHTS 16
+#define MAX_POINT_LIGHTS 2
 
 struct PointLightParams
 {
@@ -95,32 +95,22 @@ float4 main(    const float3 viewPos : POSITION
     }
 #endif
 
-    float3 result = { 0.0f, 0.0f, 0.0f };
-    float attenuation = { 0.0f };
     float3 diffuse = { 0.0f, 0.0f, 0.0f };
+    float3 specular = { 0.0f, 0.0f, 0.0f };
     float specularPower = { 0.0f };
-    float specular = { 0.0f };
-    float3 specularColor3 = { 0.0f, 0.0f, 0.0f };
-    float4 specularSample = { 0.0f, 0.0f, 0.0f, 0.0f };
-    LightVectorData lv;
-    
-    
-    for (uint i = 0; i < 4; i++)
+    for (uint i = 1; i < MAX_POINT_LIGHTS; i++)
     {
         if (i >= numPointLights)
             break;
-        
-        lv = CalculateLightVectorData(pointLights[i].viewLightPos, viewPos);
+        const PointLightParams light = pointLights[i];
+        const LightVectorData lv = CalculateLightVectorData(light.viewLightPos, viewPos);
 
-        attenuation = Attenuate(pointLights[i].constantAtt, pointLights[i].linearAtt, pointLights[i].quadraticAtt, lv.distToL);
-        diffuse = Diffuse(pointLights[i].diffuseColor, pointLights[i].diffuseIntensity, attenuation, lv.dirToL, viewNormal);
+        const float attenuation = Attenuate(light.constantAtt, light.linearAtt, light.quadraticAtt, lv.distToL);
+        diffuse += Diffuse(light.diffuseColor, light.diffuseIntensity, attenuation, lv.dirToL, viewNormal);
 
-
-        specularPower = specularGloss;
-
-        specularColor3 = specularColor;
+        float3 specularColor3 = specularColor;
 #ifndef NoSpc
-        specularSample = spec.Sample(splr, tc);
+        const float4 specularSample = spec.Sample(splr, tc);
 
         if (useSpecularMap)
         {
@@ -137,10 +127,8 @@ float4 main(    const float3 viewPos : POSITION
         }
 #endif
 
-        specular = Speculate(pointLights[i].diffuseColor * specularColor3, specularWeight, viewNormal, lv.vToL, viewPos, attenuation, specularPower);
-        result += (diffuse + ambient) * diffuseColor3 + specular;
-
+        specular += Speculate(light.diffuseColor * specularColor3, specularWeight, viewNormal, lv.vToL, viewPos, attenuation, specularPower);
     }
 
-    return float4(saturate(result), 1.0f);
+    return float4(saturate((diffuse + ambient) * diffuseColor3), 1.0f);
 }

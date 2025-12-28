@@ -66,14 +66,14 @@ namespace tryn::ecs
 	C& Entity::GetComponent()
 	{
 		auto data = pArchetype->GetComponentData<C>();
-		return data[UUID.ID - 1];
+		return data[UUID.ID];
 	}
 
 	template <typename C>
 	const C& Entity::GetComponent() const
 	{
 		auto data = pArchetype->GetComponentData<C>();
-		return data[UUID.ID - 1];
+		return data[UUID.ID];
 	}
 
 	template <typename C>

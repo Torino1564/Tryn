@@ -32,6 +32,7 @@ namespace tryn::ecs
 		friend void ser::Serialize(ser::StreamIO& io, Archetype* data, bool binary, const std::string& name);
 
 	public:
+		static constexpr auto DEFAULT_INITIAL_COMPONENT_ARRAY_SIZE = 64u;
 		template <typename C>
 		std::span<C> GetComponentData();
 
