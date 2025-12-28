@@ -98,7 +98,7 @@ float4 main(    const float3 viewPos : POSITION
     float3 diffuse = { 0.0f, 0.0f, 0.0f };
     float3 specular = { 0.0f, 0.0f, 0.0f };
     float specularPower = { 0.0f };
-    for (uint i = 1; i < MAX_POINT_LIGHTS; i++)
+    for (uint i = 0; i < numPointLights; i++)
     {
         if (i >= numPointLights)
             break;

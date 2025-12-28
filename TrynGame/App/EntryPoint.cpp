@@ -14,7 +14,7 @@ app::App* app::CreateApp(int argc, char** argv)
 		{
 			return std::make_shared<log::SeverityLevelPolicy>(
 #ifdef _DEBUG
-				log::Level::Debug
+				log::Level::Warn
 #else
 				log::Level::Warn
 #endif

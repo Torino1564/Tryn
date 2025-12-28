@@ -66,7 +66,7 @@ namespace tryn::gfx::dx11
 				{
 					static constexpr auto impl = []<typename... Args>(Args&&... unpackedArgs)
 					{
-						(trylog.debug(utl::ToWide(ZT_TYPE_OF(decltype(unpackedArgs)).data())), ...);
+						(trylog.info(utl::ToWide(ZT_TYPE_OF(decltype(unpackedArgs)).data())), ...);
 						return std::make_shared<Implementation>(std::forward<Args>(unpackedArgs)...);
 					};
 					return std::apply(std::move(impl), std::tuple_cat(std::move(std::tuple(std::cref(static_cast<const Graphics&>(gfx)))), std::move(params)));
@@ -95,7 +95,7 @@ namespace tryn::gfx::dx11
 		if constexpr (N < std::tuple_size_v<ParamTuplesTuple>)
 		{
 			using FunctionArgTuple = std::tuple_element_t<N, ParamTuplesTuple>;
-			trylog.debug(utl::ToWide(ZT_TYPE_OF(FunctionArgTuple).data()));
+			trylog.info(utl::ToWide(ZT_TYPE_OF(FunctionArgTuple).data()));
 			//if constexpr (utl::is_constructible_from_tuple_v<Implementation, FunctionArgTuple>)
 			{
 				using Functor = BindableFunctor<Interface, Implementation, FunctionArgTuple, (std::tuple_size_v<FunctionArgTuple> != 0)>;
@@ -118,7 +118,7 @@ namespace tryn::gfx::dx11
 	{
 		if constexpr (N < std::tuple_size_v<BindableLinking>)
 		{
-			trylog.debug(std::to_wstring(N));
+			trylog.info(std::to_wstring(N));
 			using Pair = std::tuple_element_t<N, BindableLinking>;
 			using Interface = typename Pair::Interface_t;
 			using Implementation = typename Pair::Implementation_t;
