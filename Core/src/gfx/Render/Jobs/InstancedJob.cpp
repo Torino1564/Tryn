@@ -2,6 +2,7 @@
 #include "InstancedJob.h"
 #include <Core/src/gfx/Drawable.h>
 #include <Core/src/gfx/Render/Step.h>
+#include <Core/src/gfx/IGraphics.h>
 
 tryn::gfx::InstancedJob::InstancedJob(Drawable* parent, Step* step, std::span<const glm::mat4> transforms, InstancedModelParent* pParentInstanced)
 	:

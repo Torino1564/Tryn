@@ -1,6 +1,9 @@
-
 #include "IBufferBase.h"
 #include <Core/src/gfx/BindablePool.h>
+#include <Core/src/gfx/IContext.h>
+#include <Core/src/gfx/Render/TechniqueProbe.h>
+#include <Core/src/gfx/Vertex.h>
+#include <Core/src/gfx/IGraphics.h>
 
 namespace tryn::gfx
 {

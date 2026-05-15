@@ -124,6 +124,32 @@ namespace tryn::gfx
 			queue.Clear();
 		}
 	}
+	void IRenderGraph::UpdateResourceDimensions(spa::DimensionsI dimensions)
+	{
+		/*if (pRTV)
+			pRTV->RegenerateResources(dimensions);
+		if (pDSV)
+			pDSV->RegenerateResources(dimensions);
+
+		for (auto& pRTV : extraRTVs)
+		{
+			if (pRTV)
+				pRTV->RegenerateResources(dimensions);
+		}
+
+		for (auto& pDSV : extraDSVs)
+		{
+			if (pDSV)
+				pDSV->RegenerateResources(dimensions);
+		}*/
+
+		pRTV = gfx.GetRenderTargetView();
+		pDSV = gfx.GetDepthStencilView();
+
+		pGlobalSource->Set(pRTV, "rtv");
+		pGlobalSource->Set(pDSV, "depthStencil");
+	}
+
 	std::uint16_t IRenderGraph::GetMaxPointLights() const
 	{
 		return maxPointLights;

@@ -9,10 +9,12 @@
 #include "Core/src/gfx/Bindables/RenderTargetView.h"
 #include "Core/src/gfx/Bindables/Sampler.h"
 #include "Core/src/gfx/Bindables/TextureResource.h"
+#include <Core/src/gfx/Render/RenderGraph.h>
+#include <Core/src/gfx/IGraphics.h>
 
 namespace tryn::gfx
 {
-	FullscreenRenderPass::FullscreenRenderPass(IRenderGraph& renderGraph, std::string name, bool bindOSRtv, bool bindDepthStencil, const std::shared_ptr<IPixelShader>* pPS)
+	FullscreenRenderPass::FullscreenRenderPass(IRenderGraph& renderGraph, const std::string& name, bool bindOSRtv, bool bindDepthStencil, const std::shared_ptr<IPixelShader>* pPS)
 		:
 		IRenderPass(name), bindOSRtv(bindOSRtv), binddepthStencil(bindDepthStencil)
 	{

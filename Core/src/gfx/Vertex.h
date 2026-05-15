@@ -82,6 +82,7 @@ namespace tryn::gfx
 		struct VertexElementAttrBase
 		{
 			static constexpr VertexElement type = Element;
+			static constexpr std::string_view semantic = "UNKNOWN";
 		};
 #define VERTEX_ELEMENT_ATTR(x) template <> struct VertexElementAttr<x> : public VertexElementAttrBase<x>
 
@@ -93,7 +94,7 @@ namespace tryn::gfx
 		{
 			using SysType = glm::vec2;
 			static constexpr VertexFormat format = VertexFormat::Vec2F;
-			static constexpr const char* semantic = "POSITION";
+			static constexpr std::string_view semantic = "POSITION";
 			static constexpr const char* code = "P2";
 			
 			DVTX_ELEMENT_EXTRACTOR;
@@ -102,7 +103,7 @@ namespace tryn::gfx
 		{
 			using SysType = glm::vec3;
 			static constexpr VertexFormat format = VertexFormat::Vec3F;
-			static constexpr const char* semantic = "POSITION";
+			static constexpr std::string_view semantic = "POSITION";
 			static constexpr const char* code = "P3";
 			DVTX_ELEMENT_EXTRACTOR;
 		};
@@ -110,7 +111,7 @@ namespace tryn::gfx
 		{
 			using SysType = glm::vec3;
 			static constexpr VertexFormat format = VertexFormat::Vec3F;
-			static constexpr const char* semantic = "NORMAL";
+			static constexpr std::string_view semantic = "NORMAL";
 			static constexpr const char* code = "N";
 			DVTX_ELEMENT_EXTRACTOR;
 		};
@@ -118,7 +119,7 @@ namespace tryn::gfx
 		{
 			using SysType = glm::vec2;
 			static constexpr VertexFormat format = VertexFormat::Vec2F;
-			static constexpr const char* semantic = "TEXCOORD";
+			static constexpr std::string_view semantic = "TEXCOORD";
 			static constexpr const char* code = "UV";
 			DVTX_ELEMENT_EXTRACTOR;
 		};
@@ -126,7 +127,7 @@ namespace tryn::gfx
 		{
 			using SysType = glm::vec3;
 			static constexpr VertexFormat format = VertexFormat::Vec3F;
-			static constexpr const char* semantic = "COLOR";
+			static constexpr std::string_view semantic = "COLOR";
 			static constexpr const char* code = "Cf3";
 			DVTX_ELEMENT_EXTRACTOR;
 		};
@@ -134,7 +135,7 @@ namespace tryn::gfx
 		{
 			using SysType = glm::vec4;
 			static constexpr VertexFormat format = VertexFormat::Vec4F;
-			static constexpr const char* semantic = "COLOR";
+			static constexpr std::string_view semantic = "COLOR";
 			static constexpr const char* code = "Cf4";
 			DVTX_ELEMENT_EXTRACTOR;
 		};
@@ -142,7 +143,7 @@ namespace tryn::gfx
 		{
 			using SysType = BGRAColor;
 			static constexpr VertexFormat format = VertexFormat::Vec4C_UNorm;
-			static constexpr const char* semantic = "COLOR";
+			static constexpr std::string_view semantic = "COLOR";
 			static constexpr const char* code = "Cc4";
 			DVTX_ELEMENT_EXTRACTOR;
 		};
@@ -150,7 +151,7 @@ namespace tryn::gfx
 		{
 			using SysType = glm::vec3;
 			static constexpr VertexFormat format = VertexFormat::Vec3F;
-			static constexpr const char* semantic = "TANGENT";
+			static constexpr std::string_view semantic = "TANGENT";
 			static constexpr const char* code = "T";
 			DVTX_ELEMENT_EXTRACTOR;
 		};
@@ -158,7 +159,7 @@ namespace tryn::gfx
 		{
 			using SysType = glm::vec3;
 			static constexpr VertexFormat format = VertexFormat::Vec3F;
-			static constexpr const char* semantic = "BITANGENT";
+			static constexpr std::string_view semantic = "BITANGENT";
 			static constexpr const char* code = "Bt";
 			DVTX_ELEMENT_EXTRACTOR;
 		};
@@ -166,7 +167,7 @@ namespace tryn::gfx
 		{
 			using SysType = glm::vec<4, uint16_t>;
 			static constexpr VertexFormat format = VertexFormat::Vec4UI16;
-			static constexpr const char* semantic = "JOINTS";
+			static constexpr std::string_view semantic = "JOINTS";
 			static constexpr const char* code = "BId";
 			DVTX_ELEMENT_EXTRACTOR;
 		};
@@ -174,7 +175,7 @@ namespace tryn::gfx
 		{
 			using SysType = glm::vec4;
 			static constexpr VertexFormat format = VertexFormat::Vec4F;
-			static constexpr const char* semantic = "WEIGHTS";
+			static constexpr std::string_view semantic = "WEIGHTS";
 			static constexpr const char* code = "BWs";
 			DVTX_ELEMENT_EXTRACTOR;
 		};
@@ -182,7 +183,7 @@ namespace tryn::gfx
 		{
 			using SysType = int;
 			static constexpr VertexFormat format = VertexFormat::Unknown;
-			static constexpr const char* semantic = "UNKNOWN";
+			static constexpr std::string_view semantic = "UNKNOWN";
 			static constexpr const char* code = "?";
 			DVTX_ELEMENT_EXTRACTOR;
 		};
@@ -266,12 +267,12 @@ namespace tryn::gfx
 			size_t Size() const;
 			uint16_t Index() const;
 			const std::string& Id() const;
-			const char* GetCode() const;
+			std::string_view GetCode() const;
 			static constexpr size_t SizeOf(VertexElement type)
 			{
 				return Bridge<VertexSysSizeLookup>(type);
 			}
-			static constexpr const char* NameOf(VertexElement type)
+			static constexpr std::string_view NameOf(VertexElement type)
 			{
 				return Bridge<VertexNameLookup>(type);
 			}
@@ -279,12 +280,12 @@ namespace tryn::gfx
 			{
 				return Bridge<VertexFormatLookup>(type);
 			}
-			static constexpr const char* CodeOf(VertexElement type)
+			static constexpr std::string_view CodeOf(VertexElement type)
 			{
 				return Bridge<VertexCodeLookup>(type);
 			}
 			VertexFormat GetFormat() const;
-			const char* GetName() const;
+			std::string_view GetName() const;
 			VertexElement GetType() const;
 		private:
 			std::string id = "";

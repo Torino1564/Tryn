@@ -35,7 +35,7 @@ namespace tryn::gfx
 		vLayout.AppendElement(VertexLayout::Position3D);
 		gfx.GetRenderGraph().AddRenderQueue("EntityID");
 
-		step.AddBindable(std::move(IRasterizer::Resolve(gfx)));
+		step.AddBindable(IRasterizer::Resolve(gfx));
 
 
 		auto pvs = IVertexShader::Resolve(gfx, shaderRootPath + "Flat_VS.cso");

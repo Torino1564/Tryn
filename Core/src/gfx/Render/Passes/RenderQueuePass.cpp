@@ -4,6 +4,13 @@
 
 namespace tryn::gfx
 {
+	RenderQueuePass::RenderQueuePass(RenderQueuePass&& rhs) noexcept
+		:
+		IRenderPass(std::move(rhs))
+	{
+		pQueues = std::move(rhs.pQueues);
+		queueNames = std::move(rhs.queueNames);
+	}
 	RenderQueuePass::RenderQueuePass(std::string name, IRenderGraph& graph, std::vector<std::string> queueNames)
 		:
 		IRenderPass(std::move(name))

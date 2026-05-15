@@ -1,7 +1,6 @@
 
 #include "Archetype.h"
 
-#include "cmp/ActiveComponent.h"
 #include "cmp/ComponentManager.h"
 
 namespace tryn::ecs
@@ -9,16 +8,13 @@ namespace tryn::ecs
 	void Archetype::Free(const EntityID entityID)
 	{
 		booker[entityID.ID].flip();
-		bookerPointer = entityID.ID;
+		bookerPointer = entityID.ID - 1;
 
 		for (auto [index, componentUUID] : std::views::enumerate(components))
 		{
 			auto pData = arrays[index][entityID.ID];
 			componentManager.Wrapper(componentUUID).Delete(pData);
 		}
-
-		auto active = GetComponentData<ActiveComponent>();
-		active[entityID.ID].active = false;
 	}
 
 	EntityID Archetype::ResolveEntityUUID()
@@ -158,23 +154,14 @@ namespace tryn::ecs
 
 	EntityID Archetype::ResolveEntityUUID_Impl(bool defaultInit)
 	{
-		uint32_t nextFree;
-		if (bookerPointer == 0)
+		auto nextFree = booker.find_next(bookerPointer);
+		while (nextFree == booker.npos)
 		{
-			nextFree = 0;
-			booker.flip(0);
-			Resize(DEFAULT_INITIAL_COMPONENT_ARRAY_SIZE);
+			Grow();
+			nextFree = booker.find_next(bookerPointer);
 		}
-		else
-		{
-			nextFree = booker.find_next(bookerPointer - 1);
-			while (nextFree == booker.npos)
-			{
-				Grow();
-				nextFree = booker.find_next(bookerPointer - 1);
-			}
-			booker.flip(nextFree);
-		}
+		booker.flip(nextFree);
+
 		if (defaultInit)
 		{
 			// Default initialize the subresource data structure
@@ -184,9 +171,14 @@ namespace tryn::ecs
 				componentManager.Wrapper(componentUUID).New(pData);
 			}
 		}
-		upperLimit = booker.find_first();
-		bookerPointer = nextFree + 1;
-		return {.ID = nextFree, .archetype = UUID };
+
+		bookerPointer = (uint32_t)nextFree;
+		if (bookerPointer > upperLimit)
+		{
+			upperLimit = (uint32_t)nextFree;
+		}
+
+		return {.ID = bookerPointer, .archetype = UUID };
 	}
 
 	Archetype::Archetype(ArchetypeManager& manager, const uint16_t uuid)

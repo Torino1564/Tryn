@@ -4,7 +4,18 @@
 
 namespace tryn::gph
 {
-	TNode& TGraph::CreateNewNode(std::unique_ptr<TNode>&& newVal, const std::optional<spa::Vec2I> pos)
+    TGraph::~TGraph()
+    {
+        links.clear();
+        nodes.clear();
+
+        nodeIdToNodeIndex.clear();
+        pinIdToInfo.clear();
+    }
+
+    TGraph::TGraph(const std::string_view name) : name(name) {}
+
+    TNode& TGraph::CreateNewNode(std::unique_ptr<TNode>&& newVal, const std::optional<spa::Vec2I> pos)
 	{
     	nodes.push_back(std::forward<std::unique_ptr<TNode>>(newVal));
         nodeIdToNodeIndex.insert({nodes.back()->uniqueId, static_cast<uint16_t>(nodes.size() - 1)});

@@ -3,6 +3,8 @@
 
 #include "Core/src/gfx/Bindables/IBufferBase.h"
 #include <Core/src/utl/StatefulMeta/TemplateData.h>
+#include <Core/src/gfx/Bindables/RenderTargetView.h>
+#include <Core/src/gfx/Bindables/DepthStencil.h>
 #include <type_traits>
 #include <functional>
 

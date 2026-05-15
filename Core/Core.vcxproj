@@ -16,11 +16,13 @@
     <ClCompile Include="src\ecs\Utils.cpp" />
     <ClCompile Include="src\gfx\Bindables\SOAVertexBuffer.cpp" />
     <ClCompile Include="src\gfx\CPUBuffer.cpp" />
+    <ClCompile Include="src\gfx\IContext.cpp" />
     <ClCompile Include="src\gfx\Model\GLTFMesh.cpp" />
     <ClCompile Include="src\gfx\Model\Mesh.cpp" />
     <ClCompile Include="src\gfx\Render\Passes\PointLightBindPass.cpp" />
     <ClCompile Include="src\gfx\Render\SinkAndSource.cpp" />
     <ClCompile Include="src\gfx\Render\Techniques\EntityIDTechnique.cpp" />
+    <ClCompile Include="src\gfx\Shape.cpp" />
     <ClCompile Include="src\gfx\TexturePool.cpp" />
     <ClCompile Include="src\gfx\win\gltfSDK.cpp" />
     <ClCompile Include="src\gph\TGraph.cpp" />
@@ -1274,11 +1276,12 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{9001e248-3c25-4435-af4b-a4013077196e}</ProjectGuid>
     <RootNamespace>Core</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -1318,6 +1321,9 @@
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <VcpkgHostTriplet />
     <VcpkgUseMD>false</VcpkgUseMD>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgAutoLink>true</VcpkgAutoLink>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

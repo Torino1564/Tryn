@@ -18,7 +18,7 @@ namespace tryn::gfx::dx11
 		void Clear() const override;
 		void Release();
 
-		void RegenerateResources(const spa::DimensionsI dimensions);
+		void RegenerateResources(const spa::DimensionsI dimensions) override;
 		void RegenerateResources(ID3D11Texture2D* pTex);
 
 	private:

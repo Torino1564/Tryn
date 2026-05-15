@@ -116,7 +116,7 @@ namespace tryn::gfx
 
 void tryn::ser::Serialize(StreamIO& io, gfx::InstancedModelParent* pData, const bool binary, const std::string& name)
 {
-	io.Field(&pData->pBase, binary);
+	//io.Field(&pData->pBase, binary);
 }
 
 void tryn::ser::Serialize(StreamWriter& sw, gfx::InstancedModelChild* pData, bool binary, const std::string& name)

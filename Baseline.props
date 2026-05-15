@@ -3,10 +3,12 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\include;$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>..\Baseline.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <ExcludePath>E:\RivaTuner Statistics Server;$(ExcludePath)</ExcludePath>
+    <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
+    <LibraryPath>$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\$(VcpkgTriplet)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <EnableASAN>false</EnableASAN>
@@ -27,11 +29,13 @@
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\$(VcpkgTriplet)\lib;$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <AdditionalDependencies>imgui.lib;assimp-vc143-mt.lib;CLI11.lib;GLTFSDK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ObjectFileOutput>$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>

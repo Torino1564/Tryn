@@ -46,7 +46,7 @@ namespace tryn::gfx
 		return id;
 	}
 
-	const char* VertexLayout::Element::GetCode() const
+	std::string_view VertexLayout::Element::GetCode() const
 	{
 		return CodeOf(type);
 	}
@@ -55,7 +55,7 @@ namespace tryn::gfx
 	{
 		return FormatOf(type);
 	}
-	const char* VertexLayout::Element::GetName() const
+	std::string_view VertexLayout::Element::GetName() const
 	{
 		return NameOf(type);
 	}
@@ -164,7 +164,7 @@ namespace tryn::gfx
 			const auto& doc = *context.pDocument;
 			const auto& reader = *context.pReader;
 
-			std::string accessorString = VertexLayout::VertexElementAttr<ElementType>::semantic;
+			std::string accessorString = VertexLayout::VertexElementAttr<ElementType>::semantic.data();
 
 			if constexpr (VertexLayout::VertexElementAttr<ElementType>::semantic == "COLOR" || VertexLayout::VertexElementAttr<ElementType>::semantic == "TEXCOORD")
 			{

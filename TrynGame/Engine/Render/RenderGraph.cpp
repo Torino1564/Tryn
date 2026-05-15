@@ -29,11 +29,12 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 		pGlobalSource->Set(*pPointLightCBuf, "pointLightBuffer");
 
 		pOffScreenBuffer = IRenderTargetView::Resolve(gfx, gfx.GetDimensions(), 0, TextureFormat::B8G8R8A8_UNORM, 0);
+		extraRTVs.push_back(pOffScreenBuffer);
 		pGlobalSource->Set(*pOffScreenBuffer, "OSRtv");
 
 		pEntityIDRTV = IRenderTargetView::Resolve(gfx, gfx.GetDimensions(), 0, TextureFormat::R32G32B32A32_UINT);
 		pGlobalSource->Set(*pEntityIDRTV, "EntityIDRTV");
-
+		extraRTVs.push_back(pEntityIDRTV);
 
 		pGlobalSink->AddDependency<IRenderTargetView>("OSRtv");
 		pGlobalSink->AddDependency<IRenderTargetView>("rtv");

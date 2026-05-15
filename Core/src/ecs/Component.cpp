@@ -46,11 +46,6 @@ namespace tryn::ecs
 		imguiPrint_(pData);
 	}
 
-	void ComponentWrapper::UpdateView(ComponentArray& array) const
-	{
-		updateView_(array);
-	}
-
 	uint32_t ComponentArray::ByteSize() const
 	{
 		return buffer.size();
@@ -64,7 +59,6 @@ namespace tryn::ecs
 	void ComponentArray::Resize(const uint32_t elementCount)
 	{
 		buffer.resize(elementCount * parentWrapper.ByteSize());
-		parentWrapper.UpdateView(*this);
 	}
 
 	std::byte* ComponentArray::data()

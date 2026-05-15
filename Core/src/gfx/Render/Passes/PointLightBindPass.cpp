@@ -1,4 +1,7 @@
 #include "PointLightBindPass.h"
+#include <Core/src/gfx/Render/RenderQueue.h>
+#include <Core/src/gfx/Render/RenderGraph.h>
+#include <Core/src/gfx/IGraphics.h>
 
 namespace tryn::gfx
 {

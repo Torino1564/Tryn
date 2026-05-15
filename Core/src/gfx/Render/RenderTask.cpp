@@ -1,6 +1,7 @@
 
 #include "RenderTask.h"
 #include <Core/src/gfx/Drawable.h>
+#include <Core/src/gfx/Render/Jobs/IJob.h>
 
 namespace tryn::gfx
 {

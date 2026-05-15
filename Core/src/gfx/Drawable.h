@@ -1,14 +1,15 @@
 #pragma once
 #include "Render/Technique.h"
 #include <core/src/gfx/Bindables/TransformCBuf.h>
-
-#include "Core/third/glm/ext/matrix_transform.hpp"
+#include <Core/third/glm/ext/matrix_transform.hpp>
 
 struct aiMesh;
 
 namespace tryn::gfx
 {
 	class Material;
+	class IPrimitiveTopology;
+	class ITransformCBuf;
 
 	class Drawable
 	{

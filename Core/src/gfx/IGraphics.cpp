@@ -18,6 +18,7 @@
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 #include <Core/src/gfx/Bindables/TransformCBuf.h>
 
+#undef min
 namespace tryn::gfx
 {
 	template <typename Interface, typename ParameterTupleTuples, unsigned N = 0>

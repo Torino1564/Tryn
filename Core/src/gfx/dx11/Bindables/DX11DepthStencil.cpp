@@ -68,7 +68,7 @@ namespace tryn::gfx::dx11
 		}
 	}
 
-	void DX11DepthStencil::RegenerateResource(const spa::DimensionsI dimensions)
+	void DX11DepthStencil::RegenerateResources(const spa::DimensionsI dimensions)
 	{
 		DSVCreation(gfx, dimensions, mode, shaderResource);
 		if (shaderResource)

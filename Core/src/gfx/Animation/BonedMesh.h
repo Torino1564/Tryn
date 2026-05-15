@@ -2,10 +2,29 @@
 #include <Core/src/gfx/Model/Mesh.h>
 #include "Bone.h"
 #include "Animation.h"
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <span>
+#include <string>
+#include <string_view>
+#include <unordered_map>
+#include <vector>
+#include <Core/src/gfx/Model/Mesh.h>
+#include <Core/src/gfx/Bindables/IBufferBase.h>
+#include <Core/src/utl/StringHasher.h>
+#include <Core/third/glm/fwd.hpp>
+#include <assimp/mesh.h>
 
 namespace Microsoft::glTF
 {
 	class Mesh;
+}
+
+namespace tryn::gfx
+{
+	class IGraphics;
+	class Material;
 }
 
 namespace tryn::gfx::ani

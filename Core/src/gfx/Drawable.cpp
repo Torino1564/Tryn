@@ -7,6 +7,7 @@
 #include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
 #include <Core/src/gfx/Bindables/SOAVertexBuffer.h>
+#include <Core/src/gfx/IGraphics.h>
 
 namespace tryn::gfx
 {

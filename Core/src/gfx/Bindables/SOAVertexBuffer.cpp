@@ -11,6 +11,9 @@
 #include <Core/src/gfx/win/gltfSDK.h>
 #include "IBufferBase.h"
 #include "Core/src/gfx/BindablePool.h"
+#include <string_view>
+
+using namespace std::literals;
 
 namespace tryn::gfx
 {
@@ -31,8 +34,8 @@ namespace tryn::gfx
 	{
 		static constexpr auto NthElement = static_cast<VertexLayout::VertexElement>(N);
 
-		if constexpr (	VertexLayout::VertexElementAttr<NthElement>::semantic == "COLOR" ||
-			VertexLayout::VertexElementAttr<NthElement>::semantic == "TEXCOORD")
+		if constexpr (VertexLayout::VertexElementAttr<NthElement>::semantic == "COLOR"sv ||
+			VertexLayout::VertexElementAttr<NthElement>::semantic == "TEXCOORD"sv)
 		{
 			// These are iterable elements. Eg: COLOR_0, COLOR_1, etc
 
@@ -47,7 +50,7 @@ namespace tryn::gfx
 						layout.AppendElement(NthElement);
 						auto nThBuffer = std::make_shared<VertexBuffer>(layout, primitive, context);
 						auto pBuffer = IVertexBuffer::Resolve(gfx, nThBuffer);
-						buffer.Append(pBuffer, VertexLayout::VertexElementAttr<NthElement>::semantic);
+						buffer.Append(pBuffer, VertexLayout::VertexElementAttr<NthElement>::semantic.data());
 					}
 					catch(std::exception& e)
 					{
@@ -57,9 +60,9 @@ namespace tryn::gfx
 			}
 		}
 
-		if (primitive.HasAttribute(VertexLayout::VertexElementAttr<NthElement>::semantic))
+		if (primitive.HasAttribute(VertexLayout::VertexElementAttr<NthElement>::semantic.data()))
 		{
-			const auto id = VertexLayout::VertexElementAttr<NthElement>::semantic;
+			const auto id = VertexLayout::VertexElementAttr<NthElement>::semantic.data();
 			if (primitive.HasAttribute(id))
 			{
 				try
@@ -96,7 +99,7 @@ namespace tryn::gfx
 			// Iterate over COLOR_n or TEXCOORD_n
 			for (unsigned n = 0; n < MAX_ITERABLE_NUMBER; n++)
 			{
-				std::string id = Attr::semantic;
+				std::string_view id = Attr::semantic;
 				if ((mesh.HasVertexColors(n) && elementType == VertexLayout::Float4Color ) ||
 					(mesh.HasTextureCoords(n) && elementType == VertexLayout::UV))
 				{
@@ -106,14 +109,14 @@ namespace tryn::gfx
 					auto nThBuffer = std::make_shared<VertexBuffer>(layout, mesh);
 					auto pBuffer = IVertexBuffer::Resolve(gfx, nThBuffer);
 
-					buffer.Append(pBuffer, id);
+					buffer.Append(pBuffer, id.data());
 				}
 			}
 		}
 		else
 		{
 			bool shouldAdd = false;
-			std::string semanticName = Attr::semantic;
+			std::string_view semanticName = Attr::semantic;
 
 			if constexpr (elementType == VertexLayout::Position3D)
 				shouldAdd = mesh.HasPositions();
@@ -136,7 +139,7 @@ namespace tryn::gfx
 				auto nThBuffer = std::make_shared<VertexBuffer>(std::move(layout), mesh);
 				auto pBuffer = IVertexBuffer::Resolve(gfx, nThBuffer);
 
-				buffer.Append(std::move(pBuffer), semanticName);
+				buffer.Append(std::move(pBuffer), semanticName.data());
 			}
 		}
 
@@ -158,7 +161,7 @@ namespace tryn::gfx
 		InsertElement<std::to_underlying(VertexLayout::VertexElement::Unknown)>(*this, gfx, mesh);
 	}
 
-	void ISOAVertexBuffer::Append(const std::shared_ptr<IVertexBuffer>& vertexBuffer, const std::string& name, uint16_t slot = 0)
+	void ISOAVertexBuffer::Append(const std::shared_ptr<IVertexBuffer>& vertexBuffer, const std::string& name, uint16_t slot)
 	{
 		if (pBuffers.contains(name))
 		{
@@ -191,7 +194,7 @@ namespace tryn::gfx
 	{
 		for (auto [slot, element] : layout.Elements | std::views::enumerate)
 		{
-			AppendFrom(soaVertexBuffer, element.Id() != "" ? element.Id() : element.GetName(), slot);
+			AppendFrom(soaVertexBuffer, element.Id() != "" ? element.Id() : element.GetName().data(), slot);
 		}
 	}
 }

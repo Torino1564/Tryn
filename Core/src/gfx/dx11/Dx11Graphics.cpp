@@ -66,7 +66,7 @@ namespace tryn::gfx::dx11
 				{
 					static constexpr auto impl = []<typename... Args>(Args&&... unpackedArgs)
 					{
-						(trylog.info(utl::ToWide(ZT_TYPE_OF(decltype(unpackedArgs)).data())), ...);
+						(trylog.debug(utl::ToWide(ZT_TYPE_OF(decltype(unpackedArgs)).data())), ...);
 						return std::make_shared<Implementation>(std::forward<Args>(unpackedArgs)...);
 					};
 					return std::apply(std::move(impl), std::tuple_cat(std::move(std::tuple(std::cref(static_cast<const Graphics&>(gfx)))), std::move(params)));
@@ -95,7 +95,7 @@ namespace tryn::gfx::dx11
 		if constexpr (N < std::tuple_size_v<ParamTuplesTuple>)
 		{
 			using FunctionArgTuple = std::tuple_element_t<N, ParamTuplesTuple>;
-			trylog.info(utl::ToWide(ZT_TYPE_OF(FunctionArgTuple).data()));
+			trylog.debug(utl::ToWide(ZT_TYPE_OF(FunctionArgTuple).data()));
 			//if constexpr (utl::is_constructible_from_tuple_v<Implementation, FunctionArgTuple>)
 			{
 				using Functor = BindableFunctor<Interface, Implementation, FunctionArgTuple, (std::tuple_size_v<FunctionArgTuple> != 0)>;
@@ -118,7 +118,7 @@ namespace tryn::gfx::dx11
 	{
 		if constexpr (N < std::tuple_size_v<BindableLinking>)
 		{
-			trylog.info(std::to_wstring(N));
+			trylog.debug(std::to_wstring(N));
 			using Pair = std::tuple_element_t<N, BindableLinking>;
 			using Interface = typename Pair::Interface_t;
 			using Implementation = typename Pair::Implementation_t;
@@ -247,7 +247,6 @@ namespace tryn::gfx::dx11
 		auto future = Dispatch_([this]
 			{
 				ImGui_ImplDX11_NewFrame();
-				//ClearBuffer(0.0f,0.0f,0.2f);
 				pRenderGraph->Reset();
 			});
 		future.get();
@@ -331,8 +330,8 @@ namespace tryn::gfx::dx11
 			pBackBuffer->GetDesc(&tDesc);
 			dimensions = { .width = static_cast<int>(tDesc.Width), .height = static_cast<int>(tDesc.Height) };
 
-			pTarget->RegenerateResources(pBackBuffer.Get());
-			pDSV->RegenerateResource(dimensions);
+			pTarget->RegenerateResources(dimensions);
+			pDSV->RegenerateResources(dimensions);
 
 			//viewport
 			viewport.Width = static_cast<float>(dimensions.width);
@@ -343,6 +342,8 @@ namespace tryn::gfx::dx11
 			viewport.TopLeftY = 0.0f;
 
 			pContext->UpdateContextDimensions(*this);
+			SetProjection(glm::perspectiveFovLH(glm::radians(90.0f), static_cast<float>(dimensions.width), static_cast<float>(dimensions.height), 0.1f, 10000000000.0f));
+			pRenderGraph->UpdateResourceDimensions(dimensions);
 			});
 		return future.get();
 	}
@@ -362,7 +363,7 @@ namespace tryn::gfx::dx11
 			for (int i = 0; i < descSize; i++)
 			{
 				D3D11_INPUT_ELEMENT_DESC descriptor = {};
-				descriptor.SemanticName = vLayout.Elements[i].GetName();
+				descriptor.SemanticName = vLayout.Elements[i].GetName().data();
 				descriptor.SemanticIndex = vLayout.Elements[i].Index();
 				descriptor.Format = MapDXGIFormat(vLayout.Elements[i].GetFormat());
 				descriptor.InputSlot = static_cast<UINT>(slot);

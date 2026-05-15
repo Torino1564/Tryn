@@ -4,6 +4,12 @@
 #include "TTypeRegister.h"
 #include "TLink.h"
 #include <unordered_map>
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <vector>
 
 namespace tryn::gph
 {
@@ -13,18 +19,11 @@ namespace tryn::gph
 	{
 	public:
 		TGraph() = default;
-		TGraph(const std::string_view name) : name(name) {}
+		virtual ~TGraph();
+		TGraph(const std::string_view name);
 		TNode& CreateNewNode(std::unique_ptr<TNode>&& newVal, std::optional<spa::Vec2I> pos = std::nullopt);
 		void CreateNewLink(unsigned long long linkId, PinInfo& pin1, PinInfo& pin2);
 		void CreateNewLink(std::unique_ptr<TLink>&& newVal);
-		virtual ~TGraph()
-		{
-			links.clear();
-			nodes.clear();
-
-			nodeIdToNodeIndex.clear();
-			pinIdToInfo.clear();
-		}
 		std::vector<std::unique_ptr<TLink>> links;
 		int m_NextLinkId = 100;
 		std::unordered_map<unsigned long long, PinInfo> pinIdToInfo;

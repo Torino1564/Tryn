@@ -1,8 +1,8 @@
 #pragma once
 #include <optional>
 #include <span>
+#include "Core/src/gfx/Bindables/IBufferBase.h"
 #include <Core/third/dynamic_bitset.hpp>
-#include "Core/src/gfx/ConstantBuffer.h"
 #include "Core/third/glm/fwd.hpp"
 #include <Core/src/ser/StreamIO.h>
 
@@ -10,24 +10,11 @@
 
 namespace tryn::gfx
 {
-	class InstancedModelParent;
-	class InstancedModelChild;
-}
-
-namespace tryn::ser
-{
-	void Serialize(StreamIO& io, gfx::InstancedModelParent* pData, bool binary = true, const std::string& name = "");
-	void Serialize(StreamWriter& io, gfx::InstancedModelChild* pData, bool binary = true, const std::string& name = "");
-	void Serialize(StreamReader& io, gfx::InstancedModelChild* pData, bool binary = true, const std::string& name = "");
-}
-
-namespace tryn::gfx
-{
 	class IGraphics;
 
 	class InstancedModelParent
 	{
-		friend void ser::Serialize(ser::StreamIO& io, gfx::InstancedModelParent* pData, bool binary, const std::string& name);
+		//friend void ser::Serialize(ser::StreamIO& io, gfx::InstancedModelParent* pData, bool binary, const std::string& name);
 		friend class InstancedModelChild;
 
 	public:
@@ -62,4 +49,11 @@ namespace tryn::gfx
 		std::uint16_t instanceID = {};
 		InstancedModelParent* pParentModel = nullptr;
 	};
+}
+
+namespace tryn::ser
+{
+	void Serialize(StreamIO& io, gfx::InstancedModelParent* pData, bool binary = true, const std::string& name = "");
+	void Serialize(StreamWriter& io, gfx::InstancedModelChild* pData, bool binary = true, const std::string& name = "");
+	void Serialize(StreamReader& io, gfx::InstancedModelChild* pData, bool binary = true, const std::string& name = "");
 }

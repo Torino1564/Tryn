@@ -213,7 +213,7 @@ namespace tryn::gfx::dx11
 		for (int i = 0; i < descSize; i++)
 		{
 			D3D11_INPUT_ELEMENT_DESC descriptor = {};
-			descriptor.SemanticName = vLayout.Elements[i].GetName();
+			descriptor.SemanticName = vLayout.Elements[i].GetName().data();
 			descriptor.SemanticIndex = vLayout.Elements[i].Index();
 			descriptor.Format = Graphics::MapDXGIFormat(vLayout.Elements[i].GetFormat());
 			descriptor.InputSlot = (UINT)slot;

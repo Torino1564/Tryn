@@ -141,7 +141,7 @@ namespace tryn::gfx
 	{
 		return hasAlpha;
 	}
-	std::string Texture::GetPath() const
+	const std::string& Texture::GetPath() const
 	{
 		return path;
 	}

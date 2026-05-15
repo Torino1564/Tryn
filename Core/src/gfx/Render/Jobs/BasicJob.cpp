@@ -2,6 +2,7 @@
 #include "BasicJob.h"
 #include <Core/src/gfx/Drawable.h>
 #include <Core/src/gfx/Render/Step.h>
+#include <Core/src/gfx/IGraphics.h>
 
 namespace tryn::gfx
 {

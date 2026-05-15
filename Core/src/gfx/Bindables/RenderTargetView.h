@@ -18,6 +18,7 @@ namespace tryn::gfx
 		void SetSlot(uint16_t slot);
 		uint16_t GetSlot() const;
 		virtual void Clear() const = 0;
+		virtual void RegenerateResources(const spa::DimensionsI dimensions) = 0;
 		void SetDepthStencil(IDepthStencil& dsv);
 		ITexture& GetTexture();
 		const ITexture& GetTexture() const;

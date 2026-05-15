@@ -5,6 +5,7 @@
 #include <Core/src/gfx/Bindables/JITUpdateBuffer.h>
 #include <Core/src/gfx/Material.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
+#include <Core/src/gfx/IGraphics.h>
 
 static glm::mat4 ConvertMatrixToGLMFormat(const aiMatrix4x4& from)
 {

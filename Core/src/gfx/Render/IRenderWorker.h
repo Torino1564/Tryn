@@ -6,7 +6,6 @@
 
 namespace tryn::gfx
 {
-	class RenderTask;
 	class Drawable;
 	class Step;
 	class IGraphics;

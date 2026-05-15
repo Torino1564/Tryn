@@ -15,7 +15,7 @@ namespace tryn::gfx::dx11
 		void Clear() const override;
 		void Release() const;
 
-		void RegenerateResource(const spa::DimensionsI dimensions);
+		void RegenerateResources(const spa::DimensionsI dimensions) override;
 	private:
 		void DSVCreation(const Graphics& gfx, const spa::DimensionsI dimensions, ComparissonMode mode, bool isShaderResource);
 		void SRVCreation(const Graphics& gfx, const uint16_t slot);

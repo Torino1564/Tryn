@@ -95,6 +95,7 @@ namespace tryn::gfx::dx11
 
 	void DX11RenderTargetView::RegenerateResources(const spa::DimensionsI dimensions)
 	{
+		this->dimensions = dimensions;
 		pTexture.reset();
 		RTVCreation();
 		SRVCreation();

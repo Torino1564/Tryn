@@ -2,12 +2,10 @@
 #include <vector>
 #include <Core/third/glm/glm.hpp>
 #include <string>
-#include <optional>
 #include <utility>
 #include <memory>
 #include <Core/src/utl/Exception.h>
 #include <Core/src/gfx/CPUBuffer.h>
-#include <Core/src/gfx/IBufferFwd.h>
 #include <Core/src/utl/Assert.h>
 
 ZT_EX_DEF(DcbException);

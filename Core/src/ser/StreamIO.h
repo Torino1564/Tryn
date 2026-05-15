@@ -5,9 +5,6 @@
 #include <span>
 #include <Core/src/ser/ExtraDataPack.h>
 
-class std::ostringstream;
-class std::istringstream;
-
 namespace tryn::ser
 {
 	ZT_EX_DEF(StreamIOException);
@@ -24,7 +21,7 @@ namespace tryn::ser
 		StreamIO(const Type type) : type{type} {}
 
 		template <typename T>
-		void Field(T* pData, bool binary, const std::string& name);
+		void Field(T* pData, bool binary = true, const std::string& name = "");
 		virtual void GetAndFill(const std::string&, void*& pToFill) {}
 		template <Type T, typename Func>
 		void Exclusive(const Func& func)
@@ -123,7 +120,7 @@ namespace tryn::ser
 	};
 
 	template <typename T>
-	void StreamIO::Field(T* pData, bool binary = true, const std::string& name = "")
+	void StreamIO::Field(T* pData, bool binary, const std::string& name)
 	{
 		if (type == Reader)
 		{

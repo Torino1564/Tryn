@@ -1,17 +1,44 @@
 #pragma once
 #include <any>
-#include <Core/src/gfx/ConstantBuffer.h>
-#include <Core/src/gfx/IBufferFwd.h>
-#include <Core/src/gfx/Render/TechniqueProbe.h>
-#include <Core/src/gfx/Vertex.h>
-#include <Core/src/utl/EmptyType.h>
+#include <cstdint>
+#include <string>
+#include <string_view>
+#include <type_traits>
+#include <vector>
 #include <memory>
+
 #include "Bindable.h"
+#include <Core/src/gfx/ConstantBuffer.h>
+#include <Core/src/gfx/CPUBuffer.h>
+#include <Core/src/utl/Exception.h>
 
 ZT_EX_DEF(BufferMissmatchException);
 
 namespace tryn::gfx
 {
+	class TechniqueProbe;
+	class VertexLayout;
+	class VertexBuffer;
+	class IGraphics;
+
+	enum class CachingPolicy
+	{
+		Caching,
+		NonCaching
+	};
+
+	enum class BufferType
+	{
+		Vertex,
+		VtxConstant,
+		PxConstant,
+		Index,
+		Instance
+	};
+
+	template<BufferType Type, CachingPolicy Policy>
+	class IBufferBase;
+
 	template <typename T>
 	struct IsBufferType_t : std::false_type{};
 
@@ -50,7 +77,15 @@ namespace tryn::gfx
 		std::string tag;
 	};
 
-	template<BufferType Type, CachingPolicy Policy>
+	using IVtxConstantBuffer = IBufferBase<BufferType::VtxConstant, CachingPolicy::Caching>;
+	using IVtxConstantBufferNCach = IBufferBase<BufferType::VtxConstant, CachingPolicy::NonCaching>;
+	using IPxConstantBuffer = IBufferBase<BufferType::PxConstant, CachingPolicy::Caching>;
+	using IPxConstantBufferNCach = IBufferBase<BufferType::PxConstant, CachingPolicy::NonCaching>;
+	using IVertexBuffer = IBufferBase<BufferType::Vertex, CachingPolicy::Caching>;
+	using IIndexBuffer = IBufferBase<BufferType::Index, CachingPolicy::Caching>;
+	using IInstanceBuffer = IBufferBase<BufferType::Instance, CachingPolicy::Caching>;
+
+	template<BufferType Type, CachingPolicy Policy = CachingPolicy::Caching>
 	class IBufferBase : public IBuffer
 	{
 	public:
@@ -77,7 +112,7 @@ namespace tryn::gfx
 		static std::string GenerateID(const IGraphics& gfx, const ConstantBufferLayout::Node& node, int slot, std::size_t size)
 			requires (Type == BufferType::Instance);
 		void Bind() override;
-		void Bind(const IContext& context) override;
+		void Bind(const class IContext& context) override;
 		virtual std::vector<std::any> GetLayoutFromVB() const;
 		virtual std::vector<std::any> GetSlottedLayoutFromVB(int slot) const;
 		virtual std::string_view Test() const;

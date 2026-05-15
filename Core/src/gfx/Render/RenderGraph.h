@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <Core/src/gfx/ConstantBuffer.h>
+#include <Core/src/spa/Dimensions.h>
 
 namespace tryn::gfx
 {
@@ -31,6 +32,7 @@ namespace tryn::gfx
 		RenderQueue& GetRenderQueueByID(std::string_view ID);
 		RenderQueue& GetOrAddRenderQueue(const std::string& renderQueueName);
 		void Reset();
+		void UpdateResourceDimensions(spa::DimensionsI dimensions);
 		std::uint16_t GetMaxPointLights() const;
 		void ResizePointLightBuffer(const std::uint16_t newSize);
 		const IGraphics& Gfx() const;
@@ -71,6 +73,9 @@ namespace tryn::gfx
 		std::shared_ptr<class IDepthStencil> pDSV;
 		std::unique_ptr<Sink> pGlobalSink;
 		std::unique_ptr<Source> pGlobalSource;
+
+		std::vector<std::shared_ptr<IRenderTargetView>> extraRTVs;
+		std::vector<std::shared_ptr<IDepthStencil>> extraDSVs;
 
 		std::vector<PointLight*> pPointLights;
 		std::vector<Camera*> pCameras;

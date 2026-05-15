@@ -17,6 +17,7 @@ namespace tryn::gfx
 
 		bool IsShaderResource() const;
 
+		virtual void RegenerateResources(const spa::DimensionsI dimensions) = 0;
 	protected:
 		bool shaderResource = true;
 		uint16_t slot = 0;
