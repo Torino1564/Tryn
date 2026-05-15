@@ -1,0 +1,26 @@
+<Project>
+      <PropertyGroup>
+        <LLVMInstallDir>$(CLANG_PATH)</LLVMInstallDir>
+        <LLVMToolsVersion>21.0.0</LLVMToolsVersion>
+        <UseMultiToolTask>true</UseMultiToolTask>
+        <EnforceProcessCountAcrossBuilds>true</EnforceProcessCountAcrossBuilds>
+        <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
+        <VcpkgTriplet>x64-windows</VcpkgTriplet>
+        <VcpkgLibDir Condition="'$(Configuration)'=='Debug'">$(VcpkgManifestInstallPath)\$(VcpkgTriplet)\debug\lib</VcpkgLibDir>
+        <VcpkgLibDir Condition="'$(Configuration)'=='Release'">$(VcpkgManifestInstallPath)\$(VcpkgTriplet)\lib</VcpkgLibDir>
+      </PropertyGroup>
+
+    <Target Name="AddVcpkgLibs" BeforeTargets="Link">
+        <ItemGroup>
+        <VcpkgLibFiles Include="$(VcpkgLibDir)\*.lib"/>
+        </ItemGroup>
+        <CreateProperty Value="@(VcpkgLibFiles->'%(FullPath)', ';')">
+        <Output TaskParameter="Value" PropertyName="VcpkgLibList"/>
+        </CreateProperty>
+        <ItemGroup>
+        <Link>
+            <AdditionalDependencies>$(VcpkgLibList);%(Link.AdditionalDependencies)</AdditionalDependencies>
+        </Link>
+        </ItemGroup>
+    </Target>
+</Project>

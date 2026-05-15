@@ -1,8 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <LLVMInstallDir>D:\clang-p2996-install</LLVMInstallDir>
-	<LLVMToolsVersion>21.0.0</LLVMToolsVersion>
-	<UseMultiToolTask>true</UseMultiToolTask>
-	<EnforceProcessCountAcrossBuilds>true</EnforceProcessCountAcrossBuilds>
-  </PropertyGroup>
-</Project>
