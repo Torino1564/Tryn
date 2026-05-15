@@ -12,6 +12,8 @@
 #include "WindowClass.h"
 #include <tuple>
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 namespace tryn::win
 {
 	Window::Window(std::shared_ptr<IWindowClass> pWindowClass, std::wstring title,
@@ -90,7 +92,6 @@ namespace tryn::win
 	uintptr_t  Window::HandleMessage_(WindowHandle hWnd, unsigned int msg, uintptr_t  wParam, uintptr_t  lParam) noexcept
 	{
 		try {
-			extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 			if (ImGui_ImplWin32_WndProcHandler((HWND)hWnd, msg, wParam, lParam))
 			{
 				return true;

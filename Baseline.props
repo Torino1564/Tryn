@@ -10,6 +10,17 @@
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
     <LibraryPath>$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\$(VcpkgTriplet)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+	<VcpkgUseStatic>true</VcpkgUseStatic>
+	<VcpkgUseMD>true</VcpkgUseMD>
+	<VcpkgTriplet>$(Platform)-windows-static-md</VcpkgTriplet>
+	<VcpkgHostTriplet>$(Platform)-windows-static-md</VcpkgHostTriplet>
+  </PropertyGroup>
+  <PropertyGroup>
+	<VcpkgLibDir Condition="'$(Configuration)'=='Debug'">$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\$(VcpkgTriplet)\debug\lib</VcpkgLibDir>
+	<VcpkgLibDir Condition="'$(Configuration)'=='Release'">$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\$(VcpkgTriplet)\lib</VcpkgLibDir>
+	<VcpkgRspFile>$(SolutionDir)vcpkg_libs.rsp</VcpkgRspFile>
+  </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <EnableASAN>false</EnableASAN>
     <EnableFuzzer>false</EnableFuzzer>
@@ -32,10 +43,10 @@
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\$(VcpkgTriplet)\lib;$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VcpkgLibDir);$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>imgui.lib;assimp-vc143-mt.lib;CLI11.lib;GLTFSDK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies) @$(VcpkgRspFile)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ObjectFileOutput>$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>
@@ -44,4 +55,18 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
+  <Target Name="WriteVcpkgRsp" BeforeTargets="Link">
+	<ItemGroup>
+		<VcpkgLibFiles Include="$(VcpkgLibDir)\*.lib"/>
+	</ItemGroup>
+	<WriteLinesToFile
+		File="$(VcpkgRspFile)"
+		Lines="@(VcpkgLibFiles->'%(FullPath)')"
+		Overwrite="true"
+		WriteOnlyWhenDifferent="true"/>
+
+	<Message Text="Found libs: @(VcpkgLibFiles)" Importance="high"/>
+	<Message Text="Rsp file written to: $(VcpkgRspFile)" Importance="high"/>
+	<Message Text="Written rsp: %(Link.AdditionalDependencies)" Importance="high"/>
+  </Target>
 </Project>

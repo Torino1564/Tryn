@@ -1650,7 +1650,6 @@ void ed::EditorContext::SetNodePosition(NodeId nodeId, const ImVec2& position)
     if (node->m_Bounds.Min != position)
     {
         node->m_Bounds.Translate(position - node->m_Bounds.Min);
-        node->m_Bounds.Floor();
         MakeDirty(NodeEditor::SaveReasonFlags::Position, node);
     }
 }
@@ -1670,7 +1669,6 @@ void ed::EditorContext::SetGroupSize(NodeId nodeId, const ImVec2& size)
     {
         node->m_GroupBounds.Min = node->m_Bounds.Min;
         node->m_GroupBounds.Max = node->m_Bounds.Min + size;
-        node->m_GroupBounds.Floor();
         MakeDirty(NodeEditor::SaveReasonFlags::Size, node);
     }
 }
@@ -1748,10 +1746,8 @@ void ed::EditorContext::UpdateNodeState(Node* node)
 
     node->m_Bounds.Min      = settings->m_Location;
     node->m_Bounds.Max      = node->m_Bounds.Min + settings->m_Size;
-    node->m_Bounds.Floor();
     node->m_GroupBounds.Min = settings->m_Location;
     node->m_GroupBounds.Max = node->m_GroupBounds.Min + settings->m_GroupSize;
-    node->m_GroupBounds.Floor();
 }
 
 void ed::EditorContext::RemoveSettings(Object* object)
@@ -3776,8 +3772,6 @@ bool ed::SizeAction::Process(const Control& control)
         if ((m_Pivot & NodeRegion::Right) == NodeRegion::Right)
             newBounds.Max.x = ImMax(newBounds.Min.x + minimumSize.x, Editor->AlignPointToGrid(newBounds.Max.x + dragOffset.x));
 
-        newBounds.Floor();
-
         m_LastSize = newBounds.GetSize();
 
         m_SizedNode->m_Bounds      = newBounds;
@@ -5286,7 +5280,6 @@ void ed::NodeBuilder::End()
     ImGui::EndGroup();
 
     m_NodeRect = ImGui_GetItemRect();
-    m_NodeRect.Floor();
 
     if (m_CurrentNode->m_Bounds.GetSize() != m_NodeRect.GetSize())
     {
@@ -5394,7 +5387,6 @@ void ed::NodeBuilder::PinRect(const ImVec2& a, const ImVec2& b)
     IM_ASSERT(nullptr != m_CurrentPin);
 
     m_CurrentPin->m_Bounds = ImRect(a, b);
-    m_CurrentPin->m_Bounds.Floor();
     m_ResolvePinRect     = false;
 }
 
@@ -5444,7 +5436,6 @@ void ed::NodeBuilder::Group(const ImVec2& size)
         ImGui::Dummy(size);
 
     m_GroupBounds = ImGui_GetItemRect();
-    m_GroupBounds.Floor();
 }
 
 ImDrawList* ed::NodeBuilder::GetUserBackgroundDrawList() const
