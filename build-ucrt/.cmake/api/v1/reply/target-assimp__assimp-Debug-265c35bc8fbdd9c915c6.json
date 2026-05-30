@@ -1,0 +1,151 @@
+{
+	"abstract" : true,
+	"artifacts" : 
+	[
+		{
+			"path" : "vcpkg_installed/x64-mingw-static/debug/lib/libassimpd.a"
+		}
+	],
+	"backtrace" : 7,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"_add_library",
+			"add_library",
+			"include",
+			"_find_package",
+			"find_package",
+			"set_target_properties"
+		],
+		"files" : 
+		[
+			"C:/Users/jtori/source/repos/vcpkg/scripts/buildsystems/vcpkg.cmake",
+			"build-ucrt/vcpkg_installed/x64-mingw-static/share/assimp/assimpTargets.cmake",
+			"build-ucrt/vcpkg_installed/x64-mingw-static/share/assimp/assimpConfig.cmake",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 3
+			},
+			{
+				"command" : 4,
+				"file" : 3,
+				"line" : 9,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 910,
+				"parent" : 1
+			},
+			{
+				"file" : 2,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 42,
+				"parent" : 3
+			},
+			{
+				"file" : 1,
+				"parent" : 4
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 58,
+				"parent" : 5
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 655,
+				"parent" : 6
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 60,
+				"parent" : 5
+			}
+		]
+	},
+	"codemodelVersion" : 
+	{
+		"major" : 2,
+		"minor" : 10
+	},
+	"id" : "assimp::assimp::@6890427a1f51a3e7e1df",
+	"imported" : true,
+	"interfaceLinkLibraries" : 
+	[
+		{
+			"backtrace" : 8,
+			"id" : "polyclipping::polyclipping::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 8,
+			"id" : "poly2tri::poly2tri::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 8,
+			"id" : "unofficial::minizip::minizip::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 8,
+			"id" : "ZLIB::ZLIB::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 8,
+			"id" : "RapidJSON::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 8,
+			"id" : "utf8cpp::utf8cpp::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 8,
+			"id" : "pugixml::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 8,
+			"id" : "zip::zip::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 8,
+			"fragment" : "-static-libgcc"
+		},
+		{
+			"backtrace" : 8,
+			"fragment" : "-static-libstdc++"
+		},
+		{
+			"backtrace" : 8,
+			"fragment" : "-Wl,-Bstatic"
+		},
+		{
+			"backtrace" : 8,
+			"fragment" : "-lstdc++"
+		},
+		{
+			"backtrace" : 8,
+			"fragment" : "-lwinpthread"
+		}
+	],
+	"local" : true,
+	"name" : "assimp::assimp",
+	"nameOnDisk" : "libassimpd.a",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sources" : [],
+	"type" : "STATIC_LIBRARY"
+}

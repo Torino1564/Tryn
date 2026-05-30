@@ -1,0 +1,573 @@
+#include "Model.h"
+
+#include <imgui.h>
+#include <Core/src/gfx/Material.h>
+#undef max
+#undef min
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/glm.hpp>
+#include <Core/src/gfx/Model/StaticMesh.h>
+#include <Core/src/gfx/Animation/BonedMesh.h>
+#include <Core/src/mem/ArenaAllocator.h>
+#include <queue>
+#include <assimp/postprocess.h>
+#include <Core/src/gfx/Animation/Bone.h>
+#include <Core/src/gfx/IGraphics.h>
+#include <Core/src/gfx/ImguiManager.h>
+#include "glm/gtx/euler_angles.hpp"
+#include <ranges>
+#include "GLTFMesh.h"
+#include "glm/gtx/quaternion.hpp"
+
+namespace tryn::gfx
+{
+	glm::mat4 ScaleTranslation(const glm::mat4& mat, const glm::vec3& scale)
+	{
+		glm::mat4 scaledMat = mat;
+		scaledMat[3][0] *= scale.x;
+		scaledMat[3][1] *= scale.y;
+		scaledMat[3][2] *= scale.z;
+		return scaledMat;
+	}
+
+	glm::mat4 AssimpMat4ToGLMMat4(const aiMatrix4x4& aiMatrix) {
+		glm::mat4 glmMatrix;
+		glmMatrix[0][0] = aiMatrix.a1; glmMatrix[1][0] = aiMatrix.a2;
+		glmMatrix[2][0] = aiMatrix.a3; glmMatrix[3][0] = aiMatrix.a4;
+		glmMatrix[0][1] = aiMatrix.b1; glmMatrix[1][1] = aiMatrix.b2;
+		glmMatrix[2][1] = aiMatrix.b3; glmMatrix[3][1] = aiMatrix.b4;
+		glmMatrix[0][2] = aiMatrix.c1; glmMatrix[1][2] = aiMatrix.c2;
+		glmMatrix[2][2] = aiMatrix.c3; glmMatrix[3][2] = aiMatrix.c4;
+		glmMatrix[0][3] = aiMatrix.d1; glmMatrix[1][3] = aiMatrix.d2;
+		glmMatrix[2][3] = aiMatrix.d3; glmMatrix[3][3] = aiMatrix.d4;
+		return glmMatrix;
+	}
+
+	Model::Model() = default;
+
+	Model::Model(const gfx::IGraphics& gfx, std::string_view path, const std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
+		:
+		pGfx(&gfx), name(path.data())
+	{
+		const std::filesystem::path fspath(path);
+
+		for (auto techniqueUUID : techniqueUUIDs)
+		{
+			techniques.push_back(techniqueUUID);
+		}
+
+		if (const auto& ext = fspath.extension().string(); ext == ".gltf" || ext == ".glb" )
+		{
+			// TinyGLTF initialization
+			//GltfInitialization(gfx, fspath, techniqueUUIDs, scale, instanced);
+			return;
+		}
+
+		auto& imp = AssimpManager::Get();
+		const auto pScene = imp.ReadFile(path.data(),
+		                                 aiProcess_Triangulate |
+		                                 aiProcess_JoinIdenticalVertices |
+		                                 aiProcess_ConvertToLeftHanded |
+		                                 aiProcess_GenNormals |
+		                                 aiProcess_CalcTangentSpace
+		);
+
+		if (pScene == nullptr)
+		{
+			trylog.error(utl::ToWide(imp.GetErrorString()));
+			throw ModelException(imp.GetErrorString());
+		}
+
+		if (scale != glm::vec3{ 1.0f,1.0f,1.0f })
+		{
+			for (size_t i = 0; i < pScene->mNumMeshes; i++)
+			{
+				const auto& mesh = *pScene->mMeshes[i];
+				for (size_t j = 0; j < mesh.mNumVertices; j++)
+				{
+					auto& vertex = mesh.mVertices[j];
+					vertex.x *= scale.x;
+					vertex.y *= scale.y;
+					vertex.z *= scale.z;
+				}
+			}
+		}
+
+		int nextId = 0;
+		rootId = ParseNode(nextId, *pScene->mRootNode, scale, true);
+
+		// parse materials
+		pMaterials.reserve(pScene->mNumMaterials);
+
+		for (size_t i = 0; i < pScene->mNumMaterials; i++)
+		{
+			pMaterials.emplace_back(std::make_shared<Material>(gfx, *pScene->mMaterials[i], path, pScene, instanced, skeleton.has_value()));
+		}
+
+		if (skeleton.has_value())
+		{
+			for (size_t i = 0; i < pScene->mNumMeshes; i++)
+			{
+				const auto& mesh = *pScene->mMeshes[i];
+				pMeshes.push_back(std::make_shared<ani::BonedMesh>(gfx, pMaterials[mesh.mMaterialIndex], mesh, mesh.mName.C_Str(), skeleton.value(), scale, meshCounter++));
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i < pScene->mNumMeshes; i++)
+			{
+				const auto& mesh = *pScene->mMeshes[i];
+				auto pMesh = std::make_shared<StaticMesh>(gfx, mesh, mesh.mName.C_Str(), pMaterials[mesh.mMaterialIndex], scale, meshCounter++);
+				pMeshes.push_back(std::move(pMesh));
+			}
+		}
+
+		for (auto& mesh : pMeshes)
+		{
+			for (auto technique : techniqueUUIDs)
+			{
+				mesh->AddTechnique(gfx, technique);
+				
+			}
+			for (auto& technique : mesh->pTechniques | std::views::values)
+			{
+				for (auto& [id, addedBindable] : pAddedBindables)
+				{
+					technique->OfferBindable(id, addedBindable);
+				}
+			}
+		}
+
+		
+
+		// Set mesh Span
+		std::queue<Node*> q;
+		q.push(&nodes[rootId]);
+
+		while (!q.empty())
+		{
+			auto& current = *q.front();
+			q.pop();
+
+			current.SetMeshSpan({ pMeshes });
+
+			for (auto& childId : current.GetChildrenIds())
+			{
+				q.push(&nodes[childId]);
+			}
+		}
+
+		for (unsigned int i = 0; i < pScene->mNumAnimations; i++)
+		{
+			auto ani = ani::AnimationManager::Get().New(name, *pScene->mAnimations[i]);
+			AddAnimation(ani, {*pScene->mAnimations[i]->mName.C_Str()});
+		}
+	}
+
+	Model::~Model() = default;
+
+	void Model::Submit(const glm::mat4& entityTransform = glm::identity<glm::mat4>()) const
+	{
+		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
+		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
+		const auto transform = translation * rotation;
+		nodes[rootId].Submit(*pGfx, entityTransform * transform);
+	}
+	void Model::SubmitBoned(const glm::mat4& entityTransform, std::span<const glm::mat4> boneTransforms) const
+	{
+		const auto rotation = glm::yawPitchRoll(settings.angles.x, settings.angles.y, settings.angles.z);
+		const auto translation = glm::translate(glm::mat4(1.0f), settings.position);
+		const auto transform = translation * rotation;
+		nodes[rootId].SubmitBoned(*pGfx, entityTransform * transform, boneTransforms );
+	}
+
+	void Model::AddPerTechniqueBindable(const std::shared_ptr<IBindable>& pBindable, const std::string& identifier)
+	{
+		std::queue<Mesh*> queue;
+
+		for (auto& pMesh : pMeshes)
+		{
+			queue.push(pMesh.get());
+		}
+
+		while (!queue.empty())
+		{
+			auto& mesh = *queue.front();
+			queue.pop();
+			if (mesh.IsParentMesh())
+			{
+				for (auto& pChild : mesh.GetChildren())
+				{
+					queue.push(pChild.get());
+				}
+			}
+			for (const auto& pTechnique : mesh.pTechniques | std::views::values)
+			{
+				pTechnique->OfferBindable(identifier, pBindable);
+			}
+		}
+
+		pAddedBindables.emplace_back(identifier, pBindable);
+	}
+
+	void Model::AddOrEnableTechniques(std::span<const utl::UUID_t> techniqueUUIDs)
+	{
+		for (const auto techniqueUUID : techniqueUUIDs)
+		{
+			if (std::ranges::find(techniques, techniqueUUID) == techniques.end())
+			{
+				techniques.emplace_back(techniqueUUID);
+			}
+			for (auto& mesh : pMeshes | std::views::transform([](auto& pMesh) -> Mesh& { return *pMesh; }))
+			{
+				mesh.EnableOrAddTechnique(*pGfx, techniqueUUID);
+				for (auto& technique : mesh.pTechniques | std::views::values)
+				{
+					for (auto& [id, addedBindable] : pAddedBindables)
+					{
+						technique->OfferBindable(id, addedBindable);
+					}
+				}
+			}
+		}
+	}
+
+	void Model::SpawnControlWindow()
+	{
+		ImGui::Begin(name.c_str());
+		ImGui::Text("Model Settings");
+		ImGui::Text("Orientation");
+		ImGui::SliderAngle("Yaw", &settings.angles.x, -180.f, 180.f);
+		ImGui::SliderAngle("Pitch", &settings.angles.y, -90.f, 90.f);
+		ImGui::SliderAngle("Roll", &settings.angles.z, -180.f, 180.f);
+		ImGui::Text("Position");
+		ImGui::SliderFloat("X", &settings.position.x, -20.0f, 20.0f);
+		ImGui::SliderFloat("Y", &settings.position.y, -20.0f, 20.0f);
+		ImGui::SliderFloat("Z", &settings.position.z, -20.0f, 20.0f);
+		ImGui::End();
+	}
+	void Model::AddAnimation(const std::shared_ptr<ani::Animation>& pAnimation, const std::string& name) const
+	{
+		auto& bonedMesh = *GetMainMesh();
+
+		bonedMesh.AddAnimation(pAnimation, name);
+	}
+	glm::vec3 Model::GetPosition() const
+	{
+		return settings.position;
+	}
+	std::uint16_t Model::GetMeshAmount() const
+	{
+		return meshCounter + 1;
+	}
+	std::uint32_t Model::ParseNode(int& nextId, const aiNode& node, const glm::vec3 scale, const bool root)
+	{
+		auto skeletonNodeIndex = -1;
+		// If its a root node, find if theres a skeleton
+		if (root)
+		{
+			for (int i = 0; i < node.mNumChildren; i++)
+			{
+				auto& child = *node.mChildren[i];
+
+				// find if any children is a skeleton
+
+				auto isSkeleton = true;
+				auto numChildren = 0;
+
+				std::queue<aiNode*> q;
+				q.push(&child);
+
+				while (!q.empty())
+				{
+					auto current = q.front();
+					q.pop();
+					if (current->mNumMeshes != 0)
+					{
+						isSkeleton = false;
+						break;
+					}
+					for (int i = 0; i < current->mNumChildren; i++)
+					{
+						numChildren++;
+						q.push(current->mChildren[i]);
+					}
+				}
+				
+				// Parse Skeleton if found any
+				if (isSkeleton && (numChildren != 0))
+				{
+					ParseSkeleton(child);
+					// Supports only one skeleton!
+					skeletonNodeIndex = i;
+					break;
+				}
+
+			}
+		}
+
+		const auto transform = ScaleTranslation(transpose(glm::make_mat4(reinterpret_cast<const float*>(&node.mTransformation))), scale);
+
+		std::vector<uint16_t> meshIds;
+		meshIds.reserve(node.mNumMeshes);
+		for (unsigned int i = 0; i < node.mNumMeshes; i++)
+		{
+			const auto meshIdx = node.mMeshes[i];
+			meshIds.push_back(meshIdx);
+		}
+
+		const auto index = nextId;
+		nodes.emplace_back(nextId++, node.mName.C_Str(), std::move(meshIds), transform, this);
+		for (auto i = 0; i < node.mNumChildren; i++)
+		{
+			if (root && i == skeletonNodeIndex)
+				continue;
+			const auto childId = ParseNode(nextId, *node.mChildren[i], scale, false);
+			nodes[index].AddChildId(childId);
+		}
+
+		return index;
+	}
+
+	class TransformData
+	{
+	public:
+		TransformData()
+		{
+			rotation[0] = rotation[1] = rotation[2] = rotation[3] = 0.0;
+			translation[0] = translation[1] = translation[2] = 0.0;
+			scale[0] = scale[1] = scale[2] = 1.0;
+		}
+
+		glm::quat rotation;
+		glm::vec3 translation;
+		glm::vec3 scale;
+		glm::mat4 matrix;
+
+		bool hasMatrix;
+	};
+
+	//std::uint32_t Model::ParseNode(int& nextId, const Microsoft::glTF::Node& node, const WinGLTFLoaderContext& context, glm::vec3 scale, bool root)
+	//{
+	//	auto& doc = *context.pDocument;
+	//	std::string skeletonNodeId;
+	//	// If its a root node, find if theres a skeleton
+	//	if (root)
+	//	{
+	//		for (auto& childId : node.children)
+	//		{
+	//			const auto& child = doc.nodes[childId];
+
+	//			// find if any children is a skeleton
+
+	//			auto isSkeleton = true;
+	//			auto numChildren = 0;
+
+	//			std::queue<const Microsoft::glTF::Node*> q;
+	//			q.push(&child);
+
+	//			while (!q.empty())
+	//			{
+	//				auto current = q.front();
+	//				q.pop();
+	//				if (!current->meshId.empty())
+	//				{
+	//					isSkeleton = false;
+	//					break;
+	//				}
+	//				for (auto& childChildId : current->children)
+	//				{
+	//					numChildren++;
+	//					q.push(&doc.nodes[childChildId]);
+	//				}
+	//			}
+	//			
+	//			// Parse Skeleton if found any
+	//			if (isSkeleton && (numChildren != 0))
+	//			{
+	//				// ParseSkeleton(child);
+	//				// Supports only one skeleton!
+	//				skeletonNodeId = childId;
+	//				break;
+	//			}
+
+	//		}
+	//	}
+
+	//	TransformData tdata;
+
+	//	Microsoft::glTF::TransformationType type = node.GetTransformationType();
+	//	tdata.hasMatrix = type == Microsoft::glTF::TRANSFORMATION_MATRIX;
+
+	//	if (tdata.hasMatrix)
+	//	{
+	//		tdata.matrix = glm::make_mat4(node.matrix.values.data());
+	//	}
+	//	else
+	//	{
+	//		tdata.rotation = glm::quat(node.rotation.w, node.rotation.x, -node.rotation.z, node.rotation.y);
+
+	//		tdata.translation.x = node.translation.x;
+	//		tdata.translation.y = node.translation.y;
+	//		tdata.translation.z = node.translation.z;
+
+	//		tdata.scale.x = node.scale.x;
+	//		tdata.scale.y = node.scale.y;
+	//		tdata.scale.z = node.scale.z;
+	//	}
+
+	//	trylog.debug(utl::ToWide(std::format("Node [{}] has matrix = [{}]", node.name, tdata.hasMatrix)));
+
+	//	if (node.name == "node_Object001_-5720")
+	//	{
+	//		trylog.debug(L"Node node_Object001_ - 5720");
+	//	}
+	//	if (node.name == "node_mesh_Adam_mask_-5716")
+	//	{
+	//		trylog.debug(L"node_mesh_Adam_mask_-5716");
+	//	}
+
+	//	const auto transform = tdata.hasMatrix ? glm::transpose(tdata.matrix) : glm::translate(glm::mat4(1.0f), tdata.translation) * glm::toMat4(tdata.rotation) * glm::scale(glm::mat4(1.0f), tdata.scale);
+
+	//	std::vector<uint16_t> meshIds;
+
+	//	if (!node.meshId.empty())
+	//		meshIds.push_back(atoi(doc.meshes[node.meshId].id.c_str()));
+
+	//	const auto index = nextId;
+	//	nodes.emplace_back(nextId++, node.name, std::move(meshIds), transform, this);
+	//	for (const auto& childId : node.children)
+	//	{
+	//		if (root && skeletonNodeId == childId)
+	//			continue;
+	//		try
+	//		{
+	//			const auto childIndex = ParseNode(nextId, doc.nodes[childId], context, scale);
+	//			nodes[index].AddChildId(childIndex);
+	//		}
+	//		catch(Microsoft::glTF::GLTFException&)
+	//		{
+	//			trylog.debug(L"Skipped Node");
+	//		}
+	//	}
+
+	//	return index;
+	//}
+
+	void Model::ParseSkeleton(const aiNode& boneRoot)
+	{
+		skeleton.emplace();
+		skeleton->bones.emplace_back(boneRoot.mName.C_Str(), 0, 0);
+		for (auto i = 0; i < boneRoot.mNumChildren; i++)
+		{
+			ParseBone(*boneRoot.mChildren[i], 0);
+		}
+	}
+	void Model::ParseBone(const aiNode& bone, const uint32_t parentID)
+	{
+		auto thisID = skeleton->NextID();
+		skeleton->bones.emplace_back(bone.mName.C_Str(), thisID, parentID);
+		for (unsigned int i = 0; i < bone.mNumChildren; i++)
+		{
+			ParseBone(*bone.mChildren[i], thisID);
+		}
+	}
+
+	ani::BonedMesh* Model::GetMainMesh() const
+	{
+		trynass(this->skeleton.has_value());
+		return reinterpret_cast<ani::BonedMesh*>(pMeshes[0].get());
+	}
+	const gfx::IGraphics* Model::GetGfx() const
+	{
+		return pGfx;
+	}
+
+	ani::Skeleton& Model::GetSkeleton()
+	{
+		trynass(skeleton.has_value());
+		return skeleton.value();
+	}
+
+	bool Model::HasTechnique(utl::UUID_t techniqueUUID) const
+	{
+		return std::ranges::contains(techniques, techniqueUUID);
+	}
+
+	//void Model::GltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path,
+	//                               std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
+	//{
+	//	using namespace Microsoft::glTF;
+
+	//	auto processFunction = [&](const WinGLTFLoaderContext& context)
+	//		{
+	//			const auto& doc = *context.pDocument;
+
+	//			if (doc.scenes.Size() > 1)
+	//				trylog.warn(L"GLTF file contains more than one scene!");
+
+	//			auto& scene = doc.GetDefaultScene();
+	//			int nextId = 0;
+
+	//			for (auto& nodeId : scene.nodes)
+	//			{
+	//				trylog.info(utl::ToWide(std::format("Root node: {}", doc.nodes[nodeId].name)));
+	//				auto& node = doc.nodes[nodeId];
+	//				rootId = ParseNode(nextId, node, context, scale, true);
+	//				break;
+	//			}
+
+	//			// parse materials
+	//			std::vector<std::shared_ptr<Material>> materials;
+	//			materials.reserve(doc.materials.Size());
+
+	//			for (unsigned int i = 0; i < doc.materials.Size(); i++)
+	//			{
+	//				materials.emplace_back(std::make_shared<Material>(gfx, doc.materials[i], path, context, instanced, skeleton.has_value()));
+	//			}
+
+	//			// Add meshes
+	//			for (unsigned int i = 0; i < doc.meshes.Size(); i++)
+	//			{
+	//				auto& mesh = doc.meshes[i];
+	//				pMeshes.push_back(std::make_shared<GLTFMesh>(gfx, mesh, context, mesh.name, materials[std::atoi(mesh.primitives[0].materialId.c_str())], scale, meshCounter++));
+	//				for (auto techniqueUUID : techniqueUUIDs)
+	//				{
+	//					pMeshes.back()->AddTechnique(gfx, techniqueUUID);
+	//				}
+	//				for (auto& pMesh = pMeshes.back(); const auto& technique : pMesh->pTechniques | std::views::values)
+	//				{
+	//					for (auto& [id, addedBindable] : pAddedBindables)
+	//					{
+	//						technique->OfferBindable(id, addedBindable);
+	//					}
+	//				}
+	//			}
+
+	//			// Set mesh Span
+	//			std::queue<Node*> q;
+	//			q.push(&nodes[rootId]);
+
+	//			while (!q.empty())
+	//			{
+	//				auto& current = *q.front();
+	//				q.pop();
+
+	//				current.SetMeshSpan({ pMeshes });
+
+	//				for (auto& childId : current.GetChildrenIds())
+	//				{
+	//					q.push(&nodes[childId]);
+	//				}
+	//			}
+	//		};
+
+	//	WinGLTFLoader::Load(path, processFunction);
+	//}
+}
+
+void tryn::ser::Serialize(StreamIO& io, gfx::Model* pModel, bool binary, const std::string& name)
+{
+	// TODO: Serialize Model
+}

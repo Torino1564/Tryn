@@ -1,0 +1,63 @@
+#include "Entity.h"
+#include <Core/src/ecs/cmp/Components.h>
+#include <ranges>
+
+namespace tryn::ecs
+{
+	Entity::Entity(std::string name)
+		:
+		name(std::move(name))
+	{
+
+	}
+
+	Entity::Entity(Entity&& e) noexcept
+	{
+		name = std::move(e.name);
+		UUID = std::move(e.UUID);
+		pArchetype = e.pArchetype;
+		e.pArchetype = nullptr;
+	}
+
+	Entity& Entity::operator=(Entity&& e) noexcept
+	{
+		name = std::move(e.name);
+		UUID = std::move(e.UUID);
+		pArchetype = e.pArchetype;
+		e.pArchetype = nullptr;
+		return *this;
+	}
+
+	Entity::~Entity()
+	{
+		if (pArchetype != nullptr)
+			pArchetype->Free(UUID);
+	}
+
+	std::span<utl::UUID_t> Entity::GetComponents() const
+	{
+		return std::span(pArchetype->components.begin(), pArchetype->components.size());
+	}
+
+	void Entity::Instanciate(std::span<Entity> destination) const
+	{
+		for (auto [instanceNum, ent] : std::ranges::views::enumerate(destination))
+		{
+			ent.name = name + "_" + std::to_string(instanceNum);
+			ent.pArchetype = pArchetype;
+			ent.UUID = pArchetype->ResolveEntityUUID();
+		}
+	}
+
+	void Entity::SpawnControlWindow()
+	{
+		if (ImGui::Begin(std::format("[{}] - Entity properties", name).c_str()))
+		{
+			ImGui::Text(std::format("Entity UUID: {}:{}", UUID.archetype, UUID.ID).c_str());
+			ImGui::Text("Components:");
+			
+			pArchetype->EntityControlWindow(UUID);
+		}
+		ImGui::End();
+	}
+}

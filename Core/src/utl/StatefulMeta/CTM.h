@@ -1,0 +1,286 @@
+#pragma once
+#include <tuple>
+#include <concepts>
+#include <type_traits>
+#include <string>
+#include <Core/src/utl/StatefulMeta/TemplateData.h>
+#include <Core/src/utl/StringHasher.h>
+#include <Core/src/utl/TypeData.h>
+
+#define ZT_CAT_C(x, y) x##y
+
+namespace tryn::utl::CTM
+{
+    // E1
+    template<typename...>
+    struct type_list {};
+
+    template <typename T, typename Input_t>
+    using tuple_append_t = decltype(
+        std::tuple_cat(std::declval<T>(), std::declval<std::tuple<Input_t>>())
+        );
+
+
+    // E2
+    template<class TypeList, typename T>
+    struct type_list_append;
+
+    template<typename... Ts, typename T>
+    struct type_list_append<type_list<Ts...>, T> {
+        using type = type_list<Ts..., T>;
+    };
+
+    template <typename T, StaticString TypeName, StaticString VarName, unsigned int VarSize, unsigned int ByteOffset, unsigned int ElementNumber>
+    struct MapElement
+    {
+        using Type = T;
+        using TypeName_t = decltype(TextType<TypeName>);
+        using VarName_t = decltype(TextType<VarName>);
+        using VarSize_t = decltype(IntType<VarSize>);
+        using ByteOffset_t = decltype(IntType<ByteOffset>);
+        using ElementNumber_t = decltype(IntType<ElementNumber>);
+    };
+
+    struct ElementData
+    {
+        template <typename MapElement>
+        static ElementData MakeOffMapElement()
+        {
+	        ElementData retval(
+                MapElement::TypeName_t()(),
+                MapElement::VarName_t()(),
+                MapElement::ByteOffset_t()(),
+                MapElement::ElementNumber_t()());
+
+            return retval;
+        }
+
+	    const std::string typeName;
+        const std::string varName;
+        const unsigned int byteOffset;
+        const unsigned int elementNumber;
+    };
+
+    // E3
+    template<unsigned N, typename List, utl::UUID_t ID>
+    struct state_t {
+        static constexpr unsigned n = N;
+        static constexpr utl::UUID_t id = ID;
+        using list = List;
+    };
+
+
+    namespace {
+        struct tu_tag {};           // E4
+    }
+
+
+    template<
+        unsigned N,
+        std::same_as<tu_tag> TUTag,
+        utl::UUID_t ID
+    >
+    struct reader {
+        friend auto state_func(reader<N, TUTag, ID>);
+    };
+
+
+    template<
+        unsigned N,
+        typename List,
+        std::same_as<tu_tag> TUTag,
+        utl::UUID_t ID
+    >
+    struct setter {
+        // E5
+        friend auto state_func(reader<N, TUTag, ID>) {
+            return List{};
+        }
+        static constexpr state_t<N, List, ID> state{};
+    };
+
+    // TODO: AUTOMATE THIS
+    // template struct setter<0, std::tuple<>, tu_tag, 0>;     // E6
+    // template struct setter<0, std::tuple<>, tu_tag, 1>;
+    // template struct setter<0, std::tuple<>, tu_tag, 2>;
+    // template struct setter<0, std::tuple<>, tu_tag, 3>;
+    // template struct setter<0, std::tuple<>, tu_tag, 4>;
+    // template struct setter<0, std::tuple<>, tu_tag, 5>;
+    // template struct setter<0, std::tuple<>, tu_tag, 6>;
+    // template struct setter<0, std::tuple<>, tu_tag, 7>;
+    // template struct setter<0, std::tuple<>, tu_tag, 8>;
+    // template struct setter<0, std::tuple<>, tu_tag, 9>;
+    // template struct setter<0, std::tuple<>, tu_tag, 10>;
+    // template struct setter<0, std::tuple<>, tu_tag, 11>;
+    // template struct setter<0, std::tuple<>, tu_tag, 12>;
+    // template struct setter<0, std::tuple<>, tu_tag, 13>;
+    // template struct setter<0, std::tuple<>, tu_tag, 14>;
+    // template struct setter<0, std::tuple<>, tu_tag, 15>;
+    // template struct setter<0, std::tuple<>, tu_tag, 16>;
+    // template struct setter<0, std::tuple<>, tu_tag, 17>;
+    // template struct setter<0, std::tuple<>, tu_tag, 18>;
+    // template struct setter<0, std::tuple<>, tu_tag, 19>;
+    // template struct setter<0, std::tuple<>, tu_tag, 20>;
+
+
+
+    // E7
+    template<
+        std::same_as<tu_tag> TUTag,
+        auto EvalTag,
+        utl::UUID_t ID,
+        unsigned N = 0
+    >
+    [[nodiscard]]
+    static consteval auto get_state() {
+        constexpr bool counted_past_n = requires(reader<N, TUTag, ID> r) {
+            state_func(r);
+        };
+
+        if constexpr (counted_past_n) {
+            return get_state<TUTag, EvalTag, ID, N + 1>();
+        }
+        else {
+            // E7.1
+            constexpr reader<N - 1, TUTag, ID> r;
+            return state_t<N - 1, decltype(state_func(r)), ID>{};
+        }
+    }
+
+
+    // E8
+    template<
+        utl::UUID_t ID = 0,
+        std::same_as<tu_tag> TUTag = tu_tag,
+        auto EvalTag = [] {},
+        auto State = get_state<TUTag, EvalTag, ID>()
+    >
+    using get_list = typename std::remove_cvref_t<decltype(State)>::list;
+
+
+    template<
+        utl::UUID_t ID = 0,
+        std::same_as<tu_tag> TUTag = tu_tag,
+        auto EvalTag = [] {},
+        auto State = get_state<TUTag, EvalTag, ID>()
+    >
+    consteval auto element_count()
+    {
+        return State.n;
+    }
+    
+    template<utl::UUID_t ID, unsigned int N, auto Tag = [] {}>
+    consteval auto get_offset()
+    {
+        if constexpr (N == 1)
+        {
+            return 0;
+        }
+        else
+        {
+            using Previous = std::tuple_element_t<N - 2, get_list<ID>>;
+            using ByteOffsetFunc_t = typename Previous::ByteOffset_t;
+            using VarSizeFunc_t = typename Previous::VarSize_t;
+            ByteOffsetFunc_t offsetFunc;
+            VarSizeFunc_t varSizeFunc;
+            return offsetFunc() + varSizeFunc();
+        }
+    }
+
+    // E9
+    template<
+        typename T,
+        StaticString TypeName,
+        StaticString VarName,
+        unsigned int VarSize,
+        std::same_as<tu_tag> TUTag,
+        auto EvalTag,
+        utl::UUID_t ID
+    >
+    [[nodiscard]]
+    consteval auto append_impl() {
+        using cur_state = decltype(get_state<TUTag, EvalTag, ID>());            // E9.1
+        using cur_list = typename cur_state::list;
+        using new_list = tuple_append_t<cur_list,
+            MapElement<T,
+            TypeName,
+            VarName,
+            VarSize,
+            get_offset<ID, cur_state::n + 1>(),
+            cur_state::n>>;      // E9.2
+        setter<cur_state::n + 1, new_list, TUTag, ID> s;                        // E9.3
+        return s.state;                                                     // E9.4
+    }
+
+
+    // E10
+    template<
+        typename T,
+        StaticString TypeName,
+        StaticString VarName,
+        unsigned int VarSize,
+        utl::UUID_t ID,
+        std::same_as<tu_tag> TUTag = tu_tag,
+        auto EvalTag = [] {},
+        auto State = append_impl<T, TypeName, VarName, VarSize, TUTag, EvalTag, ID>()
+    >
+    constexpr auto append = [] { return State; };           // E10.1
+
+    template <unsigned N, utl::UUID_t ID>
+    struct readerC {
+        friend auto counted_flag(readerC<N, ID>);
+    };
+
+    template <unsigned N, utl::UUID_t ID>
+    struct setterC {
+        friend auto	counted_flag(readerC<N, ID>) {}
+
+        static constexpr unsigned n = N;
+    };
+
+    template<auto Tag, typename T, StaticString TypeName, StaticString VarName, unsigned int VarSize, utl::UUID_t ID, unsigned NextVal = 0>
+    [[nodiscard]]
+    consteval auto Map_Impl()
+    {
+        constexpr bool counted_past_value = requires(readerC<NextVal, ID> r) {
+            counted_flag(r);
+        };
+
+        if constexpr (counted_past_value) {
+            return Map_Impl<Tag, T, TypeName, VarName, VarSize, ID, NextVal + 1>();
+        }
+        else
+        {
+            append<T, TypeName, VarName, VarSize, ID>;
+            setterC<NextVal, ID> s;
+            return s.n;
+        }
+    }
+
+    template <typename T,
+        StaticString TypeName,
+        StaticString VarName,
+        unsigned int VarSize,
+        utl::UUID_t ID = 0,
+        auto Tag = [] {},
+        auto Val = Map_Impl<Tag, T, TypeName, VarName, VarSize, ID>() >
+    constexpr auto Map = Val;
+
+    template <typename T,
+        StaticString TypeName,
+        StaticString VarName,
+        unsigned int VarSize,
+        utl::UUID_t ID = 0,
+        auto Tag = [] {},
+        auto Val = Map_Impl<Tag, T, TypeName, VarName, VarSize, ID>() >
+    struct Map_t
+    {
+        static constexpr auto Run()
+        {
+            return Val;
+        }
+
+        static constexpr auto n = Val;
+    };
+
+}

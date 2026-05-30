@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/jtori/source/repos/Tryn2/build-ucrt/cmake_install.cmake",
+		"C:/Users/jtori/source/repos/Tryn2/build-ucrt/Core/cmake_install.cmake",
+		"C:/Users/jtori/source/repos/Tryn2/build-ucrt/TrynGame/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
