@@ -1,4 +1,9 @@
 #include <Core/src/gfx/Bindables/VertexBuffer.h>
+#include <Core/src/gfx/BindablePool.h>
+#include <Core/src/gfx/Vertex.h>
+#include <Core/src/gfx/IGraphics.h>
+#include <sstream>
+#include <string>
 
 namespace tryn::gfx {
 
@@ -7,8 +12,7 @@ namespace tryn::gfx {
 		return BindablePool::Resolve<IVertexBuffer>(gfx, cpuBuffer, tag);
 	}
 
-
-	std::string GenerateID(const IGraphics& gfx, const std::shared_ptr<VertexBuffer>& cpuBuffer, const std::string& tag)
+	std::string IVertexBuffer::GenerateID(const IGraphics& gfx, const std::shared_ptr<VertexBuffer>& cpuBuffer, const std::string& tag)
 	{
 		if (tag == "?") return tag;
 		decltype(auto) typeStr = IGraphics::GetApiArray()[static_cast<int>(gfx.GetType())];
@@ -29,14 +33,28 @@ namespace tryn::gfx {
 		return static_cast<const VertexBuffer&>(*pCPUBuffer);
 	}
 
-	VertexBuffer& IVertexBuffer::GetVertexBuffer() const
+	VertexBuffer& IVertexBuffer::GetVertexBuffer()
 	{
 		pCPUBuffer->SetDirty();
 		return static_cast<VertexBuffer&>(*pCPUBuffer);
 	}
 
+	std::string_view IVertexBuffer::GetPath() const
+	{
+		return path;
+	}
+
+	std::string_view IVertexBuffer::GetTag() const
+	{
+		return tag;
+	}
+
 	const VertexLayout& IVertexBuffer::GetLayout() const
 	{
 		return GetVertexBuffer().GetLayout();
+	}
+	CPUBuffer& IVertexBuffer::GetCPUBuffer()
+	{
+		return *pCPUBuffer;
 	}
 }

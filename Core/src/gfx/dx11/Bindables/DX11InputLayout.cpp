@@ -1,8 +1,9 @@
 
 #include "DX11InputLayout.h"
 #include <Core/src/gfx/dx11/Bindables/DX11VertexShader.h>
-#include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11VertexBuffer.h>
 #include <Core/src/gfx/dx11/GraphicsError.h>
+#include <Core/src/gfx/dx11/Dx11Context.h>
 
 namespace tryn::gfx::dx11
 {

@@ -42,7 +42,7 @@
         },
       {
         "name": "ucrt64-gcc-Debug",
-        "displayName": "GCC x64 Release",
+        "displayName": "GCC x64 Debug",
         "generator": "Ninja",
         "binaryDir": "${sourceDir}/build-ucrt",
         "cmakeExecutable": "$env{MSYS2_PATH}/ucrt64/bin/cmake.exe",
@@ -50,6 +50,7 @@
           "CMAKE_C_COMPILER": "$env{MSYS2_PATH}/ucrt64/bin/gcc.exe",
           "CMAKE_CXX_COMPILER": "$env{MSYS2_PATH}/ucrt64/bin/g++.exe",
           "CMAKE_MAKE_PROGRAM": "$env{MSYS2_PATH}/ucrt64/bin/ninja.exe",
+          "CMAKE_CXX_FLAGS": "-municode",
           "CMAKE_BUILD_TYPE": "Debug",
           "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
           "VCPKG_TARGET_TRIPLET": "x64-mingw-static"
@@ -58,6 +59,46 @@
           "PATH": "$env{MSYS2_PATH}/ucrt64/bin;$env{MSYS2_PATH}usr/bin;$penv{PATH}",
           "MSYSTEM": "UCRT64",
           "CHERE_INVOKING": "1"
+        },
+        "vendor": {
+          "microsoft.com/VisualStudioSettings/CMake/1.0": {
+            "debuggerConfiguration": {
+              "type": "gdb",
+              "miDebuggerPath": "$env{MSYS2_PATH}/ucrt64/bin/gdb.exe"
+            },
+            "://microsoft.com": {
+              "intelliSenseMode": "windows-gcc-x64"
+            }
+          }
+        }
+      },
+      {
+        "name": "ucrt64-gcc-Release",
+        "displayName": "GCC x64 Release",
+        "generator": "Ninja",
+        "binaryDir": "${sourceDir}/build-ucrt",
+        "cmakeExecutable": "$env{MSYS2_PATH}/ucrt64/bin/cmake.exe",
+        "cacheVariables": {
+          "CMAKE_C_COMPILER": "$env{MSYS2_PATH}/ucrt64/bin/gcc.exe",
+          "CMAKE_CXX_COMPILER": "$env{MSYS2_PATH}/ucrt64/bin/g++.exe",
+          "CMAKE_MAKE_PROGRAM": "$env{MSYS2_PATH}/ucrt64/bin/ninja.exe",
+          "CMAKE_CXX_FLAGS": "-municode",
+          "CMAKE_BUILD_TYPE": "Release",
+          "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+          "VCPKG_TARGET_TRIPLET": "x64-mingw-static"
+        },
+        "environment": {
+          "PATH": "$env{MSYS2_PATH}/ucrt64/bin;$env{MSYS2_PATH}usr/bin;$penv{PATH}",
+          "MSYSTEM": "UCRT64",
+          "CHERE_INVOKING": "1"
+        },
+        "vendor": {
+          "microsoft.com/VisualStudioSettings/CMake/1.0": {
+            "debuggerConfiguration": {
+              "type": "gdb",
+              "miDebuggerPath": "$env{MSYS2_PATH}/ucrt64/bin/gdb.exe"
+            }
+          }
         }
       }
     ]

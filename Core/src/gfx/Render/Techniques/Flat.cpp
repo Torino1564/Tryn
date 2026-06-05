@@ -5,13 +5,14 @@
 #include <assimp/types.h>
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/gfx/Material.h>
+#include <Core/src/gfx/ConstantBuffer.h>
 #include <Core/src/gfx/Bindables/TextureResource.h>
 #include <Core/src/gfx/Bindables/Rasterizer.h>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Bindables/VertexShader.h>
 #include <Core/src/gfx/Bindables/PixelShader.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>
 #include <Core/src/gfx/Bindables/Sampler.h>
+#include <Core/src/gfx/Bindables/ConstantBufferResource.h>
 
 namespace tryn::gfx
 {
@@ -63,7 +64,7 @@ namespace tryn::gfx
 			step.AddBindable(std::move(pvs));
 			step.AddBindable(IPixelShader::Resolve(gfx, shaderRootPath + shaderCode + "_PS.cso"));
 			cbLayout.Solidify();
-			auto buf = IPxConstantBuffer::Resolve(gfx, std::move(cbLayout), 1);
+			auto buf = IConstantBufferResource::Resolve(gfx, std::move(cbLayout), IConstantBufferResource::Type::Pixel, 1);
 
 			if ((*buf)["materialColor"].Exists())
 			{

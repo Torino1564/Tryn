@@ -22,8 +22,8 @@ namespace tryn::gfx
 	public:
 		static std::string GenerateID(const IGraphics& gfx, const ConstantBufferLayout& cbl, Type type, int slot, const std::string& tag = "?");
 		static std::shared_ptr<IConstantBufferResource> Resolve(const IGraphics& gfx, const ConstantBufferLayout& cbl, Type type, int slot, const std::string& tag = "?");
-		void Accept_(TechniqueProbe& probe) const;
-		ElementView operator[](const std::string& id) const;
+		void Accept_(TechniqueProbe& probe);
+		ElementView operator[](const std::string& id);
 		virtual void Resize(const std::size_t newSize) = 0;
 		std::string_view GetPath() const;
 		std::string_view GetTag() const;
@@ -31,6 +31,7 @@ namespace tryn::gfx
 		const ConstantBuffer& GetConstantBuffer() const;
 
 	protected:
+		Type bindType;
 		std::shared_ptr<CPUBuffer> pCPUBuffer;
 		std::string path;
 		std::string tag;

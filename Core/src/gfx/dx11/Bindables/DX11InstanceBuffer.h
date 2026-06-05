@@ -1,11 +1,17 @@
 #include <Core/src/gfx/Bindables/InstanceBuffer.h>
+#include <wrl/client.h>
+
+struct ID3D11DeviceContext;
+struct ID3D11Buffer;
 
 namespace tryn::gfx::dx11
 {
+	class Graphics;
+
 	class DX11InstanceBuffer : public IInstanceBuffer
 	{
 	public:
-		DX11InstanceBuffer(const Graphics& gfx, const ConstantBufferLayout::Node& node, int slot, std::size_t numInstances = 50);
+		DX11InstanceBuffer(const Graphics& gfx, const ConstantBufferLayout::Node& arrayElement, int slot, std::size_t numInstances = 50);
 		void Bind() override;
 		void Bind(const IContext& context) override;
 		void Update();
@@ -13,7 +19,8 @@ namespace tryn::gfx::dx11
 		void InitDynamicCBufferOnGPU();
 		void Resize(std::size_t newSize) override;
 	private:
-		void Bind_(ID3D11DeviceContext& context) override;
+		void GPUSizeChanges();
+		void Bind_(ID3D11DeviceContext& context);
 	private:
 		const Graphics& gfx;
 		int slot;

@@ -1,5 +1,6 @@
 
 #include "StreamIO.h"
+#include <cstring>
 
 namespace tryn::ser
 {

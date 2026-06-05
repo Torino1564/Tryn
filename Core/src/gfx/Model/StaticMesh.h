@@ -4,16 +4,16 @@
 
 #include "Core/src/gfx/Vertex.h"
 
-namespace Microsoft::glTF
-{
-	struct MeshPrimitive;
-}
+//namespace Microsoft::glTF
+//{
+//	struct MeshPrimitive;
+//}
 
 struct aiMesh;
 
 namespace tryn::gfx
 {
-	class WinGLTFLoaderContext;
+	//class WinGLTFLoaderContext;
 	template <typename T>
 	concept Shape = std::derived_from<T, Shape3D>;
 
@@ -27,7 +27,7 @@ namespace tryn::gfx
 		StaticMesh(const IGraphics& gfx, const Shape3D& shape, std::string_view tag, const std::shared_ptr<Material>& pMaterial = nullptr, glm::vec3 scale = glm::vec3{ 1.0f,1.0f,1.0f }, std::optional<std::uint16_t> meshID = std::nullopt);
 
 		// Make a mesh via gltf primitives
-		StaticMesh(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& mesh, const gfx::WinGLTFLoaderContext& context, std::string_view tag, const std::shared_ptr<Material>& pMaterial = nullptr, glm::vec3 scale = glm::vec3{ 1.0f,1.0f,1.0f }, std::optional<std::uint16_t> meshID = std::nullopt);
+		/*StaticMesh(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& mesh, const gfx::WinGLTFLoaderContext& context, std::string_view tag, const std::shared_ptr<Material>& pMaterial = nullptr, glm::vec3 scale = glm::vec3{ 1.0f,1.0f,1.0f }, std::optional<std::uint16_t> meshID = std::nullopt);*/
 
 		[[nodiscard]] MeshType Type() const override;
 

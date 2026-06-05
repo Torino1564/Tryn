@@ -4,7 +4,6 @@
 #include <Core/src/gfx/Model/InstancedModel.h>
 #include <Core/src/gfx/IGraphics.h>
 
-#include "Core/src/gfx/Bindables/IBufferBase.h"
 
 namespace tryn::gfx
 {

@@ -23,8 +23,8 @@ namespace tryn::log
 		:
 		Entry{
 			.level_ = Level::Error,
-			.sourceFile_ = utl::ToWide(sourceFile),
-			.sourceFunctionName_ = utl::ToWide(sourceFunctionName),
+			.sourceFile_ = utl::ToWide(sourceFile).data(),
+			.sourceFunctionName_ = utl::ToWide(sourceFunctionName).data(),
 			.sourceLine_ = sourceLine,
 			.timestamp_ = std::chrono::system_clock::now(),
 		}

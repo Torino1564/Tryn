@@ -5,9 +5,10 @@
 #include <Core/src/gfx/Render/SinkAndSource.h>
 #include <Core/src/gfx/Bindables/RenderTargetView.h>
 #include <Core/src/gfx/Bindables/DepthStencil.h>
+#include <Core/src/gfx/Bindables/VertexBuffer.h>
+#include <Core/src/gfx/Bindables/ConstantBufferResource.h>
 #include <Core/src/gfx/BindablePool.h>
 #include <Core/src/gfx/PointLight.h>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 
 namespace tryn::gfx
 {

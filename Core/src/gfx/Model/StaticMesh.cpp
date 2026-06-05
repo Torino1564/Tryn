@@ -2,12 +2,13 @@
 #include "StaticMesh.h"
 #include <Core/src/gfx/BindablePool.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <format>
 #include <utility>
 #include <Core/src/gfx/Material.h>
 
 #include "Core/src/gfx/Bindables/SOAVertexBuffer.h"
+#include <Core/src/gfx/Bindables/VertexBuffer.h>
+#include <Core/src/gfx/Bindables/IndexBuffer.h>
 
 namespace tryn::gfx
 {
@@ -71,7 +72,7 @@ namespace tryn::gfx
 		//this->selectedMaterial = pMaterials.size() - 1;
 	}
 
-	StaticMesh::StaticMesh(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::string_view tag_,
+	/*StaticMesh::StaticMesh(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::string_view tag_,
 		const std::shared_ptr<Material>& pMaterial, glm::vec3 scale, const std::optional<std::uint16_t> meshID)
 			: Mesh()
 	{
@@ -100,7 +101,7 @@ namespace tryn::gfx
 		pMaterials.clear();
 		pMaterials.emplace_back(std::move(material));
 		selectedMaterial = pMaterials.size() - 1;
-	}
+	}*/
 
 	MeshType StaticMesh::Type() const
 	{

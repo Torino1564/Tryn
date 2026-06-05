@@ -5,6 +5,11 @@
 #include "cmp/ModelComponent.h"
 #include "cmp/UpdateJITBufferComponent.h"
 #include "Core/src/gfx/Render/Techniques/EntityIDTechnique.h"
+#include <Core/src/gfx/Bindables/JITUpdateBuffer.h>
+#include <Core/src/gfx/Bindables/ConstantBufferResource.h>
+#include <memory>
+#include <cstdint>
+#include <utility>
 
 namespace tryn::ecs
 {
@@ -32,13 +37,13 @@ namespace tryn::ecs
 		cblayout.Append(gfx::ConstantBufferLayout::Type::UInt32, "empty");
 		cblayout.Solidify();
 
-		auto buffer = gfx::IPxConstantBuffer::Resolve(ecs.Gfx(), std::move(cblayout));
+		auto buffer = gfx::IConstantBufferResource::Resolve(ecs.Gfx(), std::move(cblayout), gfx::IConstantBufferResource::Type::Pixel, 0u);
 
-		auto pJITBuffer = std::make_shared<gfx::JITUpdateBuffer>(gfx::JITUpdateBuffer::Make(buffer));
+		auto pJITBuffer = gfx::IJITUpdateBuffer::MakeShared(buffer);
 
 		pModel->AddPerTechniqueBindable(pJITBuffer, "entityIDBuffer");
 
-		auto pFun = [](const std::shared_ptr<gfx::JITUpdateBuffer>& pBuffer, uint32_t entityID, const ecs::Archetype* pArchetype)
+		auto pFun = [](const std::shared_ptr<gfx::IJITUpdateBuffer>& pBuffer, uint32_t entityID, const ecs::Archetype* pArchetype)
 			{
 				const auto& data = pArchetype->Manager().GetArenaAllocator().Emplace(std::tuple{ entityID, pArchetype->GetUUID(), 0u, 0u });
 				pBuffer->Set(&data, sizeof(decltype(data)));

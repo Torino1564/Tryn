@@ -14,7 +14,8 @@ namespace tryn::gfx
 	{
 		for (auto it = params.begin; it != params.end; ++it)
 		{
-			(*it._Ptr)->Execute(*params.pContext);
+			auto pIJob = *it;
+			pIJob->Execute(*params.pContext);
 		}
 	}
 

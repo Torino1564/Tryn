@@ -2,6 +2,9 @@
 #include <Core/src/gfx/IGraphics.h>
 #include "Dx11Context.h"
 #include <Core/src/gfx/VertexFormat.h>
+#include <wrl/client.h>
+
+struct ID3D11DeviceContext;
 
 namespace tryn::gfx
 {

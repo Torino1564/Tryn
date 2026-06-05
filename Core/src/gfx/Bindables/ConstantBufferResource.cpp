@@ -1,4 +1,8 @@
 #include <Core/src/gfx/Bindables/ConstantBufferResource.h>
+#include <Core/src/gfx/IGraphics.h>
+#include <Core/src/gfx/BindablePool.h>
+#include <sstream>
+#include <iostream>
 
 namespace tryn::gfx
 {
@@ -17,7 +21,7 @@ namespace tryn::gfx
 			ss << "VtxConstantBuffer#";
 			break;
 		default:
-			trynass_fail(L"Invalid constant buffer type");
+			trynchk_fail.msg(L"Invalid constant buffer type");
 		}
 		ss << slot << '#' << tag;
 		return ss.str();
@@ -28,7 +32,7 @@ namespace tryn::gfx
 		return BindablePool::Resolve<IConstantBufferResource>(gfx, cbl, type, slot, tag);
 	}
 
-	void IConstantBufferResource::Accept_(TechniqueProbe& probe) const
+	void IConstantBufferResource::Accept_(TechniqueProbe& probe)
 	{
 		if (probe.VisitBuffer(GetConstantBuffer()))
 		{
@@ -57,7 +61,7 @@ namespace tryn::gfx
 		return tag;
 	}
 
-	ElementView IConstantBufferResource::operator[](const std::string& id) const
+	ElementView IConstantBufferResource::operator[](const std::string& id)
 	{
 		return GetConstantBuffer()[id];
 	}

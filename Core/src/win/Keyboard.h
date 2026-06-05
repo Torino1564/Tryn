@@ -1,6 +1,7 @@
 #pragma once
 #include <bitset>
 #include <queue>
+#include <cstdint>
 
 namespace tryn::win
 {

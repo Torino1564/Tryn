@@ -3,10 +3,10 @@
 #include <Core/src/mem/ArenaAllocator.h>
 #include "glm/gtx/euler_angles.hpp"
 #include <Core/src/gfx/IGraphics.h>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Model/Model.h>
 #undef max
 #include <algorithm>
+#include <Core/src/gfx/ConstantBuffer.h>
 
 namespace tryn::gfx
 {
@@ -112,19 +112,4 @@ namespace tryn::gfx
 	{
 		pParentModel->transforms[instanceID] = transformation;
 	}
-}
-
-void tryn::ser::Serialize(StreamIO& io, gfx::InstancedModelParent* pData, const bool binary, const std::string& name)
-{
-	//io.Field(&pData->pBase, binary);
-}
-
-void tryn::ser::Serialize(StreamWriter& sw, gfx::InstancedModelChild* pData, bool binary, const std::string& name)
-{
-	
-}
-
-void tryn::ser::Serialize(StreamReader& io, gfx::InstancedModelChild* pData, bool binary, const std::string& name)
-{
-
 }

@@ -11,6 +11,7 @@
 #include "Core/third/backward.hpp"
 #include "WindowClass.h"
 #include <tuple>
+#include <shlobj.h>
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -398,7 +399,6 @@ namespace tryn::win
 		}
 	}
 
-#include <shlobj_core.h>
 	std::pair<bool, std::filesystem::path> SelectDirectory()
 	{
 		const auto currentWD = std::filesystem::current_path();

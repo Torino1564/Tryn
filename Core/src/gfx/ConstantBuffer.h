@@ -8,6 +8,7 @@
 #include <Core/src/gfx/CPUBuffer.h>
 #include <Core/src/utl/Assert.h>
 #include <string_view>
+#include <type_traits>
 
 ZT_EX_DEF(DcbException);
 
@@ -60,7 +61,7 @@ namespace tryn::gfx
 		};
 
 		template<template<ConstantBufferLayout::Type> class F, typename... Args>
-		static constexpr auto Bridge(const ConstantBufferLayout::Type type, Args&&... args);
+		static constexpr std::invoke_result_t<decltype(F<ConstantBufferLayout::Type::Float>::Exec), Args...> Bridge(const ConstantBufferLayout::Type type, Args&&... args);
 		static constexpr size_t SizeOf(ConstantBufferLayout::Type type);
 
 		class Node
@@ -232,7 +233,7 @@ namespace tryn::gfx
 	};
 
 	template<template<ConstantBufferLayout::Type> class F, typename... Args>
-	static constexpr auto Bridge(const ConstantBufferLayout::Type type, Args&&... args)
+	inline constexpr std::invoke_result_t<decltype(F<ConstantBufferLayout::Type::Float>::Exec), Args...> ConstantBufferLayout::Bridge(const ConstantBufferLayout::Type type, Args && ...args)
 	{
 		switch (type)
 		{
@@ -242,5 +243,19 @@ namespace tryn::gfx
 		}
 		throw DcbException("Invalid element type");
 		return F<ConstantBufferLayout::Type::Empty>::Exec(std::forward<Args>(args)...);
+	}
+
+	template<ConstantBufferLayout::Type type>
+	struct TrueTypeSizeLookup
+	{
+		static constexpr size_t Exec() noexcept
+		{
+			return ConstantBufferLayout::TypeAttr<type>::TrueTypeSize;
+		}
+	};
+
+	constexpr size_t ConstantBufferLayout::SizeOf(ConstantBufferLayout::Type type)
+	{
+		return Bridge<TrueTypeSizeLookup>(type);
 	}
 }

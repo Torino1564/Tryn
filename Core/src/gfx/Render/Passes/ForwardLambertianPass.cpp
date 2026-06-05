@@ -2,10 +2,11 @@
 #include <Core/src/gfx/Bindables/ConstantBufferResource.h>
 #include <Core/src/gfx/Bindables/RenderTargetView.h>
 #include <Core/src/gfx/Bindables/DepthStencil.h>
+#include <Core/src/gfx/Render/RenderQueue.h>
 
 namespace tryn::gfx
 {
-	ForwardLambertianPass::ForwardLambertianPass(class IRenderGraph& graph, std::string name = std::string("lambertian"))
+	ForwardLambertianPass::ForwardLambertianPass(class IRenderGraph& graph, const std::string& name)
 		:
 		RenderQueuePass(std::move(name), graph, std::vector<std::string>{"Lambertian"})
 	{
@@ -18,7 +19,7 @@ namespace tryn::gfx
 		pSource->AddExposure<IDepthStencil>("depthStencil");
 	}
 
-	void ForwardLambertianPass::Execute(const IGraphics& gfx) override
+	void ForwardLambertianPass::Execute(const IGraphics& gfx)
 	{
 		// bind Render Target View
 		auto& rtv = pSink->Get<IRenderTargetView>("rtv");

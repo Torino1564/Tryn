@@ -1,25 +1,29 @@
 #include <Core/src/gfx/dx11/Bindables/DX11ConstantBufferResource.h>
+#include <Core/src/gfx/dx11/Dx11Graphics.h>
+#include <Core/src/gfx/dx11/Dx11Context.h>
 
-namespace tryn::gfx
+namespace tryn::gfx::dx11
 {
-	DX11ConstantBufferResource::DX11ConstantBufferResource(const Graphics& gfx, const ConstantBufferLayout& cbl, Type type, int slot, const std::string& tag)
+	DX11ConstantBufferResource::DX11ConstantBufferResource(const Graphics& gfx, const ConstantBufferLayout& cbl, IConstantBufferResource::Type type, int slot, const std::string& tag)
 		: gfx(gfx)
 	{
 		this->type = GraphicAPI::DX11;
+		this->bindType = type;
 		this->slot = slot;
 		this->tag = tag;
 		trynass_msg(cbl.IsSolid(), L"ConstantBuffer cannot be created with a non solidified layout!");
 		this->pCPUBuffer = std::make_shared<ConstantBuffer>(cbl);
 	}
 
-	void BX11ConstantBufferResource::Bind()
+	void DX11ConstantBufferResource::Bind()
 	{
-		gfx.GetContext().Bind(*this);
+		Bind(gfx.GetContextInterface());
 	}
 
 	void DX11ConstantBufferResource::Bind(const IContext& context)
 	{
-		Bind_(*this);
+		gfx.AssertContextCoherence(context);
+		Bind_(static_cast<const DX11Context*>(&context)->GetContext());
 	}
 
 	void DX11ConstantBufferResource::Bind_(ID3D11DeviceContext& context)
@@ -29,7 +33,7 @@ namespace tryn::gfx
 			Update(context);
 			this->pCPUBuffer->SetClean();
 		}
-		switch (type)
+		switch (bindType)
 		{
 		case Type::Pixel:
 			context.PSSetConstantBuffers(this->slot, 1u, pBuffer.GetAddressOf());
@@ -38,7 +42,7 @@ namespace tryn::gfx
 			context.VSSetConstantBuffers(this->slot, 1u, pBuffer.GetAddressOf());
 			break;
 		default:
-			trynass_fail(L"Invalid constant buffer type");
+			trynchk_fail.msg(L"Invalid constant buffer type");
 		}
 	}
 

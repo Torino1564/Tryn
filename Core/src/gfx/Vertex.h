@@ -96,7 +96,7 @@ namespace tryn::gfx
 		};
 
 		template<template<VertexElement> class F, typename... Args>
-		static constexpr auto Bridge(VertexElement type, Args&&... args);
+		static constexpr auto Bridge(VertexLayout::VertexElement type, Args&&... args) -> decltype(F<VertexLayout::Unknown>::Exec(std::forward<Args>(args)...));
 
 		class Element
 		{
@@ -312,7 +312,7 @@ namespace tryn::gfx
 	};
 
 	template<template<VertexLayout::VertexElement> class F, typename... Args>
-	constexpr auto VertexLayout::Bridge(VertexElement type, Args&&... args)
+	constexpr auto VertexLayout::Bridge(VertexLayout::VertexElement type, Args&&... args) -> decltype(F<VertexLayout::Unknown>::Exec(std::forward<Args>(args)...))
 	{
 		switch (type)
 		{
@@ -352,9 +352,9 @@ namespace tryn::gfx
 		struct AttributeSetting
 		{
 			template<typename T>
-			static constexpr auto Exec(Vertex* pVertex, char* pAttribute, T&& val)
+			static constexpr void Exec(Vertex* pVertex, char* pAttribute, T&& val)
 			{
-				return pVertex->SetAttribute<type>(pAttribute, std::forward<T>(val));
+				pVertex->SetAttribute<type>(pAttribute, std::forward<T>(val));
 			}
 		};
 
@@ -412,7 +412,7 @@ namespace tryn::gfx
 	public:
 		VertexBuffer(VertexLayout layout_, size_t size = 0);
 		VertexBuffer(VertexLayout layout, const aiMesh& mesh, ani::Skeleton* skeleton = nullptr);
-		VertexBuffer(VertexLayout layout, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::optional<ani::Skeleton> skeleton = std::nullopt);
+		//VertexBuffer(VertexLayout layout, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::optional<ani::Skeleton> skeleton = std::nullopt);
 		VertexBuffer(VertexLayout layout, const Shape3D& mesh);
 		void Resize(size_t newSize) override;
 		constexpr std::size_t ByteSize() const noexcept override;

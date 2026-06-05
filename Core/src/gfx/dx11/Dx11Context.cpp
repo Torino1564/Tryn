@@ -1,9 +1,9 @@
 
 #include "Dx11Context.h"
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
-#include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11RenderTargetView.h>
-#include "DX11BufferFwd.h"
+#include <Core/src/gfx/dx11/Bindables/DX11ConstantBufferResource.h>
+#include <Core/src/gfx/ConstantBuffer.h>
 
 namespace tryn::gfx::dx11
 {
@@ -22,7 +22,7 @@ namespace tryn::gfx::dx11
 			cblayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Matrix4, "view"));
 			cblayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Matrix4, "viewProjection"));
 			cblayout.Solidify();
-			pTCB = std::make_unique<DX11VtxConstantBuffer>(gfx, std::move(cblayout), 0, "transformCbuf");
+			pTCB = std::make_unique<DX11ConstantBufferResource>(gfx, std::move(cblayout), IConstantBufferResource::Type::Vertex, 0, "transformCbuf");
 		}
 	}
 	ID3D11DeviceContext& DX11Context::GetContext() const

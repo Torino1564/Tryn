@@ -1,8 +1,8 @@
 
 #include "PointLightJob.h"
 #include <Core/src/gfx/Render/RenderGraph.h>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Camera.h>
+#include <Core/src/gfx/Bindables/ConstantBufferResource.h>
 
 namespace tryn::gfx
 {

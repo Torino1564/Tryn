@@ -22,6 +22,23 @@ target_link_libraries(TrynGlobalSettings INTERFACE
     glm::glm
 )
 
+if(WIN32)
+    target_link_libraries(TrynGlobalSettings INTERFACE
+        d3d11
+        dxgi
+        dxguid
+        d3dcompiler
+        dwmapi
+        user32
+        gdi32
+        shell32
+        ole32
+        comdlg32
+        dbghelp
+
+    )
+endif()
+
 target_include_directories(TrynGlobalSettings INTERFACE
     ${CMAKE_SOURCE_DIR}
     ${TINYGLTF_INCLUDE_DIRS}

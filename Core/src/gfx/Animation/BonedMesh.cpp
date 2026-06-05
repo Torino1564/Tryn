@@ -100,7 +100,7 @@ namespace tryn::gfx::ani
 
 		this->transform = finalTransform;
 
-		auto& jitBuffer = mem::ArenaAllocator<>::GP().Emplace(JITUpdateBuffer::Make(pSkeletonCBuffer, (void*)boneTransforms.data(), boneTransforms.size_bytes()));
+		auto& jitBuffer = mem::ArenaAllocator<>::GP().Emplace(JITUpdateBuffer(pSkeletonCBuffer, (void*)boneTransforms.data(), boneTransforms.size_bytes()));
 
 		AddExtraBind(&jitBuffer);
 

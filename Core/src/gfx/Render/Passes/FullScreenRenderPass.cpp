@@ -94,7 +94,7 @@ namespace tryn::gfx
 		pSource->Set(rtv, "rtv");
 	}
 
-	void FullscreenRenderPass::SetConstantBuffer(const std::shared_ptr<ConstantBufferResource>& pPxConstantBuffer_)
+	void FullscreenRenderPass::SetConstantBuffer(const std::shared_ptr<IConstantBufferResource>& pPxConstantBuffer_)
 	{
 		pPxConstantBuffer = pPxConstantBuffer_;
 	}

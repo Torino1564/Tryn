@@ -5,7 +5,6 @@
 #include <assimp/texture.h>
 
 #include "IGraphics.h"
-#include "win/gltfSDK.h"
 
 namespace tryn::gfx
 {
@@ -79,7 +78,7 @@ namespace tryn::gfx
 		}
 	}
 
-	Texture::Texture(const GLTFTextureData& textureData)
+	/*Texture::Texture(const GLTFTextureData& textureData)
 	{
 		auto texture = StbImageManager::Load(std::span{(std::byte*)std::move(textureData.data.data()), textureData.byteSize}, dimensions, numChannels, StbImageManager::RGB_ALPHA());
 		this->path = textureData.name;
@@ -92,7 +91,7 @@ namespace tryn::gfx
 		static const Deleter deleter(pDeleterFunc);
 
 		buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
-	}
+	}*/
 
 	Texture::Texture(const spa::DimensionsI dimensions, const TextureFormat format)
 		: dimensions(dimensions), format(format)

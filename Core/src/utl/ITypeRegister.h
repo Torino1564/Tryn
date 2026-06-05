@@ -2,6 +2,7 @@
 #include <Core/src/utl/StringHasher.h>
 #include <vector>
 #include "Assert.h"
+#include <utility>
 
 namespace tryn::utl
 {

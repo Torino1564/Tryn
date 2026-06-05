@@ -1,30 +1,78 @@
 #pragma once
 #include "Bindable.h"
-#include <Core/src/gfx/IBufferFwd.h>
+#include <concepts>
+#include <cstring>
 
 namespace tryn::gfx
 {
-	class IBuffer;
+	class IConstantBufferResource;
+	class IInstanceBuffer;
+	class ConstantBuffer;
 
-	class JITUpdateBuffer : public IBindable
+	template <typename BufferClass>
+	concept CompatibleBufferType = requires (BufferClass buf) {
+		{ buf.GetConstantBuffer() } -> std::same_as<ConstantBuffer&>;
+	};
+
+	template <CompatibleBufferType BufferClass>
+	class JITUpdateBuffer;
+
+	class IJITUpdateBuffer : public IBindable
 	{
 	public:
-		template <BufferType Type, CachingPolicy Policy>
-		static JITUpdateBuffer Make(const std::shared_ptr<IBufferBase<Type, Policy>>& pBuffer, const void* pData = nullptr, size_t numBytes = 0)
-			requires (Type == BufferType::VtxConstant || Type == BufferType::PxConstant || Type == BufferType::Instance)
-		{
-			return JITUpdateBuffer(pBuffer, pData, numBytes);
-		}
-		void Set(const void* pData, size_t size);
-		void Bind() override;
-		void Bind(const IContext& ctx) override;
+		virtual void Set(const void* pData, size_t size) = 0;
 		bool Dirty() const;
-		IBuffer* Get() const;
+
+		template <CompatibleBufferType BufferClass>
+		static std::shared_ptr<IJITUpdateBuffer> MakeShared(const std::shared_ptr<BufferClass>& pBuff, const void* pData = nullptr, size_t numBytes = 0)
+		{
+			return std::make_shared<JITUpdateBuffer<BufferClass>>(pBuff, pData, numBytes);
+		}
+	protected:
+		bool dirty = 0;
+		const void* pData = nullptr;
+		size_t numBytes = 0;
+	};
+
+	template <CompatibleBufferType BufferClass>
+	class JITUpdateBuffer : public IJITUpdateBuffer
+	{
+	public:
+		JITUpdateBuffer(const std::shared_ptr<BufferClass>& pBuffer, const void* pData = nullptr, size_t numBytes = 0)
+			:
+			pBuffer(pBuffer) {
+			this->pData = pData;
+			this->numBytes = numBytes;
+		}
+		void Set(const void* pData, size_t size) override
+		{
+			this->pData = pData;
+			this->numBytes = size;
+			dirty = true;
+		}
+		void Bind() override
+		{
+			if (pData != nullptr)
+			{
+				std::memcpy(pBuffer->GetConstantBuffer().Data(), pData, numBytes);
+				dirty = false;
+			}
+			pBuffer->Bind();
+		}
+		void Bind(const IContext& ctx) override
+		{
+			if (pData != nullptr)
+			{
+				std::memcpy(pBuffer->GetConstantBuffer().Data(), pData, numBytes);
+				dirty = false;
+			}
+			pBuffer->Bind(ctx);
+		}
+		BufferClass* Get() const
+		{
+			return pBuffer.get();
+		}
 	private:
-		JITUpdateBuffer(const std::shared_ptr<IBuffer>& pBuffer, const void* pData, size_t numBytes);
-		const void* pData;
-		size_t numBytes;
-		std::shared_ptr<IBuffer> pBuffer;
-		bool dirty = true;
+		std::shared_ptr<BufferClass> pBuffer;
 	};
 }

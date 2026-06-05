@@ -2,6 +2,7 @@
 #include "InputLayout.h"
 #include <Core/src/gfx/BindablePool.h>
 #include "VertexShader.h"
+#include <Core/src/gfx/Bindables/VertexBuffer.h>
 
 namespace tryn::gfx
 {

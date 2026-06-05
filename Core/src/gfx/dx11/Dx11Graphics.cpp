@@ -14,9 +14,12 @@
 #include <Core/src/gfx/dx11/Bindables/DX11Rasterizer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11Sampler.h>
 #include <Core/src/gfx/dx11/Dx11RenderWorker.h>
-#include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
 #include <Core/src/gfx/dx11/Bindables/DX11RenderTargetView.h>
 #include <Core/src/gfx/dx11/Bindables/DX11DepthStencil.h>
+#include <Core/src/gfx/dx11/Bindables/DX11VertexBuffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11IndexBuffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11ConstantBufferResource.h>
+#include <Core/src/gfx/dx11/Bindables/DX11InstanceBuffer.h>
 #include <imgui_impl_dx11.h>
 #include <Core/src/win/Window.h>
 #include <Core/src/gfx/Vertex.h>

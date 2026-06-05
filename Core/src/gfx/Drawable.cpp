@@ -4,11 +4,11 @@
 #include <Core/src/gfx/Material.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/euler_angles.hpp>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
 #include <Core/src/gfx/Bindables/SOAVertexBuffer.h>
+#include <Core/src/gfx/Bindables/IndexBuffer.h>
+#include <Core/src/gfx/Bindables/VertexBuffer.h>
 #include <Core/src/gfx/IGraphics.h>
-
 namespace tryn::gfx
 {
 	template<typename T>

@@ -4,9 +4,9 @@
 #undef min
 #undef max
 
-#include "IBufferBase.h"
 #include "Core/src/gfx/BindablePool.h"
 #include <string_view>
+#include <Core/src/gfx/Bindables/VertexBuffer.h>
 
 using namespace std::literals;
 

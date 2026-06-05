@@ -2,7 +2,6 @@
 #include "TexturePool.h"
 #include <assimp/scene.h>
 
-#include "win/gltfSDK.h"
 
 namespace tryn::gfx
 {
@@ -55,7 +54,7 @@ namespace tryn::gfx
 		}
 	}
 
-	std::shared_ptr<Texture> TexturePool::Resolve(const GLTFTextureData& textureData)
+	/*std::shared_ptr<Texture> TexturePool::Resolve(const GLTFTextureData& textureData)
 	{
 		auto id = Texture::GenerateID( textureData.name);
 
@@ -72,5 +71,5 @@ namespace tryn::gfx
 		{
 			return std::shared_ptr{ it->second.lock() };
 		}
-	}
+	}*/
 }

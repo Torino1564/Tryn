@@ -3,10 +3,10 @@
 #include <Core/src/gfx/dx11/Dx11Graphics.h>
 
 #include "DX11InputLayout.h"
-#include "Core/src/gfx/Bindables/IBufferBase.h"
 #include "Core/src/gfx/dx11/DX11BufferFwd.h"
 #include "Core/src/gfx/dx11/Bindables/DX11VertexShader.h"
-#include "Core/src/gfx/dx11/Bindables/DX11Buffer.h"
+#include <Core/src/gfx/dx11/Bindables/DX11VertexBuffer.h>
+#include <Core/src/gfx/dx11/Bindables/DX11InputLayout.h>
 
 namespace tryn::gfx::dx11
 {
@@ -69,7 +69,6 @@ namespace tryn::gfx::dx11
 			// Input layout creation
 			const auto& buffer = pair.first;
 			const auto slot= pair.second;
-			trylog.info(utl::ToWide(buffer->Test().data()));
 			const auto nthDescBuffer = buffer->GetSlottedLayoutFromVB(slot);
 			for (auto& any : nthDescBuffer)
 			{

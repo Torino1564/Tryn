@@ -7,8 +7,8 @@ namespace tryn::gfx
 	class IInstanceBuffer : public IBindable
 	{
 	public:
-		static std::shared_ptr<IInstanceBuffer> Resolve(const IGraphics& gfx, const ConstantBufferLayout::Node& node, int slot, const std::size_t size);
-		static std::string GenerateID(const IGraphics& gfx, const ConstantBufferLayout::Node& node, int slot, const std::size_t size);
+		static std::shared_ptr<IInstanceBuffer> Resolve(const IGraphics& gfx, const ConstantBufferLayout::Node& node, int slot, const std::size_t num_instances);
+		static std::string GenerateID(const IGraphics& gfx, const ConstantBufferLayout::Node& node, int slot, const std::size_t num_instances);
 		virtual void Resize(const std::size_t newSize) = 0;
 		std::string_view GetPath() const;
 		std::string_view GetTag() const;

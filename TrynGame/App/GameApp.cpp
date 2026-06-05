@@ -15,7 +15,7 @@
 TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::shared_ptr<tryn::gfx::IGraphics> pGraphics)
 	: App(pWindow, pGraphics)
 {
-	Gfx().SetRenderGraph(std::make_unique<TrynGameRenderGraph>(Gfx()));
+	Gfx().SetRenderGraph(std::make_unique<gfx::TrynGameRenderGraph>(Gfx()));
 	ECS().GetSystemManager().Finalize();
 	Gfx().SetBackgroundColor(000.0f, 000.0f, 010.0f, 1);
 	wnd->SetResizableFlag(true);

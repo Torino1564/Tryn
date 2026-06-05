@@ -4,7 +4,6 @@
 #include <Core/src/gfx/Render/DefaultRenderGraphs/DefaultRenderGraph.h>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <Core/src/win/TrynWin.h>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Bindables/SOAVertexBuffer.h>
 #include <Core/src/gfx/Bindables/DepthStencil.h>
 #include <Core/src/gfx/Bindables/RenderTargetView.h>
@@ -17,6 +16,11 @@
 #include <Core/src/gfx/Bindables/JITUpdateBuffer.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 #include <Core/src/gfx/Bindables/TransformCBuf.h>
+#include <Core/src/gfx/Bindables/VertexBuffer.h>
+#include <Core/src/gfx/Bindables/IndexBuffer.h>
+#include <Core/src/gfx/Bindables/InstanceBuffer.h>
+#include <Core/src/gfx/Bindables/ConstantBufferResource.h>
+
 
 #undef min
 namespace tryn::gfx

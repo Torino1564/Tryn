@@ -8,7 +8,7 @@
 
 namespace tryn::log
 {
-	IChannel* tryn::log::GetDefaultChannel()
+	IChannel* GetDefaultChannel()
 	{
 		static std::shared_ptr<IChannel> channelCachePtr = ioc::Sing().Resolve<IChannel>();
 		return channelCachePtr.get();

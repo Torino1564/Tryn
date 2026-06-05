@@ -1,4 +1,7 @@
-#include <Core/src/gfc/Bindables/IndexBuffer.h>
+#include <Core/src/gfx/Bindables/IndexBuffer.h>
+#include <Core/src/gfx/BindablePool.h>
+#include <Core/src/gfx/IGraphics.h>
+#include <Core/src/gfx/CPUBuffer.h>
 
 namespace tryn::gfx
 {

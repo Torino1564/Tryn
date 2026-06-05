@@ -12,6 +12,7 @@ namespace tryn::gfx
 {
 	class IGraphics;
 	class InstancedModelChild;
+
 	class InstancedModelParent
 	{
 		//friend void ser::Serialize(ser::StreamIO& io, gfx::InstancedModelParent* pData, bool binary, const std::string& name);

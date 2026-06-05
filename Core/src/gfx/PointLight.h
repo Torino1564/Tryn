@@ -6,6 +6,8 @@ namespace tryn::gfx
 {
 	class Model;
 	class IContext;
+	class IConstantBufferResource;
+
 	class PointLight
 	{
 	public:
@@ -25,7 +27,7 @@ namespace tryn::gfx
 		glm::vec3 position = { 0.0f,0.0f,0.0f };
 		glm::mat4 transformation = {};
 		std::unique_ptr<Model> pModel;
-		static std::shared_ptr<IPxConstantBuffer> pCBuf;
+		static std::shared_ptr<IConstantBufferResource> pCBuf;
 	};
 
 	class BindPointLightTask

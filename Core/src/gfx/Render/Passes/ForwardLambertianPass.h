@@ -6,7 +6,7 @@ namespace tryn::gfx
 	class ForwardLambertianPass : public RenderQueuePass
 	{
 	public:
-		ForwardLambertianPass(class IRenderGraph& graph, std::string name = std::string("lambertian"));
+		ForwardLambertianPass(class IRenderGraph& graph, const std::string& name = std::string("lambertian"));
 		void Execute(const IGraphics& gfx) override;
 	};
 }

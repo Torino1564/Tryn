@@ -1,19 +1,34 @@
 #include <Core/src/gfx/dx11/Bindables/DX11InstanceBuffer.h>
+#include <Core/src/gfx/ConstantBuffer.h>
+#include <Core/src/gfx/dx11/Dx11Context.h>
+#include <Core/src/gfx/dx11/Dx11Graphics.h>
+#include <Core/src/gfx/ConstantBuffer.h>
 
 namespace tryn::gfx::dx11
 {
-	DX11InstanceBuffer::DX11InstanceBuffer(const Graphics& gfx, const ConstantBufferLayout::Node& node, int slot, std::size_t numInstances)
+	DX11InstanceBuffer::DX11InstanceBuffer(const Graphics& gfx, const ConstantBufferLayout::Node& arrayElement, int slot, std::size_t numInstances)
 		: gfx(gfx)
 	{
 		this->type = GraphicAPI::DX11;
 		ConstantBufferLayout layout;
-		layout.Append(cbType::Array, "InstanceArray");
+		layout.Append(ConstantBufferLayout::Type::Array, "InstanceArray");
 		this->slot = slot;
 		layout["InstanceArray"].Set(arrayElement, numInstances);
 		layout.Solidify();
 		this->pCPUBuffer = std::make_shared<ConstantBuffer>(std::move(layout));
-		this->gpuSize = IBufferBase<Type, Policy>::pCPUBuffer->Size();
-		InitDynamicCBufferOnGPU();
+		this->gpuSize = this->pCPUBuffer->Size();
+
+		D3D11_BUFFER_DESC cbd = {};
+		cbd.Usage = D3D11_USAGE_DYNAMIC;
+		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		cbd.MiscFlags = 0u;
+		cbd.StructureByteStride = 0u;
+		cbd.ByteWidth = (UINT)this->pCPUBuffer->Size();
+		D3D11_SUBRESOURCE_DATA csrd = {};
+		csrd.pSysMem = this->pCPUBuffer->Data();
+
+		gfx.GetDevice().CreateBuffer(&cbd, &csrd, &pBuffer) >> chk;
 	}
 
 	void DX11InstanceBuffer::Resize(std::size_t newSize)
@@ -37,13 +52,13 @@ namespace tryn::gfx::dx11
 
 	void DX11InstanceBuffer::Bind()
 	{
-		gfx.GetContext().Bind(*this);
+		Bind(gfx.GetContextInterface());
 	}
 
 	void DX11InstanceBuffer::Bind(const IContext& context)
 	{
 		gfx.AssertContextCoherence(context);
-		Bind_(*static_cast<const DX11Context*>(&context)->GetContext());
+		Bind_(static_cast<const DX11Context*>(&context)->GetContext());
 	}
 
 	void DX11InstanceBuffer::Bind_(ID3D11DeviceContext& context)

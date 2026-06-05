@@ -1,9 +1,10 @@
 
 #include "PointLight.h"
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Render/Techniques/Flat.h>
 #include "Model/Model.h"
 #include <Core/src/gfx/ImguiManager.h>
+#include <Core/src/gfx/ConstantBuffer.h>
+#include <Core/src/gfx/Bindables/ConstantBufferResource.h>
 
 namespace tryn::gfx
 {
@@ -31,7 +32,7 @@ namespace tryn::gfx
 			cblayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Float,	"quadraticAtt"));
 			cblayout.Solidify();
 
-			pCBuf = IPxConstantBuffer::Resolve(gfx, std::move(cblayout), 0);
+			pCBuf = IConstantBufferResource::Resolve(gfx, std::move(cblayout), IConstantBufferResource::Type::Pixel, 0);
 		}
 	}
 	void PointLight::ShowControls()
@@ -93,5 +94,5 @@ namespace tryn::gfx
 		params.pLight->Bind(*params.pContext);
 	}
 
-	std::shared_ptr<IPxConstantBuffer> PointLight::pCBuf;
+	std::shared_ptr<IConstantBufferResource> PointLight::pCBuf;
 }

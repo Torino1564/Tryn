@@ -1,7 +1,7 @@
 
 #include "DX11TransformCBuf.h"
-#include <Core/src/gfx/dx11/Bindables/DX11Buffer.h>
-#include "Core/src/gfx/dx11/DX11BufferFwd.h"
+#include <Core/src/gfx/Bindables/ConstantBufferResource.h>
+#include <Core/src/gfx/dx11/Bindables/DX11ConstantBufferResource.h>
 
 namespace tryn::gfx::dx11
 {
@@ -16,10 +16,10 @@ namespace tryn::gfx::dx11
 			cblayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Matrix4, "view"));
 			cblayout.Append(ConstantBufferLayout::Node(ConstantBufferLayout::Type::Matrix4, "viewProjection"));
 			cblayout.Solidify();
-			pVCB = std::make_unique<DX11VtxConstantBuffer>(gfx, std::move(cblayout), 0, "transformCbuf");
+			pVCB = std::make_unique<DX11ConstantBufferResource>(gfx, std::move(cblayout), IConstantBufferResource::Type::Vertex, 0, "transformCbuf");
 		}
 		type = GraphicAPI::DX11;
 	}
 }
 
-std::unique_ptr<tryn::gfx::IVtxConstantBuffer> tryn::gfx::ITransformCBuf::pVCB;
+std::unique_ptr<tryn::gfx::IConstantBufferResource> tryn::gfx::ITransformCBuf::pVCB;

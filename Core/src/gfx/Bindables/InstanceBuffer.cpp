@@ -1,13 +1,16 @@
-#include <Core/src/gfc/Bindables/InstanceBuffer.h>
+#include <Core/src/gfx/Bindables/InstanceBuffer.h>
+#include <Core/src/gfx/BindablePool.h>
+#include <Core/src/gfx/IGraphics.h>
+#include <Core/src/gfx/CPUBuffer.h>
 
 namespace tryn::gfx
 {
-	std::shared_ptr<IInstanceBuffer> IInstanceBuffer::Resolve(const IGraphics& gfx, const ConstantBufferLayout::Node& node, int slot)
+	std::shared_ptr<IInstanceBuffer> IInstanceBuffer::Resolve(const IGraphics& gfx, const ConstantBufferLayout::Node& node, int slot, const std::size_t num_instances)
 	{
-		return BindablePool::Resolve<IInstanceBuffer>(gfx, node, slot);
+		return BindablePool::Resolve<IInstanceBuffer>(gfx, node, slot, num_instances);
 	}
 
-	std::string IInstanceBuffer::GenerateID(const IGraphics& gfx, const ConstantBufferLayout::Node& node, int slot, const std::size_t size)
+	std::string IInstanceBuffer::GenerateID(const IGraphics& gfx, const ConstantBufferLayout::Node& node, int slot, const std::size_t num_instances)
 	{
 		return "?";
 	}

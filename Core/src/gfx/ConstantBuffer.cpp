@@ -108,19 +108,6 @@ namespace tryn::gfx
 		return children.size();
 	}
 
-	template<ConstantBufferLayout::Type type>
-	struct TrueTypeSizeLookup
-	{
-		static constexpr size_t Exec() noexcept
-		{
-			return ConstantBufferLayout::TypeAttr<type>::TrueTypeSize;
-		}
-	};
-	constexpr size_t ConstantBufferLayout::SizeOf(ConstantBufferLayout::Type type)
-	{
-		return Bridge<TrueTypeSizeLookup>(type);
-	}
-
 	constexpr void* ConstantBuffer::Data() const noexcept
 	{
 		return (void*)(buffer.data());

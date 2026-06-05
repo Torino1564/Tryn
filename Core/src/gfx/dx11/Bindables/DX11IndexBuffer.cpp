@@ -1,6 +1,8 @@
 #include <Core/src/gfx/dx11/Bindables/DX11IndexBuffer.h>
+#include <Core/src/gfx/dx11/Dx11Graphics.h>
+#include <Core/src/gfx/dx11/Dx11Context.h>
 
-namespace tryn::gfx
+namespace tryn::gfx::dx11
 {
 	DX11IndexBuffer::DX11IndexBuffer(const Graphics& gfx, const std::shared_ptr<IndexBuffer>& cpuBuffer, const std::string& tag)
 		: gfx(gfx)
@@ -23,27 +25,28 @@ namespace tryn::gfx
 		gfx.GetDevice().CreateBuffer(&bd, &srd, &pBuffer) >> chk;
 	}
 
-	void Bind()
+	void DX11IndexBuffer::Bind()
 	{
-		gfx.GetContext().Bind(*this);
+		Bind(gfx.GetContextInterface());
 	}
 
-	void Bind(const IContext& context)
+	void DX11IndexBuffer::Bind(const IContext& context)
 	{
-		context.Bind(*this);
+		gfx.AssertContextCoherence(context);
+		Bind_(static_cast<const DX11Context*>(&context)->GetContext());
 	}
 
-	void Bind_(ID3D11DeviceContext& context)
+	void DX11IndexBuffer::Bind_(ID3D11DeviceContext& context)
 	{
 		context.IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
 	}
 
-	void Update()
+	void DX11IndexBuffer::Update()
 	{
 		Update(gfx.GetContext());
 	}
 
-	void Update(ID3D11DeviceContext& context)
+	void DX11IndexBuffer::Update(ID3D11DeviceContext& context)
 	{
 		D3D11_MAPPED_SUBRESOURCE msr;
 		context.Map(
@@ -55,5 +58,11 @@ namespace tryn::gfx
 		context.Unmap(Data(), 0u);
 	}
 
+	ID3D11Buffer* DX11IndexBuffer::Data() const
+	{
+		return pBuffer.Get();
+	}
 
 }
+
+
