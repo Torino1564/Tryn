@@ -2,7 +2,7 @@
 
 namespace tryn::gfx
 {
-	IVtxConstantBuffer& IContext::GetTransfromBuffer() const
+	IConstantBufferResource& IContext::GetTransfromBuffer() const
 	{
 		return *pTCB;
 	}

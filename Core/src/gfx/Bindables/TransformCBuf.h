@@ -1,6 +1,5 @@
 #pragma once
 #include "Bindable.h"
-#include <Core/src/gfx/IBufferFwd.h>
 
 namespace tryn::gfx
 {
@@ -21,7 +20,7 @@ namespace tryn::gfx
 	protected:
 		ITransformCBuf(const IGraphics& gfx) :gfx(gfx) {}
 		const IGraphics& gfx;
-		static std::unique_ptr<IVtxConstantBuffer> pVCB;
+		static std::unique_ptr<class IConstantBufferResource> pVCB;
 		mutable const Drawable* parent = nullptr;
 	};
 }

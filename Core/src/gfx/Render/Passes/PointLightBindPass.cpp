@@ -2,6 +2,7 @@
 #include <Core/src/gfx/Render/RenderQueue.h>
 #include <Core/src/gfx/Render/RenderGraph.h>
 #include <Core/src/gfx/IGraphics.h>
+#include <Core/src/gfx/Bindables/ConstantBufferResource.h>
 
 namespace tryn::gfx
 {
@@ -10,15 +11,15 @@ namespace tryn::gfx
 		RenderQueuePass(name, graph, std::vector<std::string>{"PointLightBind"}), graph{ graph }
 	{
 		// declare sink and source
-		pSink->AddDependency<IPxConstantBuffer>("pointLightBuffer");
+		pSink->AddDependency<IConstantBufferResource>("pointLightBuffer");
 
-		pSource->AddExposure<IPxConstantBuffer>("pointLightBuffer");
+		pSource->AddExposure<IConstantBufferResource>("pointLightBuffer");
 	}
 
 	void PointLightBindPass::Execute(const IGraphics& gfx)
 	{
 		// Get resources from sinks
-		const auto& pPointLightBuffer = pSink->Get<IPxConstantBuffer>("pointLightBuffer");
+		const auto& pPointLightBuffer = pSink->Get<IConstantBufferResource>("pointLightBuffer");
 
 		// This queue pass knows that the first queue is the PointLightBind one (because it was declared that way on its constructor)
 		auto& pointLightBindQueue = *pQueues[0];

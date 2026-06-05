@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <vector>
 #include <Core/src/gfx/Model/Mesh.h>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
+#include <Core/src/gfx/Bindables/ConstantBufferResource.h>
 #include <Core/src/utl/StringHasher.h>
 #include <glm/fwd.hpp>
 #include <assimp/mesh.h>
@@ -44,7 +44,7 @@ namespace tryn::gfx::ani
 	private:
 		void inline ExtraSubmitBehavior() override;
 		Skeleton& skeleton;	
-		std::shared_ptr<IVtxConstantBuffer> pSkeletonCBuffer;
+		std::shared_ptr<IConstantBufferResource> pSkeletonCBuffer;
 		std::unordered_map<std::string, uint16_t> animationNameMapper;
 		std::vector<std::shared_ptr<ani::Animation>> pAnimations;
 		std::vector<AnimationSkeletonInterface> interfaces;

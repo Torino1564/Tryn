@@ -85,7 +85,7 @@ namespace tryn::gfx
 		// Point Lights
 		std::uint16_t numPointLights = 0;
 		std::uint16_t maxPointLights = 10;
-		std::shared_ptr<gfx::IPxConstantBuffer> pPointLightCBuf;
+		std::shared_ptr<gfx::IConstantBufferResource> pPointLightCBuf;
 		gfx::ConstantBufferLayout::Node pointLightElement;
 	};
 }

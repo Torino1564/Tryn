@@ -3,10 +3,8 @@
 #include <Core/src/ecs/cmp/ComponentManager.h>
 #include <Core/src/gfx/Render/Jobs/PointLightJob.h>
 #include <Core/src/gfx/Model/InstancedModel.h>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Model/Model.h>
 #include <Core/src/ecs/Archetype.h>
-
 #include "TransformSystem.h"
 
 namespace tryn::ecs

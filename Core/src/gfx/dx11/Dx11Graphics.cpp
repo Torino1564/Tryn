@@ -44,10 +44,7 @@ namespace tryn::gfx::dx11
 		LinkImplementation<IRenderTargetView, DX11RenderTargetView>,
 		LinkImplementation<ISOAVertexBuffer, DX11SOAVertexBuffer>,
 		LinkImplementation<IIndexBuffer, DX11IndexBuffer>,
-		LinkImplementation<IVtxConstantBuffer, DX11VtxConstantBuffer>,
-		LinkImplementation<IVtxConstantBufferNCach, DX11VtxConstantBufferNCach>,
-		LinkImplementation<IPxConstantBuffer, DX11PxConstantBuffer>,
-		LinkImplementation<IPxConstantBufferNCach, DX11PxConstantBufferNCach>,
+		LinkImplementation<IConstantBufferResource, DX11ConstantBufferResource>,
 		LinkImplementation<IInstanceBuffer, DX11InstanceBuffer>,
 		LinkImplementation<IInputLayout, DX11InputLayout>,
 		LinkImplementation<ITexture, DX11Texture>

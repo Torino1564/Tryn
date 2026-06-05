@@ -1,10 +1,11 @@
 
 #include "BonedMesh.h"
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/mem/ArenaAllocator.h>
 #include <Core/src/gfx/Bindables/JITUpdateBuffer.h>
 #include <Core/src/gfx/Material.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
+#include <Core/src/gfx/Bindables/IndexBuffer.h>
+#include <Core/src/gfx/Bindables/VertexBuffer.h>
 #include <Core/src/gfx/IGraphics.h>
 
 static glm::mat4 ConvertMatrixToGLMFormat(const aiMatrix4x4& from)
@@ -75,7 +76,7 @@ namespace tryn::gfx::ani
 		ConstantBufferLayout::Node arrayElement(ConstantBufferLayout::Matrix4, "boneTransform");
 		cblayout["boneArray"].Set(std::move(arrayElement), skeleton.bones.size());
 		cblayout.Solidify();
-		pSkeletonCBuffer = IVtxConstantBuffer::Resolve(gfx, std::move(cblayout), 5);
+		pSkeletonCBuffer = IConstantBufferResource::Resolve(gfx, std::move(cblayout), IConstantBufferResource::Type::Vertex, 5);
 
 		pMaterials.push_back(std::move(pMaterial));
 		selectedMaterial = pMaterials.size() - 1;

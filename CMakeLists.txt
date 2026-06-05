@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(Tryn2)
+project(Tryn)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -25,6 +25,7 @@ target_link_libraries(TrynGlobalSettings INTERFACE
 target_include_directories(TrynGlobalSettings INTERFACE
     ${CMAKE_SOURCE_DIR}
     ${TINYGLTF_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}
 )
 
 add_subdirectory(Core)

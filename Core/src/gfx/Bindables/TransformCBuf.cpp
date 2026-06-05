@@ -1,8 +1,8 @@
 
 #include "TransformCBuf.h"
 #include <Core/src/gfx/Drawable.h>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/IGraphics.h>
+#include <Core/src/gfx/Bindables/TransformCBuf.h>
 
 namespace tryn::gfx
 {

@@ -28,7 +28,7 @@ namespace tryn::gfx
 			// Init Source
 			pGlobalSource->AddExposure<IRenderTargetView>("rtv");
 			pGlobalSource->AddExposure<IRenderTargetView>("depthStencil");
-			pGlobalSource->AddExposure<IPxConstantBuffer>("pointLightBuffer");
+			pGlobalSource->AddExposure<IConstantBufferResource>("pointLightBuffer");
 
 			pGlobalSource->Set(pRTV, "rtv");
 			pGlobalSource->Set(pDSV, "depthStencil");
@@ -55,7 +55,7 @@ namespace tryn::gfx
 		cblayout["pointLightArray"].Set(pointLightElement, maxPointLights);
 		cblayout.Solidify();
 
-		pPointLightCBuf = IPxConstantBuffer::Resolve(gfx, cblayout, 0, "PointLightBuffer");
+		pPointLightCBuf = IConstantBufferResource::Resolve(gfx, cblayout, IConstantBufferResource::Type::Pixel, 0, "PointLightBuffer");
 
 		// reserve queue space
 		queues.reserve(maxQueues);

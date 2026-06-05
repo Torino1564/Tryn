@@ -45,17 +45,17 @@
         "displayName": "GCC x64 Release",
         "generator": "Ninja",
         "binaryDir": "${sourceDir}/build-ucrt",
-        "cmakeExecutable": "C:/msys64/ucrt64/bin/cmake.exe",
+        "cmakeExecutable": "$env{MSYS2_PATH}/ucrt64/bin/cmake.exe",
         "cacheVariables": {
-          "CMAKE_C_COMPILER": "C:/msys64/ucrt64/bin/gcc.exe",
-          "CMAKE_CXX_COMPILER": "C:/msys64/ucrt64/bin/g++.exe",
-          "CMAKE_MAKE_PROGRAM": "C:/msys64/ucrt64/bin/ninja.exe",
+          "CMAKE_C_COMPILER": "$env{MSYS2_PATH}/ucrt64/bin/gcc.exe",
+          "CMAKE_CXX_COMPILER": "$env{MSYS2_PATH}/ucrt64/bin/g++.exe",
+          "CMAKE_MAKE_PROGRAM": "$env{MSYS2_PATH}/ucrt64/bin/ninja.exe",
           "CMAKE_BUILD_TYPE": "Debug",
-          "CMAKE_TOOLCHAIN_FILE": "C:/Users/jtori/source/repos/vcpkg/scripts/buildsystems/vcpkg.cmake",
+          "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
           "VCPKG_TARGET_TRIPLET": "x64-mingw-static"
         },
         "environment": {
-          "PATH": "C:/msys64/ucrt64/bin;C:/msys64/usr/bin;$penv{PATH}",
+          "PATH": "$env{MSYS2_PATH}/ucrt64/bin;$env{MSYS2_PATH}usr/bin;$penv{PATH}",
           "MSYSTEM": "UCRT64",
           "CHERE_INVOKING": "1"
         }

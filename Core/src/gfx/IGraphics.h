@@ -27,7 +27,6 @@
 #include <unordered_map>
 #include <utility>
 #include "Bindables/Bindable.h"
-#include "Bindables/IBufferBase.h"
 #include "Bindables/TransformCBuf.h"
 #include "Render/IRenderWorker.h"
 #include "Render/Step.h"
@@ -113,27 +112,24 @@ namespace tryn::gfx
 
 		// Bindable Registration
 		using SupportedBindables = std::tuple<
-			Register<IVertexBuffer>,
 			Register<class ISOAVertexBuffer>,
-			Register<IIndexBuffer>,
 			Register<class IVertexShader>,
 			Register<class IPixelShader>,
 			Register<class IInputLayout,
-					std::tuple<IVertexBuffer&, class IVertexShader&>,
+					std::tuple<class IVertexBuffer&, class IVertexShader&>,
 					std::tuple<class VertexLayout&, class IVertexShader&>>,
 			Register<class IPrimitiveTopology>,
-			Register<IVtxConstantBuffer>,
-			Register<IVtxConstantBufferNCach>,
-			Register<IPxConstantBuffer>,
-			Register<IPxConstantBufferNCach>,
-			Register<IInstanceBuffer>,
+			Register<IVertexBuffer>,
+			Register<class IConstantBufferResource>,
+			Register<class IIndexBuffer>,
+			Register<class IInstanceBuffer>,
 			Register<class ITexture,
-					std::tuple<const std::shared_ptr<class Texture>&, uint8_t, TextureUsage>,
-					std::tuple<spa::DimensionsI, TextureFormat, uint8_t, TextureUsage>>,
+					std::tuple<const std::shared_ptr<class Texture>&, uint8_t, enum struct TextureUsage>,
+					std::tuple<spa::DimensionsI, enum struct TextureFormat, uint8_t, TextureUsage>>,
 			Register<class IRasterizer>,
 			Register<class ISampler>,
-			Register<IRenderTargetView>,
-			Register<IDepthStencil>,
+			Register<class IRenderTargetView>,
+			Register<class IDepthStencil>,
 			Register<class ITransformCBuf>
 		>;
 

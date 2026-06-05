@@ -1,7 +1,6 @@
 
 #include "FullScreenRenderPass.h"
 #include <Core/src/gfx/Vertex.h>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 #include <Core/src/gfx/Bindables/VertexShader.h>
 #include <Core/src/gfx/Bindables/PixelShader.h>
 #include <Core/src/gfx/Bindables/InputLayout.h>
@@ -11,6 +10,9 @@
 #include "Core/src/gfx/Bindables/TextureResource.h"
 #include <Core/src/gfx/Render/RenderGraph.h>
 #include <Core/src/gfx/IGraphics.h>
+#include <Core/src/gfx/Bindables/VertexBuffer.h>
+#include <Core/src/gfx/Bindables/IndexBuffer.h>
+#include <Core/src/gfx/Bindables/ConstantBufferResource.h>
 
 namespace tryn::gfx
 {
@@ -92,7 +94,7 @@ namespace tryn::gfx
 		pSource->Set(rtv, "rtv");
 	}
 
-	void FullscreenRenderPass::SetConstantBuffer(const std::shared_ptr<IPxConstantBuffer>& pPxConstantBuffer_)
+	void FullscreenRenderPass::SetConstantBuffer(const std::shared_ptr<ConstantBufferResource>& pPxConstantBuffer_)
 	{
 		pPxConstantBuffer = pPxConstantBuffer_;
 	}

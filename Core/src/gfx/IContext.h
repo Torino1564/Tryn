@@ -1,7 +1,7 @@
 #pragma once
 #include <Core/src/gfx/GraphicAPI.h>
 #include <memory>
-#include "Bindables/IBufferBase.h"
+#include <Core/src/gfx/Bindables/ConstantBufferResource.h>
 
 namespace tryn::gfx
 {
@@ -19,11 +19,11 @@ namespace tryn::gfx
 		virtual void UpdateContextDimensions(const IGraphics& gfx) = 0;
 		virtual void Flush() = 0;
 		virtual void ClearState() = 0;
-		gfx::IVtxConstantBuffer& GetTransfromBuffer() const;
+		gfx::IConstantBufferResource& GetTransfromBuffer() const;
 		void SetDeferred(bool setting);
 		bool IsDeferred(void);
 	protected:
 		bool deferred = false;
-		std::unique_ptr<gfx::IVtxConstantBuffer> pTCB;
+		std::unique_ptr<gfx::IConstantBufferResource> pTCB;
 	};
 }

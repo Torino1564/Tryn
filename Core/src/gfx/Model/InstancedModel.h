@@ -1,7 +1,7 @@
 #pragma once
 #include <optional>
 #include <span>
-#include "Core/src/gfx/Bindables/IBufferBase.h"
+#include "Core/src/gfx/Bindables/InstanceBuffer.h"
 #include <Core/third/dynamic_bitset.hpp>
 #include "glm/fwd.hpp"
 #include <Core/src/ser/StreamIO.h>
@@ -49,11 +49,4 @@ namespace tryn::gfx
 		std::uint16_t instanceID = {};
 		InstancedModelParent* pParentModel = nullptr;
 	};
-}
-
-namespace tryn::ser
-{
-	void Serialize(StreamIO& io, gfx::InstancedModelParent* pData, bool binary = true, const std::string& name = "");
-	void Serialize(StreamWriter& io, gfx::InstancedModelChild* pData, bool binary = true, const std::string& name = "");
-	void Serialize(StreamReader& io, gfx::InstancedModelChild* pData, bool binary = true, const std::string& name = "");
 }

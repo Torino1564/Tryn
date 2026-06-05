@@ -2,7 +2,6 @@
 #include <Core/src/gfx/Bindables/Bindable.h>
 #include "SOAVertexBuffer.h"
 #include <Core/src/gfx/Model/StaticMesh.h>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 
 namespace tryn::gfx
 {

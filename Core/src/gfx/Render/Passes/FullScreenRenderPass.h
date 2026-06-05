@@ -1,18 +1,20 @@
 #pragma once
 #include <Core/src/gfx/Render/RenderPass.h>
-#include <Core/src/gfx/Bindables/IBufferBase.h>
 
 namespace tryn::gfx
 {
 	class ISampler;
 	class IPixelShader;
+	class IConstantBufferResource;
+	class IIndexBuffer;
+	class IVertexBuffer;
 
 	class FullscreenRenderPass : public IRenderPass
 	{
 	public:
 		FullscreenRenderPass(class IRenderGraph& renderGraph, const std::string& name = "FullScreenRenderPass", bool bindOSRtv = true, bool bindDepthStencil = true, const std::shared_ptr<IPixelShader>* pPS = nullptr);
 		void Execute(const IGraphics& gfx) override;
-		void SetConstantBuffer(const std::shared_ptr<IPxConstantBuffer>& pPxConstantBuffer);
+		void SetConstantBuffer(const std::shared_ptr<IConstantBufferResource>& pPxConstantBuffer);
 	private:
 		// bindables
 		bool bindOSRtv = true;
@@ -28,6 +30,6 @@ namespace tryn::gfx
 		std::shared_ptr<class IInputLayout> pInputLayout;
 		std::shared_ptr<ISampler> pSamplerState;
 		std::shared_ptr<class IPrimitiveTopology> pPTopology;
-		std::shared_ptr<IPxConstantBuffer> pPxConstantBuffer = nullptr;
+		std::shared_ptr<IConstantBufferResource> pPxConstantBuffer = nullptr;
 	};
 }

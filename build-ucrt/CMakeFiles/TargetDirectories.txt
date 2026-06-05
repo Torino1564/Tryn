@@ -1,8 +1,0 @@
-C:/Users/jtori/source/repos/Tryn2/build-ucrt/CMakeFiles/edit_cache.dir
-C:/Users/jtori/source/repos/Tryn2/build-ucrt/CMakeFiles/rebuild_cache.dir
-C:/Users/jtori/source/repos/Tryn2/build-ucrt/Core/CMakeFiles/Core.dir
-C:/Users/jtori/source/repos/Tryn2/build-ucrt/Core/CMakeFiles/edit_cache.dir
-C:/Users/jtori/source/repos/Tryn2/build-ucrt/Core/CMakeFiles/rebuild_cache.dir
-C:/Users/jtori/source/repos/Tryn2/build-ucrt/TrynGame/CMakeFiles/TrynGame.dir
-C:/Users/jtori/source/repos/Tryn2/build-ucrt/TrynGame/CMakeFiles/edit_cache.dir
-C:/Users/jtori/source/repos/Tryn2/build-ucrt/TrynGame/CMakeFiles/rebuild_cache.dir

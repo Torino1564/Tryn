@@ -111,7 +111,7 @@ namespace tryn::gfx
 	template<ConstantBufferLayout::Type type>
 	struct TrueTypeSizeLookup
 	{
-		static constexpr auto Exec() noexcept
+		static constexpr size_t Exec() noexcept
 		{
 			return ConstantBufferLayout::TypeAttr<type>::TrueTypeSize;
 		}

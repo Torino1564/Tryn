@@ -10,6 +10,8 @@ namespace tryn::gfx
 	class Material;
 	class IPrimitiveTopology;
 	class ITransformCBuf;
+	class IIndexBuffer;
+	class ISOAVertexBuffer;
 
 	class Drawable
 	{
