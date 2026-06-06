@@ -76,6 +76,7 @@ namespace tryn::gfx
 		void* Get(uint16_t index) const;
 		bool IsNonConstBounded(const std::string& exposureName)
 		{
+			return true;
 		}
 
 		template <typename T>

@@ -91,7 +91,7 @@ namespace tryn::gfx
 		};
 #define VERTEX_ELEMENT_ATTR(x) template <> struct VertexLayout::VertexElementAttr<VertexLayout::VertexElement::x> : public VertexLayout::VertexElementAttrBase<VertexLayout::VertexElement::x>
 
-		template <VertexElement Element>
+		template <VertexLayout::VertexElement Element>
 		struct VertexElementAttr : public VertexElementAttrBase<Element> {
 		};
 
@@ -171,45 +171,47 @@ namespace tryn::gfx
 		size_t size;
 	};
 
-	template<VertexLayout::VertexElement type>
-	constexpr auto VertexLayout::Element::VertexSysSizeLookup<type>::Exec() noexcept
+	template<VertexLayout::VertexElement Type>
+	constexpr auto VertexLayout::Element::VertexSysSizeLookup<Type>::Exec() noexcept
 	{
-		return sizeof(typename VertexLayout::VertexElementAttr<type>::SysType);
+		return sizeof(
+			typename VertexLayout::template VertexElementAttr<Type>::SysType
+			);
 	}
 
-	template<VertexLayout::VertexElement type>
-	constexpr auto VertexLayout::Element::VertexNameLookup<type>::Exec() noexcept
+	template<VertexLayout::VertexElement Type>
+	constexpr auto VertexLayout::Element::VertexNameLookup<Type>::Exec() noexcept
 	{
-		return VertexLayout::VertexElementAttr<type>::semantic;
+		return VertexLayout:: template VertexElementAttr<Type>::semantic;
 	}
 
-	template<VertexLayout::VertexElement type>
-	constexpr auto VertexLayout::Element::VertexFormatLookup<type>::Exec() noexcept
+	template<VertexLayout::VertexElement Type>
+	constexpr auto VertexLayout::Element::VertexFormatLookup<Type>::Exec() noexcept
 	{
-		return VertexLayout::VertexElementAttr<type>::format;
+		return VertexLayout:: template VertexElementAttr<Type>::format;
 	}
 
-	template<VertexLayout::VertexElement type>
-	constexpr auto VertexLayout::Element::VertexCodeLookup<type>::Exec() noexcept
+	template<VertexLayout::VertexElement Type>
+	constexpr auto VertexLayout::Element::VertexCodeLookup<Type>::Exec() noexcept
 	{
-		return VertexLayout::VertexElementAttr<type>::code;
+		return VertexLayout:: template VertexElementAttr<Type>::code;
 	}
 
-	template<VertexLayout::VertexElement type>
-	constexpr void VertexLayout::Element::AttributeAiMeshFill<type>::Exec(VertexBuffer& buf, const std::string& id, const aiMesh& mesh, ani::Skeleton const* skeleton)
+	template<VertexLayout::VertexElement Type>
+	constexpr void VertexLayout::Element::AttributeAiMeshFill<Type>::Exec(VertexBuffer& buf, const std::string& id, const aiMesh& mesh, ani::Skeleton const* skeleton)
 	{
 		for (auto end = mesh.mNumVertices, i = 0u; i < end; i++)
 		{
-			VertexLayout::VertexElementAttr<type>::ExtractAndFill(buf, id, mesh, i, skeleton);
+			VertexLayout:: template VertexElementAttr<Type>::ExtractAndFill(buf, id, mesh, i, skeleton);
 		}
 	}
 
-	template<VertexLayout::VertexElement type>
-	constexpr void VertexLayout::Element::AttributeShapeMeshFill<type>::Exec(VertexBuffer& buf, const std::string& id, const gfx::Shape3D& shape)
+	template<VertexLayout::VertexElement Type>
+	constexpr void VertexLayout::Element::AttributeShapeMeshFill<Type>::Exec(VertexBuffer& buf, const std::string& id, const Shape3D& shape)
 	{
 		for (auto i = 0u; i < shape.NumVertices(); i++)
 		{
-			VertexLayout::VertexElementAttr<type>::ExtractAndFill(buf, id, shape, i);
+			VertexLayout:: template VertexElementAttr<Type>::ExtractAndFill(buf, id, shape, i);
 		}
 	}
 

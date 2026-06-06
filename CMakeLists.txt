@@ -45,9 +45,10 @@ target_include_directories(TrynGlobalSettings INTERFACE
     ${PROJECT_SOURCE_DIR}
 )
 
-target_compile_options(TrynGlobalSettings INTERFACE
-    $<$<AND:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Windows>>:-municode>
-)
+if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options(-municode)
+    add_link_options(-municode)
+endif()
 
 add_subdirectory(Core)
 add_subdirectory(TrynGame)
