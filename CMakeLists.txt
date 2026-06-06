@@ -45,5 +45,9 @@ target_include_directories(TrynGlobalSettings INTERFACE
     ${PROJECT_SOURCE_DIR}
 )
 
+target_compile_options(TrynGlobalSettings INTERFACE
+    $<$<AND:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Windows>>:-municode>
+)
+
 add_subdirectory(Core)
 add_subdirectory(TrynGame)

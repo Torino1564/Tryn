@@ -50,7 +50,6 @@
           "CMAKE_C_COMPILER": "$env{MSYS2_PATH}/ucrt64/bin/gcc.exe",
           "CMAKE_CXX_COMPILER": "$env{MSYS2_PATH}/ucrt64/bin/g++.exe",
           "CMAKE_MAKE_PROGRAM": "$env{MSYS2_PATH}/ucrt64/bin/ninja.exe",
-          "CMAKE_CXX_FLAGS": "-municode",
           "CMAKE_BUILD_TYPE": "Debug",
           "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
           "VCPKG_TARGET_TRIPLET": "x64-mingw-static"
@@ -65,9 +64,6 @@
             "debuggerConfiguration": {
               "type": "gdb",
               "miDebuggerPath": "$env{MSYS2_PATH}/ucrt64/bin/gdb.exe"
-            },
-            "://microsoft.com": {
-              "intelliSenseMode": "windows-gcc-x64"
             }
           }
         }
@@ -82,7 +78,6 @@
           "CMAKE_C_COMPILER": "$env{MSYS2_PATH}/ucrt64/bin/gcc.exe",
           "CMAKE_CXX_COMPILER": "$env{MSYS2_PATH}/ucrt64/bin/g++.exe",
           "CMAKE_MAKE_PROGRAM": "$env{MSYS2_PATH}/ucrt64/bin/ninja.exe",
-          "CMAKE_CXX_FLAGS": "-municode",
           "CMAKE_BUILD_TYPE": "Release",
           "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
           "VCPKG_TARGET_TRIPLET": "x64-mingw-static"
