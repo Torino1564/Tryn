@@ -368,3 +368,4 @@ vcpkg_installed/*
 # Binaries
 *.lib
 /TrynEditor/TestGraph.lib
+/build-ucrt
