@@ -128,43 +128,47 @@ namespace tryn::ecs
 						}
 
 						ImGui::TableNextColumn();
-						const auto& id = std::format("Archetype {} Inspect", archetype.GetUUID()).c_str();
+						const auto str = std::format("Archetype {} Inspect", archetype.GetUUID());
+						const auto id = str.c_str();
+						bool* boolRef = ImGui::GetStateStorage()->GetBoolRef(ImGui::GetID(id));
 						if (ImGui::Button(std::format("Inspect##{}", archetype.GetUUID()).c_str()))
 						{
-							const auto previousValue = ImGui::GetStateStorage()->GetBool(ImGui::GetID(id));
-							ImGui::GetStateStorage()->SetBool(ImGui::GetID(id), !previousValue);
+							*boolRef = !*boolRef;
 						}
-						if (ImGui::Begin(std::format("Archetype {} Inspect", archetype.GetUUID()).c_str(), ImGui::GetStateStorage()->GetBoolRef(ImGui::GetID(id))));
+						if (*boolRef)
 						{
-							if (ImGui::BeginTable(std::format("ArchetypeEntityTable##{}", archetype.GetUUID()).c_str(), 2, ImGuiTableFlags_Borders | ImGuiTableFlags_BordersH))
+							if (ImGui::Begin(id, boolRef))
 							{
-								ImGui::TableSetupColumn("ID");
-								ImGui::TableSetupColumn("Components");
-								ImGui::TableHeadersRow();
-
-								for (uint32_t i = 0; i < archetype.upperLimit; i++)
+								if (ImGui::BeginTable(std::format("ArchetypeEntityTable##{}", archetype.GetUUID()).c_str(), 2, ImGuiTableFlags_Borders | ImGuiTableFlags_BordersH))
 								{
-									ImGui::TableNextRow();
-									ImGui::TableSetColumnIndex(0);
+									ImGui::TableSetupColumn("ID");
+									ImGui::TableSetupColumn("Components");
+									ImGui::TableHeadersRow();
 
-									ImGui::Text(std::to_string(i).c_str());
-
-									ImGui::TableNextColumn();
-									if (ImGui::TreeNode(std::format("Archetype{}EntityComponentList##{}", archetype.GetUUID(), i).c_str()))
+									for (uint32_t i = 1; i < archetype.upperLimit; i++)
 									{
-										for (const auto uuid : archetype.components)
+										ImGui::TableNextRow();
+										ImGui::TableSetColumnIndex(0);
+
+										ImGui::Text(std::to_string(i).c_str());
+
+										ImGui::TableNextColumn();
+										if (ImGui::TreeNode(std::format("Archetype{}EntityComponentList##{}", archetype.GetUUID(), i).c_str()))
 										{
-											ImGui::Text(componentManager.componentWrappers.at(uuid).Name().data());
+											for (const auto uuid : archetype.components)
+											{
+												ImGui::Text(componentManager.componentWrappers.at(uuid).Name().data());
+											}
+											ImGui::TreePop();
 										}
-										ImGui::TreePop();
+
 									}
-
+									ImGui::EndTable();
 								}
-								ImGui::EndTable();
-							}
 
+							}
+							ImGui::End();
 						}
-						ImGui::End();
 					}
 					ImGui::EndTable();
 				}

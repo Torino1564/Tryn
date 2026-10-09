@@ -70,11 +70,11 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 		const auto& pLight = entities.back();
 
-		pLight->GetComponent<ecs::PositionComponent>().position = { 10.0f, 15.0f, 10.0f };
+		pLight->GetComponent<ecs::PositionComponent>().position = { 30.0f, 20.0f, 30.0f };
 		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat>(Gfx(), "Game/Resources/Models/sphere.obj");
 		pLight->GetComponent<ecs::ActiveComponent>().active = true;
 		pLight->GetComponent<ecs::PointLightComponent>().parameters = gfx::PointLightParameters{
-			.diffuseColor = glm::normalize(glm::vec3{1.0f, 0.3f, 0.3f}),
+			.diffuseColor = glm::normalize(glm::vec3{1.0f, 1.0f, 1.0f}),
 			.diffuseIntensity = 1.0f,
 			.constantAtt = 1.0f,
 			.linearAtt = 0.045f,

@@ -10,12 +10,14 @@ namespace tryn::ecs
 {
 	void AddEntityIDJITBuffer(Entity& entity, ECS& ecs)
 	{
-		const auto& pModel = entity.GetComponent<ModelComponent>().pModel;
-
-		if (!pModel->HasTechnique(ZT_TYPE_UUID(gfx::EntityIDTechnique)))
 		{
-			// adds the technique:
-			pModel->AddOrEnableTechniques(std::array{ ZT_TYPE_UUID(gfx::EntityIDTechnique) });
+			const auto& pModel = entity.GetComponent<ModelComponent>().pModel;
+
+			if (!pModel->HasTechnique(ZT_TYPE_UUID(gfx::EntityIDTechnique)))
+			{
+				// adds the technique:
+				pModel->AddOrEnableTechniques(std::array{ ZT_TYPE_UUID(gfx::EntityIDTechnique) });
+			}
 		}
 
 		if (!entity.HasComponent<UpdateJITBufferComponent>())
@@ -35,6 +37,8 @@ namespace tryn::ecs
 		auto buffer = gfx::IPxConstantBuffer::Resolve(ecs.Gfx(), std::move(cblayout));
 
 		auto pJITBuffer = std::make_shared<gfx::JITUpdateBuffer>(gfx::JITUpdateBuffer::Make(buffer));
+
+		const auto& pModel = entity.GetComponent<ModelComponent>().pModel;
 
 		pModel->AddPerTechniqueBindable(pJITBuffer, "entityIDBuffer");
 
