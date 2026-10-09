@@ -30,9 +30,9 @@ namespace tryn::gfx
 			pGlobalSource->AddExposure<IRenderTargetView>("depthStencil");
 			pGlobalSource->AddExposure<IPxConstantBuffer>("pointLightBuffer");
 
-			pGlobalSource->Set(pRTV, "rtv");
-			pGlobalSource->Set(pDSV, "depthStencil");
-			pGlobalSource->Set(pPointLightCBuf, "pointLightBuffer");
+			pGlobalSource->Set(*pRTV, "rtv");
+			pGlobalSource->Set(*pDSV, "depthStencil");
+			pGlobalSource->Set(*pPointLightCBuf, "pointLightBuffer");
 
 		}
 
@@ -62,9 +62,13 @@ namespace tryn::gfx
 	}
 	void IRenderGraph::ExecuteFrame(const IGraphics& gfx)
 	{
-		for (auto& pass : pPasses)
+		for (auto& level : orderedIndices)
 		{
-			pass->Execute(gfx);
+			for (const auto passIndex : level)
+			{
+				auto& pass = pPasses[passIndex];
+				pass->Execute(gfx);
+			}
 		}
 	}
 	void IRenderGraph::AddCamera(Camera* cam)
@@ -146,8 +150,14 @@ namespace tryn::gfx
 		pRTV = gfx.GetRenderTargetView();
 		pDSV = gfx.GetDepthStencilView();
 
-		pGlobalSource->Set(pRTV, "rtv");
-		pGlobalSource->Set(pDSV, "depthStencil");
+		pGlobalSource->Set(*pRTV, "rtv");
+		pGlobalSource->Set(*pDSV, "depthStencil");
+
+		ResizeCallback(dimensions);
+	}
+
+	void IRenderGraph::ResizeCallback(spa::DimensionsI dimensions)
+	{
 	}
 
 	std::uint16_t IRenderGraph::GetMaxPointLights() const
@@ -211,6 +221,70 @@ namespace tryn::gfx
 		trynass(sourceFound && destinationFound).msg(L"Failed to add the linkage! Reason: could not find the required pair.").ex();
 
 		pSink->Bind(*pSource, source_.resourceName, destination_.resourceName);
+	}
+
+	void IRenderGraph::OrderExecution()
+	{
+		std::uint32_t assignedPasses = 0;
+		std::uint32_t level = 0;
+
+		std::unordered_map<std::string, std::uint32_t> levelTable;
+		levelTable["global"] = 0;
+
+		while (assignedPasses != pPasses.size())
+		{
+			auto index = 0;
+			for (const auto& pPass : pPasses)
+			{
+				// Skip if placed
+				if (levelTable.contains(pPass->GetName()))
+				{
+					index++;
+					continue;
+				}
+
+				// Else check if placeable
+				bool canPlaceInLevel = true;
+				for (const auto& dependency : pPass->GetSink().data)
+				{
+					if (dependency.pSource == nullptr)
+					{
+						trylog.warn(utl::ToWide(std::format("Dependency [{}] in pass [{}] not linked!", dependency.name, pPass->GetName())));
+						continue;
+					}
+					const auto dependsOn = dependency.pSource->pPass;
+					if (dependsOn == nullptr)
+					{
+						continue;
+					}
+					const std::string& dependsOnString = dependency.pSource->pPass->GetName();
+					if (levelTable.find(dependsOnString) == levelTable.end())
+					{
+						canPlaceInLevel = false;
+						break;
+					}
+					else {
+						const auto dependencyLevel = levelTable[dependsOnString];
+						if (dependencyLevel >= level)
+						{
+							canPlaceInLevel = false;
+							break;
+						}
+					}
+				}
+				if (canPlaceInLevel)
+				{
+					if (orderedIndices.size() <= level)
+						orderedIndices.resize(level + 1);
+
+					orderedIndices[level].push_back(index);
+					levelTable[pPass->GetName()] = level;
+					assignedPasses++;
+				}
+				index++;
+			}
+			level++;
+		}
 	}
 }
 

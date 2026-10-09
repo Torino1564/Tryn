@@ -315,7 +315,7 @@ namespace tryn::gfx::dx11
 	void Graphics::Resize()
 	{
 		auto future = Dispatch_([&] {
-			// Release resources
+			//Release resources
 			pTarget->Release();
 			pDSV->Release();
 
@@ -328,9 +328,9 @@ namespace tryn::gfx::dx11
 			pSwap->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer) >> chk;
 			D3D11_TEXTURE2D_DESC tDesc = {};
 			pBackBuffer->GetDesc(&tDesc);
-			dimensions = { .width = static_cast<int>(tDesc.Width), .height = static_cast<int>(tDesc.Height) };
+			const spa::DimensionsI dimensions = { .width = static_cast<int>(tDesc.Width), .height = static_cast<int>(tDesc.Height) };
 
-			pTarget->RegenerateResources(dimensions);
+			pTarget->RegenerateResources(pBackBuffer.Get());
 			pDSV->RegenerateResources(dimensions);
 
 			//viewport

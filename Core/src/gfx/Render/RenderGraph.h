@@ -33,9 +33,11 @@ namespace tryn::gfx
 		RenderQueue& GetOrAddRenderQueue(const std::string& renderQueueName);
 		void Reset();
 		void UpdateResourceDimensions(spa::DimensionsI dimensions);
+		virtual void ResizeCallback(spa::DimensionsI dimensions);
 		std::uint16_t GetMaxPointLights() const;
 		void ResizePointLightBuffer(const std::uint16_t newSize);
 		const IGraphics& Gfx() const;
+		void OrderExecution();
 		
 		template <typename Self>
 		auto& GetPasses(this Self&& self)
@@ -67,6 +69,9 @@ namespace tryn::gfx
 		static constexpr std::uint16_t maxQueues = 50;
 		std::vector<RenderQueue> queues;
 		const IGraphics& gfx;
+		
+		// Execution order
+		std::vector<std::vector<std::uint32_t>> orderedIndices;
 
 		// Global graph resources
 		std::shared_ptr<class IRenderTargetView> pRTV;

@@ -46,7 +46,7 @@
       <AdditionalLibraryDirectories>$(VcpkgLibDir);$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>%(AdditionalDependencies) @$(VcpkgRspFile)</AdditionalDependencies>
+      <!--<AdditionalDependencies>%(AdditionalDependencies) @$(SolutionDir)vcpkg_libs.rsp</AdditionalDependencies>-->
     </Link>
     <FxCompile>
       <ObjectFileOutput>$(SolutionDir)bin\Shaders\%(Filename).cso</ObjectFileOutput>

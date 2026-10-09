@@ -38,6 +38,9 @@ namespace tryn::gfx
 	class Sink 
 	{
 	public:
+		friend class IRenderPass;
+		friend class IRenderGraph;
+		Sink(class IRenderPass* pPass = nullptr);
 		template <typename T>
 		void AddDependency(const std::string& dependency);
 		void Bind(Source& source, const std::string& exposure, const std::string& dependency, std::optional<utl::UUID_t> uuid = std::nullopt);
@@ -54,6 +57,7 @@ namespace tryn::gfx
 			uint16_t exposureIndex;
 		};
 
+		class IRenderPass* pPass = nullptr;
 		std::vector<Entry> data;
 	};
 
@@ -68,7 +72,9 @@ namespace tryn::gfx
 	class Source
 	{
 	public:
+		friend class IRenderPass;
 		friend class Sink;
+		Source(class IRenderPass* pPass = nullptr);
 		template <typename T>
 		void AddExposure(const std::string& name);
 		template <typename T>

@@ -101,3 +101,9 @@ TrynGameRenderGraph::TrynGameRenderGraph(IGraphics& gfx)
 
 	AddLinkage(LinkageParam{ .passName = "fullscreenPP", .resourceName = "rtv" }, LinkageParam{ .passName = "global",.resourceName = "rtv" });
 }
+
+void TrynGameRenderGraph::ResizeCallback(tryn::spa::DimensionsI dimensions)
+{
+	pOffScreenBuffer->RegenerateResources(dimensions);
+	pGlobalSource->Set(*pOffScreenBuffer, "OSRtv");
+}

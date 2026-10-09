@@ -4,6 +4,10 @@
 
 namespace tryn::gfx
 {
+	Sink::Sink(IRenderPass* pPass)
+		:
+		pPass(pPass)
+	{}
 	void Sink::Bind(Source& source, const std::string& exposure, const std::string& dependency,
 	                const std::optional<utl::UUID_t> uuid)
 	{
@@ -31,6 +35,11 @@ namespace tryn::gfx
 
 		// add to binding on the source
 		exposureIt->bindings.emplace_back(this, Source::Type::NonConst);
+	}
+
+	Source::Source(IRenderPass* pPass)
+		: pPass(pPass)
+	{
 	}
 
 	void* Source::Get(const uint16_t index) const
