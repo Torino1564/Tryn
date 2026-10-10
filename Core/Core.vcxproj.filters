@@ -429,9 +429,6 @@
     <ClCompile Include="src\gfx\TexturePool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="third\tinyGLTFImpl.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\win\gltfSDK.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -1,9 +1,7 @@
 
 #include "TNode.h"
 #include "TGraph.h"
-
 #include <Core/src/ser/StreamIO.h>
-#include <nlohmann/json.hpp>
 
 namespace tryn
 {

@@ -33,7 +33,8 @@ namespace tryn::gfx
 #undef X
 			Struct,
 			Array,
-			Empty
+			Empty,
+			Padding
 		};
 
 		template <Type>

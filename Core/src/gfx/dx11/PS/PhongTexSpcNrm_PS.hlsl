@@ -1,7 +1,7 @@
 #include "LightVector.hlsli"
 #include "Operations.hlsli"
 
-#define MAX_POINT_LIGHTS 2
+#define MAX_POINT_LIGHTS 32
 
 struct PointLightParams
 {
@@ -108,11 +108,11 @@ float4 main(    const float3 viewPos : POSITION
     specularSample = spec.Sample(splr, tc);
 #endif
     
-    for (uint i = 0; i < MAX_POINT_LIGHTS; i++)
+    const uint lightCount = min(numPointLights, (uint) MAX_POINT_LIGHTS);
+    
+    [loop]
+    for (uint i = 0; i < lightCount; i++)
     {
-        if (i >= numPointLights)
-            break;
-        
         lv = CalculateLightVectorData(pointLights[i].viewLightPos, viewPos);
 
         attenuation = Attenuate(pointLights[i].constantAtt, pointLights[i].linearAtt, pointLights[i].quadraticAtt, lv.distToL);

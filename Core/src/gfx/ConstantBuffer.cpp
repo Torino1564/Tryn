@@ -3,7 +3,7 @@
 #include <Core/src/utl/Assert.h>
 #include <algorithm>
 #include <ranges>
-#include <queue>
+#include <stack>
 #include <Core/src/log/Log.h>
 
 namespace tryn::gfx
@@ -156,26 +156,32 @@ namespace tryn::gfx
 	}
 	void ConstantBufferLayout::Solidify()
 	{
-		std::queue<Node*> q;
+		std::stack<Node*> q;
+		std::deque<Node> paddingNodes;
 		q.push(root.get());
 		Node* current = nullptr;
 		size_t accumulatedOffset = 0;
 		size_t remainingSpace = 0;
 		while (!q.empty())
 		{
-			current = q.front();
+			current = q.top();
 			q.pop();
 
 			remainingSpace = 16 - (accumulatedOffset % 16);
-			// ReSharper disable once CppTooWideScope
+
 			const auto type = current->GetType();
 			switch (type)
 			{
-			case Struct:
-				break;
-			case Array:
-				break;
 			case Empty:
+				break;
+			case Struct:
+			case Array:
+			case Padding:
+				if (remainingSpace < 16)
+				{
+					accumulatedOffset += remainingSpace;
+					remainingSpace = 16;
+				}
 				break;
 			default:
 				const auto size = SizeOf(type);
@@ -193,9 +199,19 @@ namespace tryn::gfx
 
 			current->solid = true;
 
-			for (auto& child : current->children)
+			for (auto it = current->children.rbegin(); it != current->children.rend(); ++it)
 			{
-				q.push(&child);
+				q.push(&(*it));
+				if (type == ConstantBufferLayout::Type::Array)
+				{
+					paddingNodes.push_back(Node(ConstantBufferLayout::Type::Padding, "Padding"));
+					q.push(&paddingNodes.back());
+				}
+			}
+			if (type == ConstantBufferLayout::Type::Struct && !current->children.empty())
+			{
+				paddingNodes.push_back(Node(ConstantBufferLayout::Type::Padding, "Padding"));
+				q.push(&paddingNodes.back());
 			}
 		}
 
@@ -203,7 +219,7 @@ namespace tryn::gfx
 		q.push(root.get());
 		while (!q.empty())
 		{
-			current = q.front();
+			current = q.top();
 			q.pop();
 
 			for (auto& child : current->children)

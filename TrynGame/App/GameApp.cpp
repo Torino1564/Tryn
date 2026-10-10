@@ -26,7 +26,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 	{
 		pPlayer = std::make_unique<Player>(ECS(), "player1", "Game/Resources/Models/PlayerModels/ShinySphere/ShinySphere.obj", Gfx());
 
-		pPlayer->GetComponent<ecs::PositionComponent>().position = {10.0f, 10.0f, 10.0f};
+		pPlayer->GetComponent<ecs::PositionComponent>().position = {0.0f, 2.0f, 0.0f};
 		ecs::AddEntityIDJITBuffer(*pPlayer, ECS());
 	}
 
@@ -42,7 +42,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 		const auto& pLight = entities.back();
 
-		pLight->GetComponent<ecs::PositionComponent>().position = { 0.0f, 20.0f, 0.0f };
+		pLight->GetComponent<ecs::PositionComponent>().position = { 0.0f, 5.0f, 0.0f };
 		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat>(Gfx(), "Game/Resources/Models/sphere.obj");
 		pLight->GetComponent<ecs::ActiveComponent>().active = true;
 		pLight->GetComponent<ecs::PointLightComponent>().parameters = gfx::PointLightParameters{
@@ -70,7 +70,7 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 
 		const auto& pLight = entities.back();
 
-		pLight->GetComponent<ecs::PositionComponent>().position = { 30.0f, 20.0f, 30.0f };
+		pLight->GetComponent<ecs::PositionComponent>().position = { 5.0f, 5.0f, 0.0f };
 		pLight->GetComponent<ecs::ModelComponent>().pModel = gfx::Model::Make<gfx::Flat>(Gfx(), "Game/Resources/Models/sphere.obj");
 		pLight->GetComponent<ecs::ActiveComponent>().active = true;
 		pLight->GetComponent<ecs::PointLightComponent>().parameters = gfx::PointLightParameters{
@@ -121,28 +121,29 @@ TrynGameApp::TrynGameApp(std::shared_ptr<tryn::win::IWindow> pWindow, std::share
 		ecs::AddEntityIDJITBuffer(plane, ECS());
 	}
 
-	//{
-	//	entities.push_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
-	//	   ecs::ActiveComponent,
-	//	   ecs::PositionComponent,
-	//	   ecs::TransformComponent,
-	//	   ecs::ModelComponent,
-	//	   ecs::ScaleComponent,
-	//	   ecs::AnimatedComponent,
-	//	   ecs::BoneTransformsComponent,
-	//	   ecs::UpdateJITBufferComponent,
-	//	   ecs::RotationComponent>(ECS(),"AnimationTest")));
+	{
+		entities.push_back(std::make_unique<ecs::Entity>(ecs::Entity::CreateNew<
+		   ecs::ActiveComponent,
+		   ecs::PositionComponent,
+		   ecs::TransformComponent,
+		   ecs::ModelComponent,
+		   ecs::ScaleComponent,
+		   ecs::AnimatedComponent,
+		   ecs::BoneTransformsComponent,
+		   ecs::UpdateJITBufferComponent,
+		   ecs::RotationComponent>(ECS(),"AnimationTest")));
 
-	//	auto& ent = *entities.back();
+		auto& ent = *entities.back();
 
-	//	ent.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
-	//	auto& pModel = ent.GetComponent<ecs::ModelComponent>().pModel;
-	//	pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Wolf/Wolf-Blender-2.82a.glb", std::array{ZT_TYPE_UUID(gfx::ForwardPhong)});
-	//	pModel->AddOrEnableTechniques(std::array{ ZT_TYPE_UUID(gfx::EntityIDTechnique) });
-	//	ent.GetComponent<ecs::ScaleComponent>().scale = { 1.0f, 1.0f, 1.0f };
-	//	ent.GetComponent<ecs::ActiveComponent>().active = true;
-	//	ecs::AddEntityIDJITBuffer(ent, ECS());
-	//}
+		ent.GetComponent<ecs::PositionComponent>().position = { 0.0f, 0.0f, 0.0f };
+		auto& pModel = ent.GetComponent<ecs::ModelComponent>().pModel;
+		pModel = std::make_unique<gfx::Model>(Gfx(), "Game/Resources/Models/Wolf/Wolf-Blender-2.82a.glb", std::array{ZT_TYPE_UUID(gfx::ForwardPhong)});
+		pModel->AddOrEnableTechniques(std::array{ ZT_TYPE_UUID(gfx::EntityIDTechnique) });
+		//ent.GetComponent<ecs::AnimatedComponent>().pAnimationSkeletonInterface = pModel->GetAnimationSkeletonInterface();
+		ent.GetComponent<ecs::ScaleComponent>().scale = { 1.0f, 1.0f, 1.0f };
+		ent.GetComponent<ecs::ActiveComponent>().active = true;
+		ecs::AddEntityIDJITBuffer(ent, ECS());
+	}
 
 	{
 		camera.GetPosition() = { 0.0f, 10.0f, 0.0f };
