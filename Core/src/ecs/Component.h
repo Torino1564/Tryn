@@ -23,13 +23,13 @@ namespace tryn::ecs
 			retval.delete_ = [](void* pData_)
 				{
 					auto pData = static_cast<T*>(pData_);
-					pData->~T();
+					std::destroy_at(pData);
 				};
 
 			retval.new_ = [](void* pData_)
 				{
 					auto pData = static_cast<T*>(pData_);
-					new(pData) T();
+					::new (pData) T();
 				};
 
 			retval.move_ = [](void* pSource_, void* pDestination_)
@@ -37,7 +37,9 @@ namespace tryn::ecs
 					auto pSource = static_cast<T*>(pSource_);
 					auto pDestination = static_cast<T*>(pDestination_);
 
-					new(pDestination) T(std::move(*pSource));
+					::new (pDestination) T(std::move(*pSource));
+					std::destroy_at(pSource);
+					std::memset(pSource, 0, sizeof(T));
 				};
 
 			retval.imguiPrint_ = [](void* pData_)

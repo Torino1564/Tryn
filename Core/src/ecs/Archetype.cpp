@@ -173,9 +173,9 @@ namespace tryn::ecs
 		}
 
 		bookerPointer = (uint32_t)nextFree;
-		if (bookerPointer > upperLimit)
+		if (bookerPointer >= upperLimit)
 		{
-			upperLimit = (uint32_t)nextFree;
+			upperLimit = (uint32_t)nextFree + 1;
 		}
 
 		return {.ID = bookerPointer, .archetype = UUID };

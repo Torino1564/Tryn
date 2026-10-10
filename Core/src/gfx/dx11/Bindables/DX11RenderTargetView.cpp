@@ -105,6 +105,8 @@ namespace tryn::gfx::dx11
 	{
 		pTexture = std::make_shared<DX11Texture>(gfx, pTex, format, slot, TextureUsage::RenderTarget);
 
+		dimensions = pTexture->GetDimensions();
+
 		// create the target view on the texture
 		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 		rtvDesc.Format = Graphics::MapDXGIFormat(format);

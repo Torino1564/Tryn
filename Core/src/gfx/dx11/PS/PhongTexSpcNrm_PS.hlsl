@@ -1,7 +1,7 @@
 #include "LightVector.hlsli"
 #include "Operations.hlsli"
 
-#define MAX_POINT_LIGHTS 16
+#define MAX_POINT_LIGHTS 2
 
 struct PointLightParams
 {
@@ -73,7 +73,7 @@ float4 main(    const float3 viewPos : POSITION
 	const float3 diffuseColor3 = materialColor;
 #endif
 
-#ifdef MASK
+#if defined(MASK) && !defined(NoTex)
     // bail if highly translucent
     clip(diffuseSample.a < 0.1f ? -1 : 1);
     // flip normal when backface
@@ -99,13 +99,16 @@ float4 main(    const float3 viewPos : POSITION
     float attenuation = { 0.0f };
     float3 diffuse = { 0.0f, 0.0f, 0.0f };
     float specularPower = { 0.0f };
-    float specular = { 0.0f };
+    float3 specular = 0.0f;
     float3 specularColor3 = { 0.0f, 0.0f, 0.0f };
     float4 specularSample = { 0.0f, 0.0f, 0.0f, 0.0f };
     LightVectorData lv;
     
+#ifndef NoSpc
+    specularSample = spec.Sample(splr, tc);
+#endif
     
-    for (uint i = 0; i < 4; i++)
+    for (uint i = 0; i < MAX_POINT_LIGHTS; i++)
     {
         if (i >= numPointLights)
             break;
@@ -120,7 +123,6 @@ float4 main(    const float3 viewPos : POSITION
 
         specularColor3 = specularColor;
 #ifndef NoSpc
-        specularSample = spec.Sample(splr, tc);
 
         if (useSpecularMap)
         {
@@ -138,9 +140,11 @@ float4 main(    const float3 viewPos : POSITION
 #endif
 
         specular = Speculate(pointLights[i].diffuseColor * specularColor3, specularWeight, viewNormal, lv.vToL, viewPos, attenuation, specularPower);
-        result += (diffuse + ambient) * diffuseColor3 + specular;
+        result += diffuse * diffuseColor3 + specular;
 
     }
+    
+    result += ambient * diffuseColor3;
 
     return float4(saturate(result), 1.0f);
 }

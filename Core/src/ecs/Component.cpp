@@ -76,7 +76,7 @@ namespace tryn::ecs
 	std::byte* ComponentArray::operator[](const std::uint16_t elNumber)
 	{
 		trynass(elNumber < ElementCount());
-		return data() + elNumber * parentWrapper.ByteSize();
+		return data() + (elNumber - 1) * parentWrapper.ByteSize();
 	}
 
 	const ComponentWrapper& ComponentArray::Wrapper() const

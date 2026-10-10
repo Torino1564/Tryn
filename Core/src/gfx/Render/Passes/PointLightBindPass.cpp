@@ -31,6 +31,7 @@ namespace tryn::gfx
 		pointLightBuffer.GetConstantBuffer()["ambient"] = gfx.GetAmbientColor();
 		pointLightBuffer.GetConstantBuffer()["numPointLights"] = (uint32_t)pointLightBindQueue.GetNumberOfJobs();
 
+
 		pointLightBindQueue.RunJobs(gfx);
 		pointLightBindQueue.Clear();
 
