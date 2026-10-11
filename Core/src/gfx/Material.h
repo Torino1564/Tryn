@@ -25,6 +25,11 @@ namespace Microsoft::glTF
 	class Material;
 }
 
+namespace fastgltf
+{
+	class Material;
+}
+
 namespace tryn::gfx
 {
 	class WinGLTFLoaderContext;
@@ -56,6 +61,7 @@ namespace tryn::gfx
 	public:
 		Material(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, const aiScene* pScene = nullptr, bool instanced = false, bool skinned = false);
 		Material(const IGraphics& gfx, const Microsoft::glTF::Material& material, const std::filesystem::path& path, const WinGLTFLoaderContext& context, bool instanced = false, bool skinned = false);
+		Material(const IGraphics& gfx, const fastgltf::Material& material, const std::filesystem::path& path, bool instanced = false, bool skinned = false);
 		static std::shared_ptr<Material> MakeDefault(const IGraphics& gfx);
 
 		const aiScene* pScene;

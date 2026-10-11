@@ -14,6 +14,7 @@
 #include <Core/src/ser/StreamIO.h>
 
 #include "Core/src/gfx/win/gltfSDK.h"
+#include <filesystem>
 
 namespace Microsoft::glTF
 {
@@ -67,7 +68,8 @@ namespace tryn::gfx
 		ani::Skeleton& GetSkeleton();
 		bool HasTechnique(utl::UUID_t techniqueUUID) const;
 	private:
-		void GltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = {1.0f, 1.0f, 1.0f}, const bool instanced = false);
+		void GltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = { 1.0f, 1.0f, 1.0f }, const bool instanced = false);
+		void GltfInitialization2(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = { 1.0f, 1.0f, 1.0f }, const bool instanced = false);
 		std::uint32_t ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);
 		std::uint32_t ParseNode(int& nextId, const Microsoft::glTF::Node& node, const WinGLTFLoaderContext& context, glm::vec3 scale, bool root = false);
 		void ParseSkeleton(const aiNode& boneRoot);

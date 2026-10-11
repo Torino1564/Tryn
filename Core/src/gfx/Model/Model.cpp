@@ -21,6 +21,9 @@
 #include <ranges>
 #include "GLTFMesh.h"
 #include "Core/third/glm/gtx/quaternion.hpp"
+#include <print>
+
+#include <fastgltf/core.hpp>
 
 namespace tryn::gfx
 {
@@ -566,6 +569,61 @@ namespace tryn::gfx
 			};
 
 		WinGLTFLoader::Load(path, processFunction);
+	}
+
+	void Model::GltfInitialization2(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
+	{
+		trylog.info(utl::ToWide(std::format("Loading GLTF: {}", path)));
+
+		fastgltf::Parser parser {};
+
+		constexpr auto gltfOptions = fastgltf::Options::DontRequireValidAssetMember | fastgltf::Options::AllowDouble | fastgltf::Options::LoadGLBBuffers | fastgltf::Options::LoadExternalBuffers | fastgltf::Options::LoadExternalImages;
+
+		auto pData = fastgltf::GltfDataBuffer::FromPath(path).get_if();
+
+		trynass(pData).msg(utl::ToWide(std::format("Could not load file [{}]", path));
+		
+		auto& data = *pData;
+
+		fastgltf::Asset gltf;
+
+		auto type = fastgltf::determineGltfFileType(data);
+		if (type == fastgltf::GltfType::glTF)
+		{
+			auto load = parser.loadGltf(data, path.parent_path(), gltfOptions);
+			if (load)
+				gltf = std::move(load.get());
+			else {
+				trylog.error(utl::ToWide(std::format("Failed to parse the glTF data: ", fastgltf::to_underlying(load.error()))));
+				return;
+			}
+		}
+		else if (type == fastgltf::GltfType::GLB)
+		{
+			auto load = parser.loadGltfBinary(data, path.parent_path(), gltfOptions);
+			if (load)
+				gltf = std::move(load.get());
+			else {
+				trylog.error(utl::ToWide(std::format("Failed to parse the glTF data: ", fastgltf::to_underlying(load.error()))));
+				return;
+			}
+		}
+		else
+		{
+			trylog.error(utl::ToWide(std::format("Failed to parse the glTF data")));
+			return;
+		}
+
+		// Load Materials
+	
+		std::vector<std::shared_ptr<Material>> materials;
+		materials.reserve(gltf.materials.size());
+
+		for (auto& mat : gltf.materials)
+		{
+			materials.emplace_back(std::make_shared<Material>(gfx, mat, path, instanced, skeleton.has_value()));
+		}
+
 	}
 }
 

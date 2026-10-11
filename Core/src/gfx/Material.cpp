@@ -15,6 +15,7 @@
 #include "win/gltfSDK.h"
 #include <GLTFSDK/ExtensionsKHR.h>
 #include <GLTFSDK/MeshPrimitiveUtils.h>
+#include <fastgltf/core.hpp>
 
 namespace tryn::gfx
 {
@@ -247,6 +248,17 @@ namespace tryn::gfx
 				textures.insert({TextureType::Specular, tex });
 			}
 		}
+	}
+
+	Material::Material(const IGraphics& gfx, const fastgltf::Material& material, const std::filesystem::path& path, bool instanced, bool skinned)
+		: pScene(nullptr)
+	{
+		// Fill textures:
+		auto emissiveTextureId = material.emissiveTexture.;
+		auto normalTextureId = material.normalTexture.textureId;
+		auto occlusionTextureId = material.occlusionTexture.textureId;
+		auto metallicRoughnessTextureId = material.metallicRoughness.metallicRoughnessTexture.textureId;
+		auto baseColorTextureId = material.metallicRoughness.baseColorTexture.textureId;
 	}
 
 	bool Material::HasAttribute(const AttributeType attribute) const
