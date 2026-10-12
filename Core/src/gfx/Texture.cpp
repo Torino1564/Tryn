@@ -3,9 +3,14 @@
 #include <Core/src/utl/Assert.h>
 #include <Core/src/utl/String.h>
 #include <assimp/texture.h>
-
 #include "IGraphics.h"
 #include "win/gltfSDK.h"
+#undef max
+#undef min
+#include <fastgltf/core.hpp>
+#include <fastgltf/util.hpp>
+#include <fastgltf/types.hpp>
+#include <variant>
 
 namespace tryn::gfx
 {
@@ -92,6 +97,48 @@ namespace tryn::gfx
 		static const Deleter deleter(pDeleterFunc);
 
 		buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+	}
+
+	Texture::Texture(fastgltf::Asset& gltf, const fastgltf::Image& image)
+	{
+		int width, height, nrChannels;
+
+		auto pDeleterFunc = [](std::byte* bytes)
+			{
+				STBI_Close::Get().operator()(bytes);
+			};
+
+		static const Deleter deleter(pDeleterFunc);
+
+		std::visit(
+			fastgltf::visitor{
+				[](auto& arg) {},
+				[&](fastgltf::sources::URI& filePath) {
+					trynass(filePath.fileByteOffset == 0); // We don't support offsets with stbi.
+					trynass(filePath.uri.isLocalPath()); // We're only capable of loading local files.
+
+					const std::string path(filePath.uri.path().begin(), filePath.uri.path().end()); // Thanks C++.
+					auto texture = StbImageManager::Load(path, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+					buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+				},
+				[&](fastgltf::sources::Vector& vector) {
+					auto texture = StbImageManager::Load(std::span{vector.bytes.data(), vector.bytes.size()}, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+					buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+				},
+				[&](fastgltf::sources::BufferView& view) {
+					auto& bufferView = gltf.bufferViews[view.bufferViewIndex];
+					auto& buffer_ = gltf.buffers[bufferView.bufferIndex];
+
+					std::visit(fastgltf::visitor{
+						[](auto& arg) {},
+						[&](fastgltf::sources::Vector& vector) {
+							auto texture = StbImageManager::Load(std::span{vector.bytes.data(), vector.bytes.size() }, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+							buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+						}
+						}, buffer_.data);
+				}
+			},
+		image.data);
 	}
 
 	Texture::Texture(const spa::DimensionsI dimensions, const TextureFormat format)

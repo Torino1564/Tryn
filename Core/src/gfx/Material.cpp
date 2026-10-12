@@ -250,15 +250,70 @@ namespace tryn::gfx
 		}
 	}
 
-	Material::Material(const IGraphics& gfx, const fastgltf::Material& material, const std::filesystem::path& path, bool instanced, bool skinned)
+	Material::Material(const IGraphics& gfx, fastgltf::Asset& gltf, const fastgltf::Material& material, const std::filesystem::path& path, bool instanced, bool skinned)
 		: pScene(nullptr)
 	{
 		// Fill textures:
-		auto emissiveTextureId = material.emissiveTexture.;
-		auto normalTextureId = material.normalTexture.textureId;
-		auto occlusionTextureId = material.occlusionTexture.textureId;
-		auto metallicRoughnessTextureId = material.metallicRoughness.metallicRoughnessTexture.textureId;
-		auto baseColorTextureId = material.metallicRoughness.baseColorTexture.textureId;
+		auto& emissiveTexture = material.emissiveTexture;
+		auto& normalTexture = material.normalTexture;
+		auto& occlusionTexture = material.occlusionTexture;
+		auto& metallicRoughnessTexture = material.pbrData.metallicRoughnessTexture;
+		auto& baseColorTexture = material.pbrData.baseColorTexture;
+
+		// Load Textures
+
+		if (emissiveTexture)
+		{
+			auto tex = TexturePool::Resolve(gltf, gltf.images[emissiveTexture.value().textureIndex]);
+			// Load Texture
+			textures.insert({ TextureType::Emissive, tex });
+		}
+		if (normalTexture)
+		{
+			auto tex = TexturePool::Resolve(gltf, gltf.images[normalTexture.value().textureIndex]);
+			// Load Texture
+			textures.insert({ TextureType::Normal, tex });
+		}
+		if (occlusionTexture)
+		{
+			auto tex = TexturePool::Resolve(gltf, gltf.images[occlusionTexture.value().textureIndex]);
+			// Load Texture
+			textures.insert({ TextureType::Occlussion, tex });
+		}
+		if (metallicRoughnessTexture)
+		{
+			auto tex = TexturePool::Resolve(gltf, gltf.images[metallicRoughnessTexture.value().textureIndex]);
+			// Load Texture
+			textures.insert({ TextureType::MetallicRoughness, tex });
+		}
+		if (baseColorTexture)
+		{
+			auto tex = TexturePool::Resolve(gltf, gltf.images[baseColorTexture.value().textureIndex]);
+			// Load Texture
+			textures.insert({ TextureType::MetallicRoughnessBaseColor, tex });
+		}
+
+		if (material.specular)
+		{
+			// Add attributes
+			// specular color
+			{
+				auto color = material.specular->specularColorFactor;
+				attributes.emplace(AttributeType::SpecularColor, Attribute::Make<glm::vec3>({ color.x(), color.y(), color.z()}));
+			}
+			// specular gloss
+			{
+				auto gloss = material.specular->specularFactor;
+				attributes.emplace(AttributeType::SpecularGloss, Attribute::Make<float>(gloss));
+			}
+			// Load Texture
+			if (material.specular->specularColorTexture)
+			{
+				auto tex = TexturePool::Resolve(gltf, gltf.images[material.specular->specularColorTexture.value().textureIndex]);
+				textures.insert({ TextureType::Specular, tex });
+			}
+
+		}
 	}
 
 	bool Material::HasAttribute(const AttributeType attribute) const
@@ -277,7 +332,6 @@ namespace tryn::gfx
 	}
 
 	Material::Material(const aiScene* pScene)
-		: pScene(pScene)
 	{
 	}
 }

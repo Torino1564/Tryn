@@ -65,7 +65,7 @@ namespace tryn::gfx
 		if (const auto& ext = fspath.extension().string(); ext == ".gltf" || ext == ".glb" )
 		{
 			// TinyGLTF initialization
-			GltfInitialization(gfx, fspath, techniqueUUIDs, scale, instanced);
+			GltfInitialization2(gfx, fspath, techniqueUUIDs, scale, instanced);
 			return;
 		}
 
@@ -573,15 +573,16 @@ namespace tryn::gfx
 
 	void Model::GltfInitialization2(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
 	{
-		trylog.info(utl::ToWide(std::format("Loading GLTF: {}", path)));
+		trylog.info(utl::ToWide(std::format("Loading GLTF: {}", path.string())));
 
 		fastgltf::Parser parser {};
 
 		constexpr auto gltfOptions = fastgltf::Options::DontRequireValidAssetMember | fastgltf::Options::AllowDouble | fastgltf::Options::LoadGLBBuffers | fastgltf::Options::LoadExternalBuffers | fastgltf::Options::LoadExternalImages;
 
-		auto pData = fastgltf::GltfDataBuffer::FromPath(path).get_if();
+		auto data_ex = fastgltf::GltfDataBuffer::FromPath(path);
+		auto pData = data_ex.get_if();
 
-		trynass(pData).msg(utl::ToWide(std::format("Could not load file [{}]", path));
+		trynass(pData).msg(utl::ToWide(std::format("Could not load file [{}]", path.string())));
 		
 		auto& data = *pData;
 
@@ -621,7 +622,7 @@ namespace tryn::gfx
 
 		for (auto& mat : gltf.materials)
 		{
-			materials.emplace_back(std::make_shared<Material>(gfx, mat, path, instanced, skeleton.has_value()));
+			materials.emplace_back(std::make_shared<Material>(gfx, gltf, mat, path, instanced, skeleton.has_value()));
 		}
 
 	}
