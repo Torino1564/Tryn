@@ -99,7 +99,7 @@ namespace tryn::gfx
 		buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
 	}
 
-	Texture::Texture(fastgltf::Asset& gltf, const fastgltf::Image& image)
+	Texture::Texture(fastgltf::Asset& gltf, fastgltf::Image& image)
 	{
 		int width, height, nrChannels;
 
@@ -110,35 +110,70 @@ namespace tryn::gfx
 
 		static const Deleter deleter(pDeleterFunc);
 
-		std::visit(
-			fastgltf::visitor{
-				[](auto& arg) {},
-				[&](fastgltf::sources::URI& filePath) {
-					trynass(filePath.fileByteOffset == 0); // We don't support offsets with stbi.
-					trynass(filePath.uri.isLocalPath()); // We're only capable of loading local files.
+		//std::visit(
+		//	fastgltf::visitor{
+		//		[](auto& arg) {},
+		//		[&](fastgltf::sources::URI& filePath) {
+		//			trynass(filePath.fileByteOffset == 0); // We don't support offsets with stbi.
+		//			trynass(filePath.uri.isLocalPath()); // We're only capable of loading local files.
 
-					const std::string path(filePath.uri.path().begin(), filePath.uri.path().end()); // Thanks C++.
-					auto texture = StbImageManager::Load(path, dimensions, numChannels, StbImageManager::RGB_ALPHA());
-					buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
-				},
-				[&](fastgltf::sources::Vector& vector) {
-					auto texture = StbImageManager::Load(std::span{vector.bytes.data(), vector.bytes.size()}, dimensions, numChannels, StbImageManager::RGB_ALPHA());
-					buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
-				},
-				[&](fastgltf::sources::BufferView& view) {
-					auto& bufferView = gltf.bufferViews[view.bufferViewIndex];
-					auto& buffer_ = gltf.buffers[bufferView.bufferIndex];
+		//			const std::string path(filePath.uri.path().begin(), filePath.uri.path().end()); // Thanks C++.
+		//			auto texture = StbImageManager::Load(path, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+		//			buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+		//		},
+		//		[&](fastgltf::sources::Vector& vector) {
+		//			auto texture = StbImageManager::Load(std::span{vector.bytes.data(), vector.bytes.size()}, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+		//			buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+		//		},
+		//		[&](fastgltf::sources::BufferView& view) {
+		//			auto& bufferView = gltf.bufferViews[view.bufferViewIndex];
+		//			auto& buffer_ = gltf.buffers[bufferView.bufferIndex];
 
-					std::visit(fastgltf::visitor{
-						[](auto& arg) {},
-						[&](fastgltf::sources::Vector& vector) {
-							auto texture = StbImageManager::Load(std::span{vector.bytes.data(), vector.bytes.size() }, dimensions, numChannels, StbImageManager::RGB_ALPHA());
-							buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
-						}
-						}, buffer_.data);
-				}
-			},
-		image.data);
+		//			std::visit(fastgltf::visitor{
+		//				[](auto& arg) {},
+		//				[&](fastgltf::sources::Vector& vector) {
+		//					auto texture = StbImageManager::Load(std::span{vector.bytes.data(), vector.bytes.size() }, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+		//					buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+		//				}
+		//				}, buffer_.data);
+		//		}
+		//	},
+		//image.data);
+
+		if (std::holds_alternative<fastgltf::sources::URI>(image.data))
+		{
+			auto& filePath = std::get<fastgltf::sources::URI>(image.data);
+			trynass(filePath.fileByteOffset == 0); // We don't support offsets with stbi.
+			trynass(filePath.uri.isLocalPath()); // We're only capable of loading local files.
+
+			const std::string path(filePath.uri.path().begin(), filePath.uri.path().end()); // Thanks C++.
+			auto texture = StbImageManager::Load(path, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+			buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+		}
+		else if (std::holds_alternative<fastgltf::sources::URI>(image.data))
+		{
+			auto& vector = std::get<fastgltf::sources::Vector>(image.data);
+			auto texture = StbImageManager::Load(std::span{ vector.bytes.data(), vector.bytes.size() }, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+			buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+		}
+		else if (std::holds_alternative<fastgltf::sources::BufferView>(image.data))
+		{
+			auto& view = std::get<fastgltf::sources::BufferView>(image.data);
+			auto& bufferView = gltf.bufferViews[view.bufferViewIndex];
+			auto& buffer_ = gltf.buffers[bufferView.bufferIndex];
+			if (std::holds_alternative<fastgltf::sources::Vector>(buffer_.data))
+			{
+				auto& vector = std::get<fastgltf::sources::Vector>(buffer_.data);
+				auto texture = StbImageManager::Load(std::span{ vector.bytes.data(), vector.bytes.size() }, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+				buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+			}
+			if (std::holds_alternative<fastgltf::sources::Array>(buffer_.data))
+			{
+				auto& array = std::get<fastgltf::sources::Array>(buffer_.data);
+				auto texture = StbImageManager::Load(std::span{ array.bytes.data(), array.bytes.size() }, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+				buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+			}
+		}
 	}
 
 	Texture::Texture(const spa::DimensionsI dimensions, const TextureFormat format)

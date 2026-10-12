@@ -36,7 +36,7 @@ namespace tryn::gfx
 		Texture(const std::filesystem::path& path);
 		Texture(const aiTexture& tex);
 		Texture(const struct GLTFTextureData& textureData);
-		Texture(fastgltf::Asset& gltf, const fastgltf::Image& image);
+		Texture(fastgltf::Asset& gltf, fastgltf::Image& image);
 		Texture(spa::DimensionsI dimensions, TextureFormat format = TextureFormat::B8G8R8A8_UNORM);
 		static constexpr std::string GenerateID(const std::string& name);
 		std::string GetID() const noexcept;
