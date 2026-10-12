@@ -6,6 +6,8 @@
 #include <Core/third/stb_image/stb_image.h>
 #include <Core/third/stb_image/stb_image_write.h>
 #include "Core/src/utl/Assert.h"
+#include <Core/src/log/Log.h>
+#include <Core/src/utl/String.h>
 
 namespace tryn::gfx
 {
@@ -24,7 +26,12 @@ namespace tryn::gfx
 	std::byte* StbImageManager::Load(std::span<std::byte> buffer, spa::DimensionsI& dimensions, int& numChannels,
 		int desiredChannels)
 	{
-		return (std::byte*)stbi_load_from_memory((stbi_uc*)buffer.data(), buffer.size() ,&dimensions.width, &dimensions.height, &numChannels, desiredChannels);
+		auto data = (std::byte*)stbi_load_from_memory((stbi_uc*)buffer.data(), buffer.size() ,&dimensions.width, &dimensions.height, &numChannels, desiredChannels);
+		if (data == nullptr)
+		{
+			trylog.error(utl::ToWide(std::format("Failed to load image from memory: {}", stbi_failure_reason())));
+		}
+		return data;
 	}
 
 	int StbImageManager::RGB_ALPHA()

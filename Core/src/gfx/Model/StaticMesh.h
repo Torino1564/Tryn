@@ -9,6 +9,12 @@ namespace Microsoft::glTF
 	struct MeshPrimitive;
 }
 
+namespace fastgltf
+{
+	class Primitive;
+	class Asset;
+}
+
 struct aiMesh;
 
 namespace tryn::gfx
@@ -28,6 +34,9 @@ namespace tryn::gfx
 
 		// Make a mesh via gltf primitives
 		StaticMesh(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& mesh, const gfx::WinGLTFLoaderContext& context, std::string_view tag, const std::shared_ptr<Material>& pMaterial = nullptr, glm::vec3 scale = glm::vec3{ 1.0f,1.0f,1.0f }, std::optional<std::uint16_t> meshID = std::nullopt);
+
+		// Make a mesh via gltf primitives
+		StaticMesh(const IGraphics& gfx, const fastgltf::Primitive& mesh, fastgltf::Asset& asset, std::string_view tag, const std::shared_ptr<Material>& pMaterial = nullptr, glm::vec3 scale = glm::vec3{ 1.0f,1.0f,1.0f }, std::optional<std::uint16_t> meshID = std::nullopt);
 
 		[[nodiscard]] MeshType Type() const override;
 

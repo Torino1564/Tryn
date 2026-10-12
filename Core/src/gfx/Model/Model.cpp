@@ -625,6 +625,24 @@ namespace tryn::gfx
 			materials.emplace_back(std::make_shared<Material>(gfx, gltf, mat, path, instanced, skeleton.has_value()));
 		}
 
+		// Load Meshes
+
+		// Add meshes
+		for (auto& mesh : gltf.meshes)
+		{
+			pMeshes.push_back(std::make_shared<GLTFMesh>(gfx, mesh, gltf, mesh.name, materials[mesh.primitives[0].materialIndex.value()], scale, meshCounter++));
+			for (auto techniqueUUID : techniqueUUIDs)
+			{
+				pMeshes.back()->AddTechnique(gfx, techniqueUUID);
+			}
+			for (auto& pMesh = pMeshes.back(); const auto& technique : pMesh->pTechniques | std::views::values)
+			{
+				for (auto& [id, addedBindable] : pAddedBindables)
+				{
+					technique->OfferBindable(id, addedBindable);
+				}
+			}
+		}
 	}
 }
 

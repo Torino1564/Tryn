@@ -164,13 +164,21 @@ namespace tryn::gfx
 			if (std::holds_alternative<fastgltf::sources::Vector>(buffer_.data))
 			{
 				auto& vector = std::get<fastgltf::sources::Vector>(buffer_.data);
-				auto texture = StbImageManager::Load(std::span{ vector.bytes.data(), vector.bytes.size() }, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+				auto imageData = std::span{
+					vector.bytes.data() + bufferView.byteOffset,
+					bufferView.byteLength
+						};
+				auto texture = StbImageManager::Load(imageData, dimensions, numChannels, StbImageManager::RGB_ALPHA());
 				buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
 			}
 			if (std::holds_alternative<fastgltf::sources::Array>(buffer_.data))
 			{
 				auto& array = std::get<fastgltf::sources::Array>(buffer_.data);
-				auto texture = StbImageManager::Load(std::span{ array.bytes.data(), array.bytes.size() }, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+				auto imageData = std::span{
+					array.bytes.data() + bufferView.byteOffset,
+					bufferView.byteLength
+				};
+				auto texture = StbImageManager::Load(imageData, dimensions, numChannels, StbImageManager::RGB_ALPHA());
 				buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
 			}
 		}

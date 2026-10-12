@@ -11,15 +11,15 @@
     <LibraryPath>$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\$(VcpkgTriplet)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
-	<VcpkgUseStatic>true</VcpkgUseStatic>
-	<VcpkgUseMD>true</VcpkgUseMD>
-	<VcpkgTriplet>$(Platform)-windows-static-md</VcpkgTriplet>
-	<VcpkgHostTriplet>$(Platform)-windows-static-md</VcpkgHostTriplet>
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+    <VcpkgUseMD>true</VcpkgUseMD>
+    <VcpkgTriplet>$(Platform)-windows-static-md</VcpkgTriplet>
+    <VcpkgHostTriplet>$(Platform)-windows-static-md</VcpkgHostTriplet>
   </PropertyGroup>
   <PropertyGroup>
-	<VcpkgLibDir Condition="'$(Configuration)'=='Debug'">$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\$(VcpkgTriplet)\debug\lib</VcpkgLibDir>
-	<VcpkgLibDir Condition="'$(Configuration)'=='Release'">$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\$(VcpkgTriplet)\lib</VcpkgLibDir>
-	<VcpkgRspFile>$(SolutionDir)vcpkg_libs.rsp</VcpkgRspFile>
+    <VcpkgLibDir Condition="'$(Configuration)'=='Debug'">$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\$(VcpkgTriplet)\debug\lib</VcpkgLibDir>
+    <VcpkgLibDir Condition="'$(Configuration)'=='Release'">$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\$(VcpkgTriplet)\lib</VcpkgLibDir>
+    <VcpkgRspFile>$(SolutionDir)vcpkg_libs.rsp</VcpkgRspFile>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <EnableASAN>false</EnableASAN>
@@ -34,7 +34,7 @@
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
@@ -56,17 +56,12 @@
   </ItemDefinitionGroup>
   <ItemGroup />
   <Target Name="WriteVcpkgRsp" BeforeTargets="Link">
-	<ItemGroup>
-		<VcpkgLibFiles Include="$(VcpkgLibDir)\*.lib"/>
-	</ItemGroup>
-	<WriteLinesToFile
-		File="$(VcpkgRspFile)"
-		Lines="@(VcpkgLibFiles->'%(FullPath)')"
-		Overwrite="true"
-		WriteOnlyWhenDifferent="true"/>
-
-	<Message Text="Found libs: @(VcpkgLibFiles)" Importance="high"/>
-	<Message Text="Rsp file written to: $(VcpkgRspFile)" Importance="high"/>
-	<Message Text="Written rsp: %(Link.AdditionalDependencies)" Importance="high"/>
+    <ItemGroup>
+      <VcpkgLibFiles Include="$(VcpkgLibDir)\*.lib" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(VcpkgRspFile)" Lines="@(VcpkgLibFiles->'%(FullPath)')" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    <Message Text="Found libs: @(VcpkgLibFiles)" Importance="high" />
+    <Message Text="Rsp file written to: $(VcpkgRspFile)" Importance="high" />
+    <Message Text="Written rsp: %(Link.AdditionalDependencies)" Importance="high" />
   </Target>
 </Project>

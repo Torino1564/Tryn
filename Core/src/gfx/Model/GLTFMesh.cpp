@@ -5,6 +5,9 @@
 
 #include "StaticMesh.h"
 #include "Core/src/gfx/Material.h"
+#undef max
+#undef min
+#include <fastgltf/types.hpp>
 
 namespace tryn::gfx
 {
@@ -46,6 +49,14 @@ namespace tryn::gfx
 		for (const auto& primitive : mesh.primitives)
 		{
 			children.push_back(std::move(std::make_shared<StaticMesh>(gfx, primitive, context, tag, pMaterial, scale)));
+		}
+	}
+
+	GLTFMesh::GLTFMesh(const IGraphics& gfx, const fastgltf::Mesh& mesh, fastgltf::Asset& asset, std::string_view tag, std::shared_ptr<Material> pMaterial, glm::vec3 scale, std::optional<std::uint16_t> meshID)
+	{
+		for (const auto& primitive : mesh.primitives)
+		{
+			children.push_back(std::move(std::make_shared<StaticMesh>(gfx, primitive, asset, tag, pMaterial, scale)));
 		}
 	}
 

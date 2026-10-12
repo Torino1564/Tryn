@@ -23,6 +23,12 @@ namespace Microsoft::glTF
 	class Document;
 }
 
+namespace fastgltf
+{
+	class Primitive;
+	class Asset;
+}
+
 namespace tryn::gfx::ani
 {
 	class Skeleton;
@@ -383,6 +389,7 @@ namespace tryn::gfx
 		VertexBuffer(VertexLayout layout_, size_t size = 0);
 		VertexBuffer(VertexLayout layout, const aiMesh& mesh, ani::Skeleton* skeleton = nullptr);
 		VertexBuffer(VertexLayout layout, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::optional<ani::Skeleton> skeleton = std::nullopt);
+		VertexBuffer(VertexLayout layout_, const fastgltf::Primitive& primitive, const fastgltf::Asset& asset, std::optional<ani::Skeleton> skeleton = std::nullopt);
 		VertexBuffer(VertexLayout layout, const Shape3D& mesh);
 		void Resize(size_t newSize) override;
 		constexpr std::size_t ByteSize() const noexcept override;

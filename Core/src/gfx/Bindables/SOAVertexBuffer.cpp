@@ -13,6 +13,10 @@
 #include "Core/src/gfx/BindablePool.h"
 #include <string_view>
 
+#undef min
+#undef max
+#include <fastgltf/core.hpp>
+
 using namespace std::literals;
 
 namespace tryn::gfx
@@ -89,6 +93,67 @@ namespace tryn::gfx
 	}
 
 	template <unsigned SIZE, unsigned N = 0>
+	static void InsertElement(ISOAVertexBuffer& buffer, const IGraphics& gfx, const fastgltf::Primitive& primitive,
+		const fastgltf::Asset& asset)
+	{
+		static constexpr auto NthElement = static_cast<VertexLayout::VertexElement>(N);
+
+		if constexpr (VertexLayout::VertexElementAttr<NthElement>::semantic == "COLOR"sv ||
+			VertexLayout::VertexElementAttr<NthElement>::semantic == "TEXCOORD"sv)
+		{
+			// These are iterable elements. Eg: COLOR_0, COLOR_1, etc
+
+			for (unsigned n = 0; n < MAX_ITERABLE_NUMBER; n++)
+			{
+				const auto id = std::string(VertexLayout::VertexElementAttr<NthElement>::semantic) + "_" + std::to_string(n);
+				const auto it = primitive.findAttribute(id);
+				if (it != primitive.attributes.end())
+				{
+					try
+					{
+						VertexLayout layout;
+						layout.AppendElement(NthElement);
+						auto nThBuffer = std::make_shared<VertexBuffer>(layout, primitive, asset);
+						auto pBuffer = IVertexBuffer::Resolve(gfx, nThBuffer);
+						buffer.Append(pBuffer, VertexLayout::VertexElementAttr<NthElement>::semantic.data());
+					}
+					catch (std::exception& e)
+					{
+						trylog.warn(L"Could not add element of type: " + utl::ToWide(id));
+					}
+				}
+			}
+		}
+		else
+		{
+			const auto id = VertexLayout::VertexElementAttr<NthElement>::semantic.data();
+			const auto it = primitive.findAttribute(id);
+			if (it != primitive.attributes.end())
+			{
+				try
+				{
+					VertexLayout layout;
+					layout.AppendElement(NthElement);
+					auto nThBuffer = std::make_shared<VertexBuffer>(layout, primitive, asset);
+					auto pBuffer = IVertexBuffer::Resolve(gfx, nThBuffer);
+
+					buffer.Append(pBuffer, id);
+				}
+				catch (std::exception& e)
+				{
+					trylog.warn(L"Could not add element of type: " + utl::ToWide(id));
+				}
+			}
+		}
+
+		// Iterate over all elements
+		if constexpr (N < SIZE)
+		{
+			return InsertElement<SIZE, N + 1>(buffer, gfx, primitive, asset);
+		}
+	}
+
+	template <unsigned SIZE, unsigned N = 0>
 	static void InsertElement(ISOAVertexBuffer& buffer, const IGraphics& gfx, const aiMesh& mesh)
 	{
 		static constexpr auto elementType = static_cast<VertexLayout::VertexElement>(N);
@@ -154,6 +219,11 @@ namespace tryn::gfx
 		const WinGLTFLoaderContext& context)
 	{
 		InsertElement<std::to_underlying(VertexLayout::VertexElement::Unknown)>(*this, gfx, primitive, context);
+	}
+
+	void ISOAVertexBuffer::InitFields(const IGraphics& gfx, const fastgltf::Primitive& primitive, const fastgltf::Asset& asset)
+	{
+		InsertElement<std::to_underlying(VertexLayout::VertexElement::Unknown)>(*this, gfx, primitive, asset);
 	}
 
 	void ISOAVertexBuffer::InitFields(const IGraphics& gfx, const aiMesh& mesh)

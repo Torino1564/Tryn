@@ -4,6 +4,9 @@
 
 #include "win/gltfSDK.h"
 #include <assimp/mesh.h>
+#include <fastgltf/core.hpp>
+#include <fastgltf/tools.hpp>
+
 namespace tryn::gfx
 {
 	void CPUBuffer::Resize(const std::size_t newSize)
@@ -65,6 +68,28 @@ namespace tryn::gfx
 		const auto indices = Microsoft::glTF::MeshPrimitiveUtils::GetIndices32(*context.pDocument, *context.pReader, primitive);
 
 		buffer = indices;
+		dirty = false;
+	}
+
+	IndexBuffer::IndexBuffer(const fastgltf::Primitive& primitive, fastgltf::Asset& asset)
+	{
+		auto& accessorIndex = primitive.indicesAccessor;
+		if (!accessorIndex.has_value())
+		{
+			throw CPUBufferException(L"Primitive has no indices accessor!");
+		}
+		auto& accessor = asset.accessors[*accessorIndex];
+		if (!accessor.bufferViewIndex)
+		{
+			throw CPUBufferException(L"Accessor has no buffer view index!");
+		}
+		unsigned int i = 0;
+		Resize(accessor.count);
+		for (const auto& element : fastgltf::iterateAccessor<std::uint32_t>(asset, accessor))
+		{
+			buffer[i++] = element;
+		}
+
 		dirty = false;
 	}
 

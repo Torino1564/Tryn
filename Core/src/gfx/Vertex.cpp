@@ -10,6 +10,10 @@
 #include <GLTFSDK/MeshPrimitiveUtils.h>
 #include "Shape.h"
 #include "win/gltfSDK.h"
+#include <fastgltf/core.hpp>
+#include <fastgltf/tools.hpp>
+#include <Core/third/glm/glm.hpp>
+#include <fastgltf/glm_element_traits.hpp>
 
 namespace tryn::gfx
 {
@@ -197,6 +201,44 @@ namespace tryn::gfx
 				eb(element, buffer, i);
 			}
 		}
+
+	   template <fastgltf::AccessorType AccessorType, fastgltf::ComponentType ComponentType, typename ComponentTypeT, VertexLayout::VertexElement ElementType, typename SysTypeOverride = void, typename ExtraBehaviour = NothingBehaviour>
+	   void LoadBufferData(const fastgltf::Asset& asset, VertexBuffer& buffer, const fastgltf::Primitive& primitive, const std::string& id)
+	   {
+		   using SysType = std::conditional_t<std::same_as<SysTypeOverride, void>, typename VertexLayout::VertexElementAttr<ElementType>::SysType, SysTypeOverride>;
+
+		   std::string accessorString = VertexLayout::VertexElementAttr<ElementType>::semantic.data();
+
+		   if constexpr (VertexLayout::VertexElementAttr<ElementType>::semantic == "COLOR" || VertexLayout::VertexElementAttr<ElementType>::semantic == "TEXCOORD")
+		   {
+			   accessorString += "_" + std::to_string(buffer.GetLayout().Resolve(ElementType, id).Index());
+		   }
+		   auto accessorIt = primitive.findAttribute(accessorString);
+		   trynass(accessorIt != primitive.attributes.end()).msg(utl::ToWide(std::format("The primitive does not have the requested attribute: [{}]", accessorString)));
+
+		   auto& accessor = asset.accessors[accessorIt->accessorIndex];
+
+		   if (accessor.componentType != ComponentType)
+		   {
+			   throw DvtxException("Invalid component type for " + accessorString);
+		   }
+
+		   if (accessor.type != AccessorType)
+		   {
+			   throw DvtxException("Invalid accessor type for " + accessorString);
+		   }
+
+		   buffer.Resize(accessor.count);
+
+		   unsigned int i = 0;
+		   for (auto element : fastgltf::iterateAccessor<SysType>(asset, accessor))
+		   {
+			   buffer[i].Attr<ElementType>(id) = element;
+			   static constexpr auto eb = ExtraBehaviour();
+			   eb(element, buffer, i);
+			   i++;
+		   }
+	   }
 	}
 
 	struct ComputeBitangentBehaviour
@@ -292,6 +334,94 @@ namespace tryn::gfx
 			case VertexLayout::Unknown:
 			{
 				throw GLTFException("Unknown Vertex Element!");
+				break;
+			}
+			}
+		}
+		dirty = false;
+	}
+
+	VertexBuffer::VertexBuffer(VertexLayout layout_, const fastgltf::Primitive& primitive, const fastgltf::Asset& asset, std::optional<ani::Skeleton> skeleton)
+	{
+		using namespace fastgltf;
+		this->layout = std::move(layout_);
+
+		bool computedBitangents = false;
+		const auto elCount = layout.GetElementCount();
+		for (unsigned int i = 0; i < elCount; i++)
+		{
+			auto element = layout.ResolveByIndex(i);
+			switch (auto type = element.GetType())
+			{
+			case VertexLayout::Position3D:
+			{
+				LoadBufferData<AccessorType::Vec3, ComponentType::Float, float, VertexLayout::Position3D>(asset, *this, primitive, element.Id());
+				break;
+			}
+			case VertexLayout::Position2D:
+			{
+				LoadBufferData<AccessorType::Vec2, ComponentType::Float, float, VertexLayout::Position2D>(asset, *this, primitive, element.Id());
+				break;
+			}
+			case VertexLayout::Tangent:
+			{
+				try
+				{
+					LoadBufferData<AccessorType::Vec4, ComponentType::Float, float, VertexLayout::Tangent, glm::vec4, ComputeBitangentBehaviour>(asset, *this, primitive, element.Id());
+					computedBitangents = true;
+				}
+				catch (DvtxException&)
+				{
+					LoadBufferData<AccessorType::Vec3, ComponentType::Float, float, VertexLayout::Tangent>(asset, *this, primitive, element.Id());
+				}
+				break;
+			}
+			case VertexLayout::Bitangent:
+			{
+				trynass(computedBitangents == true);
+				break;
+			}
+			case VertexLayout::Normal:
+			{
+				LoadBufferData<AccessorType::Vec3, ComponentType::Float, float, VertexLayout::Normal>(asset, *this, primitive, element.Id());
+				break;
+			}
+			case VertexLayout::UV:
+			{
+
+				LoadBufferData<AccessorType::Vec2, ComponentType::Float, float, VertexLayout::UV>(asset, *this, primitive, element.Id());
+				break;
+			}
+			case VertexLayout::Char4Color:
+			{
+				trylog.error(L"Char4Color is not supported in GLTF, using Float4Color instead");
+				//LoadBufferData<AccessorType::Invalid, ComponentType::UnsignedShort, char, VertexLayout::Char4Color>(asset, *this, primitive, element.Id());
+				break;
+			}
+			case VertexLayout::Float3Color:
+			{
+				LoadBufferData<AccessorType::Vec3, ComponentType::Float, float, VertexLayout::Float3Color>(asset, *this, primitive, element.Id());
+				break;
+			}
+			case VertexLayout::Float4Color:
+			{
+				LoadBufferData<AccessorType::Vec4, ComponentType::Float, float, VertexLayout::Float4Color>(asset, *this, primitive, element.Id());
+				break;
+			}
+			case VertexLayout::BoneWeights:
+			{
+				// TODO
+				LoadBufferData<AccessorType::Vec4, ComponentType::Float, float, VertexLayout::BoneWeights>(asset, *this, primitive, element.Id());
+				break;
+			}
+			case VertexLayout::BoneIds:
+			{
+				LoadBufferData<AccessorType::Invalid, ComponentType::UnsignedInt, unsigned int, VertexLayout::BoneIds>(asset, *this, primitive, element.Id());
+				break;
+			}
+			case VertexLayout::Unknown:
+			{
+				throw DvtxException("Unknown Vertex Element!");
 				break;
 			}
 			}

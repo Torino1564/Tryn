@@ -8,6 +8,13 @@ namespace Microsoft::glTF
 {
 	struct MeshPrimitive;
 }
+
+namespace fastgltf
+{
+	class Primitive;
+	class Asset;
+}
+
 struct aiMesh;
 
 namespace tryn::gfx
@@ -52,6 +59,7 @@ namespace tryn::gfx
 		IndexBuffer(const std::vector<uint32_t>& data);
 		IndexBuffer(const aiMesh& mesh);
 		IndexBuffer(const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context);
+		IndexBuffer(const fastgltf::Primitive& primitive, fastgltf::Asset& asset);
 		constexpr void* Data() const noexcept override;
 		std::size_t Stride() const noexcept override;
 		constexpr std::size_t ByteSize() const noexcept override;
