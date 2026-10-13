@@ -23,6 +23,12 @@ namespace Microsoft::glTF
 	class Document;
 }
 
+namespace fastgltf
+{
+	class Node;
+	class Asset;
+}
+
 namespace tryn::gfx
 {
 	class IGraphics;
@@ -72,6 +78,7 @@ namespace tryn::gfx
 		void GltfInitialization2(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = { 1.0f, 1.0f, 1.0f }, const bool instanced = false);
 		std::uint32_t ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);
 		std::uint32_t ParseNode(int& nextId, const Microsoft::glTF::Node& node, const WinGLTFLoaderContext& context, glm::vec3 scale, bool root = false);
+		std::uint32_t ParseNode(int& nextId, const fastgltf::Node& node, const fastgltf::Asset& asset, glm::vec3 scale, bool root = false);
 		void ParseSkeleton(const aiNode& boneRoot);
 		void ParseBone(const aiNode& bone, const uint32_t parentID);
 		Settings settings = {};

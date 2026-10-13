@@ -424,15 +424,6 @@ namespace tryn::gfx
 
 		trylog.debug(utl::ToWide(std::format("Node [{}] has matrix = [{}]", node.name, tdata.hasMatrix)));
 
-		if (node.name == "node_Object001_-5720")
-		{
-			trylog.debug(L"Node node_Object001_ - 5720");
-		}
-		if (node.name == "node_mesh_Adam_mask_-5716")
-		{
-			trylog.debug(L"node_mesh_Adam_mask_-5716");
-		}
-
 		const auto transform = tdata.hasMatrix ? glm::transpose(tdata.matrix) : glm::translate(glm::mat4(1.0f), tdata.translation) * glm::toMat4(tdata.rotation) * glm::scale(glm::mat4(1.0f), tdata.scale);
 
 		std::vector<uint16_t> meshIds;
@@ -452,6 +443,77 @@ namespace tryn::gfx
 				nodes[index].AddChildId(childIndex);
 			}
 			catch(Microsoft::glTF::GLTFException&)
+			{
+				trylog.debug(L"Skipped Node");
+			}
+		}
+
+		return index;
+	}
+
+	glm::mat4 ToGlm(const fastgltf::math::fmat4x4& m)
+	{
+		glm::mat4 result{ 1.0f };
+
+		for (std::size_t col = 0; col < 4; ++col)
+		{
+			for (std::size_t row = 0; row < 4; ++row)
+			{
+				result[col][row] = m[col][row];
+			}
+		}
+
+		return result;
+	}
+
+	std::uint32_t Model::ParseNode(int& nextId, const fastgltf::Node& node, const fastgltf::Asset& asset, glm::vec3 scale, bool root)
+	{
+		TransformData tdata;
+
+		auto& transform = node.transform;
+
+		if (std::holds_alternative<fastgltf::math::fmat4x4>(transform))
+		{
+			tdata.hasMatrix = true;
+			const auto& matrix = std::get<fastgltf::math::fmat4x4>(transform);
+			tdata.matrix = ToGlm(matrix);
+		}
+		else
+		{
+			tdata.hasMatrix = false;
+			const auto& trs = std::get<fastgltf::TRS>(transform);
+			tdata.rotation = glm::quat(trs.rotation.w(), trs.rotation.x(), -trs.rotation.z(), trs.rotation.y());
+
+			tdata.translation.x = trs.translation.x();
+			tdata.translation.y = trs.translation.y();
+			tdata.translation.z = trs.translation.z();
+
+			tdata.scale.x = trs.scale.x();
+			tdata.scale.y = trs.scale.y();
+			tdata.scale.z = trs.scale.z();
+		}
+
+		trylog.debug(utl::ToWide(std::format("Node [{}] has matrix = [{}]", node.name, tdata.hasMatrix)));
+
+		const auto transform = tdata.hasMatrix ? glm::transpose(tdata.matrix) : glm::translate(glm::mat4(1.0f), tdata.translation) * glm::toMat4(tdata.rotation) * glm::scale(glm::mat4(1.0f), tdata.scale);
+
+		std::vector<uint16_t> meshIds;
+
+		if (!node.meshId.empty())
+			meshIds.push_back(atoi(doc.meshes[node.meshId].id.c_str()));
+
+		const auto index = nextId;
+		nodes.emplace_back(nextId++, node.name, std::move(meshIds), transform, this);
+		for (const auto& childId : node.children)
+		{
+			if (root && skeletonNodeId == childId)
+				continue;
+			try
+			{
+				const auto childIndex = ParseNode(nextId, doc.nodes[childId], context, scale);
+				nodes[index].AddChildId(childIndex);
+			}
+			catch (Microsoft::glTF::GLTFException&)
 			{
 				trylog.debug(L"Skipped Node");
 			}
@@ -613,6 +675,16 @@ namespace tryn::gfx
 		{
 			trylog.error(utl::ToWide(std::format("Failed to parse the glTF data")));
 			return;
+		}
+
+		// Load Scene
+
+		auto& scene = gltf.scenes[gltf.defaultScene.value()];
+		auto& nodes = scene.nodeIndices;
+
+		for (auto& nodeIndex : nodes)
+		{
+			auto& node = gltf.nodes[nodeIndex];
 		}
 
 		// Load Materials
