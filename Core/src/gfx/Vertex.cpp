@@ -4,12 +4,7 @@
 #include <Core/src/gfx/Animation/Bone.h>
 #undef max
 #undef min
-#include <GLTFSDK/Document.h>
-#include <GLTFSDK/GLTF.h>
-#include <GLTFSDK/GLTFResourceReader.h>
-#include <GLTFSDK/MeshPrimitiveUtils.h>
 #include "Shape.h"
-#include "win/gltfSDK.h"
 #include <fastgltf/core.hpp>
 #include <fastgltf/tools.hpp>
 #include <Core/third/glm/glm.hpp>
@@ -160,48 +155,6 @@ namespace tryn::gfx
 	};
 
 	namespace {
-		template <Microsoft::glTF::AccessorType AccessorType, Microsoft::glTF::ComponentType ComponentType, typename ComponentTypeT, VertexLayout::VertexElement ElementType, typename SysTypeOverride = void, typename ExtraBehaviour = NothingBehaviour>
-	   void LoadBufferData(const gfx::WinGLTFLoaderContext& context, VertexBuffer& buffer, const Microsoft::glTF::MeshPrimitive& primitive, const std::string& id)
-		{
-			using SysType = std::conditional_t<std::same_as<SysTypeOverride, void>, typename VertexLayout::VertexElementAttr<ElementType>::SysType, SysTypeOverride>;
-			using namespace Microsoft::glTF;
-			const auto& doc = *context.pDocument;
-			const auto& reader = *context.pReader;
-
-			std::string accessorString = VertexLayout::VertexElementAttr<ElementType>::semantic.data();
-
-			if constexpr (VertexLayout::VertexElementAttr<ElementType>::semantic == "COLOR" || VertexLayout::VertexElementAttr<ElementType>::semantic == "TEXCOORD")
-			{
-				accessorString += "_" + std::to_string(buffer.GetLayout().Resolve(ElementType, id).Index());
-			}
-
-			trynass(primitive.HasAttribute(accessorString)).msg(utl::ToWide(std::format("The primitive does not have the requested attribute: [{}]", accessorString)));
-
-			const Accessor accessor = doc.accessors[primitive.GetAttributeAccessorId(accessorString)];
-
-			if (accessor.componentType != ComponentType)
-			{
-				throw GLTFException("Invalid component type for " + accessorString);
-			}
-
-			if (accessor.type != AccessorType)
-			{
-				throw GLTFException("Invalid accessor type for " + accessorString);
-			}
-
-			auto data = reader.ReadBinaryData<ComponentTypeT>(doc, accessor);
-			static constexpr uint8_t componentPerSysType = sizeof(SysType) / sizeof(ComponentTypeT);
-			buffer.Resize(data.size()/componentPerSysType);
-
-			for (unsigned int i = 0; i < data.size()/componentPerSysType; i++)
-			{
-				const auto& element = *reinterpret_cast<SysType*>(data.data() + i*componentPerSysType);
-				buffer[i].Attr<ElementType>(id) = element;
-				static constexpr auto eb = ExtraBehaviour();
-				eb(element, buffer, i);
-			}
-		}
-
 	   template <fastgltf::AccessorType AccessorType, fastgltf::ComponentType ComponentType, typename ComponentTypeT, VertexLayout::VertexElement ElementType, typename SysTypeOverride = void, typename ExtraBehaviour = NothingBehaviour>
 	   void LoadBufferData(const fastgltf::Asset& asset, VertexBuffer& buffer, const fastgltf::Primitive& primitive, const std::string& id)
 	   {
@@ -251,95 +204,6 @@ namespace tryn::gfx
 			buffer[i].Attr<VertexLayout::Bitangent>() = bitangent;
 		}
 	};
-
-	VertexBuffer::VertexBuffer(VertexLayout layout_, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::optional<ani::Skeleton> skeleton)
-	{
-		using namespace Microsoft::glTF;
-		this->layout = std::move(layout_);
-		auto& doc = *context.pDocument;
-		auto& reader = *context.pReader;
-
-		bool computedBitangents = false;
-		const auto elCount = layout.GetElementCount();
-		for (unsigned int i = 0; i < elCount; i++)
-		{
-			auto element = layout.ResolveByIndex(i);
-			switch (auto type = element.GetType())
-			{
-			case VertexLayout::Position3D:
-				{
-					LoadBufferData<AccessorType::TYPE_VEC3, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Position3D>(context, *this, primitive, element.Id());
-					break;
-				}
-			case VertexLayout::Position2D:
-				{
-					LoadBufferData<AccessorType::TYPE_VEC2, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Position2D>(context, *this, primitive, element.Id());
-					break;
-				}
-			case VertexLayout::Tangent:
-				{
-					try
-					{
-						LoadBufferData<AccessorType::TYPE_VEC4, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Tangent, glm::vec4, ComputeBitangentBehaviour>(context, *this, primitive, element.Id());
-						computedBitangents = true;
-					}
-					catch (GLTFException&)
-					{
-						LoadBufferData<AccessorType::TYPE_VEC3, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Tangent>(context, *this, primitive, element.Id());
-					}
-					break;
-				}
-			case VertexLayout::Bitangent:
-				{
-					trynass(computedBitangents == true);
-					break;
-				}
-			case VertexLayout::Normal:
-				{
-					LoadBufferData<AccessorType::TYPE_VEC3, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Normal>(context, *this, primitive, element.Id());
-					break;
-				}
-			case VertexLayout::UV:
-				{
-
-					LoadBufferData<TYPE_VEC2, COMPONENT_FLOAT, float, VertexLayout::UV>(context, *this, primitive, element.Id());
-					break;
-				}
-			case VertexLayout::Char4Color:
-				{
-					LoadBufferData<AccessorType::TYPE_UNKNOWN, ComponentType::COMPONENT_UNSIGNED_SHORT, char, VertexLayout::Char4Color>(context, *this, primitive, element.Id());
-					break;
-				}
-			case VertexLayout::Float3Color:
-				{
-					LoadBufferData<AccessorType::TYPE_VEC3, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Float3Color>(context, *this, primitive, element.Id());
-					break;
-				}
-			case VertexLayout::Float4Color:
-			{
-				LoadBufferData<AccessorType::TYPE_VEC4, ComponentType::COMPONENT_FLOAT, float, VertexLayout::Float3Color>(context, *this, primitive, element.Id());
-				break;
-			}
-			case VertexLayout::BoneWeights:
-				{
-					// TODO
-					LoadBufferData<AccessorType::TYPE_VEC4, ComponentType::COMPONENT_FLOAT, float, VertexLayout::BoneWeights>(context, *this, primitive, element.Id());
-					break;
-				}
-			case VertexLayout::BoneIds:
-			{
-				LoadBufferData<AccessorType::TYPE_UNKNOWN, ComponentType::COMPONENT_UNSIGNED_INT, unsigned int, VertexLayout::BoneIds>(context, *this, primitive, element.Id());
-				break;
-			}
-			case VertexLayout::Unknown:
-			{
-				throw GLTFException("Unknown Vertex Element!");
-				break;
-			}
-			}
-		}
-		dirty = false;
-	}
 
 	VertexBuffer::VertexBuffer(VertexLayout layout_, const fastgltf::Primitive& primitive, const fastgltf::Asset& asset, std::optional<ani::Skeleton> skeleton)
 	{
@@ -495,7 +359,6 @@ namespace tryn::gfx
 	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::BoneIds>::ExtractAndFill(VertexBuffer& buf, const std::string& id, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
 	{
 		auto& viewBoneIDs = buf[i].Attr<BoneIds>(id);
-		auto& viewBoneWeights = buf[i].Attr<BoneWeights>(id);
 		for (auto& bone : skeleton->bones)
 		{
 			for (auto& weight : bone.boneWeights)
@@ -507,6 +370,26 @@ namespace tryn::gfx
 						if (viewBoneIDs[j] == 0u)
 						{
 							viewBoneIDs[j] = bone.ID;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::BoneWeights>::ExtractAndFill(VertexBuffer& buf, const std::string& id, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
+	{
+		auto& viewBoneWeights = buf[i].Attr<BoneWeights>(id);
+		for (auto& bone : skeleton->bones)
+		{
+			for (auto& weight : bone.boneWeights)
+			{
+				if (weight.vertexID == i)
+				{
+					for (int j = 0; j < 4; j++)
+					{
+						if (viewBoneWeights[j] == 0u)
+						{
 							viewBoneWeights[j] = weight.weight;
 							break;
 						}

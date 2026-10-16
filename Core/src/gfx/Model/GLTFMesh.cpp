@@ -1,8 +1,6 @@
 
 #include "GLTFMesh.h"
 
-#include <GLTFSDK/GLTF.h>
-
 #include "StaticMesh.h"
 #include "Core/src/gfx/Material.h"
 #undef max
@@ -39,21 +37,11 @@ namespace tryn::gfx
 		Submit(gfx, finalTransform);
 	}
 
-	GLTFMesh::GLTFMesh(const IGraphics& gfx, const Microsoft::glTF::Mesh& mesh,
-	                   const gfx::WinGLTFLoaderContext& context, std::string_view tag, std::shared_ptr<Material> pMaterial,
-	                   glm::vec3 scale, std::optional<std::uint16_t> meshID)
+	GLTFMesh::GLTFMesh(const IGraphics& gfx, const fastgltf::Mesh& mesh, fastgltf::Asset& asset, std::string_view tag, std::shared_ptr<Material> pMaterial, glm::vec3 scale, std::optional<std::uint16_t> meshID)
 	{
 		ID = meshID.value_or(0);
 		isParentMesh = true;
 		pMaterials.emplace_back(pMaterial);
-		for (const auto& primitive : mesh.primitives)
-		{
-			children.push_back(std::move(std::make_shared<StaticMesh>(gfx, primitive, context, tag, pMaterial, scale)));
-		}
-	}
-
-	GLTFMesh::GLTFMesh(const IGraphics& gfx, const fastgltf::Mesh& mesh, fastgltf::Asset& asset, std::string_view tag, std::shared_ptr<Material> pMaterial, glm::vec3 scale, std::optional<std::uint16_t> meshID)
-	{
 		for (const auto& primitive : mesh.primitives)
 		{
 			children.push_back(std::move(std::make_shared<StaticMesh>(gfx, primitive, asset, tag, pMaterial, scale)));

@@ -12,16 +12,7 @@
 #include "Core/src/gfx/Render/Techniques/ForwardPhong.h"
 #include <Core/src/gfx/Material.h>
 #include <Core/src/ser/StreamIO.h>
-
-#include "Core/src/gfx/win/gltfSDK.h"
 #include <filesystem>
-
-namespace Microsoft::glTF
-{
-	struct Node;
-	struct Scene;
-	class Document;
-}
 
 namespace fastgltf
 {
@@ -77,7 +68,6 @@ namespace tryn::gfx
 		void GltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = { 1.0f, 1.0f, 1.0f }, const bool instanced = false);
 		void GltfInitialization2(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs = {}, const glm::vec3& scale = { 1.0f, 1.0f, 1.0f }, const bool instanced = false);
 		std::uint32_t ParseNode(int& nextId, const aiNode& node, glm::vec3 scale, bool root = false);
-		std::uint32_t ParseNode(int& nextId, const Microsoft::glTF::Node& node, const WinGLTFLoaderContext& context, glm::vec3 scale, bool root = false);
 		std::uint32_t ParseNode(int& nextId, const fastgltf::Node& node, const fastgltf::Asset& asset, glm::vec3 scale, bool root = false);
 		void ParseSkeleton(const aiNode& boneRoot);
 		void ParseBone(const aiNode& bone, const uint32_t parentID);

@@ -16,11 +16,6 @@
 #include <Core/third/glm/fwd.hpp>
 #include <assimp/mesh.h>
 
-namespace Microsoft::glTF
-{
-	class Mesh;
-}
-
 namespace tryn::gfx
 {
 	class IGraphics;
@@ -33,7 +28,6 @@ namespace tryn::gfx::ani
 	{
 	public:
 		BonedMesh(const IGraphics& gfx, std::shared_ptr<Material> pMaterial, const aiMesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint16_t> meshID = std::nullopt);
-		BonedMesh(const IGraphics& gfx, std::shared_ptr<Material> pMaterial, const Microsoft::glTF::Mesh& mesh, std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale = { 1.0f,1.0f,1.0f }, std::optional<std::uint16_t> meshID = std::nullopt);
 		[[nodiscard]] MeshType Type() const override;
 		void SubmitBoned(const IGraphics& gfx, const glm::mat4& finalTransform, std::span<const glm::mat4> boneTransforms) override;
 		void AddAnimation(const std::shared_ptr<ani::Animation>& pAnimation, const std::string& name);

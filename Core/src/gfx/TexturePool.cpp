@@ -2,7 +2,6 @@
 #include "TexturePool.h"
 #include <assimp/scene.h>
 
-#include "win/gltfSDK.h"
 #include <fastgltf/core.hpp>
 
 namespace tryn::gfx
@@ -46,25 +45,6 @@ namespace tryn::gfx
 		if (it == Get().pool.end() || it != Get().pool.end() && it->second.expired())
 		{
 			auto ptr = std::shared_ptr<Texture>(new Texture(tex), Remover{});
-
-			Get().pool[id] = std::weak_ptr(ptr);
-			return ptr;
-		}
-		else
-		{
-			return std::shared_ptr{ it->second.lock() };
-		}
-	}
-
-	std::shared_ptr<Texture> TexturePool::Resolve(const GLTFTextureData& textureData)
-	{
-		auto id = Texture::GenerateID( textureData.name);
-
-		const auto it = Get().pool.find(id);
-
-		if (it == Get().pool.end() || it != Get().pool.end() && it->second.expired())
-		{
-			auto ptr = std::shared_ptr<Texture>(new Texture(textureData), Remover{});
 
 			Get().pool[id] = std::weak_ptr(ptr);
 			return ptr;

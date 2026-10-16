@@ -4,11 +4,6 @@
 
 ZT_EX_DEF(CPUBufferException);
 
-namespace Microsoft::glTF
-{
-	struct MeshPrimitive;
-}
-
 namespace fastgltf
 {
 	class Primitive;
@@ -58,7 +53,6 @@ namespace tryn::gfx
 		IndexBuffer(int indexCount = 0);
 		IndexBuffer(const std::vector<uint32_t>& data);
 		IndexBuffer(const aiMesh& mesh);
-		IndexBuffer(const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context);
 		IndexBuffer(const fastgltf::Primitive& primitive, fastgltf::Asset& asset);
 		constexpr void* Data() const noexcept override;
 		std::size_t Stride() const noexcept override;

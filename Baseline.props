@@ -55,6 +55,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
+	<!--
   <Target Name="WriteVcpkgRsp" BeforeTargets="Link">
     <ItemGroup>
       <VcpkgLibFiles Include="$(VcpkgLibDir)\*.lib" />
@@ -64,4 +65,5 @@
     <Message Text="Rsp file written to: $(VcpkgRspFile)" Importance="high" />
     <Message Text="Written rsp: %(Link.AdditionalDependencies)" Importance="high" />
   </Target>
+  -->
 </Project>

@@ -18,13 +18,6 @@ struct aiMaterial;
 struct aiMesh;
 struct aiScene;
 
-namespace Microsoft::glTF
-{
-	struct MeshPrimitive;
-	class Document;
-	class Material;
-}
-
 namespace fastgltf
 {
 	class Material;
@@ -61,7 +54,6 @@ namespace tryn::gfx
 		friend class TechniqueBase;
 	public:
 		Material(const IGraphics& gfx, const aiMaterial& material, const std::filesystem::path& path, const aiScene* pScene = nullptr, bool instanced = false, bool skinned = false);
-		Material(const IGraphics& gfx, const Microsoft::glTF::Material& material, const std::filesystem::path& path, const WinGLTFLoaderContext& context, bool instanced = false, bool skinned = false);
 		Material(const IGraphics& gfx, fastgltf::Asset& gltf, const fastgltf::Material& material, const std::filesystem::path& path, bool instanced = false, bool skinned = false);
 		static std::shared_ptr<Material> MakeDefault(const IGraphics& gfx);
 

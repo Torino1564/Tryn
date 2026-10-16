@@ -1,8 +1,5 @@
 #include "CPUBuffer.h"
 
-#include <GLTFSDK/MeshPrimitiveUtils.h>
-
-#include "win/gltfSDK.h"
 #include <assimp/mesh.h>
 #include <fastgltf/core.hpp>
 #include <fastgltf/tools.hpp>
@@ -58,14 +55,6 @@ namespace tryn::gfx
 			indices[(3 * i) + 1] = triangle.mIndices[1];
 			indices[(3 * i) + 2] = triangle.mIndices[2];
 		}
-
-		buffer = indices;
-		dirty = false;
-	}
-
-	IndexBuffer::IndexBuffer(const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context)
-	{
-		const auto indices = Microsoft::glTF::MeshPrimitiveUtils::GetIndices32(*context.pDocument, *context.pReader, primitive);
 
 		buffer = indices;
 		dirty = false;

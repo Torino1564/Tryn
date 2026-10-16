@@ -429,9 +429,6 @@
     <ClCompile Include="src\gfx\TexturePool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\win\gltfSDK.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\Model\GLTFMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -2268,9 +2265,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="third\stb_image\stb_image_write.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gfx\win\gltfSDK.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Attribute.h">

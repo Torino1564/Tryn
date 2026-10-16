@@ -17,12 +17,6 @@
 
 #include "Animation/BonedMesh.h"
 
-namespace Microsoft::glTF
-{
-	struct MeshPrimitive;
-	class Document;
-}
-
 namespace fastgltf
 {
 	class Primitive;
@@ -388,7 +382,6 @@ namespace tryn::gfx
 	public:
 		VertexBuffer(VertexLayout layout_, size_t size = 0);
 		VertexBuffer(VertexLayout layout, const aiMesh& mesh, ani::Skeleton* skeleton = nullptr);
-		VertexBuffer(VertexLayout layout, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::optional<ani::Skeleton> skeleton = std::nullopt);
 		VertexBuffer(VertexLayout layout_, const fastgltf::Primitive& primitive, const fastgltf::Asset& asset, std::optional<ani::Skeleton> skeleton = std::nullopt);
 		VertexBuffer(VertexLayout layout, const Shape3D& mesh);
 		void Resize(size_t newSize) override;
@@ -443,10 +436,6 @@ namespace tryn::gfx
 	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(BoneIds, Vertices);
 	DVTX_ELEMENT_SHAPE_EXTRACTOR_DEFINITION(Unknown, Vertices);
 
-	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::BoneWeights>::ExtractAndFill(VertexBuffer& buf, const std::string& id, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
-	{
-
-	}
 
 	void inline VertexLayout::VertexElementAttr<VertexLayout::VertexElement::Unknown>::ExtractAndFill(VertexBuffer& buf, const std::string& id, const aiMesh& mesh, size_t i, ani::Skeleton const* skeleton) noexcept
 	{

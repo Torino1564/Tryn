@@ -74,37 +74,6 @@ namespace tryn::gfx
 		//this->selectedMaterial = pMaterials.size() - 1;
 	}
 
-	StaticMesh::StaticMesh(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& primitive, const gfx::WinGLTFLoaderContext& context, std::string_view tag_,
-		const std::shared_ptr<Material>& pMaterial, glm::vec3 scale, const std::optional<std::uint16_t> meshID)
-			: Mesh()
-	{
-		auto material = pMaterial ? pMaterial : Material::MakeDefault(gfx);
-
-		if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f)
-		{
-			tag = std::format("{}#Scale[X:{},Y:{},Z:{}]", tag_, scale.x, scale.y, scale.z);
-		}
-		else
-		{
-			tag = tag_;
-		}
-
-		ID = meshID.value_or(0);
-		
-		const auto indices = IndexBuffer(primitive, context);
-
-		indexCount = static_cast<uint32_t>(indices.Size());
-		pSOAVertexBuffer = ISOAVertexBuffer::Resolve(gfx);
-		pSOAVertexBuffer->InitFields(gfx, primitive, context);
-		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<IndexBuffer>(std::move(indices)));
-		pTopology = IPrimitiveTopology::Resolve(gfx);
-		InitTransformCBuf(gfx);
-
-		pMaterials.clear();
-		pMaterials.emplace_back(std::move(material));
-		selectedMaterial = pMaterials.size() - 1;
-	}
-
 	StaticMesh::StaticMesh(const IGraphics& gfx, const fastgltf::Primitive& mesh, fastgltf::Asset& asset, std::string_view tag_, const std::shared_ptr<Material>& pMaterial, glm::vec3 scale, std::optional<std::uint16_t> meshID)
 	{
 		auto material = pMaterial ? pMaterial : Material::MakeDefault(gfx);

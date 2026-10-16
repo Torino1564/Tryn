@@ -81,14 +81,6 @@ namespace tryn::gfx::ani
 		selectedMaterial = pMaterials.size() - 1;
 	}
 
-	BonedMesh::BonedMesh(const IGraphics& gfx, std::shared_ptr<Material> pMaterial, const Microsoft::glTF::Mesh& mesh,
-		std::string_view tag, ani::Skeleton& skeleton, glm::vec3 scale, std::optional<std::uint16_t> meshID)
-			:
-		skeleton(skeleton)
-	{
-
-	}
-
 	MeshType BonedMesh::Type() const
 	{
 		return MeshType::Boned;

@@ -16,8 +16,6 @@
 #include <Core/src/gfx/IGraphics.h>
 #include <Core/src/gfx/ImguiManager.h>
 #include "Core/third/glm/gtx/euler_angles.hpp"
-#include <Core/src/gfx/win/gltfSDK.h>
-#include <GLTFSDK/Deserialize.h>
 #include <ranges>
 #include "GLTFMesh.h"
 #include "Core/third/glm/gtx/quaternion.hpp"
@@ -64,7 +62,7 @@ namespace tryn::gfx
 
 		if (const auto& ext = fspath.extension().string(); ext == ".gltf" || ext == ".glb" )
 		{
-			// TinyGLTF initialization
+			// fastglTF initialization
 			GltfInitialization2(gfx, fspath, techniqueUUIDs, scale, instanced);
 			return;
 		}
@@ -266,6 +264,7 @@ namespace tryn::gfx
 	{
 		return meshCounter + 1;
 	}
+
 	std::uint32_t Model::ParseNode(int& nextId, const aiNode& node, const glm::vec3 scale, const bool root)
 	{
 		auto skeletonNodeIndex = -1;
@@ -353,104 +352,6 @@ namespace tryn::gfx
 		bool hasMatrix;
 	};
 
-	std::uint32_t Model::ParseNode(int& nextId, const Microsoft::glTF::Node& node, const WinGLTFLoaderContext& context, glm::vec3 scale, bool root)
-	{
-		auto& doc = *context.pDocument;
-		std::string skeletonNodeId;
-		// If its a root node, find if theres a skeleton
-		if (root)
-		{
-			for (auto& childId : node.children)
-			{
-				const auto& child = doc.nodes[childId];
-
-				// find if any children is a skeleton
-
-				auto isSkeleton = true;
-				auto numChildren = 0;
-
-				std::queue<const Microsoft::glTF::Node*> q;
-				q.push(&child);
-
-				while (!q.empty())
-				{
-					auto current = q.front();
-					q.pop();
-					if (!current->meshId.empty())
-					{
-						isSkeleton = false;
-						break;
-					}
-					for (auto& childChildId : current->children)
-					{
-						numChildren++;
-						q.push(&doc.nodes[childChildId]);
-					}
-				}
-				
-				// Parse Skeleton if found any
-				if (isSkeleton && (numChildren != 0))
-				{
-					// ParseSkeleton(child);
-					// Supports only one skeleton!
-					skeletonNodeId = childId;
-					break;
-				}
-
-			}
-		}
-
-		TransformData tdata;
-
-		Microsoft::glTF::TransformationType type = node.GetTransformationType();
-		tdata.hasMatrix = type == Microsoft::glTF::TRANSFORMATION_MATRIX;
-
-		if (tdata.hasMatrix)
-		{
-			tdata.matrix = glm::make_mat4(node.matrix.values.data());
-		}
-		else
-		{
-			tdata.rotation = glm::quat(node.rotation.w, node.rotation.x, -node.rotation.z, node.rotation.y);
-
-			tdata.translation.x = node.translation.x;
-			tdata.translation.y = node.translation.y;
-			tdata.translation.z = node.translation.z;
-
-			tdata.scale.x = node.scale.x;
-			tdata.scale.y = node.scale.y;
-			tdata.scale.z = node.scale.z;
-		}
-
-		trylog.debug(utl::ToWide(std::format("Node [{}] has matrix = [{}]", node.name, tdata.hasMatrix)));
-
-		const auto transform = tdata.hasMatrix ? glm::transpose(tdata.matrix) : glm::translate(glm::mat4(1.0f), tdata.translation) * glm::toMat4(tdata.rotation) * glm::scale(glm::mat4(1.0f), tdata.scale);
-
-		std::vector<uint16_t> meshIds;
-
-		if (!node.meshId.empty())
-			meshIds.push_back(atoi(doc.meshes[node.meshId].id.c_str()));
-
-		const auto index = nextId;
-		nodes.emplace_back(nextId++, node.name, std::move(meshIds), transform, this);
-		for (const auto& childId : node.children)
-		{
-			if (root && skeletonNodeId == childId)
-				continue;
-			try
-			{
-				const auto childIndex = ParseNode(nextId, doc.nodes[childId], context, scale);
-				nodes[index].AddChildId(childIndex);
-			}
-			catch(Microsoft::glTF::GLTFException&)
-			{
-				trylog.debug(L"Skipped Node");
-			}
-		}
-
-		return index;
-	}
-
 	glm::mat4 ToGlm(const fastgltf::math::fmat4x4& m)
 	{
 		glm::mat4 result{ 1.0f };
@@ -495,25 +396,23 @@ namespace tryn::gfx
 
 		trylog.debug(utl::ToWide(std::format("Node [{}] has matrix = [{}]", node.name, tdata.hasMatrix)));
 
-		const auto transform = tdata.hasMatrix ? glm::transpose(tdata.matrix) : glm::translate(glm::mat4(1.0f), tdata.translation) * glm::toMat4(tdata.rotation) * glm::scale(glm::mat4(1.0f), tdata.scale);
+		const auto transformMatrix = tdata.hasMatrix ? glm::transpose(tdata.matrix) : glm::translate(glm::mat4(1.0f), tdata.translation) * glm::toMat4(tdata.rotation) * glm::scale(glm::mat4(1.0f), tdata.scale);
 
 		std::vector<uint16_t> meshIds;
 
-		if (!node.meshId.empty())
-			meshIds.push_back(atoi(doc.meshes[node.meshId].id.c_str()));
+		if (node.meshIndex)
+			meshIds.push_back(node.meshIndex.value());
 
 		const auto index = nextId;
-		nodes.emplace_back(nextId++, node.name, std::move(meshIds), transform, this);
+		nodes.emplace_back(nextId++, node.name, std::move(meshIds), transformMatrix, this);
 		for (const auto& childId : node.children)
 		{
-			if (root && skeletonNodeId == childId)
-				continue;
 			try
 			{
-				const auto childIndex = ParseNode(nextId, doc.nodes[childId], context, scale);
+				const auto childIndex = ParseNode(nextId, asset.nodes[childId], asset, scale);
 				nodes[index].AddChildId(childIndex);
 			}
-			catch (Microsoft::glTF::GLTFException&)
+			catch (ModelException&)
 			{
 				trylog.debug(L"Skipped Node");
 			}
@@ -562,77 +461,6 @@ namespace tryn::gfx
 		return std::ranges::contains(techniques, techniqueUUID);
 	}
 
-	void Model::GltfInitialization(const gfx::IGraphics& gfx, const std::filesystem::path& path,
-	                               std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
-	{
-		using namespace Microsoft::glTF;
-
-		auto processFunction = [&](const WinGLTFLoaderContext& context)
-			{
-				const auto& doc = *context.pDocument;
-
-				if (doc.scenes.Size() > 1)
-					trylog.warn(L"GLTF file contains more than one scene!");
-
-				auto& scene = doc.GetDefaultScene();
-				int nextId = 0;
-
-				for (auto& nodeId : scene.nodes)
-				{
-					trylog.info(utl::ToWide(std::format("Root node: {}", doc.nodes[nodeId].name)));
-					auto& node = doc.nodes[nodeId];
-					rootId = ParseNode(nextId, node, context, scale, true);
-					break;
-				}
-
-				// parse materials
-				std::vector<std::shared_ptr<Material>> materials;
-				materials.reserve(doc.materials.Size());
-
-				for (unsigned int i = 0; i < doc.materials.Size(); i++)
-				{
-					materials.emplace_back(std::make_shared<Material>(gfx, doc.materials[i], path, context, instanced, skeleton.has_value()));
-				}
-
-				// Add meshes
-				for (unsigned int i = 0; i < doc.meshes.Size(); i++)
-				{
-					auto& mesh = doc.meshes[i];
-					pMeshes.push_back(std::make_shared<GLTFMesh>(gfx, mesh, context, mesh.name, materials[std::atoi(mesh.primitives[0].materialId.c_str())], scale, meshCounter++));
-					for (auto techniqueUUID : techniqueUUIDs)
-					{
-						pMeshes.back()->AddTechnique(gfx, techniqueUUID);
-					}
-					for (auto& pMesh = pMeshes.back(); const auto& technique : pMesh->pTechniques | std::views::values)
-					{
-						for (auto& [id, addedBindable] : pAddedBindables)
-						{
-							technique->OfferBindable(id, addedBindable);
-						}
-					}
-				}
-
-				// Set mesh Span
-				std::queue<Node*> q;
-				q.push(&nodes[rootId]);
-
-				while (!q.empty())
-				{
-					auto& current = *q.front();
-					q.pop();
-
-					current.SetMeshSpan({ pMeshes });
-
-					for (auto& childId : current.GetChildrenIds())
-					{
-						q.push(&nodes[childId]);
-					}
-				}
-			};
-
-		WinGLTFLoader::Load(path, processFunction);
-	}
-
 	void Model::GltfInitialization2(const gfx::IGraphics& gfx, const std::filesystem::path& path, std::span<const utl::UUID_t> techniqueUUIDs, const glm::vec3& scale, const bool instanced)
 	{
 		trylog.info(utl::ToWide(std::format("Loading GLTF: {}", path.string())));
@@ -678,17 +506,31 @@ namespace tryn::gfx
 		}
 
 		// Load Scene
-
 		auto& scene = gltf.scenes[gltf.defaultScene.value()];
-		auto& nodes = scene.nodeIndices;
+		auto& sceneNodes = scene.nodeIndices;
+		int nextId = 0;
 
-		for (auto& nodeIndex : nodes)
+
+		// Parse nodes
+		if (sceneNodes.size() > 1)
 		{
-			auto& node = gltf.nodes[nodeIndex];
+			nodes.emplace_back(0, "virtual_root", std::vector<uint16_t>{}, glm::identity<glm::mat4>(), this);
+			nextId = 1;
+			for (auto& sceneNodeId : scene.nodeIndices)
+			{
+				auto& node = gltf.nodes[sceneNodeId];
+				const auto childId = ParseNode(nextId, node, gltf, scale);
+				nodes[0].AddChildId(childId);
+			}
+		}
+		else
+		{
+			rootId = ParseNode(nextId, gltf.nodes[sceneNodes[0]], gltf, scale);
 		}
 
+
+
 		// Load Materials
-	
 		std::vector<std::shared_ptr<Material>> materials;
 		materials.reserve(gltf.materials.size());
 
@@ -697,9 +539,15 @@ namespace tryn::gfx
 			materials.emplace_back(std::make_shared<Material>(gfx, gltf, mat, path, instanced, skeleton.has_value()));
 		}
 
-		// Load Meshes
+		// Parse Skeleton if exist
+		if (!gltf.skins.empty())
+		{
+			auto& skin = gltf.skins[0];
+			skeleton.emplace();
+			
+		}
 
-		// Add meshes
+		// Load Meshes
 		for (auto& mesh : gltf.meshes)
 		{
 			pMeshes.push_back(std::make_shared<GLTFMesh>(gfx, mesh, gltf, mesh.name, materials[mesh.primitives[0].materialIndex.value()], scale, meshCounter++));
@@ -713,6 +561,23 @@ namespace tryn::gfx
 				{
 					technique->OfferBindable(id, addedBindable);
 				}
+			}
+		}
+
+		// Set mesh Span
+		std::queue<Node*> q;
+		q.push(&nodes[rootId]);
+
+		while (!q.empty())
+		{
+			auto& current = *q.front();
+			q.pop();
+
+			current.SetMeshSpan({ pMeshes });
+
+			for (auto& childId : current.GetChildrenIds())
+			{
+				q.push(&nodes[childId]);
 			}
 		}
 	}

@@ -10,7 +10,6 @@ namespace tryn::gfx
 		static std::shared_ptr<ISOAVertexBuffer> Resolve(const IGraphics& gfx);
 		static std::string GenerateID(const IGraphics& gfx);
 
-		void InitFields(const IGraphics& gfx, const Microsoft::glTF::MeshPrimitive& primitive, const WinGLTFLoaderContext& context);
 		void InitFields(const IGraphics& gfx, const fastgltf::Primitive& primitive, const fastgltf::Asset& asset);
 		void InitFields(const IGraphics& gfx, const aiMesh& mesh);
 		void Append(const std::shared_ptr<IVertexBuffer>& vertexBuffer, const std::string& name, uint16_t slot = 0);

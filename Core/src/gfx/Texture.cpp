@@ -4,7 +4,6 @@
 #include <Core/src/utl/String.h>
 #include <assimp/texture.h>
 #include "IGraphics.h"
-#include "win/gltfSDK.h"
 #undef max
 #undef min
 #include <fastgltf/core.hpp>
@@ -84,21 +83,6 @@ namespace tryn::gfx
 		}
 	}
 
-	Texture::Texture(const GLTFTextureData& textureData)
-	{
-		auto texture = StbImageManager::Load(std::span{(std::byte*)std::move(textureData.data.data()), textureData.byteSize}, dimensions, numChannels, StbImageManager::RGB_ALPHA());
-		this->path = textureData.name;
-
-		auto pDeleterFunc = [](std::byte* bytes)
-		{
-			STBI_Close::Get().operator()(bytes);
-		};
-
-		static const Deleter deleter(pDeleterFunc);
-
-		buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
-	}
-
 	Texture::Texture(fastgltf::Asset& gltf, fastgltf::Image& image)
 	{
 		int width, height, nrChannels;
@@ -150,10 +134,16 @@ namespace tryn::gfx
 			auto texture = StbImageManager::Load(path, dimensions, numChannels, StbImageManager::RGB_ALPHA());
 			buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
 		}
-		else if (std::holds_alternative<fastgltf::sources::URI>(image.data))
+		else if (std::holds_alternative<fastgltf::sources::Vector>(image.data))
 		{
 			auto& vector = std::get<fastgltf::sources::Vector>(image.data);
 			auto texture = StbImageManager::Load(std::span{ vector.bytes.data(), vector.bytes.size() }, dimensions, numChannels, StbImageManager::RGB_ALPHA());
+			buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
+		}
+		else if (std::holds_alternative<fastgltf::sources::Array>(image.data))
+		{
+			auto& array = std::get<fastgltf::sources::Array>(image.data);
+			auto texture = StbImageManager::Load(std::span{ array.bytes.data(), array.bytes.size() }, dimensions, numChannels, StbImageManager::RGB_ALPHA());
 			buffer = std::move(std::unique_ptr<std::byte, Deleter>(texture, deleter));
 		}
 		else if (std::holds_alternative<fastgltf::sources::BufferView>(image.data))

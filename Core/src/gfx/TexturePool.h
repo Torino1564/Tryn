@@ -18,7 +18,6 @@ namespace tryn::gfx
 
 		static std::shared_ptr<Texture> Resolve(const std::filesystem::path& path);
 		static std::shared_ptr<Texture> Resolve(const aiTexture& tex);
-		static std::shared_ptr<Texture> Resolve(const class GLTFTextureData& textureData);
 		static std::shared_ptr<Texture> Resolve(class fastgltf::Asset& gltf, class fastgltf::Image& image);
 
 	private:
