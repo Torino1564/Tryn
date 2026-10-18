@@ -6,6 +6,7 @@
 #include <Core/src/gfx/Material.h>
 #include <Core/src/gfx/Bindables/PrimitiveTopology.h>
 #include <Core/src/gfx/IGraphics.h>
+#include <Core/src/gfx/Bindables/SOAVertexBuffer.h>
 
 static glm::mat4 ConvertMatrixToGLMFormat(const aiMatrix4x4& from)
 {
@@ -65,6 +66,10 @@ namespace tryn::gfx::ani
 		const auto indices = IndexBuffer(mesh);
 
 		indexCount = static_cast<uint32_t>(indices.Size());
+
+
+		pSOAVertexBuffer = ISOAVertexBuffer::Resolve(gfx);
+		pSOAVertexBuffer->InitFields(gfx, mesh);
 
 		pIndexBuffer = IIndexBuffer::Resolve(gfx, std::make_shared<IndexBuffer>(indices));
 		pTopology = IPrimitiveTopology::Resolve(gfx);
